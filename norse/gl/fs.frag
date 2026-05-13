@@ -1,57 +1,18 @@
 precision highp float;
 
-uniform sampler2D previousFrame;
 uniform vec2 resolution;
 uniform float time;
-
-//////////////////////////////////////////////////////
-// CONFIG
-//////////////////////////////////////////////////////
-
-uniform float fade;
-
-uniform float waveAmount;
-
-uniform float sparkThreshold;
-uniform float sparkBrightness;
-
-uniform float hueSpeed;
-uniform float saturation;
-uniform float brightness;
-
-//////////////////////////////////////////////////////
-// WORLD CONFIG
-//////////////////////////////////////////////////////
-
-uniform float horizonY;
-uniform float flowSpeed;
-
-uniform float skyDetail;
-uniform float groundDetail;
-
-uniform float mistStrength;
-uniform float horizonGlow;
 
 varying vec2 vUv;
 
 //////////////////////////////////////////////////////
-// HASH
+// SIMPLE HASH (for subtle texture)
 //////////////////////////////////////////////////////
 
 float hash(vec2 p){
-
-    return fract(
-        sin(dot(p, vec2(127.1,311.7)))
-        * 43758.5453123
-    );
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
-
-//////////////////////////////////////////////////////
-// NOISE
-//////////////////////////////////////////////////////
-
 float noise(vec2 p){
-
     vec2 i = floor(p);
     vec2 f = fract(p);
 
@@ -62,16 +23,10 @@ float noise(vec2 p){
 
     vec2 u = f * f * (3.0 - 2.0 * f);
 
-    return
-        mix(a,b,u.x)
-        + (c-a) * u.y * (1.0-u.x)
-        + (d-b) * u.x * u.y;
+    return mix(a,b,u.x) +
+           (c-a)*u.y*(1.0-u.x) +
+           (d-b)*u.x*u.y;
 }
-
-//////////////////////////////////////////////////////
-// FBM
-//////////////////////////////////////////////////////
-
 float fbm(vec2 p){
 
     float v = 0.0;
@@ -79,127 +34,8 @@ float fbm(vec2 p){
     v += noise(p * 1.0) * 0.5;
     v += noise(p * 2.0) * 0.25;
     v += noise(p * 4.0) * 0.125;
-    v += noise(p * 8.0) * 0.0625;
 
     return v;
-}
-
-//////////////////////////////////////////////////////
-// HSV
-//////////////////////////////////////////////////////
-
-vec3 hsv2rgb(vec3 c){
-
-    vec3 rgb =
-        clamp(
-            abs(
-                mod(
-                    c.x * 6.0 +
-                    vec3(0.0,4.0,2.0),
-                    6.0
-                ) - 3.0
-            ) - 1.0,
-            0.0,
-            1.0
-        );
-
-    rgb = rgb * rgb * (3.0 - 2.0 * rgb);
-
-    return c.z * mix(vec3(1.0), rgb, c.y);
-}
-
-//////////////////////////////////////////////////////
-// PERSPECTIVE MAPPING
-//////////////////////////////////////////////////////
-
-vec2 projectGround(vec2 p){
-
-    //////////////////////////////////////////////////
-    // distance from horizon
-    //////////////////////////////////////////////////
-
-    float d =
-        max(p.y, 0.02);
-
-    //////////////////////////////////////////////////
-    // perspective depth
-    //////////////////////////////////////////////////
-
-    float z =
-        1.0 / d;
-
-    //////////////////////////////////////////////////
-    // move INTO scene
-    //////////////////////////////////////////////////
-
-    z +=
-        time * flowSpeed;
-
-    //////////////////////////////////////////////////
-    // projected coordinates
-    //////////////////////////////////////////////////
-
-    vec2 uv;
-
-    uv.x =
-        p.x * z * 0.15;
-
-    uv.y =
-        z * 0.08;
-
-    //////////////////////////////////////////////////
-    // turbulence
-    //////////////////////////////////////////////////
-
-    float n =
-        fbm(
-            vec2(
-                uv.x * 2.0,
-                uv.y * 0.5
-            )
-        );
-
-    uv.x +=
-        (n - 0.5) * 0.35;
-
-    return uv;
-}
-
-//////////////////////////////////////////////////////
-// SKY PROJECTION
-//////////////////////////////////////////////////////
-
-vec2 projectSky(vec2 p){
-
-    float d =
-        max(-p.y, 0.02);
-
-    float z =
-        1.0 / d;
-
-    z +=
-        time * flowSpeed * 0.6;
-
-    vec2 uv;
-
-    uv.x =
-        p.x * z * 0.12;
-
-    uv.y =
-        z * 0.05;
-
-    float n =
-        fbm(
-            vec2(
-                uv.x * 1.5,
-                uv.y * 0.4
-            )
-        );
-
-    uv.x +=
-        (n - 0.5) * 0.25;
-
-    return uv;
 }
 
 //////////////////////////////////////////////////////
@@ -211,239 +47,132 @@ void main(){
     vec2 uv = vUv;
 
     //////////////////////////////////////////////////
-    // FEEDBACK
+    // SCREEN SPACE (-1 to 1)
     //////////////////////////////////////////////////
 
-    vec2 fb = uv - 0.5;
-
-    fb.x *=
-        resolution.x /
-        resolution.y;
-
-    float drift =
-        fbm(
-            fb * 2.0 +
-            time * 0.03
-        );
-
-    fb.x +=
-        (drift - 0.5)
-        * waveAmount;
-
-    vec2 sampleUV = fb;
-
-    sampleUV.x /=
-        resolution.x /
-        resolution.y;
-
-    sampleUV += 0.5;
-
-    vec3 prev =
-        texture2D(
-            previousFrame,
-            sampleUV
-        ).rgb;
-
-    prev *= fade;
+    vec2 p = uv * 2.0 - 1.0;
+    p.x *= resolution.x / resolution.y;
 
     //////////////////////////////////////////////////
-    // WORLD SPACE
+    // CAMERA HEIGHT (STATIC HORIZON LOCK)
     //////////////////////////////////////////////////
 
-    vec2 world = uv;
-
-    world.x -= 0.5;
-    world.y -= horizonY;
-
-    world.x *=
-        resolution.x /
-        resolution.y;
+    float horizonY = -0.33;
 
     //////////////////////////////////////////////////
-    // MASKS
+    // FAKE DEPTH AXIS (THIS IS THE CORE)
     //////////////////////////////////////////////////
 
-    float skyMask =
-        smoothstep(
-            -0.01,
-             0.03,
-            -world.y
-        );
+    float y = p.y - horizonY;
 
-    float groundMask =
-        smoothstep(
-            0.01,
-            0.05,
-            world.y
-        );
+    // prevent division blowup
+    float depth = 1.0 / (abs(y) + 0.05);
 
     //////////////////////////////////////////////////
-    // SKY
+    // FORWARD MOTION INTO Z
     //////////////////////////////////////////////////
 
-    vec2 skyUV =
-        projectSky(world);
-
-    float skyNoise =
-        fbm(
-            skyUV *
-            skyDetail
-        );
-
-    float skyBands =
-        sin(
-            skyNoise * 9.0 +
-            skyUV.y * 8.0
-        );
-
-    skyBands =
-        pow(
-            abs(skyBands),
-            5.0
-        );
+    float camZ = time * 10.5;
 
     //////////////////////////////////////////////////
-    // GROUND
+    // GROUND PLANE (below horizon)
     //////////////////////////////////////////////////
 
-    vec2 groundUV =
-        projectGround(world);
+    float groundMask = step(0.0, y); 
 
-    float groundNoise =
-        fbm(
-            groundUV *
-            groundDetail
-        );
+    float groundX = p.x * depth;
+    float groundZ = depth + camZ;
 
-    float groundBands =
-        sin(
-            groundNoise * 12.0 +
-            groundUV.y * 14.0
-        );
-
-    groundBands =
-        pow(
-            abs(groundBands),
-            8.0
-        );
+    float groundPattern = 
+        sin(groundX * 3.0) *
+        sin(groundZ * 0.5);
 
     //////////////////////////////////////////////////
-    // ATMOSPHERE
+    // SKY PLANE (above horizon)
     //////////////////////////////////////////////////
 
-    float mist =
-        fbm(
-            world * 2.0 +
-            time * 0.02
-        );
+    float skyMask = 1.0 - groundMask;
+
+float skyWarp =
+    fbm(vec2(
+        p.x * 1.5,
+        depth * 0.615 + camZ * 0.02
+    ));
+
+float warpedX =
+    p.x +
+    (skyWarp - 0.5) * 0.6;
+
+float skyX = warpedX * depth;
+    float skyZ = depth + camZ * 0.3;
+
+vec2 cloudUV = vec2(
+    skyX * 0.35,
+    skyZ * 0.03
+);
+
+//////////////////////////////////////////////////////
+// DOMAIN WARPING
+//////////////////////////////////////////////////////
+
+float warp1 = fbm(cloudUV * 0.7 + vec2(0.0, camZ * 0.01));
+float warp2 = fbm(cloudUV * 1.3 - vec2(camZ * 0.015, 0.0));
+
+cloudUV.x += (warp1 - 0.5) * 2.5;
+cloudUV.y += (warp2 - 0.5) * 1.5;
+
+//////////////////////////////////////////////////////
+// MAIN CLOUD FIELD
+//////////////////////////////////////////////////////
+
+float cloudNoise = fbm(cloudUV);
+
+//////////////////////////////////////////////////////
+// SHAPE CLOUD MASSES
+//////////////////////////////////////////////////////
+
+float skyPattern = smoothstep(
+    0.42,
+    0.72,
+    cloudNoise
+);
+
+//////////////////////////////////////////////////////
+// DISTANCE FADE
+//////////////////////////////////////////////////////
+
+skyPattern *= 1.0 - abs(y) * 0.25;
 
     //////////////////////////////////////////////////
-    // HORIZON GLOW
+    // HORIZON GLOW (vanishing singularity)
     //////////////////////////////////////////////////
 
-    float horizonDist =
-        abs(world.y);
-
-    float horizonLight =
-        horizonGlow /
-        (horizonDist + 0.04);
+    float glow = 0.03 / (abs(y) + 0.03);
 
     //////////////////////////////////////////////////
-    // COLOR
+    // COLOR BASES
     //////////////////////////////////////////////////
 
-    float hue =
-        mod(
-            time * hueSpeed +
-            mist * 0.08,
-            1.0
-        );
-
-    vec3 baseColor =
-        hsv2rgb(
-            vec3(
-                hue,
-                saturation,
-                brightness
-            )
-        );
+    vec3 groundCol = vec3(0.1, 0.2, 0.4);
+    vec3 skyCol = vec3(0.1, 0.3, 0.1);
+    vec3 glowCol = vec3(0.6, 0.7, 1.0);
 
     //////////////////////////////////////////////////
-    // FINAL COMBINE
+    // COMBINE
     //////////////////////////////////////////////////
 
-    vec3 col = prev;
+    vec3 col = vec3(0.0);
 
-    col +=
-        baseColor *
-        skyBands *
-        skyMask *
-        0.35;
-
-    col +=
-        baseColor *
-        groundBands *
-        groundMask *
-        0.55;
-
-    col +=
-        baseColor *
-        mist *
-        mistStrength *
-        0.25;
-
-    col +=
-        baseColor *
-        horizonLight *
-        0.3;
+    col += skyCol * skyPattern * skyMask;
+    col += groundCol * groundPattern * groundMask;
+    col += glowCol * glow * 0.5;
 
     //////////////////////////////////////////////////
-    // PARTICLES
+    // SIMPLE VIGNETTE (FOCUS MOTION)
     //////////////////////////////////////////////////
 
-    float spore =
-        hash(
-            floor(
-                uv *
-                resolution.xy *
-                0.5
-            ) +
-            floor(time * 10.0)
-        );
-
-    if(spore > sparkThreshold){
-
-        vec3 sporeColor =
-            hsv2rgb(
-                vec3(
-                    mod(hue + 0.08,1.0),
-                    0.7,
-                    1.8
-                )
-            );
-
-        col +=
-            sporeColor *
-            sparkBrightness;
-    }
-
-    //////////////////////////////////////////////////
-    // VIGNETTE
-    //////////////////////////////////////////////////
-
-    float vignette =
-        smoothstep(
-            1.7,
-            0.05,
-            length(uv - 0.5)
-        );
-
+    float vignette = 1.0 - dot(p, p) * 0.5;
     col *= vignette;
 
-    //////////////////////////////////////////////////
-    // FINAL
-    //////////////////////////////////////////////////
-
-    gl_FragColor =
-        vec4(col,1.0);
+    gl_FragColor = vec4(col, 1.0);
 }
