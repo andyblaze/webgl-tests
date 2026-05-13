@@ -9,23 +9,8 @@ uniform float time;
 //////////////////////////////////////////////////////
 
 uniform float fade;
-uniform float rotationSpeed;
-uniform float zoom;
 
 uniform float waveAmount;
-uniform float waveScaleX;
-uniform float waveScaleY;
-
-uniform float warpStrength;
-uniform float warpScale;
-uniform float warpSpeed;
-uniform float warpDetail;
-uniform float warpAngularBias;
-uniform float warpRadialBias;
-
-uniform float glowStrength;
-uniform float glowRadius;
-uniform float glowPulse;
 
 uniform float sparkThreshold;
 uniform float sparkBrightness;
@@ -56,7 +41,7 @@ varying vec2 vUv;
 float hash(vec2 p){
 
     return fract(
-        sin(dot(p,vec2(127.1,311.7)))
+        sin(dot(p, vec2(127.1,311.7)))
         * 43758.5453123
     );
 }
@@ -124,6 +109,100 @@ vec3 hsv2rgb(vec3 c){
 }
 
 //////////////////////////////////////////////////////
+// PERSPECTIVE MAPPING
+//////////////////////////////////////////////////////
+
+vec2 projectGround(vec2 p){
+
+    //////////////////////////////////////////////////
+    // distance from horizon
+    //////////////////////////////////////////////////
+
+    float d =
+        max(p.y, 0.02);
+
+    //////////////////////////////////////////////////
+    // perspective depth
+    //////////////////////////////////////////////////
+
+    float z =
+        1.0 / d;
+
+    //////////////////////////////////////////////////
+    // move INTO scene
+    //////////////////////////////////////////////////
+
+    z +=
+        time * flowSpeed;
+
+    //////////////////////////////////////////////////
+    // projected coordinates
+    //////////////////////////////////////////////////
+
+    vec2 uv;
+
+    uv.x =
+        p.x * z * 0.15;
+
+    uv.y =
+        z * 0.08;
+
+    //////////////////////////////////////////////////
+    // turbulence
+    //////////////////////////////////////////////////
+
+    float n =
+        fbm(
+            vec2(
+                uv.x * 2.0,
+                uv.y * 0.5
+            )
+        );
+
+    uv.x +=
+        (n - 0.5) * 0.35;
+
+    return uv;
+}
+
+//////////////////////////////////////////////////////
+// SKY PROJECTION
+//////////////////////////////////////////////////////
+
+vec2 projectSky(vec2 p){
+
+    float d =
+        max(-p.y, 0.02);
+
+    float z =
+        1.0 / d;
+
+    z +=
+        time * flowSpeed * 0.6;
+
+    vec2 uv;
+
+    uv.x =
+        p.x * z * 0.12;
+
+    uv.y =
+        z * 0.05;
+
+    float n =
+        fbm(
+            vec2(
+                uv.x * 1.5,
+                uv.y * 0.4
+            )
+        );
+
+    uv.x +=
+        (n - 0.5) * 0.25;
+
+    return uv;
+}
+
+//////////////////////////////////////////////////////
 // MAIN
 //////////////////////////////////////////////////////
 
@@ -132,56 +211,32 @@ void main(){
     vec2 uv = vUv;
 
     //////////////////////////////////////////////////
-    // FEEDBACK SPACE
+    // FEEDBACK
     //////////////////////////////////////////////////
 
-    vec2 p = uv - 0.5;
+    vec2 fb = uv - 0.5;
 
-    p.x *=
+    fb.x *=
         resolution.x /
         resolution.y;
 
-    //////////////////////////////////////////////////
-    // FEEDBACK DRIFT
-    //////////////////////////////////////////////////
-
-    float driftA =
+    float drift =
         fbm(
-            p * 2.0 +
-            time * 0.05
+            fb * 2.0 +
+            time * 0.03
         );
 
-    float driftB =
-        fbm(
-            p * 3.0 -
-            time * 0.04
-        );
+    fb.x +=
+        (drift - 0.5)
+        * waveAmount;
 
-    p.x +=
-        (driftA - 0.5)
-        * waveAmount
-        * 5.0;
-
-    p.y +=
-        (driftB - 0.5)
-        * waveAmount
-        * 5.0;
-
-    //////////////////////////////////////////////////
-    // SAMPLE UV
-    //////////////////////////////////////////////////
-
-    vec2 sampleUV = p;
+    vec2 sampleUV = fb;
 
     sampleUV.x /=
         resolution.x /
         resolution.y;
 
     sampleUV += 0.5;
-
-    //////////////////////////////////////////////////
-    // FEEDBACK
-    //////////////////////////////////////////////////
 
     vec3 prev =
         texture2D(
@@ -192,16 +247,13 @@ void main(){
     prev *= fade;
 
     //////////////////////////////////////////////////
-    // HORIZON WORLD
+    // WORLD SPACE
     //////////////////////////////////////////////////
-
-    float horizon =
-        horizonY;
 
     vec2 world = uv;
 
     world.x -= 0.5;
-    world.y -= horizon;
+    world.y -= horizonY;
 
     world.x *=
         resolution.x /
@@ -215,112 +267,86 @@ void main(){
         smoothstep(
             -0.01,
              0.03,
-             uv.y - horizon
+            -world.y
         );
 
     float groundMask =
-        1.0 - skyMask;
+        smoothstep(
+            0.01,
+            0.05,
+            world.y
+        );
 
     //////////////////////////////////////////////////
-    // SKY FLOW
-    // (+y sample motion = visual DOWN)
+    // SKY
     //////////////////////////////////////////////////
 
-    vec2 skyP = world;
-
-    skyP.y +=
-        time * flowSpeed;
-
-    skyP.x +=
-        sin(
-            skyP.y * 2.0 +
-            time * 0.2
-        ) * 0.12;
-
-    skyP.x +=
-        (fbm(
-            skyP * 2.0 +
-            time * 0.04
-        ) - 0.5) * 0.2;
+    vec2 skyUV =
+        projectSky(world);
 
     float skyNoise =
         fbm(
-            skyP *
+            skyUV *
             skyDetail
         );
 
     float skyBands =
         sin(
-            skyNoise * 7.0 +
-            skyP.y * 5.0
+            skyNoise * 9.0 +
+            skyUV.y * 8.0
         );
 
     skyBands =
         pow(
             abs(skyBands),
-            6.0
+            5.0
         );
 
     //////////////////////////////////////////////////
-    // GROUND FLOW
-    // (-y sample motion = visual UP)
+    // GROUND
     //////////////////////////////////////////////////
 
-    vec2 groundP = world;
-
-    groundP.y -=
-        time * flowSpeed;
-
-    groundP.x +=
-        sin(
-            groundP.y * 5.0 -
-            time * 0.15
-        ) * 0.08;
-
-    groundP.x +=
-        (fbm(
-            groundP * 3.0 -
-            time * 0.05
-        ) - 0.5) * 0.1;
+    vec2 groundUV =
+        projectGround(world);
 
     float groundNoise =
         fbm(
-            groundP *
+            groundUV *
             groundDetail
         );
 
     float groundBands =
         sin(
-            groundNoise * 11.0 -
-            groundP.y * 12.0
+            groundNoise * 12.0 +
+            groundUV.y * 14.0
         );
 
     groundBands =
         pow(
             abs(groundBands),
-            9.0
+            8.0
         );
 
     //////////////////////////////////////////////////
-    // HORIZON MIST
+    // ATMOSPHERE
     //////////////////////////////////////////////////
 
     float mist =
         fbm(
             world * 2.0 +
-            time * 0.03
+            time * 0.02
         );
 
     //////////////////////////////////////////////////
-    // HORIZON LIGHT
+    // HORIZON GLOW
     //////////////////////////////////////////////////
 
     float horizonDist =
-        abs(uv.y - horizon);
+        abs(world.y);
 
     float horizonLight =
         horizonGlow /
-        (horizonDist + 0.025);
+        (horizonDist + 0.04);
 
     //////////////////////////////////////////////////
     // COLOR
@@ -329,8 +355,7 @@ void main(){
     float hue =
         mod(
             time * hueSpeed +
-            mist * 0.15 +
-            uv.y * 0.08,
+            mist * 0.08,
             1.0
         );
 
@@ -344,7 +369,7 @@ void main(){
         );
 
     //////////////////////////////////////////////////
-    // COMBINE
+    // FINAL COMBINE
     //////////////////////////////////////////////////
 
     vec3 col = prev;
@@ -353,27 +378,27 @@ void main(){
         baseColor *
         skyBands *
         skyMask *
-        0.45;
+        0.35;
 
     col +=
         baseColor *
         groundBands *
         groundMask *
-        0.5;
+        0.55;
 
     col +=
         baseColor *
         mist *
         mistStrength *
-        0.18;
+        0.25;
 
     col +=
         baseColor *
         horizonLight *
-        0.35;
+        0.3;
 
     //////////////////////////////////////////////////
-    // SPORES
+    // PARTICLES
     //////////////////////////////////////////////////
 
     float spore =

@@ -23,8 +23,8 @@ export const CONFIG = {
     warpStrength : 0.068,
     warpScale : 0.07,
     warpSpeed : 0.025,
-    warpDetail : 10.0,
-    warpAngularBias : 0.52,
+    warpDetail : 0.1,
+    warpAngularBias : 0.052,
     warpRadialBias : 0.06,
 
     //////////////////////////////////////////////////
@@ -54,7 +54,7 @@ export const CONFIG = {
 // WORLD FLOW
 //////////////////////////////////////////////////
 
-skyWarp : 0.9,
+skyWarp : 0.59,
 groundWarp : 1.8,
 
 flowSmear : 0.12,
@@ -62,7 +62,7 @@ flowSmear : 0.12,
 //-------------- 
 
 horizonY : 0.33,
-flowSpeed : 0.15,
+flowSpeed : -0.515,
 
 skyDetail : 2.0,
 groundDetail : 4.5,
