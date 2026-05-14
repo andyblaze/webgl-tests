@@ -75,66 +75,66 @@ void main(){
     float camZ = time * 10.5;
 
     //////////////////////////////////////////////////
-    // GROUND PLANE (below horizon)
-    //////////////////////////////////////////////////
-
-    float groundMask = step(0.0, y); 
-
-    float groundX = p.x * depth;
-    float groundZ = depth + camZ;
-
-    float groundPattern = 
-        sin(groundX * 3.0) *
-        sin(groundZ * 0.5);
-
-    //////////////////////////////////////////////////
     // SKY PLANE (above horizon)
     //////////////////////////////////////////////////
 
-    float skyMask = 1.0 - groundMask;
+    float skyMask = step(0.0, y); 
 
-float skyWarp =
-    fbm(vec2(
-        p.x * 1.5,
-        depth * 0.615 + camZ * 0.02
-    ));
+    float skyX = p.x * depth;
+    float skyZ = depth + camZ;
 
-float warpedX =
-    p.x +
-    (skyWarp - 0.5) * 0.6;
+    float skyPattern = 
+        sin(skyX * 3.0) *
+        sin(skyZ * 0.5);
 
-float skyX = warpedX * depth;
-    float skyZ = depth + camZ * 0.3;
+    //////////////////////////////////////////////////
+    // GROUND PLANE (below horizon)
+    //////////////////////////////////////////////////
 
-vec2 cloudUV = vec2(
-    skyX * 0.35,
-    skyZ * 0.03
-);
+    float groundMask = 1.0 - skyMask;
+
+    float groundWarp =
+        fbm(vec2(
+            p.x * 1.5,
+            depth * 0.615 + camZ * 0.02
+        ));
+
+    float warpedX =
+        p.x +
+        (groundWarp - 0.5) * 0.6;
+
+    float groundX = warpedX * depth;
+        float groundZ = depth + camZ * 0.3;
+
+    vec2 terrainUV = vec2(
+        groundX * 0.35,
+        groundZ * 0.03
+    );
 
 //////////////////////////////////////////////////////
 // DOMAIN WARPING
 //////////////////////////////////////////////////////
 
-float warp1 = fbm(cloudUV * 0.7 + vec2(0.0, camZ * 0.01));
-float warp2 = fbm(cloudUV * 1.3 - vec2(camZ * 0.015, 0.0));
+float warp1 = fbm(terrainUV * 0.7 + vec2(0.0, camZ * 0.01));
+float warp2 = fbm(terrainUV * 1.3 - vec2(camZ * 0.015, 0.0));
 
-cloudUV.x += (warp1 - 0.5) * 2.5;
-cloudUV.y += (warp2 - 0.5) * 1.5;
+terrainUV.x += (warp1 - 0.5) * 2.5;
+terrainUV.y += (warp2 - 0.5) * 1.5;
 
 //////////////////////////////////////////////////////
 // MAIN CLOUD FIELD
 //////////////////////////////////////////////////////
 
-float cloudNoise = fbm(cloudUV);
+float terrainNoise = fbm(terrainUV);
 
 //////////////////////////////////////////////////////
-// SHAPE CLOUD MASSES
+// SHAPE GROUND MASSES
 //////////////////////////////////////////////////////
 
-float skyPattern = smoothstep(
+float groundPattern = smoothstep(
     0.42,
     0.72,
-    cloudNoise
+    terrainNoise
 );
 
 //////////////////////////////////////////////////////
@@ -153,8 +153,8 @@ skyPattern *= 1.0 - abs(y) * 0.25;
     // COLOR BASES
     //////////////////////////////////////////////////
 
-    vec3 groundCol = vec3(0.1, 0.2, 0.4);
-    vec3 skyCol = vec3(0.1, 0.3, 0.1);
+    vec3 groundCol = vec3(0.1, 0.3, 0.1);
+    vec3 skyCol = vec3(0.1, 0.2, 0.4);
     vec3 glowCol = vec3(0.6, 0.7, 1.0);
 
     //////////////////////////////////////////////////
