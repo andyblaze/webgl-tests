@@ -72,20 +72,93 @@ void main(){
     // FORWARD MOTION INTO Z
     //////////////////////////////////////////////////
 
-    float camZ = time * 10.5;
+    float camZ = time * 42.5;
 
-    //////////////////////////////////////////////////
-    // SKY PLANE (above horizon)
-    //////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+// SKY PLANE (above horizon)
+//////////////////////////////////////////////////////
 
-    float skyMask = step(0.0, y); 
+float skyMask = step(0.0, y);
 
-    float skyX = p.x * depth;
-    float skyZ = depth + camZ;
+float perspective = mix(
+    depth,
+    sqrt(depth),
+    0.72
+);
 
-    float skyPattern = 
-        sin(skyX * 3.0) *
-        sin(skyZ * 0.5);
+//////////////////////////////////////////////////////
+// PRE-PROJECTION SKY WARP
+//////////////////////////////////////////////////////
+// distort X BEFORE perspective projection
+// this breaks the "god ray" horizon alignment
+
+float skyWarp =
+    fbm(vec2(
+        p.x * 0.8,
+        depth * 0.12 + camZ * 0.01
+    ));
+
+float warpedSkyX =
+    p.x +
+    (skyWarp - 0.5) * 1.2;
+
+//////////////////////////////////////////////////////
+// SKY PROJECTION
+//////////////////////////////////////////////////////
+
+//float skyX = warpedSkyX * depth;
+float horizonCompress =
+    1.0 / (1.0 + depth * 0.12);
+
+/*float skyX =
+    warpedSkyX *
+    depth *
+    horizonCompress;*/
+float skyX = warpedSkyX * perspective;
+
+float skyZ = depth + camZ * 0.15;
+
+vec2 cloudUV = vec2(
+    skyX * 0.18,
+    skyZ * 0.015
+);
+
+//////////////////////////////////////////////////////
+// DOMAIN WARPING
+//////////////////////////////////////////////////////
+
+float cloudWarp1 =
+    fbm(cloudUV * 0.6 + vec2(0.0, camZ * 0.005));
+
+float cloudWarp2 =
+    fbm(cloudUV * 1.1 - vec2(camZ * 0.008, 0.0));
+
+cloudUV.x += (cloudWarp1 - 0.5) * 4.0;
+cloudUV.y += (cloudWarp2 - 0.5) * 2.0;
+
+//////////////////////////////////////////////////////
+// CLOUD FIELD
+//////////////////////////////////////////////////////
+
+float cloudNoise = fbm(cloudUV);
+
+//////////////////////////////////////////////////////
+// CLOUD SHAPING
+//////////////////////////////////////////////////////
+
+float skyPattern =
+    smoothstep(
+        0.48,
+        0.72,
+        cloudNoise
+    );
+
+
+//////////////////////////////////////////////////////
+// DISTANCE ATMOSPHERE
+//////////////////////////////////////////////////////
+
+skyPattern *= 1.0 - abs(y) * 0.22;
 
     //////////////////////////////////////////////////
     // GROUND PLANE (below horizon)
@@ -103,8 +176,10 @@ void main(){
         p.x +
         (groundWarp - 0.5) * 0.6;
 
-    float groundX = warpedX * depth;
-        float groundZ = depth + camZ * 0.3;
+    //float groundX = warpedX * depth;
+    float groundX = warpedX * perspective;
+    
+    float groundZ = depth + camZ * 0.3;
 
     vec2 terrainUV = vec2(
         groundX * 0.35,
@@ -122,7 +197,7 @@ terrainUV.x += (warp1 - 0.5) * 2.5;
 terrainUV.y += (warp2 - 0.5) * 1.5;
 
 //////////////////////////////////////////////////////
-// MAIN CLOUD FIELD
+// MAIN TERRAIN FIELD
 //////////////////////////////////////////////////////
 
 float terrainNoise = fbm(terrainUV);
@@ -153,8 +228,8 @@ skyPattern *= 1.0 - abs(y) * 0.25;
     // COLOR BASES
     //////////////////////////////////////////////////
 
-    vec3 groundCol = vec3(0.1, 0.3, 0.1);
-    vec3 skyCol = vec3(0.1, 0.2, 0.4);
+    vec3 groundCol = vec3(0.0, 1.0, 0.45);
+    vec3 skyCol    = vec3(0.15, 0.35, 1.2);
     vec3 glowCol = vec3(0.6, 0.7, 1.0);
 
     //////////////////////////////////////////////////
@@ -171,8 +246,16 @@ skyPattern *= 1.0 - abs(y) * 0.25;
     // SIMPLE VIGNETTE (FOCUS MOTION)
     //////////////////////////////////////////////////
 
-    float vignette = 1.0 - dot(p, p) * 0.5;
-    col *= vignette;
+float vignetteX =
+    1.0 - abs(p.x) * 0.18;
+
+float vignetteY =
+    1.0 - abs(p.y) * 0.45;
+
+float vignette =
+    vignetteX * vignetteY;
+
+col *= vignette;
 
     gl_FragColor = vec4(col, 1.0);
 }
