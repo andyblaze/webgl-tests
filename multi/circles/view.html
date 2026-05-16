@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WebGL Feedback Drift + Warping + Color Cycling</title>
+
+<style type="text/css">
+html,body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+    width:100vw;
+    height:100vh;
+}
+#wrap, #shutter, canvas {
+    width:100vw;
+    height:100vh;  
+}
+#wrap {
+    position: relative;  
+}
+#shutter, canvas {
+    position: absolute;
+}
+canvas{
+    display:block;
+}
+#shutter {
+    opacity: 0;
+    background-color: #000000;
+}
+</style>
+</head>
+<body>
+
+<div id="wrap">
+    <canvas id="c"></canvas>
+    <div id="shutter"></div>
+</div>
+
+{{shaders}}
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
