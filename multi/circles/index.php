@@ -13,7 +13,36 @@ function readGl($n, $p, $f) {
     else echo "File not found  -  " . $fn . "    <br>\n";
 }
 
+function pre($data) {
+    echo '<pre>'; var_dump($data); echo '</pre>';
+}
+
+$tree = [];
+foreach ( glob('scenes/*') as $name ) {
+    $tree[basename($name)] = [];
+} 
+foreach ( $tree as $name=>$arr ) {
+    $dir = 'scenes/' . $name . '/';
+    $tree[$name]['config'] = file_get_contents($dir . 'config.js');
+    $tree[$name]['shader'] = '`' . file_get_contents($dir . 'fs.frag') . '`';
+}
+$js = '';
+foreach ( $tree as $name=>$files ) {
+    //$sceneCfg = ['config'=>$files['config'], 'shader'=>$files['shader']];
+    $js .= $name . ': {config: ' . $files['config'] . ', shader: ' . $files['shader'];
+}
+$js .= '}';
+
+
 $viewHtml = file_get_contents("view.html");
+$viewHtml = str_replace(
+    '$$scenes$$',
+    $js,
+    $viewHtml
+);
+
+//echo $viewHtml;
+
 
 $shaders = [
     'fragShaderCopy'=> 'fscopy.frag',

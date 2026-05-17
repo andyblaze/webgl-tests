@@ -21,17 +21,22 @@ function resize(){
 addEventListener("resize", resize);
 resize();
 
+//console.log();
+
+const scene = scenes.current();
+
 // COMPILE
 const program = new Program(gl);
 
-const feedbackProgram = program.make(fragShader, vertShader);
+//const feedbackProgram = program.make(fragShader, vertShader);
+const feedbackProgram = program.make(scene.shader, vertShader);
 const copyProgram = program.make(fragShaderCopy, vertShader);
 
 // QUAD
 const quad = new GlQuad(gl);
 
 // RENDERING
-const renderer = new Renderer(gl, CONFIG, {
+const renderer = new Renderer(gl, scene.config, {
     "buffers": buffers, 
     "canvas": canvas,
     "quad": quad,

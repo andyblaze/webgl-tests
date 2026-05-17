@@ -38,6 +38,28 @@ canvas{
     <div id="shutter"></div>
 </div>
 
+<script type="text/javascript">
+class Scenes {
+    constructor() {
+        this.indices = ["circles"];
+        this.index = 0;
+        this.data = {$$scenes$$};
+    }
+    current() {
+        const idx = this.indices[this.index];
+        return this.data[idx];
+    }
+    next() {
+        if ( this.index + 1 >= this.indices.length )
+            this.index = -1;
+        this.index++;
+        const idx = this.indices[this.index];
+        return this.data[idx];
+    }
+}
+const scenes = new Scenes();
+</script>
+
 {{shaders}}
 
 <script type="module" src="js/main.js"></script>
