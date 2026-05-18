@@ -11,6 +11,15 @@ export default class Shutter {
         this.shutterState = "open";
         this.fadeSpeed = 0.125;
         this.css.opacity = 0;
+        this.observers = [];
+    }
+    addObserver(o) {
+        this.observers.push(o);
+    }
+    notify() {
+        for ( const o of this.observers ) {
+            o.update();
+        }
     }
     setState(s) {
         this.shutterState = s;

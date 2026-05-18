@@ -1,16 +1,19 @@
 export default class Renderer {
     constructor(gl, cfg, opts) {
-        this.gl = gl;
-        this.cfg = cfg;
+        this.gl = gl;      
         this.buffers = opts.buffers;
         this.canvas = opts.canvas;
         this.quad = opts.quad;
         this.feedbackProgram = opts.feedbackProgram;
         this.copyProgram = opts.copyProgram;
+        this.setConfig(cfg);
+    }
+    setConfig(cfg) {
+        this.cfg = cfg;
         this.uniforms = {};
         for( const key in this.cfg ) {
             this.uniforms[key] =
-                gl.getUniformLocation(this.feedbackProgram, key);
+                this.gl.getUniformLocation(this.feedbackProgram, key);
         }
     }
     draw(t) {

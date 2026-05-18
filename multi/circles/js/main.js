@@ -21,14 +21,11 @@ function resize(){
 addEventListener("resize", resize);
 resize();
 
-//console.log();
-
 const scene = scenes.current();
 
 // COMPILE
 const program = new Program(gl);
 
-//const feedbackProgram = program.make(fragShader, vertShader);
 const feedbackProgram = program.make(scene.shader, vertShader);
 const copyProgram = program.make(fragShaderCopy, vertShader);
 
