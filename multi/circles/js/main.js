@@ -42,14 +42,21 @@ const renderer = new Renderer(gl, scene.config, {
 });
 
 class SceneChanger {
-    constructor() {}
-    update() { console.log(9);
-        scene = scenes.next();
-        feedbackProgram = program.make(scene.shader, vertShader);
-        renderer.setConfig(scene.config);
+    constructor(scene, scenes, feedbackProgram, program, vertShader, renderer) {
+        this.scene = scene;
+        this.scenes = scenes;
+        this.feedbackProgram = feedbackProgram;
+        this.program = program;
+        this.vertShader = vertShader;
+        this.renderer = renderer;
+    }
+    update() { console.log(9); 
+        this.scene = this.scenes.next();
+        this.feedbackProgram = this.program.make(this.scene.shader, this.vertShader);
+        this.renderer.setConfig(this.scene.config);
     }
 }
-const changer = new SceneChanger();
+const changer = new SceneChanger(scene, scenes, feedbackProgram, program, vertShader, renderer);
 
 const shutter = new Shutter(document.getElementById("shutter"));
 shutter.addObserver(changer);
