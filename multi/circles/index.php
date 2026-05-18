@@ -17,42 +17,35 @@ function pre($data) {
     echo '<pre>'; var_dump($data); echo '</pre>';
 }
 
-function prepStr($str, $enc='', $toArray=false) {
-
+function data2str($data, $enc='', $separator='') {
+    $result = $data;
+    if ( $separator != '' ) {
+        $result = implode($separator, $result);
+    }
+    return $enc . $result . $enc;
 }
 
-$tree = [];
 $names = [];
+$js = [];
 
 foreach ( glob('scenes/*') as $path ) { 
-    $tree[basename($path)] = [
-        'config' => file_get_contents($path . '/config.js'),
-        'shader' => '`' . file_get_contents($path . '/fs.frag') . '`'
-    ];
+    $name = basename($path);
+    $names[] = $name;
+    $cfg = file_get_contents($path . '/config.js');
+    $shdr = data2str(file_get_contents($path . '/fs.frag'), '`');
+    $js[] = $name . ': {config: ' . $cfg . ', shader: ' . $shdr . '}';
 } 
-$js = [];
-foreach ( $tree as $name=>$files ) {
-    //$sceneCfg = ['config'=>$files['config'], 'shader'=>$files['shader']];
-    $js[] = $name . ': {config: ' . $files['config'] . ', shader: ' . $files['shader'] . '}';
-}
-//$js = trim($js, ',');
-
-
 
 $viewHtml = file_get_contents("view.html");
 $viewHtml = str_replace(
     ['$$indices$$', '$$scenes$$'],
-    ['"' . implode('","', array_keys($tree)) . '"', implode(',', $js)],
+    [data2str($names, '"', '","'), data2str($js, '', ',')],
     $viewHtml
 );
 
-//echo $viewHtml;
-
-
 $shaders = [
     'fragShaderCopy'=> 'fscopy.frag',
-    'vertShader'=> 'vs.vert'//,
-    //'fragShader'=> 'fs.frag'
+    'vertShader'=> 'vs.vert'
 ];
 
 $shaderJS = '';
