@@ -12,14 +12,17 @@ export default class Shutter {
         this.fadeSpeed = 0.125;
         this.css.opacity = 0;
         this.observers = [];
+        this.notified = false;
     }
     addObserver(o) {
         this.observers.push(o);
     }
     notify() {
-        for ( const o of this.observers ) {
-            o.update();
-        }
+        if ( this.notified === false ) {
+            for ( const o of this.observers ) {
+                o.update();
+            }
+        }        
     }
     setState(s) {
         this.shutterState = s;
@@ -28,8 +31,11 @@ export default class Shutter {
         this.transitionTimer += dt;
         if ( this.transitionTimer > this.openTime && this.shutterState === "open" ) {
             this.css.opacity = Math.min(parseFloat(this.css.opacity) + (dt * this.fadeSpeed), 1);
-            if ( this.css.opacity > 0.99999 )
+            if ( this.css.opacity > 0.99999 ) {
                 this.setState("holding");
+                this.notify();
+                this.notified = true;
+            }
         }
         if ( this.shutterState === "holding" ) {
             this.css.opacity = 1;

@@ -21,12 +21,12 @@ function resize(){
 addEventListener("resize", resize);
 resize();
 
-const scene = scenes.current();
+let scene = scenes.current();
 
 // COMPILE
 const program = new Program(gl);
 
-const feedbackProgram = program.make(scene.shader, vertShader);
+let feedbackProgram = program.make(scene.shader, vertShader);
 const copyProgram = program.make(fragShaderCopy, vertShader);
 
 // QUAD
@@ -41,7 +41,18 @@ const renderer = new Renderer(gl, scene.config, {
     "copyProgram": copyProgram
 });
 
+class SceneChanger {
+    constructor() {}
+    update() { console.log(9);
+        scene = scenes.next();
+        feedbackProgram = program.make(scene.shader, vertShader);
+        renderer.setConfig(scene.config);
+    }
+}
+const changer = new SceneChanger();
+
 const shutter = new Shutter(document.getElementById("shutter"));
+shutter.addObserver(changer);
 
 let lastTime = performance.now();
 
