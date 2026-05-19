@@ -49,12 +49,12 @@ class SceneChanger {
         this.vertShader = vertShader;
         this.renderer = renderer;
     }
-    update() { console.log(9); 
+    update() { 
         this.scene = this.scenes.next();
         this.program.make("feedback", this.scene.shader, this.vertShader);
         this.renderer.stop();
-        this.renderer.setConfig(this.scene.config);
         this.renderer.setFeedbackProgram(this.program.feedback);
+        this.renderer.setConfig(this.scene.config);
         this.renderer.start();
     }
 }
