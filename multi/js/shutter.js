@@ -1,3 +1,5 @@
+import { mt_rand } from "./functions.js";
+
 export default class Shutter {
     constructor(s) {
         this.shutter = s;
@@ -5,26 +7,21 @@ export default class Shutter {
         this.transitionTimer = 0;
         this.holdTimer = 0;
         // timings in seconds
-        this.openTime = 30;
-        this.holdTime = 0.5;
-        //
+        this.openTime = mt_rand(25, 35);
+        this.holdTime = 0.125;
+
         this.shutterState = "open";
         this.fadeSpeed = 0.25;
-        this.fadeDuration = 1;
-        this.fadeTimer = 0;
         this.css.opacity = 0;
-        this.observers = [];
+        this.observer = null;
         this.notified = false;
     }
     addObserver(o) {
-        this.observers.push(o);
+        this.observer = o;
     }
     notify() {
-        if ( this.notified === false ) {
-            for ( const o of this.observers ) {
-                o.update();
-            }
-        }        
+        if ( true === this.notified ) return;
+        this.observer.update();      
     }
     setState(s) {
         this.shutterState = s;
@@ -45,6 +42,7 @@ export default class Shutter {
             if ( this.holdTimer > this.holdTime ) {
                 this.holdTimer = 0;
                 this.setState("closed");
+                this.openTime = mt_rand(25, 35);
             }
         }
         if ( this.shutterState === "closed") {

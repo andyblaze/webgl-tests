@@ -5,9 +5,10 @@ import Renderer from "./renderer.js";
 import SceneChanger from "./scene-changer.js";
 import Shutter from "./shutter.js";
 import DeltaReport from "./delta-report.js";
+import { byId } from "./functions.js";
 
 // WEBGL SETUP
-const canvas = document.getElementById("c");
+const canvas = byId("c");
 const gl = canvas.getContext("webgl", { premultipliedAlpha:false });
 
 const buffers = new BufferManager(gl);
@@ -43,7 +44,7 @@ const renderer = new Renderer(gl, scene.config, {
 
 // SCENE CHANGES
 const changer = new SceneChanger(scene, scenes, program, vertShader, renderer);
-const shutter = new Shutter(document.getElementById("shutter"));
+const shutter = new Shutter(byId("shutter"));
 shutter.addObserver(changer);
 
 // RAF LOOP
