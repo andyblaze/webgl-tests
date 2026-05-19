@@ -6,7 +6,14 @@ export default class Renderer {
         this.quad = opts.quad;
         this.feedbackProgram = opts.feedbackProgram;
         this.copyProgram = opts.copyProgram;
+        this.running = true;
         this.setConfig(cfg);
+    }
+    start() {
+        this.running = true;
+    }
+    stop() {
+        this.running = false;
     }
     setConfig(cfg) {
         this.cfg = cfg;
@@ -16,7 +23,11 @@ export default class Renderer {
                 this.gl.getUniformLocation(this.feedbackProgram, key);
         }
     }
+    setFeedbackProgram(fb) {
+        this.feedbackProgram = fb;
+    }
     draw(t) {
+        if ( false === this.running ) return;
         const time = t * 0.001;
         const gl = this.gl;
         const buffers = this.buffers;

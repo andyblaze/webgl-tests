@@ -26,8 +26,8 @@ let scene = scenes.current();
 // COMPILE
 const program = new Program(gl);
 
-let feedbackProgram = program.make(scene.shader, vertShader);
-const copyProgram = program.make(fragShaderCopy, vertShader);
+program.make("feedback", scene.shader, vertShader);
+program.make("copy", fragShaderCopy, vertShader);
 
 // QUAD
 const quad = new GlQuad(gl);
@@ -37,26 +37,28 @@ const renderer = new Renderer(gl, scene.config, {
     "buffers": buffers, 
     "canvas": canvas,
     "quad": quad,
-    "feedbackProgram": feedbackProgram,
-    "copyProgram": copyProgram
+    "feedbackProgram": program.feedback,
+    "copyProgram": program.copy
 });
 
 class SceneChanger {
-    constructor(scene, scenes, feedbackProgram, program, vertShader, renderer) {
+    constructor(scene, scenes, program, vertShader, renderer) {
         this.scene = scene;
         this.scenes = scenes;
-        this.feedbackProgram = feedbackProgram;
         this.program = program;
         this.vertShader = vertShader;
         this.renderer = renderer;
     }
     update() { console.log(9); 
         this.scene = this.scenes.next();
-        this.feedbackProgram = this.program.make(this.scene.shader, this.vertShader);
+        this.program.make("feedback", this.scene.shader, this.vertShader);
+        this.renderer.stop();
         this.renderer.setConfig(this.scene.config);
+        this.renderer.setFeedbackProgram(this.program.feedback);
+        this.renderer.start();
     }
 }
-const changer = new SceneChanger(scene, scenes, feedbackProgram, program, vertShader, renderer);
+const changer = new SceneChanger(scene, scenes, program, vertShader, renderer);
 
 const shutter = new Shutter(document.getElementById("shutter"));
 shutter.addObserver(changer);

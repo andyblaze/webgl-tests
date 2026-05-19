@@ -1,6 +1,8 @@
 export default class Program {
     constructor(gl) {
         this.gl = gl;
+        this.feedback = null;
+        this.copy = null;
     }
     compile(type, src){
         const s = this.gl.createShader(type);
@@ -8,11 +10,11 @@ export default class Program {
         this.gl.compileShader(s);
         return s;
     }
-    make(fsSource, vs){
+    make(type, fsSource, vs){
         const p = this.gl.createProgram();
         this.gl.attachShader(p, this.compile(this.gl.VERTEX_SHADER, vs));
         this.gl.attachShader(p, this.compile(this.gl.FRAGMENT_SHADER, fsSource));
         this.gl.linkProgram(p);
-        return p;
+        this[type] = p;
     }
 }
