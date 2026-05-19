@@ -1,8 +1,8 @@
-import { CONFIG } from "./config.js";
 import Program from "./program.js";
 import GlQuad from "./gl-quad.js";
 import BufferManager from "./buffer-manager.js";
 import Renderer from "./renderer.js";
+import SceneChanger from "./scene-changer.js";
 import Shutter from "./shutter.js";
 import DeltaReport from "./delta-report.js";
 
@@ -41,33 +41,18 @@ const renderer = new Renderer(gl, scene.config, {
     "copyProgram": program.copy
 });
 
-class SceneChanger {
-    constructor(scene, scenes, program, vertShader, renderer) {
-        this.scene = scene;
-        this.scenes = scenes;
-        this.program = program;
-        this.vertShader = vertShader;
-        this.renderer = renderer;
-    }
-    update() {
-        this.scene = this.scenes.next();
-        this.program.make("feedback", this.scene.shader, this.vertShader);
-        this.renderer.stop();
-        this.renderer.setFeedbackProgram(this.program.feedback);
-        this.renderer.setConfig(this.scene.config);
-        this.renderer.start();
-    }
-}
+// SCENE CHANGES
 const changer = new SceneChanger(scene, scenes, program, vertShader, renderer);
-
 const shutter = new Shutter(document.getElementById("shutter"));
 shutter.addObserver(changer);
 
+// RAF LOOP
 let lastTime = performance.now();
+let dt = 0;
 
 function render(now) {
-    let dt = (now - lastTime) / 1000;
-    //dt = Math.min(dt, 3.0);
+    dt = (now - lastTime) / 1000;
+    dt = Math.min(dt, 0.1);
     lastTime = now;
 
     shutter.update(dt);

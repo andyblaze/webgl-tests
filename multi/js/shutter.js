@@ -5,11 +5,13 @@ export default class Shutter {
         this.transitionTimer = 0;
         this.holdTimer = 0;
         // timings in seconds
-        this.openTime = 10;
+        this.openTime = 30;
         this.holdTime = 0.5;
         //
         this.shutterState = "open";
         this.fadeSpeed = 0.25;
+        this.fadeDuration = 1;
+        this.fadeTimer = 0;
         this.css.opacity = 0;
         this.observers = [];
         this.notified = false;
