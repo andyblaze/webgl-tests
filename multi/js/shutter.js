@@ -6,10 +6,10 @@ export default class Shutter {
         this.holdTimer = 0;
         // timings in seconds
         this.openTime = 10;
-        this.holdTime = 2;
+        this.holdTime = 0.5;
         //
         this.shutterState = "open";
-        this.fadeSpeed = 0.125;
+        this.fadeSpeed = 0.25;
         this.css.opacity = 0;
         this.observers = [];
         this.notified = false;
@@ -50,6 +50,7 @@ export default class Shutter {
             if ( this.css.opacity < 0.00001 ) {
                 this.transitionTimer = 0;
                 this.setState("open");
+                this.notified = false;
             }
         }       
     }
