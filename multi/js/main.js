@@ -22,6 +22,8 @@ function resize(){
 addEventListener("resize", resize);
 resize();
 
+const scenes = new Scenes(); // Scenes class is injected by php after being assembled
+
 let scene = scenes.current();
 
 // COMPILE

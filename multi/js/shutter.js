@@ -7,7 +7,9 @@ export default class Shutter {
         this.transitionTimer = 0;
         this.holdTimer = 0;
         // timings in seconds
-        this.openTime = mt_rand(25, 35);
+        this.openTimes = { least: 10, most: 12 };
+        this.openTime = 0;
+        this.setOpenTime(this.openTimes);
         this.holdTime = 0.125;
 
         this.shutterState = "open";
@@ -15,6 +17,9 @@ export default class Shutter {
         this.css.opacity = 0;
         this.observer = null;
         this.notified = false;
+    }
+    setOpenTime(t) {
+        this.openTime = mt_rand(t.least, t.most);
     }
     addObserver(o) {
         this.observer = o;
@@ -42,7 +47,7 @@ export default class Shutter {
             if ( this.holdTimer > this.holdTime ) {
                 this.holdTimer = 0;
                 this.setState("closed");
-                this.openTime = mt_rand(25, 35);
+                this.setOpenTime(this.openTimes);
             }
         }
         if ( this.shutterState === "closed") {

@@ -25,6 +25,10 @@ function data2str($data, $enc='', $separator='') {
     return $enc . $result . $enc;
 }
 
+function scriptTag($js) {
+    return "<script type=\"text/javascript\">\n{$js}\n</script>\n";
+}
+
 $names = [];
 $js = [];
 
@@ -36,11 +40,12 @@ foreach ( glob('scenes/*') as $path ) {
     $js[] = $name . ': {config: ' . $cfg . ', shader: ' . $shdr . '}';
 } 
 
-$viewHtml = file_get_contents("view.html");
-$viewHtml = str_replace(
+$scenesClass = file_get_contents('js-php/scenes.js');
+
+$scenesClass = str_replace(
     ['$$indices$$', '$$scenes$$'],
     [data2str($names, '"', '","'), data2str($js, '', ',')],
-    $viewHtml
+    $scenesClass
 );
 
 $shaders = [
@@ -54,8 +59,10 @@ foreach ($shaders as $name => $filename) {
     $shaderJS .= readGl($name, $path, $filename);
 }
 
+$viewHtml = file_get_contents('view.html');
+
 echo str_replace(
-    '{{shaders}}',
-    "<script type=\"text/javascript\">{$shaderJS}</script>\n",
+    ['{{scenes}}', '{{shaders}}'],
+    [scriptTag($scenesClass), scriptTag($shaderJS)],
     $viewHtml
 );
