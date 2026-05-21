@@ -7,7 +7,7 @@ export default class Shutter {
         this.transitionTimer = 0;
         this.holdTimer = 0;
         // timings in seconds
-        this.openTimes = { least: 10, most: 12 };
+        this.openTimes = { least: 80, most: 126 };
         this.openTime = 0;
         this.setOpenTime(this.openTimes);
         this.holdTime = 0.125;

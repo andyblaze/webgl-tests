@@ -1,4 +1,4 @@
-export const CONFIG = {
+{
 
     fade : 0.978,
     rotationSpeed : 0.0006,
@@ -25,4 +25,4 @@ export const CONFIG = {
     hueSpeed : 0.08,
     saturation : 0.9,
     brightness : 1.7
-};
+}
