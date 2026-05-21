@@ -31,6 +31,7 @@ function scriptTag($js) {
 
 $names = [];
 $js = [];
+$meta = '';
 
 foreach ( glob('scenes/*') as $path ) { 
     $name = basename($path);
