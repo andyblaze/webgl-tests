@@ -1,8 +1,9 @@
 class Scenes {
-    constructor() {
+    constructor(cfg) {
         this.indices = [$$indices$$]; 
         this.index = 0;
         this.data = {$$scenes$$};
+        this.indices = cfg.playOrder;
     }
     current() {
         const idx = this.indices[this.index];

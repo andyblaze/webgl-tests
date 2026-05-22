@@ -1,3 +1,4 @@
+import { CONFIG } from "./config.js";
 import Program from "./program.js";
 import GlQuad from "./gl-quad.js";
 import BufferManager from "./buffer-manager.js";
@@ -22,7 +23,7 @@ function resize(){
 addEventListener("resize", resize);
 resize();
 
-const scenes = new Scenes(); // Scenes class is injected by php after being assembled
+const scenes = new Scenes(CONFIG); // Scenes class is injected by php after being assembled
 
 let scene = scenes.current();
 
