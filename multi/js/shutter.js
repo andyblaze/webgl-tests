@@ -22,7 +22,7 @@ export default class Shutter {
         this.openTime = mt_rand(t.minTime, t.maxTime);
     }
     setOpenTimes(meta) {
-        this.openTimes = { minTime: meta. minTime, maxTime: meta.maxTime }; 
+        this.openTimes = { minTime: meta.minTime, maxTime: meta.maxTime }; 
     }
     addObserver(o) {
         this.observer = o;
