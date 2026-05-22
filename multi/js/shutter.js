@@ -7,7 +7,7 @@ export default class Shutter {
         this.transitionTimer = 0;
         this.holdTimer = 0;
         // timings in seconds
-        this.openTimes = { least: 80, most: 126 };
+        this.openTimes = { minTime: 38, maxTime: 48 };
         this.openTime = 0;
         this.setOpenTime(this.openTimes);
         this.holdTime = 0.125;
@@ -19,14 +19,19 @@ export default class Shutter {
         this.notified = false;
     }
     setOpenTime(t) {
-        this.openTime = mt_rand(t.least, t.most);
+        this.openTime = mt_rand(t.minTime, t.maxTime);
+    }
+    setOpenTimes(meta) {
+        this.openTimes = { minTime: meta. minTime, maxTime: meta.maxTime }; 
     }
     addObserver(o) {
         this.observer = o;
+        this.setOpenTimes(this.observer.scene.meta);
     }
     notify() {
-        if ( true === this.notified ) return;
+        if ( true === this.notified ) return;        
         this.observer.update();      
+        this.setOpenTimes(this.observer.scene.meta);
     }
     setState(s) {
         this.shutterState = s;

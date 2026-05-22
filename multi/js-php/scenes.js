@@ -12,8 +12,7 @@ class Scenes {
         if ( this.index + 1 >= this.indices.length )
             this.index = -1;
         this.index++;
-        const idx = this.indices[this.index];
-        return this.data[idx];
+        return this.current();
     }
     rand() {
         

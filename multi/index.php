@@ -29,16 +29,28 @@ function scriptTag($js) {
     return "<script type=\"text/javascript\">\n{$js}\n</script>\n";
 }
 
+function createMeta($name, $path) {
+    if ( file_exists($path . '/meta.json') ) return;
+    $meta = '{
+    "name": "%n%",
+    "minTime": 10,
+    "maxTime": 17
+}';
+    $fc = str_replace('%n%', $name, $meta);
+    file_put_contents($path . '/meta.json', $fc);
+}
+
 $names = [];
 $js = [];
-$meta = '';
 
 foreach ( glob('scenes/*') as $path ) { 
     $name = basename($path);
+    createMeta($name, $path);
     $names[] = $name;
     $cfg = file_get_contents($path . '/config.js');
     $shdr = data2str(file_get_contents($path . '/fs.frag'), '`');
-    $js[] = $name . ': {config: ' . $cfg . ', shader: ' . $shdr . '}';
+    $meta = file_get_contents($path . '/meta.json');
+    $js[] = $name . ': {config: ' . $cfg . ', shader: ' . $shdr . ', meta: ' . $meta .'}';
 } 
 
 $scenesClass = file_get_contents('js-php/scenes.js');
