@@ -74,8 +74,14 @@ foreach ($shaders as $name => $filename) {
 
 $viewHtml = file_get_contents('view.html');
 
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+$timestamp = time();
+
 echo str_replace(
-    ['{{scenes}}', '{{shaders}}'],
-    [scriptTag($scenesClass), scriptTag($shaderJS)],
+    ['{{scenes}}', '{{shaders}}', '$$time$$'],
+    [scriptTag($scenesClass), scriptTag($shaderJS), $timestamp],
     $viewHtml
 );
