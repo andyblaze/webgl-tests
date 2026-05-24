@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Horsehead Nebula (Structured)</title>
+
+<style>
+html,body{
+    margin:0;
+    overflow:hidden;
+    background:black;
+    width:100%;
+    height:100%;
+}
+canvas{
+    width:100%;
+    height:100%;
+    display:block;
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<script>
+const canvas = document.getElementById("c");
+const gl = canvas.getContext("webgl");
+
+function resize(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    gl.viewport(0,0,canvas.width,canvas.height);
+}
+window.addEventListener("resize",resize);
+resize();
+
+const vertex = `
+attribute vec2 position;
+void main(){
+    gl_Position = vec4(position,0.0,1.0);
+}
+`;
+
+const fragment = `
+precision highp float;
+
+uniform vec2 resolution;
+uniform float time;
+
+#define STEPS 72
+
+float hash(vec3 p){
+    p = fract(p * 0.3183099 + 0.1);
+    p *= 17.0;
+    return fract(p.x*p.y*p.z*(p.x+p.y+p.z));
+}
+
+float noise(vec3 x){
+    vec3 i = floor(x);
+    vec3 f = fract(x);
+    f = f*f*(3.0-2.0*f);
+
+    return mix(
+        mix(
+            mix(hash(i+vec3(0,0,0)),hash(i+vec3(1,0,0)),f.x),
+            mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+        mix(
+            mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),
+            mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),
+        f.z
+    );
+}
+
+float fbm(vec3 p){
+    float f = 0.0;
+    f += noise(p)*0.5; p*=2.02;
+    f += noise(p)*0.25; p*=2.03;
+    f += noise(p)*0.125; p*=2.01;
+    f += noise(p)*0.0625;
+    return f;
+}
+
+// ----------------------------
+// STRUCTURED HORSEHEAD SHAPE
+// ----------------------------
+
+float horsehead(vec3 p){
+
+    // global drift (tiny motion)
+    p.x += sin(time*0.05 + p.y*0.8)*0.05;
+    p.y += cos(time*0.04 + p.x*0.6)*0.04;
+
+    // BODY (pillar)
+    float body =
+        smoothstep(
+            1.35,
+            0.15,
+            length((p.xy-vec2(-0.15,-0.25))*vec2(0.75,1.5))
+        );
+
+    // NECK CUT (defines horse silhouette)
+    body *= smoothstep(-1.4,0.25, p.y + p.x*0.95);
+
+    // HEAD MASS
+    float head =
+        smoothstep(
+            0.95,
+            0.1,
+            length(p.xy-vec2(0.18,1.05))
+        );
+
+    // MUZZLE EXTENSION
+    float muzzle =
+        smoothstep(
+            0.55,
+            0.06,
+            length(p.xy-vec2(0.7,0.95))
+        );
+
+    // EAR NOTCH (signature silhouette cut)
+    float ear =
+        smoothstep(
+            0.5,
+            0.0,
+            length(p.xy-vec2(-0.18,1.55))
+        );
+
+    float shape = max(body, max(head, muzzle));
+    shape -= ear * 0.75;
+
+    // ----------------------------
+    // INTERNAL STRUCTURE (IMPORTANT PART)
+    // ----------------------------
+
+    float d1 = fbm(p*4.5);
+    float d2 = fbm(p*9.0);
+    float fil = fbm(vec3(p.xy*16.0, p.z*2.0));
+
+    // carve DARK dust lanes (this is what was missing)
+    shape -= d1 * 0.38;
+    shape -= d2 * 0.18;
+
+    // filament highlights
+    shape += fil * 0.12;
+
+    // sharpen structure into readable nebula
+    shape = smoothstep(0.15, 0.78, shape);
+
+    return shape;
+}
+
+void main(){
+
+    vec2 uv =
+        (gl_FragCoord.xy - 0.5*resolution.xy)
+        / resolution.y;
+
+    vec3 ro = vec3(0.0,0.0,-4.2);
+    vec3 rd = normalize(vec3(uv,1.3));
+
+    float t = time * 0.06;
+
+    vec3 col = vec3(0.0);
+
+    float glow = 0.0;
+
+    for(int i=0;i<STEPS;i++){
+
+        float d = float(i)/float(STEPS);
+
+        vec3 p = ro + rd * d * 8.5;
+
+        // slow spatial drift
+        p.x += sin(t + p.z)*0.08;
+        p.y += cos(t*0.9 + p.x)*0.06;
+
+        float h = horsehead(p);
+
+        float n = fbm(p*1.7 + t);
+
+        // STRUCTURED DENSITY (key improvement)
+        float density =
+            pow(n,1.6) * h;
+
+        // extra internal carving
+        density -= fbm(p*6.0)*0.25 * h;
+
+        density = smoothstep(0.28, 0.95, density);
+
+        // COLOR LAYERS
+        vec3 nebula =
+            mix(
+                vec3(0.01,0.005,0.012),
+                vec3(1.25,0.28,0.07),
+                density
+            );
+
+        // ionized edges
+        nebula += vec3(0.2,0.35,0.9) * pow(density,4.0) * 0.5;
+
+        col += nebula * density * 0.035;
+
+        glow += density * 0.02;
+    }
+
+    // STARFIELD (adds scale reference)
+    vec2 suv = uv * 140.0;
+    vec2 id = floor(suv);
+
+    float star =
+        step(
+            0.9988,
+            fract(sin(dot(id,vec2(127.1,311.7))) * 43758.5453)
+        );
+
+    col += star;
+
+    // central emission haze
+    col += vec3(1.0,0.25,0.08) * glow * 0.25;
+
+    // vignette
+    col *= 1.0 - length(uv)*0.4;
+
+    // gamma
+    col = pow(col, vec3(0.82));
+
+    gl_FragColor = vec4(col,1.0);
+}
+`;
+
+function shader(type,src){
+    const s = gl.createShader(type);
+    gl.shaderSource(s,src);
+    gl.compileShader(s);
+    return s;
+}
+
+const vs = shader(gl.VERTEX_SHADER,vertex);
+const fs = shader(gl.FRAGMENT_SHADER,fragment);
+
+const program = gl.createProgram();
+gl.attachShader(program,vs);
+gl.attachShader(program,fs);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+const verts = new Float32Array([
+-1,-1,
+ 1,-1,
+-1, 1,
+-1, 1,
+ 1,-1,
+ 1, 1
+]);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,verts,gl.STATIC_DRAW);
+
+const pos = gl.getAttribLocation(program,"position");
+gl.enableVertexAttribArray(pos);
+gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+
+const timeLoc = gl.getUniformLocation(program,"time");
+const resLoc = gl.getUniformLocation(program,"resolution");
+
+function render(ms){
+
+    gl.uniform1f(timeLoc, ms*0.001);
+    gl.uniform2f(resLoc, canvas.width, canvas.height);
+
+    gl.drawArrays(gl.TRIANGLES,0,6);
+
+    requestAnimationFrame(render);
+}
+
+render();
+</script>
+
+</body>
+</html>
