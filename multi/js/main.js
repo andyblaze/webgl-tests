@@ -1,12 +1,12 @@
-import { CONFIG } from "./config.js";
-import Program from "./program.js";
-import GlQuad from "./gl-quad.js";
-import BufferManager from "./buffer-manager.js";
-import Renderer from "./renderer.js";
-import SceneChanger from "./scene-changer.js";
-import Shutter from "./shutter.js";
-import DeltaReport from "./delta-report.js";
-import { byId } from "./functions.js";
+import { CONFIG } from "./config.js?r=1";
+import Program from "./program.js?r=1";
+import GlQuad from "./gl-quad.js?r=1";
+import BufferManager from "./buffer-manager.js?r=1";
+import Renderer from "./renderer.js?r=1";
+import SceneChanger from "./scene-changer.js?r=1";
+import Shutter from "./shutter.js?r=1";
+import DeltaReport from "./delta-report.js?r=1";
+import { byId } from "./functions.js?r=1";
 
 // WEBGL SETUP
 const canvas = byId("c");
