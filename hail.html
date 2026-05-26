@@ -110,20 +110,20 @@ class HailParticle {
         this.sleeping = false;
     }
 
-    update() {
+    update(cfg, particlesArray) {
 
         if (this.sleeping) return;
 
         //
         // gravity
         //
-        this.vy += CONFIG.gravity * this.mass;
+        this.vy += cfg.gravity * this.mass;
 
         //
         // air resistance
         //
-        this.vx *= (1 - CONFIG.airDrag);
-        this.vy *= (1 - CONFIG.airDrag);
+        this.vx *= (1 - cfg.airDrag);
+        this.vy *= (1 - cfg.airDrag);
 
         //
         // movement
@@ -141,7 +141,7 @@ class HailParticle {
             //
             // bounce
             //
-            this.vy *= -CONFIG.bounceLoss;
+            this.vy *= -cfg.bounceLoss;
 
             //
             // friction
@@ -152,16 +152,16 @@ class HailParticle {
             // fragmentation
             //
             if (
-                Math.abs(this.vy) > CONFIG.breakVelocity &&
-                this.radius > CONFIG.minBreakRadius
+                Math.abs(this.vy) > cfg.breakVelocity &&
+                this.radius > cfg.minBreakRadius
             ) {
-                this.breakApart();
+                this.breakApart(cfg, particlesArray);
             }
 
             //
             // sleep check
             //
-            if (Math.abs(this.vy) < CONFIG.sleepThreshold) {
+            if (Math.abs(this.vy) < cfg.sleepThreshold) {
 
                 this.vy = 0;
                 this.vx = 0;
@@ -171,12 +171,12 @@ class HailParticle {
         }
     }
 
-    breakApart() {
+    breakApart(cfg, particlesArray) {
 
         const count =
             randomRangeInt(
-                CONFIG.fragmentCountMin,
-                CONFIG.fragmentCountMax
+                cfg.fragmentCountMin,
+                cfg.fragmentCountMax
             );
 
         for (let i = 0; i < count; i++) {
@@ -190,7 +190,7 @@ class HailParticle {
             const speed =
                 randomRange(1, 4);
 
-            /*particles.push(
+            particlesArray.push(
                 new HailParticle(
                     this.x,
                     this.y,
@@ -200,7 +200,7 @@ class HailParticle {
                     Math.cos(angle) * speed,
                     Math.sin(angle) * speed * 0.5
                 )
-            );*/
+            );
         }
 
         //
@@ -210,10 +210,10 @@ class HailParticle {
         this.sleeping = true;
     }
 
-    draw() {
+    draw(cfg) {
 
         const brightness =
-            CONFIG.particleBrightness;
+            cfg.particleBrightness;
 
         ctx.fillStyle =
             `rgb(${brightness}, ${brightness}, ${brightness})`;
@@ -272,37 +272,22 @@ class ParticleSystem {
             )
         );
     }
-}
+    update() {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
 
-function spawnParticle() {
+            const p = this.particles[i];
 
-    if (particles.length >= CONFIG.maxParticles)
-        return;
+            p.update(this.cfg, this.particles);
+            p.draw(this.cfg);
 
-    const radius =
-        randomRange(
-            CONFIG.minRadius,
-            CONFIG.maxRadius
-        );
-
-    particles.push(
-
-        new HailParticle(
-
-            randomRange(0, canvas.width),
-
-            -20,
-
-            radius,
-
-            randomRange(-0.5, 0.5),
-
-            randomRange(
-                CONFIG.minFallSpeed,
-                CONFIG.maxFallSpeed
-            )
-        )
-    );
+            //
+            // cleanup dead particles
+            //
+            if (p.radius <= 0) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
 }
 
 const particleSystem = new ParticleSystem(CONFIG, canvas);
@@ -341,20 +326,7 @@ function animate() {
     //
     // update/draw
     //
-    for (let i = particleSystem.particles.length - 1; i >= 0; i--) {
-
-        const p = particleSystem.particles[i];
-
-        p.update();
-        p.draw();
-
-        //
-        // cleanup dead particles
-        //
-        if (p.radius <= 0) {
-            particleSystem.particles.splice(i, 1);
-        }
-    }
+    particleSystem.update();
 }
 
 animate();
