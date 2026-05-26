@@ -105,18 +105,18 @@ config.resize();
 
 class HailParticle {
 
-    constructor(x, y, radius, vx, vy) {
+    constructor(opts) {
 
-        this.x = x;
-        this.y = y;
+        this.x = opts.x;
+        this.y = opts.y;
 
-        this.vx = vx;
-        this.vy = vy;
+        this.vx = opts.vx;
+        this.vy = opts.vy;
 
-        this.radius = radius;
+        this.radius = opts.radius;
 
         // larger particles feel heavier
-        this.mass = radius * 0.15;
+        this.mass = this.radius * 0.15;
 
         this.sleeping = false;
     }
@@ -173,28 +173,18 @@ class HailParticle {
 
         const count = mt_rand(cfg.fragmentCountMin, cfg.fragmentCountMax);
 
-        for (let i = 0; i < count; i++) {
+        for ( let i = 0; i < count; i++ ) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = mt_randf(1, 4);
 
-            const newRadius =
-                this.radius * mt_randf(0.35, 0.6);
-
-            const angle =
-                Math.random() * Math.PI * 2;
-
-            const speed =
-                mt_randf(1, 4);
-
-            particlesArray.push(
-                new HailParticle(
-                    this.x,
-                    this.y,
-
-                    newRadius,
-
-                    Math.cos(angle) * speed,
-                    Math.sin(angle) * speed * 0.5
-                )
-            );
+            const options = {
+                x: this.x,
+                y: this.y,
+                radius: this.radius * mt_randf(0.35, 0.6),
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed * 0.5
+            };
+            particlesArray.push(new HailParticle(options));
         }
         //
         // remove original
@@ -235,30 +225,14 @@ class ParticleSystem {
     }
     spawn() {
         if ( this.particles.length >= this.cfg.maxParticles ) return;
-        const radius =
-            mt_randf(
-                this.cfg.minRadius,
-                this.cfg.maxRadius
-            );
-
-        this.particles.push(
-
-            new HailParticle(
-
-                mt_randf(0, this.cfg.canvasW),
-
-                -20,
-
-                radius,
-
-                mt_randf(-0.5, 0.5),
-
-                mt_randf(
-                    this.cfg.minFallSpeed,
-                    this.cfg.maxFallSpeed
-                )
-            )
-        );
+        const options = {
+            radius: mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
+            x: mt_randf(0, this.cfg.canvasW),
+            y: -20,
+            vx: mt_randf(-0.5, 0.5),
+            vy: mt_randf(this.cfg.minFallSpeed,this.cfg.maxFallSpeed)
+        };
+        this.particles.push(new HailParticle(options));
     }
     update() {
         for (let i = this.particles.length - 1; i >= 0; i--) {
