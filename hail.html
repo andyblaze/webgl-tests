@@ -29,41 +29,62 @@
 // ======================================================
 //
 
-const CONFIG = {
+class Config {
 
-    // physics
-    gravity: 0.15,
-    airDrag: 0.01,
+    constructor() {
 
-    // spawning
-    spawnRate: 6,          // particles per frame
-    maxParticles: 20,
+        // physics
+        this.gravity = 0.15;
+        this.airDrag = 0.01;
 
-    // hail sizes
-    minRadius: 2,
-    maxRadius: 12,
+        // spawning
+        this.spawnRate = 6;         // particles per frame
+        this.maxParticles = 20;
 
-    // velocity
-    minFallSpeed: 1,
-    maxFallSpeed: 4,
+        // hail sizes
+        this.minRadius = 2;
+        this.maxRadius = 12;
 
-    // bounce
-    bounceLoss: 0.965,
+        // velocity
+        this.minFallSpeed = 1;
+        this.maxFallSpeed = 4;
 
-    // fragmentation
-    breakVelocity: 1,
-    minBreakRadius: 3,
-    fragmentCountMin: 2,
-    fragmentCountMax: 5,
+        // bounce
+        this.bounceLoss = 0.965;
 
-    // settling
-    sleepThreshold: 0.15,
+        // fragmentation
+        this.breakVelocity = 1;
+        this.minBreakRadius = 3;
+        this.fragmentCountMin = 2;
+        this.fragmentCountMax = 5;
 
-    // rendering
-    backgroundFade: 0.918,
-    particleBrightness: 220,
+        // settling
+        this.sleepThreshold = 0.15;
 
-};
+        // rendering
+        this.backgroundFade = 0.918;
+        this.particleBrightness = 220;
+
+        // canvas stuff
+        this.canvas = null;
+        this.ctx = null;
+        this.canvasW = 0;
+        this.canvasH = 0;
+    }
+    initCanvas(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext("2d");
+    }
+    resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;   
+        this.canvasW = this.canvas.width;
+        this.canvasH = this.canvas.height;     
+    }
+}
+
+const config = new Config();
+config.initCanvas("canvas");
 
 
 //
@@ -72,16 +93,8 @@ const CONFIG = {
 // ======================================================
 //
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-window.addEventListener("resize", resize);
-resize();
+window.addEventListener("resize", config.resize);
+config.resize();
 
 
 //
@@ -134,9 +147,9 @@ class HailParticle {
         //
         // floor collision
         //
-        if (this.y + this.radius >= canvas.height) {
+        if (this.y + this.radius >= cfg.canvasH) {
 
-            this.y = canvas.height - this.radius;
+            this.y = cfg.canvasH - this.radius;
 
             //
             // bounce
@@ -215,12 +228,12 @@ class HailParticle {
         const brightness =
             cfg.particleBrightness;
 
-        ctx.fillStyle =
+        cfg.ctx.fillStyle =
             `rgb(${brightness}, ${brightness}, ${brightness})`;
 
-        ctx.beginPath();
+        cfg.ctx.beginPath();
 
-        ctx.arc(
+        cfg.ctx.arc(
             this.x,
             this.y,
             this.radius,
@@ -228,7 +241,7 @@ class HailParticle {
             Math.PI * 2
         );
 
-        ctx.fill();
+        cfg.ctx.fill();
     }
 }
 
@@ -240,9 +253,8 @@ class HailParticle {
 //
 
 class ParticleSystem {
-    constructor(cfg, cnvs) {
+    constructor(cfg) {
         this.cfg = cfg;
-        this.canvas = cnvs;
         this.particles = [];
     }
     spawn() {
@@ -257,7 +269,7 @@ class ParticleSystem {
 
             new HailParticle(
 
-                randomRange(0, this.canvas.width),
+                randomRange(0, this.cfg.canvasW),
 
                 -20,
 
@@ -290,7 +302,7 @@ class ParticleSystem {
     }
 }
 
-const particleSystem = new ParticleSystem(CONFIG, canvas);
+const particleSystem = new ParticleSystem(config);
 
 
 //
@@ -299,17 +311,17 @@ const particleSystem = new ParticleSystem(CONFIG, canvas);
 // ======================================================
 //
 
-function animate() {
+function animate(timestamp) {
 
     requestAnimationFrame(animate);
 
     //
     // dark fade
     //
-    ctx.fillStyle =
-        `rgba(10,10,14,${CONFIG.backgroundFade})`;
+    config.ctx.fillStyle =
+        `rgba(10,10,14,${config.backgroundFade})`;
 
-    ctx.fillRect(
+    config.ctx.fillRect(
         0,
         0,
         canvas.width,
@@ -319,7 +331,7 @@ function animate() {
     //
     // spawn
     //
-    for (let i = 0; i < CONFIG.spawnRate; i++) {
+    for (let i = 0; i < config.spawnRate; i++) {
         particleSystem.spawn();
     }
 
@@ -329,7 +341,7 @@ function animate() {
     particleSystem.update();
 }
 
-animate();
+animate(performance.now());
 
 
 //
