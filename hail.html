@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hail Prototype</title>
+
+<style>
+    html, body {
+        margin: 0;
+        overflow: hidden;
+        background: rgb(10, 10, 14);
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+//
+// ======================================================
+// CONFIG
+// ======================================================
+//
+
+const CONFIG = {
+
+    // physics
+    gravity: 0.15,
+    airDrag: 0.01,
+
+    // spawning
+    spawnRate: 6,          // particles per frame
+    maxParticles: 20,
+
+    // hail sizes
+    minRadius: 2,
+    maxRadius: 12,
+
+    // velocity
+    minFallSpeed: 1,
+    maxFallSpeed: 4,
+
+    // bounce
+    bounceLoss: 0.965,
+
+    // fragmentation
+    breakVelocity: 1,
+    minBreakRadius: 3,
+    fragmentCountMin: 2,
+    fragmentCountMax: 5,
+
+    // settling
+    sleepThreshold: 0.15,
+
+    // rendering
+    backgroundFade: 0.918,
+    particleBrightness: 220,
+
+};
+
+
+//
+// ======================================================
+// SETUP
+// ======================================================
+//
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+
+//
+// ======================================================
+// PARTICLES
+// ======================================================
+//
+
+//const particles = [];
+
+class HailParticle {
+
+    constructor(x, y, radius, vx, vy) {
+
+        this.x = x;
+        this.y = y;
+
+        this.vx = vx;
+        this.vy = vy;
+
+        this.radius = radius;
+
+        // larger particles feel heavier
+        this.mass = radius * 0.15;
+
+        this.sleeping = false;
+    }
+
+    update() {
+
+        if (this.sleeping) return;
+
+        //
+        // gravity
+        //
+        this.vy += CONFIG.gravity * this.mass;
+
+        //
+        // air resistance
+        //
+        this.vx *= (1 - CONFIG.airDrag);
+        this.vy *= (1 - CONFIG.airDrag);
+
+        //
+        // movement
+        //
+        this.x += this.vx;
+        this.y += this.vy;
+
+        //
+        // floor collision
+        //
+        if (this.y + this.radius >= canvas.height) {
+
+            this.y = canvas.height - this.radius;
+
+            //
+            // bounce
+            //
+            this.vy *= -CONFIG.bounceLoss;
+
+            //
+            // friction
+            //
+            this.vx *= 0.92;
+
+            //
+            // fragmentation
+            //
+            if (
+                Math.abs(this.vy) > CONFIG.breakVelocity &&
+                this.radius > CONFIG.minBreakRadius
+            ) {
+                this.breakApart();
+            }
+
+            //
+            // sleep check
+            //
+            if (Math.abs(this.vy) < CONFIG.sleepThreshold) {
+
+                this.vy = 0;
+                this.vx = 0;
+
+                this.sleeping = true;
+            }
+        }
+    }
+
+    breakApart() {
+
+        const count =
+            randomRangeInt(
+                CONFIG.fragmentCountMin,
+                CONFIG.fragmentCountMax
+            );
+
+        for (let i = 0; i < count; i++) {
+
+            const newRadius =
+                this.radius * randomRange(0.35, 0.6);
+
+            const angle =
+                Math.random() * Math.PI * 2;
+
+            const speed =
+                randomRange(1, 4);
+
+            /*particles.push(
+                new HailParticle(
+                    this.x,
+                    this.y,
+
+                    newRadius,
+
+                    Math.cos(angle) * speed,
+                    Math.sin(angle) * speed * 0.5
+                )
+            );*/
+        }
+
+        //
+        // remove original
+        //
+        this.radius = 0;
+        this.sleeping = true;
+    }
+
+    draw() {
+
+        const brightness =
+            CONFIG.particleBrightness;
+
+        ctx.fillStyle =
+            `rgb(${brightness}, ${brightness}, ${brightness})`;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            this.x,
+            this.y,
+            this.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    }
+}
+
+
+//
+// ======================================================
+// SPAWNING
+// ======================================================
+//
+
+class ParticleSystem {
+    constructor(cfg, cnvs) {
+        this.cfg = cfg;
+        this.canvas = cnvs;
+        this.particles = [];
+    }
+    spawn() {
+        if ( this.particles.length >= this.cfg.maxParticles ) return;
+        const radius =
+            randomRange(
+                this.cfg.minRadius,
+                this.cfg.maxRadius
+            );
+
+        this.particles.push(
+
+            new HailParticle(
+
+                randomRange(0, this.canvas.width),
+
+                -20,
+
+                radius,
+
+                randomRange(-0.5, 0.5),
+
+                randomRange(
+                    this.cfg.minFallSpeed,
+                    this.cfg.maxFallSpeed
+                )
+            )
+        );
+    }
+}
+
+function spawnParticle() {
+
+    if (particles.length >= CONFIG.maxParticles)
+        return;
+
+    const radius =
+        randomRange(
+            CONFIG.minRadius,
+            CONFIG.maxRadius
+        );
+
+    particles.push(
+
+        new HailParticle(
+
+            randomRange(0, canvas.width),
+
+            -20,
+
+            radius,
+
+            randomRange(-0.5, 0.5),
+
+            randomRange(
+                CONFIG.minFallSpeed,
+                CONFIG.maxFallSpeed
+            )
+        )
+    );
+}
+
+const particleSystem = new ParticleSystem(CONFIG, canvas);
+
+
+//
+// ======================================================
+// LOOP
+// ======================================================
+//
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    //
+    // dark fade
+    //
+    ctx.fillStyle =
+        `rgba(10,10,14,${CONFIG.backgroundFade})`;
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    //
+    // spawn
+    //
+    for (let i = 0; i < CONFIG.spawnRate; i++) {
+        particleSystem.spawn();
+    }
+
+    //
+    // update/draw
+    //
+    for (let i = particleSystem.particles.length - 1; i >= 0; i--) {
+
+        const p = particleSystem.particles[i];
+
+        p.update();
+        p.draw();
+
+        //
+        // cleanup dead particles
+        //
+        if (p.radius <= 0) {
+            particleSystem.particles.splice(i, 1);
+        }
+    }
+}
+
+animate();
+
+
+//
+// ======================================================
+// HELPERS
+// ======================================================
+//
+
+function randomRange(min, max) {
+    return min + Math.random() * (max - min);
+}
+
+function randomRangeInt(min, max) {
+    return Math.floor(randomRange(min, max + 1));
+}
+
+</script>
+
+</body>
+</html>
