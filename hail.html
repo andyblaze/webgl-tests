@@ -150,7 +150,8 @@ class HailParticle {
             this.sleepAge++;
             this.alpha *= 0.99;
             this.radius *= cfg.radiusShrinkRate;
-            this.dead = (this.radius <= 0 || this.alpha <= 0);
+            if ( this.dead === false && (this.radius <= 0 || this.alpha <= 0))
+                this.dead = true;
             return;
         }
         //
@@ -204,7 +205,7 @@ class HailParticle {
             }
         }
     }
-    shatter(cfg, particlesArray) {
+    shatter(cfg, particleSys) {
 
         const count = mt_rand(cfg.fragmentCountMin, cfg.fragmentCountMax);
 
@@ -219,7 +220,7 @@ class HailParticle {
                 Math.cos(angle) * speed,
                 Math.sin(angle) * speed * 0.5
             );
-            particlesArray.push(new HailParticle(options));
+            particleSys.spawn(new HailParticle(options));
         }
         //
         // remove original
@@ -266,15 +267,21 @@ class ParticleSystem {
         this.cfg = cfg;
         this.particles = [];
     }
-    spawn() {
+    spawn(opts=false) {
         if ( this.particles.length >= this.cfg.maxParticles ) return;
-        const options = createOptions(
-            mt_randf(0, this.cfg.canvasW),
-            -20,
-            mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
-            mt_randf(-0.5, 0.5),
-            mt_randf(this.cfg.minFallSpeed,this.cfg.maxFallSpeed)
-        );
+        let options  = {};
+        if ( opts === false ) {
+            options = createOptions(
+                mt_randf(0, this.cfg.canvasW),
+                -20,
+                mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
+                mt_randf(-0.5, 0.5),
+                mt_randf(this.cfg.minFallSpeed,this.cfg.maxFallSpeed)
+            );
+        }
+        else 
+            options = opts;
+
         this.particles.push(new HailParticle(options));
     }
     update() {
@@ -282,7 +289,7 @@ class ParticleSystem {
 
             const p = this.particles[i];
 
-            p.update(this.cfg, this.particles);
+            p.update(this.cfg, this);
             p.draw(this.cfg);
 
             //
