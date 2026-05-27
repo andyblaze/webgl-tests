@@ -147,7 +147,7 @@ class HailParticle {
     update(cfg, particlesArray) {
 
         if (this.sleeping) {
-            if ( this.dead ) return;
+            if ( this.dead ) return; 
             this.sleepAge++;
             this.alpha *= 0.99;
             this.radius *= cfg.radiusShrinkRate;
