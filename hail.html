@@ -54,16 +54,16 @@ class Config {
 
         // physics
         this.gravity = 0.31;
-        this.airDrag = 0.071;
-        this.groundFriction = 0.1972;
+        this.airDrag = 0.051;
+        this.groundFriction = 0.972;
         // horizontal wind
         // negative = left
         // positive = right
-        this.windSpeed = -0.06;
+        this.windSpeed = -0.0125;
 
         // spawning
         this.spawnRate = 60;         // particles per frame
-        this.maxParticles = 200;
+        this.maxParticles = 400;
 
         // hail sizes
         this.minRadius = 1;
@@ -77,9 +77,9 @@ class Config {
         this.bounceLoss = 0.965;
 
         // fragmentation
-        this.breakVelocity = 1;
-        this.minBreakRadius = 3;
-        this.fragmentCountMin = 2;
+        this.breakVelocity = 2;
+        this.minBreakRadius = 1;
+        this.fragmentCountMin = 3;
         this.fragmentCountMax = 5;
 
         // settling
@@ -136,7 +136,7 @@ class HailParticle {
         this.radius = opts.radius;
 
         // larger particles feel heavier
-        this.mass = this.radius * 0.415;
+        this.mass = this.radius * 0.15;
 
         // status & removal
         this.sleeping = false;
@@ -147,10 +147,11 @@ class HailParticle {
     update(cfg, particlesArray) {
 
         if (this.sleeping) {
+            if ( this.dead ) return;
             this.sleepAge++;
             this.alpha *= 0.99;
             this.radius *= cfg.radiusShrinkRate;
-            if ( this.dead === false && (this.radius <= 0 || this.alpha <= 0))
+            if ( this.dead === false && (this.radius <= 0.05 || this.alpha <= 0.01))
                 this.dead = true;
             return;
         }
@@ -273,7 +274,7 @@ class ParticleSystem {
         if ( opts === false ) {
             options = createOptions(
                 mt_randf(0, this.cfg.canvasW),
-                -20,
+                0,
                 mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
                 mt_randf(-0.5, 0.5),
                 mt_randf(this.cfg.minFallSpeed,this.cfg.maxFallSpeed)
