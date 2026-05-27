@@ -44,23 +44,27 @@ class Config {
     constructor() {
 
         // physics
-        this.gravity = 0.15;
-        this.airDrag = 0.01;
+        this.gravity = 1;
+        this.airDrag = 0.1;
+        // horizontal wind
+        // negative = left
+        // positive = right
+        this.windSpeed = 0.1;
 
         // spawning
         this.spawnRate = 6;         // particles per frame
-        this.maxParticles = 20;
+        this.maxParticles = 200;
 
         // hail sizes
         this.minRadius = 2;
         this.maxRadius = 12;
 
         // velocity
-        this.minFallSpeed = 1;
+        this.minFallSpeed = 2;
         this.maxFallSpeed = 4;
 
         // bounce
-        this.bounceLoss = 0.965;
+        this.bounceLoss = 0.65;
 
         // fragmentation
         this.breakVelocity = 1;
@@ -72,7 +76,7 @@ class Config {
         this.sleepThreshold = 0.15;
 
         // rendering
-        this.backgroundFade = 0.918;
+        this.backgroundFade = 1;
         this.particleBrightness = 220;
 
         // canvas stuff
@@ -127,6 +131,11 @@ class HailParticle {
         // gravity
         //
         this.vy += cfg.gravity * this.mass;
+        //
+        // wind
+        // smaller particles are affected more
+        //
+        this.vx += cfg.windSpeed / this.mass;
         //
         // air resistance
         //
