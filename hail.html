@@ -55,14 +55,14 @@ class Config {
         // physics
         this.gravity = 0.31;
         this.airDrag = 0.071;
-        this.groundFriction = 0.62;
+        this.groundFriction = 0.1972;
         // horizontal wind
         // negative = left
         // positive = right
         this.windSpeed = -0.06;
 
         // spawning
-        this.spawnRate = 6;         // particles per frame
+        this.spawnRate = 60;         // particles per frame
         this.maxParticles = 200;
 
         // hail sizes
@@ -83,11 +83,17 @@ class Config {
         this.fragmentCountMax = 5;
 
         // settling
-        this.sleepThreshold = 0.15;
+        this.sleepThreshold = 0.25;
 
         // rendering
         this.backgroundFade = 1;
         this.particleBrightness = 220;
+
+        // aging / cleanup
+        this.enableAging = true;
+        this.sleepFadeStart = 120;
+        this.sleepFadeEnd = 240;
+        this.radiusShrinkRate = 0.985;
 
         // canvas stuff
         this.canvas = null;
@@ -132,11 +138,21 @@ class HailParticle {
         // larger particles feel heavier
         this.mass = this.radius * 0.415;
 
+        // status & removal
         this.sleeping = false;
+        this.sleepAge = 0;
+        this.alpha = 1;
+        this.dead = false;
     }
     update(cfg, particlesArray) {
 
-        if (this.sleeping) return;
+        if (this.sleeping) {
+            this.sleepAge++;
+            this.alpha *= 0.99;
+            this.radius *= cfg.radiusShrinkRate;
+            this.dead = (this.radius <= 0 || this.alpha <= 0);
+            return;
+        }
         //
         // gravity
         //
@@ -212,8 +228,10 @@ class HailParticle {
         this.sleeping = true;
     }
     outOfView(cfg) {
-        if ( this.x < 0 || this.x > cfg.canvasW ) return true;
-        if ( this.y < 0 || this.y > cfg.canvasH ) return true;
+        if (( this.x < 0 || this.x > cfg.canvasW ) || ( this.y < -20 || this.y > cfg.canvasH )) {
+            this.dead = true;
+            return true;
+        }
         return false;
     }
     draw(cfg) {
@@ -223,7 +241,7 @@ class HailParticle {
             cfg.particleBrightness;
 
         cfg.ctx.fillStyle =
-            `rgb(${brightness}, ${brightness}, ${brightness})`;
+            `rgba(${brightness}, ${brightness}, ${brightness}, ${this.alpha})`;
 
         cfg.ctx.beginPath();
 
@@ -270,10 +288,11 @@ class ParticleSystem {
             //
             // cleanup dead particles
             //
-            if (p.radius <= 0) {
+            if ( p.dead ) {
                 this.particles.splice(i, 1);
             }
         }
+        console.log(this.particles.length);
     }
 }
 
