@@ -53,21 +53,21 @@ class Config {
     constructor() {
 
         // physics
-        this.gravity = 0.1;
-        this.airDrag = 0.01;
-        this.groundFriction = 0.92;
+        this.gravity = 0.31;
+        this.airDrag = 0.071;
+        this.groundFriction = 0.62;
         // horizontal wind
         // negative = left
         // positive = right
-        this.windSpeed = -0.01;
+        this.windSpeed = -0.06;
 
         // spawning
         this.spawnRate = 6;         // particles per frame
         this.maxParticles = 200;
 
         // hail sizes
-        this.minRadius = 2;
-        this.maxRadius = 12;
+        this.minRadius = 1;
+        this.maxRadius = 6;
 
         // velocity
         this.minFallSpeed = 2;
@@ -130,7 +130,7 @@ class HailParticle {
         this.radius = opts.radius;
 
         // larger particles feel heavier
-        this.mass = this.radius * 0.15;
+        this.mass = this.radius * 0.415;
 
         this.sleeping = false;
     }
