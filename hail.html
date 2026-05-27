@@ -134,6 +134,7 @@ class HailParticle {
         this.vy = opts.vy;
 
         this.radius = opts.radius;
+        this.bottom = this.y + (this.radius / 2);
 
         // larger particles feel heavier
         this.mass = this.radius * 0.15;
@@ -174,10 +175,11 @@ class HailParticle {
         //
         this.x += this.vx;
         this.y += this.vy;
+        this.bottom = this.y + (this.radius / 2);
         //
         // floor collision
         //
-        if (this.y + this.radius >= cfg.canvasH) {
+        if (this.bottom >= cfg.canvasH) {
             this.y = cfg.canvasH - this.radius;
             //
             // bounce
@@ -320,15 +322,8 @@ function animate(timestamp) {
     //
     // dark fade
     //
-    config.ctx.fillStyle =
-        `rgba(10,10,14,${config.backgroundFade})`;
-
-    config.ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    config.ctx.fillStyle = `rgba(10,10,14,${config.backgroundFade})`;
+    config.ctx.fillRect(0, 0, config.canvasW, config.canvasH);
 
     //
     // spawn
