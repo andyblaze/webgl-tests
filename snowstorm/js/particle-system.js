@@ -31,13 +31,10 @@ export default class ParticleSystem {
             p.update(this.cfg, this);
             p.draw(this.cfg);
 
-            //
             // cleanup dead particles
-            //
             if ( p.dead ) {
                 this.particles.splice(i, 1);
             }
         }
-        console.log(this.particles.length);
     }
 }
