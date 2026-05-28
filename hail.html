@@ -168,12 +168,13 @@ class Config {
 
         // physics
         this.gravity = 0.31;
-        this.airDrag = 0.051;
+        this.airDrag = 0.0251;
         this.groundFriction = 0.972;
         // horizontal wind
         // negative = left
         // positive = right
-        this.windSpeed = -0.0125;
+        this.windSpeed = -0.025;
+        this.baseWindSpeed = 0.0025;
 
         // spawning
         this.spawnRate = 60;         // particles per frame
@@ -185,19 +186,19 @@ class Config {
 
         // velocity
         this.minFallSpeed = 2;
-        this.maxFallSpeed = 4;
+        this.maxFallSpeed = 6;
 
         // bounce
-        this.bounceLoss = 0.965;
+        this.bounceLoss = 0.00965;
 
         // fragmentation
-        this.breakVelocity = 2;
-        this.minBreakRadius = 1;
+        this.breakVelocity = 20;
+        this.minBreakRadius = 10;
         this.fragmentCountMin = 3;
         this.fragmentCountMax = 5;
 
         // settling
-        this.sleepThreshold = 0.25;
+        this.sleepThreshold = 0.95;
 
         // rendering
         this.backgroundFade = 1;
@@ -237,6 +238,8 @@ config.initCanvas("canvas");
 window.addEventListener("resize", config.resize);
 config.resize();
 
+const stormNoise = new Perlin(1337);
+
 class HailParticle {
 
     constructor(opts) {
@@ -251,7 +254,7 @@ class HailParticle {
         this.bottom = this.y + (this.radius / 2);
 
         // larger particles feel heavier
-        this.mass = this.radius * 0.15;
+        this.mass = (this.radius / 3) * mt_randf(0.05, 0.25);
 
         // status & removal
         this.sleeping = false;
@@ -266,7 +269,7 @@ class HailParticle {
             this.sleepAge++;
             this.alpha *= 0.99;
             this.radius *= cfg.radiusShrinkRate;
-            if ( this.dead === false && (this.radius <= 0.05 || this.alpha <= 0.01))
+            if ( this.dead === false && (this.radius <= 0.5 || this.alpha <= 0.1))
                 this.dead = true;
             return;
         }
@@ -346,7 +349,7 @@ class HailParticle {
         this.sleeping = true;
     }
     outOfView(cfg) {
-        if (( this.x < 0 || this.x > cfg.canvasW ) || ( this.y < -20 || this.y > cfg.canvasH )) {
+        if (( this.x < -100 || this.x > cfg.canvasW + 100 ) || ( this.y < -20 || this.y > cfg.canvasH )) {
             this.dead = true;
             return true;
         }
@@ -432,6 +435,10 @@ const particleSystem = new ParticleSystem(config);
 function animate(timestamp) {
 
     requestAnimationFrame(animate);
+
+    const storm = stormNoise.sample(timestamp * 0.0002);
+    const signedNoise = (storm * 2) - 1
+    config.windSpeed = signedNoise * config.baseWindSpeed;
 
     //
     // dark fade
