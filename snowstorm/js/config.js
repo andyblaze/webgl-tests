@@ -20,6 +20,9 @@ export default class Config {
         this.minRadius = 1;
         this.maxRadius = 6;
 
+        this.minMassAdjuster = 0.05;
+        this.maxMassAdjuster = 0.25;
+
         // velocity
         this.minFallSpeed = 2;
         this.maxFallSpeed = 6;
@@ -45,6 +48,7 @@ export default class Config {
         this.sleepFadeStart = 120;
         this.sleepFadeEnd = 240;
         this.radiusShrinkRate = 0.985;
+        this.alphaFadeRate = 0.99;
 
         // canvas stuff
         this.canvas = null;

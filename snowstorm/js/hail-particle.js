@@ -2,7 +2,7 @@ import { mt_randf, createOptions } from "./functions.js";
 
 export default class HailParticle {
 
-    constructor(opts) {
+    constructor(cfg, opts) {
 
         this.x = opts.x;
         this.y = opts.y;
@@ -14,7 +14,7 @@ export default class HailParticle {
         this.bottom = this.y + (this.radius / 2);
 
         // larger particles feel heavier
-        this.mass = (this.radius / 3) * mt_randf(0.05, 0.25);
+        this.mass = (this.radius / 3) * mt_randf(cfg.minMassAdjuster, cfg.maxMassAdjuster);
 
         // status & removal
         this.sleeping = false;
@@ -22,12 +22,12 @@ export default class HailParticle {
         this.alpha = 1;
         this.dead = false;
     }
-    update(cfg, particlesArray) {
+    update(cfg, particlesArray, storm) {
 
         if (this.sleeping) {
             if ( this.dead ) return; 
             this.sleepAge++;
-            this.alpha *= 0.99;
+            this.alpha *= cfg.alphaFadeRate;
             this.radius *= cfg.radiusShrinkRate;
             if ( this.dead === false && (this.radius <= 0.5 || this.alpha <= 0.1))
                 this.dead = true;
@@ -41,7 +41,7 @@ export default class HailParticle {
         // wind
         // smaller particles are affected more
         //
-        this.vx += cfg.windSpeed / this.mass;
+        this.vx += storm.globalWind / this.mass;
         //
         // air resistance
         //

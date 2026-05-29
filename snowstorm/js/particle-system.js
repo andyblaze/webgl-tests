@@ -6,7 +6,7 @@ export default class ParticleSystem {
         this.cfg = cfg;
         this.particles = [];
     }
-    spawn(opts=false) {
+    spawn(opts=false, idx=false) {
         if ( this.particles.length >= this.cfg.maxParticles ) return;
         let options  = {};
         if ( opts === false ) {
@@ -21,18 +21,22 @@ export default class ParticleSystem {
         else 
             options = opts;
 
-        this.particles.push(new HailParticle(options));
+        if ( idx === false )
+            this.particles.push(new HailParticle(this.cfg, options));
+        else 
+            this.particles[idx] = new HailParticle(this.cfg, options);
     }
-    update() {
+    update(storm) {
         for (let i = this.particles.length - 1; i >= 0; i--) {
 
             const p = this.particles[i];
 
-            p.update(this.cfg, this);
+            p.update(this.cfg, this, storm);
             p.draw(this.cfg);
 
             // cleanup dead particles
             if ( p.dead ) {
+                //this.spawn(false, i);
                 this.particles.splice(i, 1);
             }
         }
