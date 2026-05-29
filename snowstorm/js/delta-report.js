@@ -8,8 +8,8 @@ export default class DeltaReport {
     static timeSum = 0; // total ms of frame times (not normalised)
     static fps = 0;
     static fpsEl = null;
-    static running = true;
-    //static running = false;
+    //static running = true;
+    static running = false;
 
     static spew() {
         console.log(Math.random());

@@ -22,7 +22,7 @@ export default class HailParticle {
         this.alpha = 1;
         this.dead = false;
     }
-    update(cfg, particlesArray, storm) {
+    update(cfg, particlesSys, storm) {
 
         if (this.sleeping) {
             if ( this.dead ) return; 
@@ -73,7 +73,7 @@ export default class HailParticle {
                 Math.abs(this.vy) > cfg.breakVelocity &&
                 this.radius > cfg.minBreakRadius
             ) {
-                this.shatter(cfg, particlesArray);
+                this.shatter(cfg, particlesSys);
             }
             //
             // sleep check
