@@ -1,5 +1,5 @@
 export default class Perlin {
-    constructor(seed= ) {
+    constructor(seed=1337 ) {
 
         this.seed = seed;
         // cache generated lattice values
