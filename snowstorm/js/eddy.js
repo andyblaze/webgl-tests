@@ -8,8 +8,9 @@ export default class Eddy {
         this.strength = 0;
         this.maxStrength = maxStrength;
         this.driftSpeed = 0.1;
-        this.lifetime = 25 * 60; // 5s, 60fps 
+        this.lifetime = 55 * 60; // 5s, 60fps 
         this.age = 0;
+        this.active = true;
     }
     calcStrengthFromAge() {
         const t = this.age / this.lifetime;
@@ -19,8 +20,11 @@ export default class Eddy {
         return this.maxStrength * Math.sin(Math.PI * t);
     }
     update() {
+        if ( false === this.active ) return;
         this.x += this.driftSpeed;
         this.age++;
+        if ( this.age > this.lifetime )
+            this.active = false;
         this.strength = this.calcStrengthFromAge();
     }
     // returns wind vector at a position
