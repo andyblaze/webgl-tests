@@ -5,7 +5,19 @@ export default class Eddy {
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.strength = strength; // positive = clockwise, negative = anticlockwise
+        this.strength = 0;//strength; // positive = clockwise, negative = anticlockwise
+        this.maxStrength = strength;
+        this.driftSpeed = 0.1;
+        this.lifetime = 5 * 60; // 5s, 60fps 
+        this.age = 0;
+    }
+    update() {
+        this.x += this.driftSpeed;
+        this.age++;
+        if ( this.strength < this.maxStrength )
+            this.strength += 0.000001;
+        else 
+            this.strength -= 0.000001;
     }
     // returns wind vector at a position
     sample(px, py) {

@@ -9,6 +9,9 @@ export default class StormSystem {
         const storm = this.perlin.sample(timestamp * 0.0002);
         const signedNoise = (storm * 2) - 1
         this.globalWind = signedNoise * this.cfg.baseWindSpeed;
+        for (const eddy of this.eddies) {
+            eddy.update();
+        }
     }
     addEddy(e) {
         this.eddies.push(e);

@@ -36,13 +36,11 @@ export default class HailParticle {
         // gravity
         this.vy += cfg.gravity * this.mass;
 
-        // wind, smaller particles are affected more
-        //this.vx += storm.globalWind / this.mass;
-
         // air resistance
         this.vx *= (1 - cfg.airDrag);
         this.vy *= (1 - cfg.airDrag); 
-
+        
+        // wind, smaller particles are affected more
         const wind = storm.sampleWind(this.x, this.y);
 
         this.vx += wind.x / this.mass;
