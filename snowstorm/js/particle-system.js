@@ -10,12 +10,15 @@ export default class ParticleSystem {
         if ( this.particles.length >= this.cfg.maxParticles ) return;
         let options  = {};
         if ( opts === false ) {
+            const t = Math.pow(Math.random(), 2);
+
+//radius = 0.5 + t * (maxRadius - 0.5);
             options = createOptions(
                 mt_randf(0, this.cfg.canvasW),
                 0,
-                mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
+                0.5 + t * (this.cfg.maxRadius - 0.5), //mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
                 mt_randf(-0.5, 0.5),
-                mt_randf(this.cfg.minFallSpeed,this.cfg.maxFallSpeed)
+                mt_randf(this.cfg.minFallSpeed, this.cfg.maxFallSpeed)
             );
         }
         else 

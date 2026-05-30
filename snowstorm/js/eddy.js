@@ -20,11 +20,11 @@ export default class Eddy {
         return this.maxStrength * Math.sin(Math.PI * t);
     }
     update() {
-        if ( false === this.active ) return;
-        this.x += this.driftSpeed;
         this.age++;
         if ( this.age > this.lifetime )
             this.active = false;
+        if ( false === this.active ) return;
+        this.x += this.driftSpeed;
         this.strength = this.calcStrengthFromAge();
     }
     // returns wind vector at a position
