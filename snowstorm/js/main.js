@@ -13,7 +13,6 @@ config.resize();
 
 const storm = new StormSystem(new Perlin(1337), config);
 storm.addEddy(new Eddy(800, 400, 150, 0.025)); 
-console.log(StormSystem.prototype);
 
 const particleSystem = new ParticleSystem(config);
 

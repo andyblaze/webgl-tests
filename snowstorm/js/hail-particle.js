@@ -33,18 +33,13 @@ export default class HailParticle {
                 this.dead = true;
             return;
         }
-        //
         // gravity
-        //
         this.vy += cfg.gravity * this.mass;
-        //
-        // wind
-        // smaller particles are affected more
-        //
+
+        // wind, smaller particles are affected more
         //this.vx += storm.globalWind / this.mass;
-        //
+
         // air resistance
-        //
         this.vx *= (1 - cfg.airDrag);
         this.vy *= (1 - cfg.airDrag); 
 
@@ -52,37 +47,27 @@ export default class HailParticle {
 
         this.vx += wind.x / this.mass;
         this.vy += wind.y / this.mass;
-        //
+
         // movement
-        //
         this.x += this.vx;
         this.y += this.vy;
         this.bottom = this.y + (this.radius / 2);
-        //
+
         // floor collision
-        //
         if (this.bottom >= cfg.canvasH) {
             this.y = cfg.canvasH - this.radius;
-            //
             // bounce
-            //
             this.vy *= -cfg.bounceLoss;
-            //
             // friction
-            //
             this.vx *= cfg.groundFriction;
-            //
             // fragmentation
-            //
             if (
                 Math.abs(this.vy) > cfg.breakVelocity &&
                 this.radius > cfg.minBreakRadius
             ) {
                 this.shatter(cfg, particlesSys);
             }
-            //
             // sleep check
-            //
             if (Math.abs(this.vy) < cfg.sleepThreshold) {
                 this.vy = 0;
                 this.vx = 0;
@@ -91,7 +76,6 @@ export default class HailParticle {
         }
     }
     shatter(cfg, particleSys) {
-
         const count = mt_rand(cfg.fragmentCountMin, cfg.fragmentCountMax);
 
         for ( let i = 0; i < count; i++ ) {
@@ -107,9 +91,7 @@ export default class HailParticle {
             );
             particleSys.spawn(new HailParticle(options));
         }
-        //
         // remove original
-        //
         this.radius = 0;
         this.sleeping = true;
     }
