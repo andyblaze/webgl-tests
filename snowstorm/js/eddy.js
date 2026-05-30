@@ -1,23 +1,27 @@
 export default class Eddy {
 
-    constructor(x, y, radius, strength=0.05) {
+    constructor(x, y, radius, maxStrength=0.05) { //strength; // positive = clockwise, negative = anticlockwise
 
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.strength = 0;//strength; // positive = clockwise, negative = anticlockwise
-        this.maxStrength = strength;
+        this.strength = 0;
+        this.maxStrength = maxStrength;
         this.driftSpeed = 0.1;
-        this.lifetime = 5 * 60; // 5s, 60fps 
+        this.lifetime = 25 * 60; // 5s, 60fps 
         this.age = 0;
+    }
+    calcStrengthFromAge() {
+        const t = this.age / this.lifetime;
+
+        if ( t >= 1 ) return 0;
+
+        return this.maxStrength * Math.sin(Math.PI * t);
     }
     update() {
         this.x += this.driftSpeed;
         this.age++;
-        if ( this.strength < this.maxStrength )
-            this.strength += 0.000001;
-        else 
-            this.strength -= 0.000001;
+        this.strength = this.calcStrengthFromAge();
     }
     // returns wind vector at a position
     sample(px, py) {
