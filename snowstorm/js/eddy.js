@@ -15,7 +15,7 @@ export default class Eddy {
     }
     reset() {
         if ( true === this.active ) return;
-        this.maxStrength = mt_randf(0.02, 0.08);
+        this.maxStrength = mt_randf(0.005, 0.007);
         if ( Math.random() < 0.5 )
             this.maxStrength = -this.maxStrength;
         this.x = mt_rand(600, 1200);
