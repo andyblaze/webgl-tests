@@ -6,6 +6,10 @@ export default class StormSystem {
         this.influences = [];
     }
     update(timestamp) {
+        this.influences[0].reset();
+        this.influences[1].reset();
+        this.influences[2].reset();
+        this.influences[3].reset();
         const storm = this.perlin.sample(timestamp * 0.0002);
         const signedNoise = (storm * 2) - 1
         this.globalWind = signedNoise * this.cfg.baseWindSpeed;

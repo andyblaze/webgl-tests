@@ -1,3 +1,5 @@
+import { mt_rand, mt_randf } from "./functions.js";
+
 export default class Eddy {
 
     constructor(x, y, radius, maxStrength=0.05) { // maxStrength - +ve = clockwise, -ve = anticlockwise
@@ -9,10 +11,23 @@ export default class Eddy {
         this.driftSpeed = 0.1; // +ve drifts L -> R,  -ve is R -> L
         this.lifetime = 55 * 60; // 55s, 60fps 
         this.age = 0;
-        this.active = true;
+        this.active = false;
     }
     reset() {
-        // placeholder for when StormSystem sets random properties
+        if ( true === this.active ) return;
+        this.maxStrength = mt_randf(0.02, 0.08);
+        if ( Math.random() < 0.5 )
+            this.maxStrength = -this.maxStrength;
+        this.x = mt_rand(600, 1200);
+        this.y = mt_rand(200, 400);
+        this.strength = 0;
+        this.lifetime = mt_rand(30, 60) * 60;
+        this.driftSpeed = mt_randf(0.05, 0.15);
+        if ( Math.random() < 0.5 )
+            this.driftSpeed = -this.driftSpeed;
+        this.age = 0;
+        this.active = true;
+
     }
     calcStrengthFromAge() {
         const t = this.age / this.lifetime;

@@ -1,3 +1,5 @@
+import { mt_rand, mt_randf } from "./functions.js";
+
 export default class Sheet {
 
     constructor(x, y, width, maxStrength = 0.01) {
@@ -14,11 +16,19 @@ export default class Sheet {
 
         this.lifetime = 9 * 60;
         this.age = 0;
-        this.active = true;
+        this.active = false;
     }
 
     reset() {
-        // placeholder
+        if ( true === this.active ) return;
+        this.maxStrength = mt_randf(0.005, 0.01);
+        this.x = mt_rand(6, 120);
+        this.y = mt_rand(20, 100);
+        this.strength = 0;
+        this.lifetime = mt_rand(6, 10) * 60;
+        this.driftSpeed = mt_randf(1.5, 2.5);
+        this.age = 0;
+        this.active = true;
     }
 
     calcStrengthFromAge() {

@@ -10,11 +10,11 @@ export default class Config {
         // negative = left
         // positive = right
         this.windSpeed = -0.025;
-        this.baseWindSpeed = 0.00025;
+        this.baseWindSpeed = 0.0025;
 
         // spawning
-        this.spawnRate = 60;         // particles per frame
-        this.maxParticles = 400;
+        this.spawnRate = 80;         // particles per frame
+        this.maxParticles = 600;
 
         // hail sizes
         this.minRadius = 1;
