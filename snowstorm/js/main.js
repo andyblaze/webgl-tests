@@ -18,7 +18,7 @@ storm.addInfluence(new Sheet(60, 400, 400));
 storm.addInfluence(new Eddy(400, 400, 150, 0.025)); 
 storm.addInfluence(new Eddy(1000, 600, 100, 0.025)); 
 
-const particleSystem = new ParticleSystem(config);
+const particleSystem = new ParticleSystem(config); 
 
 function animate(timestamp) {
 
