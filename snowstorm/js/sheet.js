@@ -10,9 +10,9 @@ export default class Sheet {
         this.strength = 0;
         this.maxStrength = maxStrength;
 
-        this.driftSpeed = 2;
+        this.driftSpeed = 2.951;
 
-        this.lifetime = 20 * 60;
+        this.lifetime = 9 * 60;
         this.age = 0;
         this.active = true;
     }
@@ -69,11 +69,11 @@ export default class Sheet {
 
         if (dx > 0) {
             // particle right of centreline -> pull left
-            vx = -force;
+            vx = force * Math.random();
         }
         else {
             // particle left of centreline -> pull right
-            vx = force;
+            //vx = force;
         }
 
         return {
