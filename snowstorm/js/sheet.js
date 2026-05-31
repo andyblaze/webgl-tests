@@ -1,6 +1,6 @@
 export default class Sheet {
 
-    constructor(x, y, width, maxStrength = 0.008) {
+    constructor(x, y, width, maxStrength = 0.01) {
 
         this.x = x;
         this.y = y; // currently unused, but useful later
@@ -10,7 +10,7 @@ export default class Sheet {
         this.strength = 0;
         this.maxStrength = maxStrength;
 
-        this.driftSpeed = 2.951;
+        this.driftSpeed = 1;
 
         this.lifetime = 9 * 60;
         this.age = 0;
