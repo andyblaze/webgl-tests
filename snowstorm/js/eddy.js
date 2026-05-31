@@ -1,15 +1,18 @@
 export default class Eddy {
 
-    constructor(x, y, radius, maxStrength=0.05) { //strength; // positive = clockwise, negative = anticlockwise
+    constructor(x, y, radius, maxStrength=0.05) { // maxStrength - +ve = clockwise, -ve = anticlockwise
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.strength = 0;
         this.maxStrength = maxStrength;
-        this.driftSpeed = 0.1;
-        this.lifetime = 55 * 60; // 5s, 60fps 
+        this.driftSpeed = 0.1; // +ve drifts L -> R,  -ve is R -> L
+        this.lifetime = 55 * 60; // 55s, 60fps 
         this.age = 0;
         this.active = true;
+    }
+    reset() {
+        // placeholder for when StormSystem sets random properties
     }
     calcStrengthFromAge() {
         const t = this.age / this.lifetime;
