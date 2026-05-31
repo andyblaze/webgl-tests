@@ -3,27 +3,27 @@ export default class StormSystem {
         this.perlin = p;
         this.cfg = cfg;
         this.globalWind = 0;
-        this.eddies = [];
+        this.influences = [];
     }
     update(timestamp) {
         const storm = this.perlin.sample(timestamp * 0.0002);
         const signedNoise = (storm * 2) - 1
         this.globalWind = signedNoise * this.cfg.baseWindSpeed;
-        for (const eddy of this.eddies) {
-            eddy.update();
+        for (const i of this.influences) {
+            i.update();
         }
     }
-    addEddy(e) {
-        this.eddies.push(e);
+    addInfluence(i) {
+        this.influences.push(i);
     }
     sampleWind(x, y) {
 
         let windX = this.globalWind;
         let windY = 0;
 
-        for (const eddy of this.eddies) {
+        for (const i of this.influences) {
 
-            const w = eddy.sample(x, y);
+            const w = i.sample(x, y);
 
             windX += w.x;
             windY += w.y;
