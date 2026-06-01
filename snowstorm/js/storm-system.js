@@ -1,14 +1,25 @@
+import { mt_randf, mt_rand } from "./functions.js";
+
 export default class StormSystem {
     constructor(p, cfg) {
         this.perlin = p;
         this.cfg = cfg;
         this.intensity = 0;
+        this.targetIntensity = 0.02;
         this.globalWind = 0;
         this.influences = [];
     }
-    update(timestamp) {
-        if ( this.intensity < 1 )
+    setIntensity() {
+        if (this.intensity < this.targetIntensity)
             this.intensity += 0.0001;
+        else if (this.intensity > this.targetIntensity)
+            this.intensity -= 0.0001;
+
+        if ( mt_rand(600, 3600) < 601 )
+            this.targetIntensity = mt_randf(0.02, 0.93);
+    }
+    update(timestamp) {
+        this.setIntensity();
         this.influences[0].reset();
         this.influences[1].reset();
         this.influences[2].reset();

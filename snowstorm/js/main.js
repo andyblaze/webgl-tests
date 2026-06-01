@@ -29,6 +29,14 @@ function animate(timestamp) {
     config.ctx.fillStyle = `rgba(10,10,14,${config.backgroundFade})`;
     config.ctx.fillRect(0, 0, config.canvasW, config.canvasH);
 
+    // cloud layer
+    const gradient = config.ctx.createLinearGradient(0, 0, 0, 250);
+    gradient.addColorStop(0.0, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(1.0, "rgba(255, 255, 255, 0)");
+
+    config.ctx.fillStyle = gradient;
+    config.ctx.fillRect(0, 0, config.canvasW, 250);
+
     const toSpawn = parseInt(storm.intensity * config.spawnRate);
 
     for (let i = 0; i < toSpawn; i++) {
