@@ -11,12 +11,12 @@ export default class StormSystem {
     }
     setIntensity() {
         if (this.intensity < this.targetIntensity)
-            this.intensity += 0.0001;
+            this.intensity += 0.001;
         else if (this.intensity > this.targetIntensity)
-            this.intensity -= 0.0001;
+            this.intensity -= 0.001;
 
         if ( mt_rand(600, 3600) < 601 )
-            this.targetIntensity = mt_randf(0.02, 0.93);
+            this.targetIntensity = mt_randf(0.02, 0.93); console.log(this.intensity, this.targetIntensity);
     }
     update(timestamp) {
         this.setIntensity();
