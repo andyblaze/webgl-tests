@@ -29,7 +29,9 @@ function animate(timestamp) {
     config.ctx.fillStyle = `rgba(10,10,14,${config.backgroundFade})`;
     config.ctx.fillRect(0, 0, config.canvasW, config.canvasH);
 
-    for (let i = 0; i < config.spawnRate; i++) {
+    const toSpawn = parseInt(storm.intensity * config.spawnRate);
+
+    for (let i = 0; i < toSpawn; i++) {
         particleSystem.spawn();
     }
 

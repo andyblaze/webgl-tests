@@ -2,10 +2,13 @@ export default class StormSystem {
     constructor(p, cfg) {
         this.perlin = p;
         this.cfg = cfg;
+        this.intensity = 0;
         this.globalWind = 0;
         this.influences = [];
     }
     update(timestamp) {
+        if ( this.intensity < 1 )
+            this.intensity += 0.0001;
         this.influences[0].reset();
         this.influences[1].reset();
         this.influences[2].reset();

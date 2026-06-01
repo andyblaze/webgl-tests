@@ -3,8 +3,8 @@ export default class Config {
     constructor() {
 
         // physics
-        this.gravity = 0.31;
-        this.airDrag = 0.0251;
+        this.gravity = 0.3;
+        this.airDrag = 0.025;
         this.groundFriction = 0.972;
         // horizontal wind
         // negative = left
@@ -13,19 +13,19 @@ export default class Config {
         this.baseWindSpeed = 0.0025;
 
         // spawning
-        this.spawnRate = 120;         // particles per frame
-        this.maxParticles = 750;
+        this.spawnRate = 140;         // particles per frame
+        this.maxParticles = 800;
 
         // hail sizes
         this.minRadius = 1;
-        this.maxRadius = 6;
+        this.maxRadius = 5;
 
         this.minMassAdjuster = 0.05;
-        this.maxMassAdjuster = 0.25;
+        this.maxMassAdjuster = 0.1;
 
         // velocity
         this.minFallSpeed = 2;
-        this.maxFallSpeed = 6;
+        this.maxFallSpeed = 5;
 
         // bounce
         this.bounceLoss = 0.00965;

@@ -14,7 +14,7 @@ export default class HailParticle {
         this.bottom = this.y + (this.radius / 2);
 
         // larger particles feel heavier
-        this.mass = (this.radius / 3) * mt_randf(cfg.minMassAdjuster, cfg.maxMassAdjuster);
+        this.mass = Math.sqrt(this.radius) * mt_randf(cfg.minMassAdjuster, cfg.maxMassAdjuster);
 
         // status & removal
         this.sleeping = false;
@@ -39,7 +39,7 @@ export default class HailParticle {
         // air resistance
         this.vx *= (1 - cfg.airDrag);
         this.vy *= (1 - cfg.airDrag); 
-        
+
         // wind, smaller particles are affected more
         const wind = storm.sampleWind(this.x, this.y);
 
@@ -52,7 +52,7 @@ export default class HailParticle {
         this.bottom = this.y + (this.radius / 2);
 
         // floor collision
-        if (this.bottom >= cfg.canvasH) {
+        if (this.y >= cfg.canvasH) {
             this.y = cfg.canvasH - this.radius;
             // bounce
             this.vy *= -cfg.bounceLoss;
