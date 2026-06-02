@@ -13,8 +13,8 @@ export default class Config {
         this.baseWindSpeed = 0.0025;
 
         // spawning
-        this.spawnRate = 140;         // particles per frame
-        this.maxParticles = 800;
+        this.spawnRate = 400;         // particles per frame
+        this.maxParticles = 2000;
 
         // hail sizes
         this.minRadius = 1;

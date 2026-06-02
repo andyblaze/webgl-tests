@@ -2,29 +2,40 @@ import { mt_rand, mt_randf } from "./functions.js";
 
 export default class Eddy {
 
-    constructor(x, y, radius, maxStrength=0.05) { // maxStrength - +ve = clockwise, -ve = anticlockwise
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
+    constructor(cfg) { 
+        this.cfg = cfg;
+        this.x = 0;
+        this.y = 0;
+        this.radius = 0;
         this.strength = 0;
-        this.maxStrength = maxStrength;
-        this.driftSpeed = 0.1; // +ve drifts L -> R,  -ve is R -> L
-        this.lifetime = 55 * 60; // 55s, 60fps 
+        this.maxStrength = 0;
+        this.driftSpeed = 0; 
+        this.lifetime = 0; 
         this.age = 0;
         this.active = false;
     }
     reset() {
         if ( true === this.active ) return;
-        this.maxStrength = mt_randf(0.005, 0.007);
+        this.lifetime = mt_rand(30, 60) * 60;
+        this.y = this.radius * 2;
+        this.maxStrength = mt_randf(0.005, 0.009); // maxStrength - +ve = clockwise, -ve = anticlockwise
         if ( Math.random() < 0.5 )
             this.maxStrength = -this.maxStrength;
-        this.x = mt_rand(600, 1200);
-        this.y = mt_rand(200, 400);
-        this.strength = 0;
-        this.lifetime = mt_rand(30, 60) * 60;
-        this.driftSpeed = mt_randf(0.05, 0.15);
+        this.driftSpeed = mt_randf(0.05, 0.15); // +ve drifts L -> R,  -ve is R -> L
         if ( Math.random() < 0.5 )
             this.driftSpeed = -this.driftSpeed;
+        this.radius = mt_rand(25, 150);
+        if ( this.driftSpeed > 0 )
+            this.x = mt_rand(this.radius * 2, this.cfg.canvasW / 2);
+        else 
+            this.x = mt_rand(this.cfg.canvasW - this.radius * 2, this.cfg.canvasW / 2);
+        if ( this.radius < 50 ) {
+            this.y = mt_rand(this.cfg.canvasH - this.radius * 4, this.cfg.canvasH - this.radius * 2);
+            this.maxStrength = 0.09;
+            this.lifetime = mt_rand(10, 30);
+        }    
+        
+        this.strength = 0;
         this.age = 0;
         this.active = true;
 
