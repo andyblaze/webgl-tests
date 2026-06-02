@@ -17,6 +17,7 @@ export default class Eddy {
     reset() {
         if ( true === this.active ) return;
         this.lifetime = mt_rand(30, 60) * 60;
+        this.radius = mt_rand(25, 70);
         this.y = this.radius * 2;
         this.maxStrength = mt_randf(0.005, 0.009); // maxStrength - +ve = clockwise, -ve = anticlockwise
         if ( Math.random() < 0.5 )
@@ -24,15 +25,16 @@ export default class Eddy {
         this.driftSpeed = mt_randf(0.05, 0.15); // +ve drifts L -> R,  -ve is R -> L
         if ( Math.random() < 0.5 )
             this.driftSpeed = -this.driftSpeed;
-        this.radius = mt_rand(25, 150);
+        
         if ( this.driftSpeed > 0 )
             this.x = mt_rand(this.radius * 2, this.cfg.canvasW / 2);
         else 
             this.x = mt_rand(this.cfg.canvasW - this.radius * 2, this.cfg.canvasW / 2);
         if ( this.radius < 50 ) {
             this.y = mt_rand(this.cfg.canvasH - this.radius * 4, this.cfg.canvasH - this.radius * 2);
+            console.log(this.y);
             this.maxStrength = 0.09;
-            this.lifetime = mt_rand(10, 30);
+            this.lifetime = mt_rand(10, 30) * 60;
         }    
         
         this.strength = 0;
