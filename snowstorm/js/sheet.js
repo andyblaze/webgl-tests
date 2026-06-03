@@ -25,7 +25,7 @@ export default class Sheet {
         this.maxStrength = mt_randf(0.005, 0.01);
         this.x = mt_rand(6, 120);
         this.y = mt_rand(20, 100);
-        this.height = mt_rand(300, 600);
+        this.height = mt_rand(100, 600);
         this.strength = 0;
         this.lifetime = mt_rand(6, 10) * 60;
         this.driftSpeed = mt_randf(1.5, 2.5);
@@ -64,18 +64,20 @@ export default class Sheet {
             return { x: 0, y: 0 };
 
         const dx = px - this.x;
+        const dy = py - this.y;
 
         const halfWidth = this.width * 0.5;
-        const dist = Math.abs(dx);
+        const distX = Math.abs(dx);
+        const distY = Math.abs(dy);
 
         // outside sheet
-        if ( py < this.y || py > this.y + this.height )
+        if ( distY < this.y || distY > this.y + this.height )
             return { x: 0, y: 0 };
-        if ( dist > halfWidth )
+        if ( distX > halfWidth )
             return { x: 0, y: 0 };
 
         // 1 at centre, 0 at edge
-        const t = dist / halfWidth;
+        const t = distX / halfWidth;
 
         const force = (1 - t) * this.strength;
 
