@@ -2,12 +2,13 @@ import { mt_rand, mt_randf } from "./functions.js";
 
 export default class Sheet {
 
-    constructor(x, y, width, maxStrength = 0.01) {
+    constructor(x, y, width, height, maxStrength = 0.01) {
 
         this.x = x;
         this.y = y; // currently unused, but useful later
 
         this.width = width;
+        this.height = height;
 
         this.strength = 0;
         this.maxStrength = maxStrength;
@@ -24,6 +25,7 @@ export default class Sheet {
         this.maxStrength = mt_randf(0.005, 0.01);
         this.x = mt_rand(6, 120);
         this.y = mt_rand(20, 100);
+        this.height = mt_rand(300, 600);
         this.strength = 0;
         this.lifetime = mt_rand(6, 10) * 60;
         this.driftSpeed = mt_randf(1.5, 2.5);
@@ -67,7 +69,9 @@ export default class Sheet {
         const dist = Math.abs(dx);
 
         // outside sheet
-        if (dist > halfWidth)
+        if ( py < this.y || py > this.y + this.height )
+            return { x: 0, y: 0 };
+        if ( dist > halfWidth )
             return { x: 0, y: 0 };
 
         // 1 at centre, 0 at edge

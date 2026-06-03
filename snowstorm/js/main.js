@@ -13,10 +13,10 @@ window.addEventListener("resize", config.resize);
 config.resize();
 
 const storm = new StormSystem(new Perlin(1337), config);
-storm.addInfluence(new Sheet(60, 400, 400));
-storm.addInfluence(new Sheet(60, 400, 400));
-storm.addInfluence(new Sheet(60, 400, 400));
-storm.addInfluence(new Sheet(60, 400, 400));
+storm.addInfluence(new Sheet(60, 40, 400, 400));
+storm.addInfluence(new Sheet(60, 40, 400, 400));
+storm.addInfluence(new Sheet(60, 40, 400, 400));
+storm.addInfluence(new Sheet(60, 40, 400, 400));
 storm.addInfluence(new Eddy(config)); 
 storm.addInfluence(new Eddy(config)); 
 storm.addInfluence(new Eddy(config)); 
