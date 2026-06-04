@@ -2,20 +2,20 @@ import { mt_rand, mt_randf } from "./functions.js";
 
 export default class Gust {
 
-    constructor(x, y, width, height, maxStrength = 0.01) {
+    constructor(cfg) {
+        this.cfg = cfg;
+        this.x = 0;
+        this.y = 0; // currently unused, but useful later
 
-        this.x = x;
-        this.y = y; // currently unused, but useful later
-
-        this.width = width;
-        this.height = height;
+        this.width = 0;
+        this.height = 0;
 
         this.strength = 0;
-        this.maxStrength = maxStrength;
+        this.maxStrength = 0;
 
-        this.driftSpeed = 1;
+        this.driftSpeed = 0;
 
-        this.lifetime = 9 * 60;
+        this.lifetime = 0;
         this.age = 0;
         this.active = false;
     }
@@ -25,6 +25,7 @@ export default class Gust {
         this.maxStrength = mt_randf(0.005, 0.01);
         this.x = mt_rand(6, 120);
         this.y = mt_rand(20, 100);
+        this.width = mt_rand(360, 400);
         this.height = mt_rand(100, 600);
         this.strength = 0;
         this.lifetime = mt_rand(6, 10) * 60;
