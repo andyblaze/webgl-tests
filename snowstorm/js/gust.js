@@ -1,6 +1,6 @@
 import { mt_rand, mt_randf } from "./functions.js";
 
-export default class Sheet {
+export default class Gust {
 
     constructor(x, y, width, height, maxStrength = 0.01) {
 
