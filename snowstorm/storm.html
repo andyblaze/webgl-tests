@@ -53,28 +53,25 @@ const glConfig = {
     driftSpeedY: 2
 };
 
-const canvas = document.getElementById("sky");
+const glCanvas = document.getElementById("sky");
 
-const gl = canvas.getContext("webgl", {
+const gl = glCanvas.getContext("webgl", {
     alpha: true,
     premultipliedAlpha: false
 });
 
-function resize() {
+function glResize(w, h) {
 
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    glCanvas.width = w;
+    glCanvas.height = h;
 
     gl.viewport(
         0,
         0,
-        canvas.width,
-        canvas.height
+        w,
+        h
     );
 }
-
-window.addEventListener("resize", resize);
-resize();
 
 const vertexSource = `
 attribute vec2 aPos;

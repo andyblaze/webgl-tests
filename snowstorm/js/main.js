@@ -40,8 +40,8 @@ t *= 0.001;
 
     gl.uniform2f(
         uResolution,
-        canvas.width,
-        canvas.height
+        glCanvas.width,
+        glCanvas.height
     );
 
     gl.uniform1f(
@@ -76,6 +76,24 @@ t *= 0.001;
         4
     );
 }
+
+class RampUp {
+    constructor() {
+        this.amount = 5;
+        this.totalAmount = 400;
+        this.done = false;
+    }
+    spawn(ps, storm) {
+        for ( let i = 0; i < this.amount; i++ )
+            ps.spawn();
+        ps.update(storm);
+        this.amount += 5;
+        if ( this.amount >= this.totalAmount )
+            this.done = true;
+    }
+}
+
+const ramp = new RampUp();
 
 function animate(timestamp) {
 

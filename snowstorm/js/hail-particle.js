@@ -52,8 +52,15 @@ export default class HailParticle {
         this.bottom = this.y + (this.radius / 2);
 
         // floor collision
-        if (this.y >= cfg.canvasH) {
-            this.y = cfg.canvasH - this.radius;
+        const t = this.radius / cfg.maxRadius;
+
+        const floorY =
+            cfg.canvasH -
+            this.radius -
+            ((1 - t) * 20);
+
+        if ( this.y >= floorY ) {
+            this.y = floorY;
             // bounce
             this.vy *= -cfg.bounceLoss;
             // friction

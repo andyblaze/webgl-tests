@@ -1,5 +1,5 @@
 import HailParticle from "./hail-particle.js";
-import { mt_randf, createOptions } from "./functions.js";
+import { mt_randf, mt_rand, createOptions } from "./functions.js";
 
 export default class ParticleSystem {
     constructor(cfg) {
@@ -15,7 +15,7 @@ export default class ParticleSystem {
 //radius = 0.5 + t * (maxRadius - 0.5);
             options = createOptions(
                 mt_randf(0, this.cfg.canvasW),
-                0,
+                mt_rand(0, 40),
                 0.5 + t * (this.cfg.maxRadius - 0.5), //mt_randf(this.cfg.minRadius, this.cfg.maxRadius),
                 mt_randf(-0.5, 0.5),
                 mt_randf(this.cfg.minFallSpeed, this.cfg.maxFallSpeed)
