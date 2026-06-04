@@ -7,7 +7,7 @@ import Sheet from "./sheet.js";
 import StormSystem from "./storm-system.js";
 
 const config = new Config();
-config.initCanvas("canvas");
+config.initCanvas("snow");
 
 window.addEventListener("resize", config.resize);
 config.resize();
@@ -24,18 +24,73 @@ storm.addInfluence(new Eddy(config));
 
 const particleSystem = new ParticleSystem(config); 
 
+function drawGl(gl, t) {
+t *= 0.001;
+
+    gl.clearColor(
+        0,
+        0,
+        0,
+        0
+    );
+
+    gl.clear(
+        gl.COLOR_BUFFER_BIT
+    );
+
+    gl.uniform2f(
+        uResolution,
+        canvas.width,
+        canvas.height
+    );
+
+    gl.uniform1f(
+        uTime,
+        t
+    );
+
+    gl.uniform1f(
+        uOpacity,
+        glConfig.opacity
+    );
+
+    gl.uniform1f(
+        uCloudHeight,
+        glConfig.cloudHeight
+    );
+
+    gl.uniform1f(
+        uNoiseScale,
+        glConfig.noiseScale
+    );
+
+    gl.uniform2f(
+        uDrift,
+        glConfig.driftSpeedX,
+        glConfig.driftSpeedY
+    );
+
+    gl.drawArrays(
+        gl.TRIANGLE_STRIP,
+        0,
+        4
+    );
+}
+
 function animate(timestamp) {
 
     requestAnimationFrame(animate);
 
     storm.update(timestamp); 
+    drawGl(gl, timestamp);
 
-    config.ctx.fillStyle = `rgba(10,10,14,${config.backgroundFade})`;
-    config.ctx.fillRect(0, 0, config.canvasW, config.canvasH);
+    //config.ctx.fillStyle = `rgba(10,10,14,${config.backgroundFade})`;
+    //config.ctx.fillRect(0, 0, config.canvasW, config.canvasH);
+    config.ctx.clearRect(0, 0, config.canvasW, config.canvasH);
 
     // cloud layer
     const gradient = config.ctx.createLinearGradient(0, 0, 0, 250);
-    gradient.addColorStop(0.0, "rgba(255, 255, 255, 1)");
+    gradient.addColorStop(0.0, "rgba(255, 255, 255, 0.35)");
     gradient.addColorStop(1.0, "rgba(255, 255, 255, 0)");
 
     config.ctx.fillStyle = gradient;
