@@ -4,6 +4,7 @@ import ParticleSystem from "./particle-system.js";
 import DeltaReport from "./delta-report.js";
 import Eddy from "./eddy.js";
 import Gust from "./gust.js";
+import Downdraft from "./downdraft.js";
 import StormSystem from "./storm-system.js";
 import { drawGl } from "./functions.js";
 
@@ -25,6 +26,7 @@ for ( let i = 0; i < 4; i++ ) {
     storm.addInfluence(new Gust(config));
     storm.addInfluence(new Eddy(config));  
 }
+storm.addInfluence(new Downdraft(config));
 
 const particleSystem = new ParticleSystem(config); 
 

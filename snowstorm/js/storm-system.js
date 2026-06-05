@@ -45,8 +45,7 @@ export default class StormSystem {
             windY += w.y;
         }
 
-        return {
-            x: windX,
+        return {x: windX,
             y: windY
         };
     }
