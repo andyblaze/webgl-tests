@@ -5,6 +5,7 @@ import DeltaReport from "./delta-report.js";
 import Eddy from "./eddy.js";
 import Gust from "./gust.js";
 import StormSystem from "./storm-system.js";
+import { drawGl } from "./functions.js";
 
 const config = new Config("snow");
 
@@ -20,31 +21,13 @@ window.addEventListener("resize", resize);
 resize();
 
 const storm = new StormSystem(new Perlin(1337), config);
-storm.addInfluence(new Gust(config));
-storm.addInfluence(new Gust(config));
-storm.addInfluence(new Gust(config));
-storm.addInfluence(new Gust(config));
-storm.addInfluence(new Eddy(config)); 
-storm.addInfluence(new Eddy(config)); 
-storm.addInfluence(new Eddy(config)); 
-storm.addInfluence(new Eddy(config)); 
+for ( let i = 0; i < 4; i++ )
+    storm.addInfluence(new Gust(config));
+
+for ( let i = 0; i < 4; i++ )
+    storm.addInfluence(new Eddy(config));  
 
 const particleSystem = new ParticleSystem(config); 
-
-function drawGl(gl, t) {
-    t *= 0.001;
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    gl.uniform2f(uResolution, glCanvas.width, glCanvas.height);
-    gl.uniform1f(uTime, t);
-    gl.uniform1f(uOpacity, glConfig.opacity);
-    gl.uniform1f(uCloudHeight, glConfig.cloudHeight);
-    gl.uniform1f(uNoiseScale, glConfig.noiseScale);
-    gl.uniform2f(uDrift, glConfig.driftSpeedX, glConfig.driftSpeedY);
-
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-}
 
 class RampUp {
     constructor() {
@@ -71,8 +54,6 @@ function animate(timestamp) {
     storm.update(timestamp); 
     drawGl(gl, timestamp);
 
-    //config.ctx.fillStyle = `rgba(10,10,14,${config.backgroundFade})`;
-    //config.ctx.fillRect(0, 0, config.canvasW, config.canvasH);
     config.ctx.clearRect(0, 0, config.canvasW, config.canvasH);
 
     // cloud layer
