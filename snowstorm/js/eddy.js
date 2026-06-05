@@ -8,8 +8,7 @@ export default class Eddy extends WeatherCell {
         this.radius = 0;
     }
     reset() {
-        if (true === this.active)
-            return;
+        if (true === this.active) return;
 
         // spawn position first
         this.y = mt_rand(50, this.cfg.canvasH - 50);
@@ -18,9 +17,7 @@ export default class Eddy extends WeatherCell {
         const heightFactor = this.y / this.cfg.canvasH;
 
         // higher eddies are larger
-        this.radius = Math.round(
-            150 - (125 * heightFactor)
-        );
+        this.radius = Math.round(150 - (125 * heightFactor));
         // 150 @ top
         // 25  @ bottom
 
@@ -29,21 +26,19 @@ export default class Eddy extends WeatherCell {
         // 0.005 @ top
         // 0.090 @ bottom
 
-        if (Math.random() < 0.5)
+        if ( Math.random() < 0.5 )
             this.maxStrength = -this.maxStrength;
 
         // faster drift near ground
-        this.driftSpeed =
-            0.05 + (0.15 * heightFactor);
+        this.driftSpeed = 0.05 + (0.15 * heightFactor);
         // 0.05 @ top
         // 0.20 @ bottom
 
-        if (Math.random() < 0.5)
+        if ( Math.random() < 0.5 )
             this.driftSpeed = -this.driftSpeed;
 
         // shorter lifetime near ground
-        const lifetimeSeconds =
-            60 - (54 * heightFactor);
+        const lifetimeSeconds = 60 - (54 * heightFactor);
         // 60s @ top
         // 6s  @ bottom
 
@@ -51,12 +46,10 @@ export default class Eddy extends WeatherCell {
 
         // start somewhere sensible depending on drift
 
-        if (this.driftSpeed > 0)
-            this.x = mt_rand(this.radius * 2,
-                            this.cfg.canvasW / 2);
+        if ( this.driftSpeed > 0 )
+            this.x = mt_rand(this.radius * 2, this.cfg.canvasW / 2);
         else
-            this.x = mt_rand(this.cfg.canvasW - this.radius * 2,
-                            this.cfg.canvasW / 2);
+            this.x = mt_rand(this.cfg.canvasW - this.radius * 2, this.cfg.canvasW / 2);
 
         this.baseReset();
     }
