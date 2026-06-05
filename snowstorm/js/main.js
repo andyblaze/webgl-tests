@@ -28,23 +28,10 @@ for ( let i = 0; i < 4; i++ ) {
 
 const particleSystem = new ParticleSystem(config); 
 
-class RampUp {
-    constructor() {
-        this.amount = 5;
-        this.totalAmount = 400;
-        this.done = false;
-    }
-    spawn(ps, storm) {
-        for ( let i = 0; i < this.amount; i++ )
-            ps.spawn();
-        ps.update(storm);
-        this.amount += 5;
-        if ( this.amount >= this.totalAmount )
-            this.done = true;
-    }
-}
-
-const ramp = new RampUp();
+// cloud layer
+const gradient = config.ctx.createLinearGradient(0, 0, 0, 250);
+gradient.addColorStop(0.0, "rgba(255, 255, 255, 0.35)");
+gradient.addColorStop(1.0, "rgba(255, 255, 255, 0)");
 
 function animate(timestamp) {
 
@@ -54,12 +41,6 @@ function animate(timestamp) {
     drawGl(gl, timestamp);
 
     config.ctx.clearRect(0, 0, config.canvasW, config.canvasH);
-
-    // cloud layer
-    const gradient = config.ctx.createLinearGradient(0, 0, 0, 250);
-    gradient.addColorStop(0.0, "rgba(255, 255, 255, 0.35)");
-    gradient.addColorStop(1.0, "rgba(255, 255, 255, 0)");
-
     config.ctx.fillStyle = gradient;
     config.ctx.fillRect(0, 0, config.canvasW, 250);
 
