@@ -21,11 +21,10 @@ window.addEventListener("resize", resize);
 resize();
 
 const storm = new StormSystem(new Perlin(1337), config);
-for ( let i = 0; i < 4; i++ )
+for ( let i = 0; i < 4; i++ ) {
     storm.addInfluence(new Gust(config));
-
-for ( let i = 0; i < 4; i++ )
     storm.addInfluence(new Eddy(config));  
+}
 
 const particleSystem = new ParticleSystem(config); 
 

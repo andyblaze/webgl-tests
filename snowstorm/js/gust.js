@@ -1,25 +1,13 @@
 import { mt_rand, mt_randf } from "./functions.js";
+import WeatherCell from "./weather-cell.js";
 
-export default class Gust {
+export default class Gust extends WeatherCell {
 
     constructor(cfg) {
-        this.cfg = cfg;
-        this.x = 0;
-        this.y = 0; // currently unused, but useful later
-
+        super(cfg);
         this.width = 0;
         this.height = 0;
-
-        this.strength = 0;
-        this.maxStrength = 0;
-
-        this.driftSpeed = 0;
-
-        this.lifetime = 0;
-        this.age = 0;
-        this.active = false;
     }
-
     reset() {
         if ( true === this.active ) return;
         this.maxStrength = mt_randf(0.005, 0.01);
@@ -27,42 +15,13 @@ export default class Gust {
         this.y = mt_rand(20, 100);
         this.width = mt_rand(360, 400);
         this.height = mt_rand(100, 600);
-        this.strength = 0;
         this.lifetime = mt_rand(6, 10) * 60;
         this.driftSpeed = mt_randf(1.5, 2.5);
-        this.age = 0;
-        this.active = true;
+        this.baseReset();
     }
-
-    calcStrengthFromAge() {
-
-        const t = this.age / this.lifetime;
-
-        if (t >= 1)
-            return 0;
-
-        return this.maxStrength * Math.sin(Math.PI * t);
-    }
-
-    update() {
-
-        this.age++;
-
-        if (this.age > this.lifetime)
-            this.active = false;
-
-        if (false === this.active)
-            return;
-
-        this.x += this.driftSpeed;
-
-        this.strength = this.calcStrengthFromAge();
-    }
-
     sample(px, py) {
 
-        if (false === this.active)
-            return { x: 0, y: 0 };
+        if (false === this.active) return this.noForce;
 
         const dx = px - this.x;
         const dy = py - this.y;
@@ -72,30 +31,16 @@ export default class Gust {
         const distY = Math.abs(dy);
 
         // outside sheet
-        if ( distY < this.y || distY > this.y + this.height )
-            return { x: 0, y: 0 };
-        if ( distX > halfWidth )
-            return { x: 0, y: 0 };
+        if ( distY < this.y || distY > this.y + this.height ) return this.noForce;
+        if ( distX > halfWidth ) return this.noForce;
 
-        // 1 at centre, 0 at edge
-        const t = distX / halfWidth;
-
-        const force = (1 - t) * this.strength;
+        const force = this.getForce(distX, halfWidth);
 
         let vx = 0;
 
-        if (dx > 0) {
-            // particle right of centreline -> pull left
+        if (dx > 0) 
             vx = force * Math.random();
-        }
-        else {
-            // particle left of centreline -> pull right
-            //vx = force;
-        }
 
-        return {
-            x: vx,
-            y: 0
-        };
+        return { x: vx,  y: 0 };
     }
 }
