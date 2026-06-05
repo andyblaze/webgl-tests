@@ -6,11 +6,18 @@ import Eddy from "./eddy.js";
 import Gust from "./gust.js";
 import StormSystem from "./storm-system.js";
 
-const config = new Config();
-config.initCanvas("snow");
+const config = new Config("snow");
 
-window.addEventListener("resize", config.resize);
-config.resize();
+function resize() {
+    config.canvas.width = window.innerWidth;
+    config.canvas.height = window.innerHeight;   
+    config.canvasW = config.canvas.width;
+    config.canvasH = config.canvas.height;  
+    glResize(config.canvasW, config.canvasH); 
+}
+
+window.addEventListener("resize", resize);
+resize();
 
 const storm = new StormSystem(new Perlin(1337), config);
 storm.addInfluence(new Gust(config));

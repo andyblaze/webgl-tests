@@ -1,6 +1,6 @@
 export default class Config {
 
-    constructor() {
+    constructor(canvasId) {
 
         // physics
         this.gravity = 0.3;
@@ -51,10 +51,12 @@ export default class Config {
         this.alphaFadeRate = 0.99;
 
         // canvas stuff
-        this.canvas = null;
-        this.ctx = null;
-        this.canvasW = 0;
-        this.canvasH = 0;
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext("2d");
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;   
+        this.canvasW = this.canvas.width;
+        this.canvasH = this.canvas.height; 
     }
     initCanvas(canvasId) {
         this.canvas = document.getElementById(canvasId);
