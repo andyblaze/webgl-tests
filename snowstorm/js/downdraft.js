@@ -10,7 +10,8 @@ export default class Downdraft extends WeatherCell {
     }
     reset() {
         if ( true === this.active ) return;
-        this.maxStrength = mt_randf(0.005, 0.009);
+        this.maxStrength = mt_randf(0.025, 0.045);
+        const sections = parseInt(this.cfg.canvasW / 20);
         this.x = mt_rand(6, 120);
         this.y = mt_rand(0, 10);
         this.width = mt_rand(500, 700);
