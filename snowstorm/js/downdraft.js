@@ -10,13 +10,13 @@ export default class Downdraft extends WeatherCell {
     }
     reset() {
         if ( true === this.active ) return;
-        this.maxStrength = mt_randf(0.005, 0.01);
+        this.maxStrength = mt_randf(0.005, 0.009);
         this.x = mt_rand(6, 120);
-        this.y = mt_rand(20, 100);
-        this.width = mt_rand(100, 700);
-        this.height = mt_rand(360, 400);
-        this.lifetime = mt_rand(6, 10) * 60;
-        this.driftSpeed = mt_randf(1.5, 2.5);
+        this.y = mt_rand(0, 10);
+        this.width = mt_rand(500, 700);
+        this.height = mt_rand(260, 300);
+        this.lifetime = mt_rand(2, 6) * 60;
+        this.driftSpeed = mt_randf(0.5, 1.5);
         this.baseReset();
     }
     update() {
