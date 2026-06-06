@@ -11,7 +11,7 @@ export default class Downdraft extends WeatherCell {
         this.sectionWidth = this.cfg.canvasW / this.totalSections;
         this.minSections = 5;
         this.maxSections = 8;
-
+        this.setCooldown();
     }
     getPlacement() {
         const downdraftSections = mt_rand(this.minSections, this.maxSections);
@@ -22,9 +22,13 @@ export default class Downdraft extends WeatherCell {
             width: downdraftSections * this.sectionWidth 
         };
     }
+    setCooldown() {
+        this.coolDown = mt_rand(4, 9) * 60;
+    }
     reset() {
         if ( true === this.active ) return;
-        this.maxStrength = mt_randf(0.025, 0.045);
+        if ( this.coolDown > 0 ) return;
+        this.maxStrength = mt_randf(0.015, 0.035);
         const placement = this.getPlacement();
         this.x = placement.left;
         this.width = placement.width;
@@ -36,6 +40,9 @@ export default class Downdraft extends WeatherCell {
     }
     update() {
         super.update();
+        this.coolDown -= 1;
+        if ( false === this.active && this.coolDown < 0 )
+            this.setCooldown();
         this.x -= this.driftSpeed;
         this.y += this.driftSpeed;
     }

@@ -72,6 +72,6 @@ export default class Config {
         this.canvas.height = window.innerHeight;   
         this.canvasW = this.canvas.width;
         this.canvasH = this.canvas.height;  
-        glResize(this.canvasW, this.canvasH);   
+        glResize(this.canvasW, this.canvasH);  
     }
 }
