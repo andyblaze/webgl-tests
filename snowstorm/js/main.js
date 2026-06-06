@@ -51,7 +51,7 @@ function animate(timestamp) {
     for (let i = 0; i < toSpawn; i++) {
         particleSystem.spawn();
     }
-
+    config.update();
     particleSystem.update(storm); // also draws
     DeltaReport.log(timestamp);
 }

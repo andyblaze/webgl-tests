@@ -13,7 +13,8 @@ export default class Config {
         this.baseWindSpeed = 0.0025;
 
         // spawning
-        this.spawnRate = 400;         // particles per frame
+        this.spawnRate = 2;         // particles per frame
+        this.maxSpawnRate = 400;
         this.maxParticles = 2000;
 
         // hail sizes
@@ -57,6 +58,10 @@ export default class Config {
         this.canvas.height = window.innerHeight;   
         this.canvasW = this.canvas.width;
         this.canvasH = this.canvas.height; 
+    }
+    update() {
+        if ( this.spawnRate >= this.maxSpawnRate ) return;
+        this.spawnRate += 0.5;
     }
     initCanvas(canvasId) {
         this.canvas = document.getElementById(canvasId);
