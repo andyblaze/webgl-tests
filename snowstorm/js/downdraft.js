@@ -7,14 +7,27 @@ export default class Downdraft extends WeatherCell {
         super(cfg);
         this.width = 0;
         this.height = 0;
+        this.totalSections = 20;
+        this.sectionWidth = this.cfg.canvasW / this.totalSections;
+        this.minSections = 5;
+        this.maxSections = 14;
+
+    }
+    getPlacement() {
+        const downdraftSections = mt_rand(this.minSections, this.maxSections);
+        const maxStartSection = this.totalSections - downdraftSections;
+        const startSection = mt_rand(0, maxStartSection);
+        const left = startSection * this.sectionWidth;
+        const w = downdraftSections * this.sectionWidth;
+        return { x: left, width: w };
     }
     reset() {
         if ( true === this.active ) return;
         this.maxStrength = mt_randf(0.025, 0.045);
-        const sections = parseInt(this.cfg.canvasW / 20);
-        this.x = mt_rand(6, 120);
+        const placement = this.getPlacement();
+        this.x = placement.left;
         this.y = mt_rand(0, 10);
-        this.width = mt_rand(500, 700);
+        this.width = placement.width;
         this.height = mt_rand(260, 300);
         this.lifetime = mt_rand(2, 6) * 60;
         this.driftSpeed = mt_randf(0.5, 1.5);
