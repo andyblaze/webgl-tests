@@ -11,7 +11,7 @@ export default class Downdraft extends WeatherCell {
         this.sectionWidth = this.cfg.canvasW / this.totalSections;
         this.minSections = 5;
         this.maxSections = 8;
-        this.setCooldown();
+        this.setCooldown(15, 20);
     }
     getPlacement() {
         const downdraftSections = mt_rand(this.minSections, this.maxSections);
@@ -22,15 +22,14 @@ export default class Downdraft extends WeatherCell {
             width: downdraftSections * this.sectionWidth 
         };
     }
-    setCooldown() {
-        this.coolDown = mt_rand(4, 9) * 60;
+    setCooldown(lo, hi) {
+        this.coolDown = mt_rand(lo, hi) * 60;
     }
     reset() {
-        if ( true === this.active ) return;
-        if ( this.coolDown > 0 ) return;
+        if ( true === this.active || this.coolDown > 0 ) return;
         this.maxStrength = mt_randf(0.015, 0.035);
         const placement = this.getPlacement();
-        this.x = placement.left;
+        this.x = placement.x;
         this.width = placement.width;
         this.y = mt_rand(0, 10);
         this.height = mt_rand(260, 300);
@@ -42,13 +41,13 @@ export default class Downdraft extends WeatherCell {
         super.update();
         this.coolDown -= 1;
         if ( false === this.active && this.coolDown < 0 )
-            this.setCooldown();
+            this.setCooldown(4, 9);
         this.x -= this.driftSpeed;
         this.y += this.driftSpeed;
     }
     sample(px, py) {
 
-        if (false === this.active) return this.noForce;
+        if ( false === this.active ) return this.noForce;
 
         const dx = px - this.x;
         const dy = py - this.y;
@@ -58,7 +57,7 @@ export default class Downdraft extends WeatherCell {
         const distY = Math.abs(dy);
 
         // outside sheet
-        if ( distX < this.x || distX > this.x + this.width ) return this.noForce;
+        if ( px < this.x || px > this.x + this.width ) return this.noForce;
         if ( distY > halfHeight ) return this.noForce;
 
         const force = this.getForce(distY, halfHeight);
