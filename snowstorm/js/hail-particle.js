@@ -1,4 +1,4 @@
-import { mt_randf, createOptions } from "./functions.js";
+import { mt_rand, mt_randf, createOptions } from "./functions.js";
 
 export default class HailParticle {
 
@@ -21,13 +21,17 @@ export default class HailParticle {
         this.sleepAge = 0;
         this.alpha = 1;
         this.dead = false;
-
-        const baseHue = cfg.particleHue;
-        // tiny “ice variation”
-        const hue = baseHue + (Math.random() - 0.5) * 10;      // +/- 5°
-        const sat = 10 + Math.random() * 10;                    // 10–20%
-        const light = 85 + Math.random() * 10;                  // 85–95%
-        this.color = `hsla(${hue}, ${sat}%, ${light}%, ${this.alpha})`;
+        this.color = this.createColor(cfg.particleHue);
+    }
+    createColor(particleHue) {
+        const baseHue = particleHue;
+        // slight icy variation around the base hue
+        const hue = baseHue + mt_rand(-5, 5);
+        // keep snow low-saturation (almost white)
+        const sat = mt_rand(15, 25);
+        // keep it bright, near-white
+        const light = mt_rand(85, 95);
+        return `hsla(${hue}, ${sat}%, ${light}%, ${this.alpha})`;        
     }
     update(cfg, particlesSys, storm) {
 
