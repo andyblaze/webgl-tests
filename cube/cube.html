@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Drifting Image Cube</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+<script>
+  // --- Scene ---
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+  );
+  camera.position.z = 1;
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  document.body.appendChild(renderer.domElement);
+
+  // --- Texture loader ---
+  const loader = new THREE.TextureLoader();
+
+  function makeMaterial(path) {
+    const tex = loader.load(path);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return new THREE.MeshBasicMaterial({ map: tex });
+  }
+
+  // --- Cube ---
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+  const cube = new THREE.Mesh(geometry, [
+    makeMaterial('1.jpg'),
+    makeMaterial('2.jpg'),
+    makeMaterial('3.jpg'),
+    makeMaterial('4.jpg'),
+    makeMaterial('5.jpg'),
+    makeMaterial('6.jpg')
+  ]);
+
+  scene.add(cube);
+
+  // --- Cube rotation (slow organic drift) ---
+  let vx = (Math.random() - 0.5) * 0.01;
+  let vy = (Math.random() - 0.5) * 0.01;
+  let vz = (Math.random() - 0.5) * 0.01;
+
+  function driftRotation() {
+    vx += (Math.random() - 0.5) * 0.0002;
+    vy += (Math.random() - 0.5) * 0.0002;
+    vz += (Math.random() - 0.5) * 0.0002;
+
+    vx = THREE.MathUtils.clamp(vx, -0.01, 0.01);
+    vy = THREE.MathUtils.clamp(vy, -0.01, 0.01);
+    vz = THREE.MathUtils.clamp(vz, -0.01, 0.01);
+  }
+
+  // --- Camera drift state ---
+  const baseCamZ = 1.8;
+
+  let camT = 0;
+
+  // very low frequency motion seeds
+  const seedX = Math.random() * 1000;
+  const seedY = Math.random() * 1000;
+  const seedZ = Math.random() * 1000;
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // cube motion
+    driftRotation();
+    cube.rotation.x += vx;
+    cube.rotation.y += vy;
+    cube.rotation.z += vz;
+
+    // --- camera drift (slow, organic) ---
+    camT += 0.005;
+
+    const driftX = Math.sin(camT * 0.7 + seedX) * 0.08;
+    const driftY = Math.sin(camT * 0.5 + seedY) * 0.06;
+    const driftZ = Math.sin(camT * 0.3 + seedZ) * 0.05;
+
+    camera.position.x = driftX;
+    camera.position.y = driftY;
+    camera.position.z = baseCamZ + driftZ;
+
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // --- resize ---
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+
+</body>
+</html>
