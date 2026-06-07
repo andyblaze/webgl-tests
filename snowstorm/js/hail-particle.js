@@ -31,7 +31,8 @@ export default class HailParticle {
         const sat = mt_rand(15, 25);
         // keep it bright, near-white
         const light = mt_rand(85, 95);
-        return `hsla(${hue}, ${sat}%, ${light}%, ${this.alpha})`;        
+        //const alpha = mt_randf(0.65, 1);
+        return `hsla(${hue}, ${sat}%, ${light}%, ${this.alpha})`;         
     }
     update(cfg, particlesSys, storm) {
 
