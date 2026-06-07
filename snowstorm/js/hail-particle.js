@@ -21,6 +21,13 @@ export default class HailParticle {
         this.sleepAge = 0;
         this.alpha = 1;
         this.dead = false;
+
+        const baseHue = cfg.particleHue;
+        // tiny “ice variation”
+        const hue = baseHue + (Math.random() - 0.5) * 10;      // +/- 5°
+        const sat = 10 + Math.random() * 10;                    // 10–20%
+        const light = 85 + Math.random() * 10;                  // 85–95%
+        this.color = `hsla(${hue}, ${sat}%, ${light}%, ${this.alpha})`;
     }
     update(cfg, particlesSys, storm) {
 
@@ -110,22 +117,9 @@ export default class HailParticle {
     draw(cfg) {
         if ( this.outOfView(cfg) ) return;
 
-        const brightness =
-            cfg.particleBrightness;
-
-        cfg.ctx.fillStyle =
-            `rgba(${brightness}, ${brightness}, ${brightness}, ${this.alpha})`;
-
+        cfg.ctx.fillStyle = this.color;
         cfg.ctx.beginPath();
-
-        cfg.ctx.arc(
-            this.x,
-            this.y,
-            this.radius,
-            0,
-            Math.PI * 2
-        );
-
+        cfg.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         cfg.ctx.fill();
     }
 }

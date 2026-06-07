@@ -42,7 +42,7 @@ export default class Config {
 
         // rendering
         this.backgroundFade = 1;
-        this.particleBrightness = 220;
+        this.particleHue = 100;
 
         // aging / cleanup
         this.enableAging = true;
