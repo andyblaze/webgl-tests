@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Textured Octahedron</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+<script>
+  // --- Scene ---
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+  );
+
+  camera.position.z = 2;
+
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true
+  });
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x000000, 1);
+  document.body.appendChild(renderer.domElement);
+
+  // --- Texture ---
+  const loader = new THREE.TextureLoader();
+  const tex = loader.load('t1.jpg');
+  tex.colorSpace = THREE.SRGBColorSpace;
+
+  const material = new THREE.MeshBasicMaterial({
+    map: tex
+  });
+
+  // --- Geometry ---
+  const geometry = new THREE.OctahedronGeometry(1, 0);
+
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  // --- Rotation drift ---
+  let vx = (Math.random() - 0.5) * 0.01;
+  let vy = (Math.random() - 0.5) * 0.01;
+  let vz = (Math.random() - 0.5) * 0.01;
+
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // slow organic rotation drift
+    vx += (Math.random() - 0.5) * 0.0002;
+    vy += (Math.random() - 0.5) * 0.0002;
+    vz += (Math.random() - 0.5) * 0.0002;
+
+    vx = THREE.MathUtils.clamp(vx, -0.01, 0.01);
+    vy = THREE.MathUtils.clamp(vy, -0.01, 0.01);
+    vz = THREE.MathUtils.clamp(vz, -0.01, 0.01);
+
+    mesh.rotation.x += vx;
+    mesh.rotation.y += vy;
+    mesh.rotation.z += vz;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // --- resize ---
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+
+</body>
+</html>
