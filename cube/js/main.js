@@ -9,22 +9,19 @@ const rot = document.getElementById("rot");
 const scaleLbl = document.getElementById(scale.dataset.lbl);
 const xLbl = document.getElementById(x.dataset.lbl);
 const yLbl = document.getElementById(y.dataset.lbl);
+const payload = {};
 
 
 function update() {
-const srcImg = document.getElementById("srcImg");
-const natW = srcImg.naturalWidth;
-const natH = srcImg.naturalHeight;
-const cliW = srcImg.clientWidth;
-const cliH = srcImg.clientHeight;
-const imgScaleX = (natW / cliW).toFixed(2);
-const imgScaleY = (natH / cliH).toFixed(2);
+    const srcImg = document.getElementById("srcImg");
+    const natW = srcImg.naturalWidth;
+    const natH = srcImg.naturalHeight;
+    const cliW = srcImg.clientWidth;
+    const cliH = srcImg.clientHeight;
+    const imgScaleX = (natW / cliW).toFixed(2);
+    const imgScaleY = (natH / cliH).toFixed(2);
 
-//net.style.maxWidth = `${cliW}px`;
-
-
-const scales = document.getElementById("scales");
-
+    const scales = document.getElementById("scales");
 
     const s = parseFloat(scale.value);
     const px = parseInt(x.value);

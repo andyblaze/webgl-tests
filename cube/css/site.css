@@ -12,7 +12,6 @@ body {
     margin: -492px 0 0 63%;
 }
 
-/* full image background */
 #stage {
     position: absolute;
     top:0;
@@ -46,28 +45,15 @@ body {
     box-sizing: border-box;
     background: rgba(255,255,255,0.05);
 }
-fc {
- 
+.fc {
+ outline: none;
 }
-.ft {
-    outline: 1px solid rgba(22, 21, 21, 0.7);
-}
-.fr {
-    outline: 1px solid rgba(22, 21, 21, 0.7);
-}
-.fb {
-    outline: 1px solid rgba(22, 21, 21, 0.7);
-}
-.fl {
-    outline: 1px solid rgba(22, 21, 21, 0.7);
-}
-.fe {
+.ft, .fr, .fb, .fl, .fe {
     outline: 1px solid rgba(22, 21, 21, 0.7);
 }
 
 #ui {
     width:60%;
-    /*right: 0;*/
     padding: 12px;
     background: rgba(0,0,0,0.6);
     color: white;
