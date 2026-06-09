@@ -7,24 +7,10 @@
 </head>
 <body>
 
-<div id="wrap">
-    <div id="stage">
-        <img src="t5.jpg" id="srcImg" />
-    </div>
-    <div id="net">
-        <table>
-            <tr><td></td><td class="face ft"></td><td></td></tr>
-            <tr><td class="face fl"></td><td class="face f"></td><td class="face fr"></td></tr>
-            <tr><td></td><td class="face fb"></td><td></td></tr>
-            <tr><td></td><td class="face fe"></td><td></td></tr>
-        </table>
-    </div>
-</div>
-
 <div id="ui">
     <label>
         Scale
-        <input id="scale" type="range" min="0" max="3" step="0.01" value="1" data-lbl="lbl-s">
+        <input id="scale" type="range" min="0" max="3" step="0.001" value="1" data-lbl="lbl-s">
     </label><br><div id="lbl-s"></div>
 
     <label>
@@ -45,6 +31,21 @@
     <button id="go">GO</button>
     <br><div id="scales"></div>
 </div>
+
+<div id="wrap">
+    <div id="stage">
+        <img src="t5.jpg" id="srcImg" />
+    </div>
+    <div id="net">
+        <table>
+            <tr><td></td><td class="face ft"></td><td></td></tr>
+            <tr><td class="face fl"></td><td class="face fc"></td><td class="face fr"></td></tr>
+            <tr><td></td><td class="face fb"></td><td></td></tr>
+            <tr><td></td><td class="face fe"></td><td></td></tr>
+        </table>
+    </div>
+</div>
+
 
 <script type="text/javascript" src="js/main.js"></script>
 
