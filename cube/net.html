@@ -3,122 +3,21 @@
 <head>
 <meta charset="utf-8" />
 <title>Cube Net Composer</title>
-
-<style>
-body {
-    margin: 0;
-    font-family: sans-serif;
-    background: #111;
-    overflow: hidden;
-}
-
-#wrap {
-    position: relative;
-    height: 100vh;
-    width:300px;
-    margin: 0 auto;
-}
-
-/* full image background */
-#stage {
-    position: absolute;
-    top:0;
-    left: 0;
-    width: 300px;
-    height: 100vh;
-    background: url("t5.jpg") center / contain no-repeat;
-}
-
-/* overlay net */
-#net {
-    position: absolute;
-    width: 300px;
-    height: 400px;
-    left: 0;
-    top: 0;
-    /*transform: translate(-50%, -50%);
-    pointer-events: none;*/
-}
-
-/* simple cube net layout */
-.face {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    border: 1px solid rgba(22, 21, 21, 0.7);
-    box-sizing: border-box;
-    background: rgba(255,255,255,0.05);
-}
-fc {
- 
-}
-.ft {
-    border-bottom: 0px solid rgba(22, 21, 21, 0.7);
-}
-.fr {
-    border-left: 0px solid rgba(22, 21, 21, 0.7);
-}
-.fb {
-    border-top: 0px solid rgba(22, 21, 21, 0.7);
-}
-.fl {
-    border-right: 0px solid rgba(22, 21, 21, 0.7);
-}
-.fe {
-    border-top: 0px solid rgba(22, 21, 21, 0.7);
-}
-
-/* cross layout (classic net) */
-#f1 { left: 100px; top: 100px; } /* center */
-#f2 { left: 0px; top: 100px; }   /* left */
-#f3 { left: 200px; top: 100px; } /* right */
-#f4 { left: 100px; top: 0px; }   /* top */
-#f5 { left: 100px; top: 200px; } /* bottom */
-#f6 { left: 100px; top: 300px; } /* extra extension */
-
-#ui {
-    position: absolute;
-    top: 0;
-    left: 0;
-    /*right: 0;*/
-    padding: 12px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    display: block;
-    gap: 12px;
-    align-items: center;
-}
-
-label {
-    font-size: 12px;
-    /*display: flex;
-    flex-direction: row;*/
-    display: block;
-}
-
-input[type="range"] {
-    width: 420px;
-}
-
-button {
-    padding: 8px 14px;
-    cursor: pointer;
-}
-</style>
+<link href="css/site.css" rel="stylesheet" type="text/css">
 </head>
-
 <body>
 
 <div id="wrap">
-    <div id="stage"></div>
-
+    <div id="stage">
+        <img src="t5.jpg" />
+    </div>
     <div id="net">
-        <div class="face fc" id="f1"></div> 
-        <div class="face fl" id="f2"></div>
-        <div class="face fr" id="f3"></div>
-        <div class="face ft" id="f4"></div>
-        <div class="face fb" id="f5"></div>
-        <div class="face fe" id="f6"></div>
+        <table>
+            <tr><td></td><td class="face ft"></td><td></td></tr>
+            <tr><td class="face fl"></td><td class="face f"></td><td class="face fr"></td></tr>
+            <tr><td></td><td class="face fb"></td><td></td></tr>
+            <tr><td></td><td class="face fe"></td><td></td></tr>
+        </table>
     </div>
 </div>
 
@@ -146,51 +45,7 @@ button {
     <button id="go">GO</button>
 </div>
 
-<script>
-const net = document.getElementById("net");
-
-const scale = document.getElementById("scale");
-const x = document.getElementById("x");
-const y = document.getElementById("y");
-const rot = document.getElementById("rot");
-
-function update() {
-    const s = parseFloat(scale.value);
-    const px = parseInt(x.value);
-    const py = parseInt(y.value);
-    const r = parseInt(rot.value) * 90;
-
-    net.style.left = `${px}px`;
-    net.style.top = `${py}px`;
-        //`translate(-50%, -50%) translate(${px}px, ${py}px) scale(${s}) rotate(${r}deg)`;
-}
-
-scale.oninput = update;
-x.oninput = update;
-y.oninput = update;
-rot.oninput = update;
-
-update();
-
-// GO button (placeholder for PHP handoff)
-document.getElementById("go").onclick = () => {
-    const data = {
-        scale: scale.value,
-        x: x.value,
-        y: y.value,
-        rotationSteps: rot.value
-    };
-
-    console.log("GO payload:", data);
-
-    alert("scale: " + scale.value + " ," +
-        "x: " + x.value + " ," +
-        "y: " + y.value + " ," +
-        "sx: " + scale.value * x.value + " ," +
-        "sy: " + scale.value * y.value 
-    );
-};
-</script>
+<script type="text/javascript" src="js/main.js"></script>
 
 </body>
 </html>
