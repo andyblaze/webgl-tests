@@ -35,6 +35,33 @@ function update() {
     const trueFs = Math.round(fs * (natW / cliW));
     const trueNetW = Math.round(w * (natW / cliW));
 
+    const verts = ["top", "center", "bottom", "extension"];
+    const horzs = ["left", "right"];
+    let left = trueX + trueFs;
+    let top = trueY;
+
+    for ( let ty = 0; ty < verts.length; ty++ )
+        payload[verts[ty]] = {
+            x:trueX + trueFs,
+            y:trueY + (ty * trueFs),
+            w:trueFs,
+            h:trueFs
+        };
+
+    payload["left"] = {
+        x:trueX,
+        y:trueY + trueFs,
+        w:trueFs,
+        h:trueFs
+    };
+
+    payload["right"] = {
+        x:trueX + (trueFs * 2),
+        y:trueY + trueFs,
+        w:trueFs,
+        h:trueFs
+    };
+
 scales.innerHTML = `Nat W: ${natW} , NatH: ${natH} , CliW: ${cliW} , CliH: ${cliH} , <br> ImgScaleX: ${imgScaleX} , ImgScaleY: ${imgScaleY} , <br> True X: ${trueX} , True Y: ${trueY} , True Face Sz: ${trueFs} , <br> Net W: ${w}, True NetW: ${trueNetW}`;
 
     net.style.left = `${px}px`;
@@ -56,21 +83,28 @@ rot.oninput = update;
 
 update();
 
-// GO button (placeholder for PHP handoff)
-document.getElementById("go").onclick = () => {
-    const data = {
-        scale: scale.value,
-        x: x.value,
-        y: y.value,
-        rotationSteps: rot.value
-    };
+document.getElementById("go").onclick = async () =>
+{
+    const data = payload;
 
     console.log("GO payload:", data);
 
-    alert("scale: " + scale.value + " ," +
-        "x: " + x.value + " ," +
-        "y: " + y.value + " ," +
-        "sx: " + scale.value * x.value + " ," +
-        "sy: " + scale.value * y.value 
-    );
+    try
+    {
+        const response = await fetch("net.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.text();
+
+        console.log("PHP replied:", result);
+    }
+    catch (err)
+    {
+        console.error(err);
+    }
 };
