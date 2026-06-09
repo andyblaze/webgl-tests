@@ -12,10 +12,20 @@ body {
     overflow: hidden;
 }
 
+#wrap {
+    position: relative;
+    height: 100vh;
+    width:300px;
+    margin: 0 auto;
+}
+
 /* full image background */
 #stage {
     position: absolute;
-    inset: 0;
+    top:0;
+    left: 0;
+    width: 300px;
+    height: 100vh;
     background: url("t5.jpg") center / contain no-repeat;
 }
 
@@ -23,11 +33,11 @@ body {
 #net {
     position: absolute;
     width: 300px;
-    height: 300px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
+    height: 400px;
+    left: 0;
+    top: 0;
+    /*transform: translate(-50%, -50%);
+    pointer-events: none;*/
 }
 
 /* simple cube net layout */
@@ -39,6 +49,24 @@ body {
     box-sizing: border-box;
     background: rgba(255,255,255,0.05);
 }
+fc {
+ 
+}
+.ft {
+    border-bottom: 0px solid rgba(22, 21, 21, 0.7);
+}
+.fr {
+    border-left: 0px solid rgba(22, 21, 21, 0.7);
+}
+.fb {
+    border-top: 0px solid rgba(22, 21, 21, 0.7);
+}
+.fl {
+    border-right: 0px solid rgba(22, 21, 21, 0.7);
+}
+.fe {
+    border-top: 0px solid rgba(22, 21, 21, 0.7);
+}
 
 /* cross layout (classic net) */
 #f1 { left: 100px; top: 100px; } /* center */
@@ -46,7 +74,7 @@ body {
 #f3 { left: 200px; top: 100px; } /* right */
 #f4 { left: 100px; top: 0px; }   /* top */
 #f5 { left: 100px; top: 200px; } /* bottom */
-#f6 { left: 300px; top: 100px; } /* extra extension */
+#f6 { left: 100px; top: 300px; } /* extra extension */
 
 #ui {
     position: absolute;
@@ -81,15 +109,17 @@ button {
 
 <body>
 
-<div id="stage"></div>
+<div id="wrap">
+    <div id="stage"></div>
 
-<div id="net">
-    <div class="face" id="f1"></div>
-    <div class="face" id="f2"></div>
-    <div class="face" id="f3"></div>
-    <div class="face" id="f4"></div>
-    <div class="face" id="f5"></div>
-    <div class="face" id="f6"></div>
+    <div id="net">
+        <div class="face fc" id="f1"></div> 
+        <div class="face fl" id="f2"></div>
+        <div class="face fr" id="f3"></div>
+        <div class="face ft" id="f4"></div>
+        <div class="face fb" id="f5"></div>
+        <div class="face fe" id="f6"></div>
+    </div>
 </div>
 
 <div id="ui">
@@ -130,8 +160,9 @@ function update() {
     const py = parseInt(y.value);
     const r = parseInt(rot.value) * 90;
 
-    net.style.transform =
-        `translate(-50%, -50%) translate(${px}px, ${py}px) scale(${s}) rotate(${r}deg)`;
+    net.style.left = `${px}px`;
+    net.style.top = `${py}px`;
+        //`translate(-50%, -50%) translate(${px}px, ${py}px) scale(${s}) rotate(${r}deg)`;
 }
 
 scale.oninput = update;
