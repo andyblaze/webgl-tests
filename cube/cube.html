@@ -8,7 +8,7 @@
       margin: 0;
       overflow: hidden;
       background: black;
-      background-image: url(t1.jpg);
+      background-image: url(sbg.jpg);
       background-size: 100% 100%;
     }
     canvas {
@@ -55,12 +55,12 @@ renderer.setClearColor(0x000000, 0);
   const geometry = new THREE.BoxGeometry(1, 1, 1);
 
   const cube = new THREE.Mesh(geometry, [
-    makeMaterial('t2.jpg'),
-    makeMaterial('t2.jpg'),
-    makeMaterial('t2.jpg'),
-    makeMaterial('t2.jpg'),
-    makeMaterial('t2.jpg'),
-    makeMaterial('t2.jpg')
+    makeMaterial('s/r.jpg'),
+    makeMaterial('s/l.jpg'),
+    makeMaterial('s/t.jpg'),
+    makeMaterial('s/b.jpg'),
+    makeMaterial('s/c.jpg'),
+    makeMaterial('s/e.jpg')
   ]);
 
   scene.add(cube);

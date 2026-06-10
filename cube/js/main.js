@@ -2,6 +2,8 @@ const net = document.getElementById("net");
 
 const faces = document.getElementsByClassName("face");
 
+const srcImg = document.getElementById("srcImg");
+
 const scale = document.getElementById("scale");
 const x = document.getElementById("x");
 const y = document.getElementById("y");
@@ -9,11 +11,11 @@ const rot = document.getElementById("rot");
 const scaleLbl = document.getElementById(scale.dataset.lbl);
 const xLbl = document.getElementById(x.dataset.lbl);
 const yLbl = document.getElementById(y.dataset.lbl);
-const payload = {};
+const payload = { "image": srcImg.getAttribute("src") };
 
 
 function update() {
-    const srcImg = document.getElementById("srcImg");
+    
     const natW = srcImg.naturalWidth;
     const natH = srcImg.naturalHeight;
     const cliW = srcImg.clientWidth;
