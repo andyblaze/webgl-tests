@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ground Plane Test</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+}
+canvas {
+    display: block;
+}
+</style>
+</head>
+<body>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js";
+
+//
+// Scene
+//
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+
+//
+// Camera
+//
+const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
+
+camera.position.set(0, 13, 20);
+camera.lookAt(0, 0, 0);
+
+//
+// Renderer
+//
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+//
+// Light
+//
+const light = new THREE.DirectionalLight(0xffffff, 2);
+light.position.set(10, 20, 10);
+scene.add(light);
+
+const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambient);
+
+//
+// Ground Plane
+//
+const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(
+        200,   // width
+        200,   // height
+        200,   // width segments
+        200    // height segments
+    ),
+    new THREE.MeshBasicMaterial({
+        color: 0x00ff00,
+        wireframe: true
+    })
+);
+
+//
+// Make it horizontal
+//
+plane.rotation.x = -Math.PI / 2;
+
+scene.add(plane);
+
+//
+// Create two gravity wells
+//
+const positions = plane.geometry.attributes.position;
+
+for (let i = 0; i < positions.count; i++) {
+
+    const x = positions.getX(i);
+    const z = positions.getY(i);
+
+    //
+    // Well 1 (centre)
+    //
+    const r1 = Math.sqrt(x * x + z * z);
+    const well1 = -8 * Math.exp(-(r1 * r1) / 40);
+
+    //
+    // Well 2 (offset)
+    //
+    const dx = x - 20;
+    const dz = z - 10;
+
+    const r2 = Math.sqrt(dx * dx + dz * dz);
+    const well2 = -4 * Math.exp(-(r2 * r2) / 30);
+
+    //
+    // Combined deformation
+    //
+    positions.setZ(i, well1 + well2);
+}
+
+positions.needsUpdate = true;
+
+//
+// Resize
+//
+window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+//
+// Render
+//
+renderer.render(scene, camera);
+
+</script>
+
+</body>
+</html>

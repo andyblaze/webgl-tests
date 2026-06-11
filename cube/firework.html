@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tuned Black Hole Starfield</title>
+<style>
+body { margin:0; overflow:hidden; background:#3a3939; cursor:crosshair; }
+canvas { display:block; }
+</style>
+</head>
+<body>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js";
+
+//
+// ---------- SCENE ----------
+//
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+    70,
+    innerWidth / innerHeight,
+    0.1,
+    1000
+);
+camera.position.z = 30;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setClearColor(0x05060a);
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener("resize", () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});
+
+//
+// ---------- STAR TEXTURE (KEY FIX) ----------
+//
+function makeStarTexture() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 64;
+    canvas.height = 64;
+
+    const ctx = canvas.getContext("2d");
+
+    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, "rgba(255,255,255,1)");
+    g.addColorStop(0.2, "rgba(255,255,255,0.5)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(32, 32, 32, 0, Math.PI * 2);
+    ctx.fill();
+
+    return new THREE.CanvasTexture(canvas);
+}
+
+const starTexture = makeStarTexture();
+
+//
+// ---------- STARFIELD ----------
+//
+const COUNT = 2500;
+
+const geo = new THREE.BufferGeometry();
+const pos = new Float32Array(COUNT * 3);
+const vel = [];
+
+for (let i = 0; i < COUNT; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 60;
+    pos[i * 3 + 1] = (Math.random() - 0.5) * 60;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * 60;
+
+    vel.push({
+        z: 0.05 + Math.random() * 0.1
+    });
+}
+
+geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+
+const stars = new THREE.Points(
+    geo,
+    new THREE.PointsMaterial({
+        map: starTexture,
+        color: 0xffffff,
+        size: 0.18,
+        transparent: true,
+        opacity: 0.9,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+    })
+);
+
+scene.add(stars);
+
+//
+// ---------- BLACK HOLE ----------
+//
+const blackHole = new THREE.Vector3();
+
+let hasHole = false;
+let mass = 0;
+
+const MAX_MASS = 8;
+
+let strength = 1;
+let radius = 0.5;
+
+const hole = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5, 24, 24),
+    new THREE.MeshBasicMaterial({ color: 0x000000 })
+);
+scene.add(hole);
+
+//
+// ---------- INPUT ----------
+//
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener("click", (e) => {
+    mouse.x = (e.clientX / innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -10);
+    raycaster.ray.intersectPlane(plane, blackHole);
+
+    hasHole = true;
+    mass = 0.1;
+});
+
+//
+// ---------- LOOP ----------
+//
+function animate() {
+    requestAnimationFrame(animate);
+
+    const p = geo.attributes.position.array;
+
+    if (hasHole) {
+        const growth = 0.01 / (0.01 + mass * 0.06);
+        mass += growth;
+        mass = Math.min(MAX_MASS, mass);
+
+        strength = mass * 0.035;
+        radius = 0.6 + mass * 0.01;
+
+        hole.position.copy(blackHole);
+        hole.scale.set(radius, radius, radius);
+    }
+
+    for (let i = 0; i < COUNT; i++) {
+        const ix = i * 3;
+
+        let x = p[ix];
+        let y = p[ix + 1];
+        let z = p[ix + 2];
+
+        // forward drift (starfield motion)
+        z += vel[i].z;
+
+        if (z > 30) {
+            z = -30;
+            x = (Math.random() - 0.5) * 60;
+            y = (Math.random() - 0.5) * 60;
+        }
+
+        if (hasHole) {
+            const dx = blackHole.x - x;
+            const dy = blackHole.y - y;
+            const dz = blackHole.z - z;
+
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.01;
+
+            const force = strength / (dist * dist);
+
+            x += dx * force;
+            y += dy * force;
+            z += dz * force;
+
+            // swirl
+            const swirl = 0.012 * strength;
+            x += -dy * swirl;
+            y += dx * swirl;
+
+            // absorption
+            if (dist < radius * 1.6) {
+                mass += 0.003 * (1 - mass / MAX_MASS);
+
+                x = (Math.random() - 0.5) * 60;
+                y = (Math.random() - 0.5) * 60;
+                z = -30;
+            }
+        }
+
+        p[ix] = x;
+        p[ix + 1] = y;
+        p[ix + 2] = z;
+    }
+
+    geo.attributes.position.needsUpdate = true;
+
+    camera.position.x = Math.sin(Date.now() * 0.0003) * 2;
+    camera.position.y = Math.cos(Date.now() * 0.0002) * 1.5;
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>

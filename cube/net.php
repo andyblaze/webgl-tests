@@ -18,8 +18,6 @@ function crop($src, $dest, $coords, $face) {
 
 $json = file_get_contents('php://input');
 
-///$json = '{"image":"s5.jpg","top":{"x":811,"y":863,"w":811,"h":811},"center":{"x":811,"y":1674,"w":811,"h":811},"bottom":{"x":811,"y":2485,"w":811,"h":811},"extension":{"x":811,"y":3296,"w":811,"h":811},"left":{"x":0,"y":1674,"w":811,"h":811},"right":{"x":1622,"y":1674,"w":811,"h":811}}';
-
 $json = (object)json_decode($json);
 
 $imgIn = imagecreatefromjpeg($json->image);
