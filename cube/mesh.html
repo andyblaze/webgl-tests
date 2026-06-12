@@ -90,23 +90,28 @@ const positions = plane.geometry.attributes.position;
 
 for (let i = 0; i < positions.count; i++) {
 
-    const x = positions.getX(i);
-    const z = positions.getY(i);
+    let height = -8;
+    let divisor = 40;
+
+    const ox = positions.getX(i);
+    const oz = positions.getY(i);
 
     //
     // Well 1 (centre)
     //
-    const r1 = Math.sqrt(x * x + z * z);
-    const well1 = -8 * Math.exp(-(r1 * r1) / 40);
+    const r1 = Math.sqrt(ox * ox + oz * oz);
+    const well1 = height * Math.exp(-(r1 * r1) / divisor);
 
     //
     // Well 2 (offset)
     //
-    const dx = x - 20;
-    const dz = z - 10;
+    const dx = ox - 20;
+    const dz = oz - 10;
+    height = -4;
+    divisor = 30;
 
     const r2 = Math.sqrt(dx * dx + dz * dz);
-    const well2 = -4 * Math.exp(-(r2 * r2) / 30);
+    const well2 = height * Math.exp(-(r2 * r2) / divisor);
 
     //
     // Combined deformation
