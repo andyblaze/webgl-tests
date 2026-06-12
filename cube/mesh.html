@@ -88,35 +88,37 @@ scene.add(plane);
 //
 const positions = plane.geometry.attributes.position;
 
-for (let i = 0; i < positions.count; i++) {
+class GravityWell {
+    constructor(x, y, st, sp) {
+        this.x = x;
+        this.y = y;
+        this.strength = -st;
+        this.spread = sp;
+    }
+    influence(ox, oy) {
+        const dx = ox - this.x;
+        const dy = oy - this.y;
+        const distanceSquared = dx * dx + dy * dy;
+        return this.strength * Math.exp(-distanceSquared / this.spread);
+    }
+}
 
-    let height = -8;
-    let divisor = 40;
+const wells = [
+    new GravityWell(0, 0, 8, 40),
+    new GravityWell(20, 10, 4, 30)
+];
+
+for (let i = 0; i < positions.count; i++) {
+    let height = 0;
 
     const ox = positions.getX(i);
-    const oz = positions.getY(i);
+    const oy = positions.getY(i);
 
-    //
-    // Well 1 (centre)
-    //
-    const r1 = Math.sqrt(ox * ox + oz * oz);
-    const well1 = height * Math.exp(-(r1 * r1) / divisor);
-
-    //
-    // Well 2 (offset)
-    //
-    const dx = ox - 20;
-    const dz = oz - 10;
-    height = -4;
-    divisor = 30;
-
-    const r2 = Math.sqrt(dx * dx + dz * dz);
-    const well2 = height * Math.exp(-(r2 * r2) / divisor);
-
-    //
-    // Combined deformation
-    //
-    positions.setZ(i, well1 + well2);
+    for ( let w = 0; w < wells.length; w++ ) {
+        const well = wells[w];
+        height += well.influence(ox, oy);
+    }
+    positions.setZ(i, height);
 }
 
 positions.needsUpdate = true;
