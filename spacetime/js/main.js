@@ -68,7 +68,7 @@ scene.add(plane);
 
 // Create gravity wells
 const wells = [
-    new GravityWell(0, 0, 0, 9, 40, 3000, 11),
+    new GravityWell(10, 10, 0, 9, 40, 3000, 18),
     new GravityWell(20, 10, 0, 4, 30, 2000, 7),
     new GravityWell(30, 20, 0, 5, 30, 2500, 6),
     new GravityWell(40, 40, 0, 2, 20, 4500, 13)

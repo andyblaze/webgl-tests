@@ -1,12 +1,12 @@
 export default class GravityWell {
-    constructor(x, y, z, st, sp, d, c) {
+    constructor(x, y, z, st, sp, os, or) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.strength = -st;
         this.spread = sp;
-        this.divisor = d;
-        this.constant = c;
+        this.orbitSpeed = os;
+        this.orbitRadius = or;
     }
     influence(ox, oy, oz) {
         const dx = ox - this.x;
@@ -15,6 +15,7 @@ export default class GravityWell {
         return this.strength * Math.exp(-distanceSquared / this.spread);
     }
     update(t) {
-        this.x = Math.sin(t / this.divisor) * this.constant;
+        this.x = Math.cos(t / this.orbitSpeed) * this.orbitRadius;
+        this.y = Math.sin(t / this.orbitSpeed) * this.orbitRadius;
     }
 }
