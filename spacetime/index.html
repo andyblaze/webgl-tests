@@ -203,6 +203,9 @@ const wells = [
 const positions = plane.geometry.attributes.position;
 
 function updateMesh(t) {    
+    for ( let w = 0; w < wells.length; w++ ) {
+        wells[w].update(t);
+    }
 
     for (let i = 0; i < positions.count; i++) {
         let height = 0;
@@ -212,9 +215,7 @@ function updateMesh(t) {
         const oz = positions.getZ(i);
 
         for ( let w = 0; w < wells.length; w++ ) {
-            const well = wells[w];
-            well.update(t);
-            height += well.influence(ox, oy, oz);
+            height += wells[w].influence(ox, oy, oz);
         }
         positions.setZ(i, height);
     }
