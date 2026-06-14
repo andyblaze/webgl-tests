@@ -12,6 +12,17 @@ export default class Field {
         for ( let w of this.wells ) {
             h += w.influence(x, y, z);
         }
-        return h;
+    //
+    // Horizon attenuation
+    //
+    const minY = -70;
+    const maxY = 70;
+
+    let factor = 1 - ((y - minY) / (maxY - minY));
+
+    // keep some activity on the horizon
+    factor = 0.525 + (factor * 0.75);
+
+    return h * factor;
     }
 }
