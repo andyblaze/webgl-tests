@@ -15,8 +15,8 @@ export default class Field {
     //
     // Horizon attenuation
     //
-    const minY = -70;
-    const maxY = 70;
+    const minY = -60;
+    const maxY = 60;
 
     let factor = 1 - ((y - minY) / (maxY - minY));
 
