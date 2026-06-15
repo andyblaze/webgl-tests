@@ -21,7 +21,7 @@ export default class Field {
     let factor = 1 - ((y - minY) / (maxY - minY));
 
     // keep some activity on the horizon
-    factor = 0.525 + (factor * 0.75);
+    factor = 0.825 + (factor * 0.75);
 
     return h * factor;
     }

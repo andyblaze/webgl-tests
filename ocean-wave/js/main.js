@@ -24,15 +24,20 @@ function makeRenderer(three) {
     return renderer;
 }
 
-function makePlane(three, meshSize, img) {
+function makePlane(three, camera, meshSize, img) {
+    const distance = camera.position.z;
+    const height = 2 * distance * Math.tan((camera.fov * Math.PI / 180) / 2);
+    const width = height * camera.aspect;
+    
     const texture = new three.TextureLoader().load(img);
+
     texture.minFilter = three.LinearMipmapLinearFilter;
     texture.magFilter = three.LinearFilter;
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     const plane = new three.Mesh(
         new three.PlaneGeometry(
-            meshSize * 1.4,   // width
-            meshSize * 1.4,   // height
+            width,   
+            height,   
             meshSize,   // width segments
             meshSize    // height segments
         ),
@@ -41,7 +46,7 @@ function makePlane(three, meshSize, img) {
         })
     );
     // Make it horizontal
-    plane.rotation.x = -Math.PI / 2;
+    //plane.rotation.x = -Math.PI / 2;
     return plane;
 }
 
@@ -58,13 +63,13 @@ scene.background = new THREE.Color(0x000000);
 const camera = makeCamera(
     THREE, 
     {fov: 22, aspect: window.innerWidth / window.innerHeight, near: 0.1, far: 1000 },
-    {x: 0, y: 160, z: 160}, 
+    {x: 0, y: 0, z: 380}, 
     {x: 0, y: 0, z: 0}
 );
 const renderer = makeRenderer(THREE);
 document.body.appendChild(renderer.domElement);
 
-const plane = makePlane(THREE, 160, "oce.jpg?g="+Math.random());
+const plane = makePlane(THREE, camera, 120, "oce.jpg?g="+Math.random());
 scene.add(plane);
 
 const wells = makeWells(28);
