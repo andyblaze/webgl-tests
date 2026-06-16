@@ -60,6 +60,30 @@ class BallRenderer {
     }
 }
 
+class CollisionSystem {
+    constructor() {}
+
+    ballVsWalls(ball, bounds) {
+        const r = ball.collider.radius;
+        if ( ball.x + r >= bounds.right ) {
+            ball.x = bounds.right - r;
+            ball.vx *= -1;
+        }
+        if ( ball.x - r <= bounds.left ) {
+            ball.x = bounds.left + r;
+            ball.vx *= -1;
+        }
+        if ( ball.y + r >= bounds.top ) {
+            ball.y = bounds.top - r;
+            ball.vy *= -1;
+        }
+        if ( ball.y - r <= bounds.bottom ) {
+            ball.y = bounds.bottom + r;
+            ball.vy *= -1;
+        }
+    }
+}
+
 //
 // Ball Collider
 //
@@ -68,14 +92,6 @@ class BallCollider {
     constructor(radius) {
         this.radius = radius;
     }
-    checkWallCollision(ball, bounds) {
-        if ( ball.x + this.radius >= bounds.right || ball.x - this.radius <= bounds.left ) {
-            ball.vx *= -1;
-        }
-        if (ball.y + this.radius >= bounds.top || ball.y - this.radius <= bounds.bottom ) {
-            ball.vy *= -1;
-        }
-    }
 }
 
 //
@@ -83,15 +99,16 @@ class BallCollider {
 //
 
 class Ball {
-    constructor(x, y, radius) {
+    constructor(x, y, r) {
         this.x = x;
         this.y = y;
+        this.radius = r;
 
         this.vx = 5;
         this.vy = 3;
 
-        this.renderer = new BallRenderer(radius);
-        this.collider = new BallCollider(radius);
+        this.renderer = new BallRenderer(r);
+        this.collider = new BallCollider(r);
 
         this.renderer.setPosition(this.x, this.y);
     }
@@ -101,8 +118,6 @@ class Ball {
     update(deltaTime, bounds) {
         this.x += this.vx * deltaTime;
         this.y += this.vy * deltaTime;
-
-        this.collider.checkWallCollision(this, bounds);
         this.renderer.setPosition(this.x, this.y);
     }
 }
@@ -240,14 +255,19 @@ window.addEventListener('resize', () => {
 // Game Loop
 //
 
+const collisions = new CollisionSystem();
+
 const clock = new THREE.Clock();
 
 function animate(timestamp) {
     requestAnimationFrame(animate);
     const deltaTime = clock.getDelta();
 
+    
+
     ball.update(deltaTime, bounds);
-    paddle.update(deltaTime, input, bounds);
+    paddle.update(deltaTime, input, bounds);    
+    collisions.ballVsWalls(ball, bounds);
     renderer.render(scene, camera);
 }
 animate(performance.now());
