@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breakout Prototype</title>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: black;
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+<body>
+
+<script type="module">
+
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js';
+
+//
+// Scene Setup
+//
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.OrthographicCamera(-10, 10, 7.5, -7.5, 0.1, 100);
+
+camera.position.z = 10;
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+//
+// Ball Renderer
+//
+
+class BallRenderer {
+    constructor(radius) {
+        const geometry = new THREE.SphereGeometry(radius, 32, 32);
+
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+        this.mesh = new THREE.Mesh(geometry, material);
+    }
+    setPosition(x, y) {
+        this.mesh.position.set(x, y, 0);
+    }
+    addToScene(scene) {
+        scene.add(this.mesh);
+    }
+}
+
+//
+// Ball Collider
+//
+
+class BallCollider {
+    constructor(radius) {
+        this.radius = radius;
+    }
+    checkWallCollision(ball, bounds) {
+        if (
+            ball.x + this.radius >= bounds.right ||
+            ball.x - this.radius <= bounds.left
+        )
+        {
+            ball.vx *= -1;
+        }
+
+        if (
+            ball.y + this.radius >= bounds.top ||
+            ball.y - this.radius <= bounds.bottom
+        )
+        {
+            ball.vy *= -1;
+        }
+    }
+}
+
+//
+// Ball
+//
+
+class Ball {
+    constructor(x, y, radius) {
+        this.x = x;
+        this.y = y;
+
+        this.vx = 5;
+        this.vy = 3;
+
+        this.renderer = new BallRenderer(radius);
+        this.collider = new BallCollider(radius);
+
+        this.renderer.setPosition(this.x, this.y);
+    }
+    addToScene(scene) {
+        this.renderer.addToScene(scene);
+    }
+    update(deltaTime, bounds) {
+        this.x += this.vx * deltaTime;
+        this.y += this.vy * deltaTime;
+
+        this.collider.checkWallCollision(this, bounds);
+        this.renderer.setPosition(this.x, this.y);
+    }
+}
+
+class PaddleRenderer {
+    constructor(width, height) {
+        const geometry = new THREE.BoxGeometry(width, height, 0.2);
+
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+        this.mesh = new THREE.Mesh(geometry, material);
+    }
+    addToScene(scene) {
+        scene.add(this.mesh);
+    }
+    setPosition(x, y) {
+        this.mesh.position.set(x, y, 0);
+    }
+}
+
+class PaddleCollider {
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+}
+
+class Paddle {
+    constructor(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.speed = 8;
+
+        this.renderer = new PaddleRenderer(width, height);
+        this.collider = new PaddleCollider(width, height);
+        this.renderer.setPosition(this.x, this.y);
+    }
+    addToScene(scene) {
+        this.renderer.addToScene(scene);
+    }
+    update(deltaTime, input, bounds) {
+        if ( input.left ) {
+            this.x -= this.speed * deltaTime;
+        }
+        if ( input.right ) {
+            this.x += this.speed * deltaTime;
+        }
+        const halfWidth = this.collider.width / 2;
+
+        if ( this.x - halfWidth < bounds.left ) {
+            this.x = bounds.left + halfWidth;
+        }
+        if ( this.x + halfWidth > bounds.right ) {
+            this.x = bounds.right - halfWidth;
+        }
+        this.renderer.setPosition(this.x, this.y);
+    }
+}
+
+
+
+const paddle = new Paddle(0, -6, 3, 0.3);
+
+paddle.addToScene(scene);
+
+//
+// Input Manager
+//
+
+class InputManager {
+    constructor() {
+        this.left = false;
+        this.right = false;
+
+        window.addEventListener(
+            "keydown",
+            (event) => this.onKeyDown(event)
+        );
+
+        window.addEventListener(
+            "keyup",
+            (event) => this.onKeyUp(event)
+        );
+    }
+    onKeyDown(event) {
+        switch(event.code) {
+            case "ArrowLeft":
+                this.left = true;
+                break;
+
+            case "ArrowRight":
+                this.right = true;
+                break;
+        }
+    }
+    onKeyUp(event) {
+        switch(event.code) {
+            case "ArrowLeft":
+                this.left = false;
+                break;
+
+            case "ArrowRight":
+                this.right = false;
+                break;
+        }
+    }
+} 
+const input = new InputManager();
+//
+// World Bounds
+//
+
+const bounds = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
+
+//
+// Create Ball
+//
+
+const ball = new Ball(0, 0, 0.4);
+
+ball.addToScene(scene);
+
+//
+// Resize Handling
+//
+
+window.addEventListener('resize', () => {
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+});
+
+//
+// Game Loop
+//
+
+const clock = new THREE.Clock();
+
+function animate(timestamp) {
+    requestAnimationFrame(animate);
+    const deltaTime = clock.getDelta();
+
+    ball.update(deltaTime, bounds);
+    paddle.update(deltaTime, input, bounds);
+    renderer.render(scene, camera);
+}
+animate(performance.now());
+
+</script>
+
+</body>
+</html>
