@@ -23,9 +23,9 @@ export default class CollisionSystem {
     ballVsPaddle(ball, paddle) {
         const r = ball.collider.radius;
         const w = paddle.collider.width;
-        const h = paddle.collider.height;
-        if ( ball.y + r <= h ) {
-            ball.y = h + r;
+        const b = paddle.collider.bottom + paddle.collider.height;
+        if ( ball.y + r <= b ) {
+            ball.y = b + r;
             ball.vy *= -1;
         }
     }

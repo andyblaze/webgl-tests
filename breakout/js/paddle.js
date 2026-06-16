@@ -8,7 +8,7 @@ export default class Paddle {
         this.speed = 8;
 
         this.renderer = new PaddleRenderer(three, width, height);
-        this.collider = new PaddleCollider(width, height);
+        this.collider = new PaddleCollider(x, y, width, height);
         this.renderer.setPosition(this.x, this.y);
     }
     addToScene(scene) {
