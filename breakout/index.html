@@ -69,19 +69,10 @@ class BallCollider {
         this.radius = radius;
     }
     checkWallCollision(ball, bounds) {
-        if (
-            ball.x + this.radius >= bounds.right ||
-            ball.x - this.radius <= bounds.left
-        )
-        {
+        if ( ball.x + this.radius >= bounds.right || ball.x - this.radius <= bounds.left ) {
             ball.vx *= -1;
         }
-
-        if (
-            ball.y + this.radius >= bounds.top ||
-            ball.y - this.radius <= bounds.bottom
-        )
-        {
+        if (ball.y + this.radius >= bounds.top || ball.y - this.radius <= bounds.bottom ) {
             ball.vy *= -1;
         }
     }
