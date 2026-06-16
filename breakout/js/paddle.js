@@ -29,6 +29,8 @@ export default class Paddle {
         if ( this.x + halfWidth > bounds.right ) {
             this.x = bounds.right - halfWidth;
         }
+        this.collider.x = this.x;
+        this.collider.y = this.y;
         this.renderer.setPosition(this.x, this.y);
     }
 }
