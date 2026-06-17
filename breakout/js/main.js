@@ -3,6 +3,12 @@ import CollisionSystem from './collision-system.js';
 import Ball from './ball.js';
 import Paddle from './paddle.js?r=1126';
 import InputManager from './input-manager.js';
+import Hud from './hud.js';
+import GameState from './gamestate.js';
+
+const gamestate = new GameState();
+gamestate.addObserver(new Hud());
+gamestate.notify();
 
 //
 // Scene Setup
@@ -42,6 +48,7 @@ function animate(timestamp) {
     paddle.update(deltaTime, input, bounds);    
     collisions.ballVsWalls(ball, bounds);
     collisions.ballVsPaddle(ball, paddle);
+    gamestate.update(ball);
     renderer.render(scene, camera);
 }
 animate(performance.now());
