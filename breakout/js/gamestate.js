@@ -11,6 +11,12 @@ export default class GameState {
     addObserver(o) {
         this.observers.push(o);
     }
+    registerHit(hit) {
+        if ( hit === 1 ) {
+            this.data.score++;
+            this.notify();
+        }
+    }
     update(ball, hit) {
         if ( ball.y < -5.5 ) {
             this.data.lives--;
@@ -18,10 +24,6 @@ export default class GameState {
             if ( this.data.lives <= 0 )
                 this.data.gameOver = true;
 
-            this.notify();
-        }
-        if ( hit === 1 ) {
-            this.data.score++;
             this.notify();
         }
     }
