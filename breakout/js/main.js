@@ -5,6 +5,7 @@ import Paddle from './paddle.js?r=1126';
 import InputManager from './input-manager.js';
 import Hud from './hud.js';
 import GameState from './gamestate.js';
+import Brick from './brick.js';
 
 const gamestate = new GameState();
 gamestate.addObserver(new Hud());
@@ -27,6 +28,9 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+const brick = new Brick(THREE, 0, 4, 9, 2);
+brick.addToScene(scene);
+
 const paddle = new Paddle(THREE, 0, -6, 3, 0.3);
 paddle.addToScene(scene);
 
@@ -34,7 +38,7 @@ const input = new InputManager();
 // World Bounds
 const bounds = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
 
-const ball = new Ball(THREE, 0, 0, 0.4);
+const ball = new Ball(THREE, 0, 0, 0.2);
 ball.addToScene(scene);
 
 const collisions = new CollisionSystem();
@@ -48,6 +52,7 @@ function animate(timestamp) {
     paddle.update(deltaTime, input, bounds);    
     collisions.ballVsWalls(ball, bounds);
     collisions.ballVsPaddle(ball, paddle);
+    collisions.ballVsBrick(ball, brick);
     gamestate.update(ball);
     renderer.render(scene, camera);
 }

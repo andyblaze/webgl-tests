@@ -1,4 +1,4 @@
-export default class PaddleCollider {
+export default class BrickCollider {
     constructor(x, y, width, height) {
         this.x = x;
         this.y = y;
