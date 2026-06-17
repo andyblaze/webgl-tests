@@ -52,8 +52,8 @@ function animate(timestamp) {
     paddle.update(deltaTime, input, bounds);    
     collisions.ballVsWalls(ball, bounds);
     collisions.ballVsPaddle(ball, paddle);
-    collisions.ballVsBrick(ball, brick);
-    gamestate.update(ball);
+    const hit = collisions.ballVsBrick(ball, brick);
+    gamestate.update(ball, hit);
     renderer.render(scene, camera);
 }
 animate(performance.now());
