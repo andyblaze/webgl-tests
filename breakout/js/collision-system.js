@@ -2,23 +2,29 @@ export default class CollisionSystem {
     constructor() {
 
     }
+    bounceX(ball, dir) {
+        ball.x = dir; // snap ball (prevents sticking)
+        ball.vx *= -1;
+        return 1;
+    }
+    bounceY(ball, dir) {
+        ball.y = dir; // snap ball (prevents sticking)
+        ball.vy *= -1;
+        return 1;
+    }
     ballVsEdges(ball, bounds) {
         const r = ball.collider.radius;
-        if ( ball.x + r >= bounds.right ) {
-            ball.x = bounds.right - r;
-            ball.vx *= -1;
-        }
         if ( ball.x - r <= bounds.left ) {
-            ball.x = bounds.left + r;
-            ball.vx *= -1;
+            this.bounceX(ball, bounds.left + r);
         }
-        if ( ball.y + r >= bounds.top ) {
-            ball.y = bounds.top - r;
-            ball.vy *= -1;
+        if ( ball.x + r >= bounds.right ) {
+            this.bounceX(ball, bounds.right - r);
         }
         if ( ball.y - r <= bounds.bottom ) {
-            ball.y = bounds.bottom + r;
-            ball.vy *= -1;
+            this.bounceY(ball, bounds.bottom + r);
+        }
+        if ( ball.y + r >= bounds.top ) {
+            this.bounceY(ball, bounds.top - r);
         }
     }
     ballVsPaddle(ball, paddle) {
@@ -26,16 +32,10 @@ export default class CollisionSystem {
         const bounds = paddle.collider;
 
         // quick rejection (your existing optimisation)
-        if ( ball.x + r < bounds.left ) return;
-        if ( ball.x - r > bounds.right ) return;
-        if ( ball.y + r < bounds.bottom ) return;
-        if ( ball.y - r > bounds.top ) return;
+        if ( this.isOutsideBounds(ball, bounds) ) return;
 
         // --- collision happened ---
-
-        // snap ball above paddle (prevents sticking)
-        ball.y = bounds.top + r;
-
+        this.bounceY(ball, bounds.top + r);
         // compute hit position (-1 to +1)
         const hitPos = (ball.x - bounds.x) / (bounds.width / 2);
 
@@ -46,35 +46,32 @@ export default class CollisionSystem {
         const maxAngleFactor = 6;
 
         ball.vx = clampedHit * maxAngleFactor;
-        ball.vy *= -1;
+        
+    }
+    isOutsideBounds(ball, bounds) {
+        const r = ball.collider.radius;
+        return ( 
+            ball.x + r < bounds.left ||
+            ball.x - r > bounds.right ||
+            ball.y + r < bounds.bottom ||
+            ball.y - r > bounds.top );
     }
     ballVsBrick(ball, brick) {
         const r = ball.collider.radius;
         const bounds = brick.collider;
-        if ( ball.x + r < bounds.left ) return 0;
-        if ( ball.x - r > bounds.right ) return 0;
-        if ( ball.y + r < bounds.bottom ) return 0;
-        if ( ball.y - r > bounds.top ) return 0;   
+        if ( this.isOutsideBounds(ball, bounds) ) return 0;
 
         if ( ball.x + r >= bounds.right ) {
-            ball.x = bounds.right + r;
-            ball.vx *= -1;
-            return 1;
+            return this.bounceX(ball, bounds.right + r);
         }
         if ( ball.x - r <= bounds.left ) {
-            ball.x = bounds.left - r;
-            ball.vx *= -1;
-            return 1;
+            return this.bounceX(ball, bounds.left - r);
         }
         if ( ball.y + r >= bounds.top ) {
-            ball.y = bounds.top + r;
-            ball.vy *= -1;
-            return 1;
+            return this.bounceY(ball, bounds.top + r);
         }
         if ( ball.y - r <= bounds.bottom ) {
-            ball.y = bounds.bottom - r;
-            ball.vy *= -1;
-            return 1;
+            return this.bounceY(ball, bounds.bottom - r);
         }
     }
     ballVsWall(ball, wall, gamestate) {
