@@ -2,16 +2,16 @@ import BallRenderer from './ball-renderer.js';
 import BallCollider from './ball-collider.js';
 
 export default class Ball {
-    constructor(three, x, y, r) {
-        this.x = x;
-        this.y = y;
-        this.radius = r;
+    constructor(three, pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+        this.radius = pos.radius;
 
         this.vx = 5;
         this.vy = 3;
 
-        this.renderer = new BallRenderer(three, r);
-        this.collider = new BallCollider(r);
+        this.renderer = new BallRenderer(three, pos.radius);
+        this.collider = new BallCollider(pos.radius);
 
         this.renderer.setPosition(this.x, this.y);
     }

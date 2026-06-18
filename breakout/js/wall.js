@@ -1,10 +1,13 @@
 import Brick from './brick.js';
 
 export default class Wall {
-    constructor(three, scene, n) {
+    constructor(three, scene, n, brickSz) {
+        const left = -((n / 2) * brickSz.width);
+        //console.log(left);
         this.bricks = [];
-        for ( let i = 1; i <= n; i+=2 ) {
-            const b = new Brick(three, -i, i, 2, 1);
+        for ( let x = left; x < n; x+= brickSz.width ) {
+            //console.log(x);
+            const b = new Brick(three, x, 1, brickSz.width, brickSz.height);
             b.addToScene(scene);
             this.bricks.push(b);
         }

@@ -5,36 +5,33 @@ export default class CollisionSystem {
     bounceX(ball, dir) {
         ball.x = dir; // snap ball (prevents sticking)
         ball.vx *= -1;
-        return 1;
+        return 1; // it's a hit
     }
     bounceY(ball, dir) {
-        ball.y = dir; // snap ball (prevents sticking)
+        ball.y = dir; 
         ball.vy *= -1;
         return 1;
     }
     ballVsEdges(ball, bounds) {
         const r = ball.collider.radius;
-        if ( ball.x - r <= bounds.left ) {
+        if ( ball.x - r <= bounds.left ) 
             this.bounceX(ball, bounds.left + r);
-        }
-        if ( ball.x + r >= bounds.right ) {
+
+        if ( ball.x + r >= bounds.right ) 
             this.bounceX(ball, bounds.right - r);
-        }
-        if ( ball.y - r <= bounds.bottom ) {
+
+        if ( ball.y - r <= bounds.bottom ) 
             this.bounceY(ball, bounds.bottom + r);
-        }
-        if ( ball.y + r >= bounds.top ) {
+
+        if ( ball.y + r >= bounds.top ) 
             this.bounceY(ball, bounds.top - r);
-        }
     }
     ballVsPaddle(ball, paddle) {
-        const r = ball.collider.radius;
         const bounds = paddle.collider;
-
-        // quick rejection (your existing optimisation)
         if ( this.isOutsideBounds(ball, bounds) ) return;
 
         // --- collision happened ---
+        const r = ball.collider.radius;
         this.bounceY(ball, bounds.top + r);
         // compute hit position (-1 to +1)
         const hitPos = (ball.x - bounds.x) / (bounds.width / 2);
@@ -61,18 +58,17 @@ export default class CollisionSystem {
         const bounds = brick.collider;
         if ( this.isOutsideBounds(ball, bounds) ) return 0;
 
-        if ( ball.x + r >= bounds.right ) {
+        if ( ball.x + r >= bounds.right ) 
             return this.bounceX(ball, bounds.right + r);
-        }
-        if ( ball.x - r <= bounds.left ) {
+
+        if ( ball.x - r <= bounds.left ) 
             return this.bounceX(ball, bounds.left - r);
-        }
-        if ( ball.y + r >= bounds.top ) {
+
+        if ( ball.y + r >= bounds.top ) 
             return this.bounceY(ball, bounds.top + r);
-        }
-        if ( ball.y - r <= bounds.bottom ) {
+
+        if ( ball.y - r <= bounds.bottom ) 
             return this.bounceY(ball, bounds.bottom - r);
-        }
     }
     ballVsWall(ball, wall, gamestate) {
         for ( const b of wall.bricks ) {
