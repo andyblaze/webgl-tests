@@ -11,36 +11,30 @@ const gamestate = new GameState();
 gamestate.addObserver(new Hud());
 gamestate.notify();
 
-//
 // Scene Setup
-//
-
 const scene = new THREE.Scene();
-
 const camera = new THREE.OrthographicCamera(-10, 10, 7.5, -7.5, 0.1, 100);
-
 camera.position.z = 10;
-
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// game items
+const collisions = new CollisionSystem();
+const input = new InputManager();
 const wall = new Wall(THREE, scene, 7);
 
 const paddle = new Paddle(THREE, 0, -6, 3, 0.3);
 paddle.addToScene(scene);
 
-const input = new InputManager();
-// World Bounds
-const edges = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
-
 const ball = new Ball(THREE, 0, 0, 0.2);
 ball.addToScene(scene);
 
-const collisions = new CollisionSystem();
+// World Bounds
+const edges = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
+
+// animation stuff
 const clock = new THREE.Clock();
 
 function animate(timestamp) {
