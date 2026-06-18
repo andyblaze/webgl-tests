@@ -1,4 +1,4 @@
-import PaddleRenderer from "./paddle-renderer.js?r=112";
+import PaddleRenderer from "./paddle-renderer.js";
 import PaddleCollider from "./paddle-collider.js";
 
 export default class Paddle {

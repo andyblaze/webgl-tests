@@ -1,11 +1,11 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js';
 import CollisionSystem from './collision-system.js';
 import Ball from './ball.js';
-import Paddle from './paddle.js?r=1126';
+import Paddle from './paddle.js';
 import InputManager from './input-manager.js';
 import Hud from './hud.js';
 import GameState from './gamestate.js';
-import Brick from './brick.js';
+import Wall from './wall.js';
 
 const gamestate = new GameState();
 gamestate.addObserver(new Hud());
@@ -28,23 +28,6 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-class Wall {
-    constructor(three, scene, n) {
-        this.bricks = [];
-        for ( let i = 1; i <= n; i+=2 ) {
-            const b = new Brick(three, -i, i, 2, 1);
-            b.addToScene(scene);
-            this.bricks.push(b);
-        }
-    }
-    iterate(ball, gamestate) {
-        for ( const b of this.bricks ) {
-            const hit = this.ballVsBrick(ball, b);
-            gamestate.registerHit(hit);
-        }
-    }
-}
-
 const wall = new Wall(THREE, scene, 7);
 
 const paddle = new Paddle(THREE, 0, -6, 3, 0.3);
@@ -52,7 +35,7 @@ paddle.addToScene(scene);
 
 const input = new InputManager();
 // World Bounds
-const bounds = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
+const edges = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
 
 const ball = new Ball(THREE, 0, 0, 0.2);
 ball.addToScene(scene);
@@ -64,12 +47,11 @@ function animate(timestamp) {
     requestAnimationFrame(animate);
     const deltaTime = clock.getDelta();    
 
-    ball.update(deltaTime, bounds);
-    paddle.update(deltaTime, input, bounds);    
-    collisions.ballVsWalls(ball, bounds);
+    ball.update(deltaTime, edges);
+    paddle.update(deltaTime, input, edges);    
+    collisions.ballVsEdges(ball, edges);
     collisions.ballVsPaddle(ball, paddle);
     collisions.ballVsWall(ball, wall, gamestate);
-    //wall.iterate(ball, collisions, gamestate);
     gamestate.update(ball);
     renderer.render(scene, camera);
 }

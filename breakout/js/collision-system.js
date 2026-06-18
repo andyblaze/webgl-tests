@@ -1,7 +1,7 @@
 export default class CollisionSystem {
     constructor() {}
 
-    ballVsWalls(ball, bounds) {
+    ballVsEdges(ball, bounds) {
         const r = ball.collider.radius;
         if ( ball.x + r >= bounds.right ) {
             ball.x = bounds.right - r;

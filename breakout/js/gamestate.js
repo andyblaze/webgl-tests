@@ -17,7 +17,7 @@ export default class GameState {
             this.notify();
         }
     }
-    update(ball, hit) {
+    update(ball) {
         if ( ball.y < -5.5 ) {
             this.data.lives--;
 
