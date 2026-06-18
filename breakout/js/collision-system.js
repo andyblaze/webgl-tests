@@ -76,4 +76,10 @@ export default class CollisionSystem {
             return 1;
         }
     }
+    ballVsWall(ball, wall, gamestate) {
+        for ( const b of wall.bricks ) {
+            const hit = this.ballVsBrick(ball, b);
+            gamestate.registerHit(hit);
+        }
+    }
 }

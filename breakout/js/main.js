@@ -28,21 +28,24 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const bricks = [];
-for ( let i = 1; i <= 7; i+=2 ) {
-    const b = new Brick(THREE, -i, i, 2, 1);
-    b.addToScene(scene);
-    bricks.push(b);
+class Wall {
+    constructor(three, scene, n) {
+        this.bricks = [];
+        for ( let i = 1; i <= n; i+=2 ) {
+            const b = new Brick(three, -i, i, 2, 1);
+            b.addToScene(scene);
+            this.bricks.push(b);
+        }
+    }
+    iterate(ball, gamestate) {
+        for ( const b of this.bricks ) {
+            const hit = this.ballVsBrick(ball, b);
+            gamestate.registerHit(hit);
+        }
+    }
 }
 
-/*const brick0 = new Brick(THREE, -1, 1, 2, 1);
-brick0.addToScene(scene);
-const brick1 = new Brick(THREE, -3, 3, 2, 1);
-brick1.addToScene(scene);
-const brick2 = new Brick(THREE, -5, 5, 2, 1);
-brick2.addToScene(scene);
-const brick3 = new Brick(THREE, -7, 7, 2, 1);
-brick3.addToScene(scene);*/
+const wall = new Wall(THREE, scene, 7);
 
 const paddle = new Paddle(THREE, 0, -6, 3, 0.3);
 paddle.addToScene(scene);
@@ -65,13 +68,8 @@ function animate(timestamp) {
     paddle.update(deltaTime, input, bounds);    
     collisions.ballVsWalls(ball, bounds);
     collisions.ballVsPaddle(ball, paddle);
-    for ( const b of bricks ) {
-        const hit = collisions.ballVsBrick(ball, b);
-        gamestate.registerHit(hit);
-    }
-    /*collisions.ballVsBrick(ball, brick1);
-    collisions.ballVsBrick(ball, brick2);
-    collisions.ballVsBrick(ball, brick3);*/
+    collisions.ballVsWall(ball, wall, gamestate);
+    //wall.iterate(ball, collisions, gamestate);
     gamestate.update(ball);
     renderer.render(scene, camera);
 }
