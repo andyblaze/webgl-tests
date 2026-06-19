@@ -1,3 +1,5 @@
+import { clamp } from "./functions.js";
+
 export default class CollisionSystem {
     constructor() {
 
@@ -37,7 +39,7 @@ export default class CollisionSystem {
         const hitPos = (ball.x - bounds.x) / (bounds.width / 2);
 
         // optional clamp so it doesn't go insane at edges
-        const clampedHit = Math.max(-1, Math.min(1, hitPos));
+        const clampedHit = clamp(hitPos, -1, 1);
 
         // tweak angle influence strength
         const maxAngleFactor = 6;

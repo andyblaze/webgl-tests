@@ -6,6 +6,7 @@ import InputManager from './input-manager.js';
 import Hud from './hud.js';
 import GameState from './gamestate.js';
 import Wall from './wall.js';
+import Brick from './brick.js';
 
 const gamestate = new GameState();
 gamestate.addObserver(new Hud());
@@ -23,12 +24,12 @@ document.body.appendChild(renderer.domElement);
 // game items
 const collisions = new CollisionSystem();
 const input = new InputManager();
-const wall = new Wall(THREE, scene, 8, 5, { width: 2, height: 1 });
+const wall = new Wall(THREE, scene, { cols:8, rows: 5, brickW: 2, brickH: 1 });
 
 const paddle = new Paddle(THREE, { x: 0, y: -6, width: 3, height: 0.3 });
 paddle.addToScene(scene);
 
-const ball = new Ball(THREE, { x: 0, y: 0, radius: 0.2 });
+const ball = new Ball(THREE, { x: 0, y: -2, radius: 0.2 });
 ball.addToScene(scene);
 
 // World Bounds

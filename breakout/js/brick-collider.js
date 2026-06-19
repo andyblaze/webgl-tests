@@ -1,5 +1,6 @@
 export default class BrickCollider {
-    constructor(x, y, width, height) {
+    constructor(cfg) {
+        const { x, y, width, height } = {...cfg};
         this.x = x;
         this.y = y;
         this.width = width;
