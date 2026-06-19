@@ -1,15 +1,28 @@
 import Brick from './brick.js';
 
 export default class Wall {
-    constructor(three, scene, n, brickSz) {
-        const left = -((n / 2) * brickSz.width);
-        //console.log(left);
+    constructor(three, scene, cols, rows, brickSz) {
+        const left = -(cols * brickSz.width) / 2;
+
         this.bricks = [];
-        for ( let x = left; x < n; x+= brickSz.width ) {
-            //console.log(x);
-            const b = new Brick(three, x, 1, brickSz.width, brickSz.height);
-            b.addToScene(scene);
-            this.bricks.push(b);
+
+        for ( let row = 0; row < rows; row++ ) {
+            const y = 1 + row * brickSz.height;
+
+            for ( let col = 0; col < cols; col++ ) {
+                const x = left + col * brickSz.width;
+
+                const brick = new Brick(
+                    three,
+                    x,
+                    y,
+                    brickSz.width,
+                    brickSz.height
+                );
+
+                brick.addToScene(scene);
+                this.bricks.push(brick);
+            }
         }
-    } 
+    }
 }

@@ -79,8 +79,7 @@ export default class CollisionSystem {
             
             if ( hit === 1 ) {
                 gamestate.registerHit(hit);
-                b.destroyed = true;
-                b.renderer.update(b);
+                b.destroy();
                 break;
             }
         }

@@ -23,7 +23,7 @@ document.body.appendChild(renderer.domElement);
 // game items
 const collisions = new CollisionSystem();
 const input = new InputManager();
-const wall = new Wall(THREE, scene, 8, { width: 2, height: 1 });
+const wall = new Wall(THREE, scene, 8, 5, { width: 2, height: 1 });
 
 const paddle = new Paddle(THREE, { x: 0, y: -6, width: 3, height: 0.3 });
 paddle.addToScene(scene);

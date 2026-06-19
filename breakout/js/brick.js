@@ -14,4 +14,8 @@ export default class Brick {
     addToScene(scene) {
         this.renderer.addToScene(scene);
     }
+    destroy() {
+        this.destroyed = true;
+        this.renderer.update(this);
+    }
 }
