@@ -10,6 +10,8 @@ export default class Ball {
         this.vx = cfg.vx;
         this.vy = cfg.vy;
 
+        this.dead = false;
+
         this.renderer = new BallRenderer(three, cfg.radius);
         this.collider = new BallCollider(cfg.radius);
 
@@ -22,5 +24,8 @@ export default class Ball {
         this.x += this.vx * deltaTime;
         this.y += this.vy * deltaTime;
         this.renderer.setPosition(this.x, this.y);
+    }
+    kill() {
+        this.dead = true;
     }
 }

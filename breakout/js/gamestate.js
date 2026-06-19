@@ -5,7 +5,8 @@ export default class GameState {
         this.data = {
             lives: 3,
             score: 0,
-            gameOver: false
+            gameOver: false,
+            isPaused: false
         };
     }
     addObserver(o) {
@@ -16,6 +17,21 @@ export default class GameState {
             this.data.score++;
             this.notify();
         }
+    }
+    togglePaused() {
+        this.isPaused = !this.isPaused;
+    }
+    paused() {
+        return this.isPaused;
+    }
+    registerLifeLoss() {
+        this.data.lives--;
+
+        if ( this.data.lives <= 0 )
+            this.data.gameOver = true;
+
+        this.notify();  
+        this.togglePaused();      
     }
     update(ball) {
         if ( ball.y < -5.5 ) {

@@ -3,7 +3,6 @@ import Brick from './brick.js';
 export default class Wall {
     constructor(three, scene, cfg) {
         const { cols, rows, brickW, brickH } = { ...cfg };
-        //const left = -(cols * brickW) / 2;
         const left = -(cols * brickW) / 2 + brickW / 2;
         this.bricks = [];
 

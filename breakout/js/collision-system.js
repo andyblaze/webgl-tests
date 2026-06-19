@@ -14,7 +14,7 @@ export default class CollisionSystem {
         ball.vy *= -1;
         return 1;
     }
-    ballVsEdges(ball, bounds) {
+    ballVsEdges(ball, bounds, gamestate) {
         const r = ball.collider.radius;
         if ( ball.x - r <= bounds.left ) 
             this.bounceX(ball, bounds.left + r);
@@ -22,8 +22,11 @@ export default class CollisionSystem {
         if ( ball.x + r >= bounds.right ) 
             this.bounceX(ball, bounds.right - r);
 
-        if ( ball.y - r <= bounds.bottom ) 
-            this.bounceY(ball, bounds.bottom + r);
+        const ballLost = ( true === !ball.dead && ball.y <= bounds.bottom );
+            if ( true === ballLost ) {
+                ball.kill();
+                gamestate.registerLifeLoss();
+            }
 
         if ( ball.y + r >= bounds.top ) 
             this.bounceY(ball, bounds.top - r);

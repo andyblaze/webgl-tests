@@ -43,11 +43,12 @@ const clock = new THREE.Clock();
 
 function animate(timestamp) {
     requestAnimationFrame(animate);
+    if ( true === gamestate.paused() ) return;
     const deltaTime = clock.getDelta();    
 
     ball.update(deltaTime, edges);
     paddle.update(deltaTime, input, edges);    
-    collisions.ballVsEdges(ball, edges);
+    collisions.ballVsEdges(ball, edges, gamestate);
     collisions.ballVsPaddle(ball, paddle);
     collisions.ballVsWall(ball, wall, gamestate);
     gamestate.update(ball);
