@@ -24,7 +24,7 @@ document.body.appendChild(renderer.domElement);
 // game items
 const collisions = new CollisionSystem();
 const input = new InputManager();
-const wall = new Wall(THREE, scene, { cols:8, rows: 5, brickW: 2, brickH: 1 });
+const wall = new Wall(THREE, scene, { cols:16, rows: 10, brickW: 1, brickH: 0.5 });
 
 const paddle = new Paddle(THREE, { x: 0, y: -6, width: 3, height: 0.3 });
 paddle.addToScene(scene);
