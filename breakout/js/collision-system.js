@@ -22,10 +22,11 @@ export default class CollisionSystem {
         if ( ball.x + r >= bounds.right ) 
             this.bounceX(ball, bounds.right - r);
 
-        const ballLost = ( true === !ball.dead && ball.y <= bounds.bottom );
+        const ballLost = ( false === ball.dead && ball.y <= -6);//bounds.bottom );
             if ( true === ballLost ) {
-                ball.kill();
+                ball.kill();                
                 gamestate.registerLifeLoss();
+                ball.reset();
             }
 
         if ( ball.y + r >= bounds.top ) 

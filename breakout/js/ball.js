@@ -25,6 +25,10 @@ export default class Ball {
         this.y += this.vy * deltaTime;
         this.renderer.setPosition(this.x, this.y);
     }
+    reset() {
+        this.y = 0;
+        this.renderer.setPosition(this.x, this.y);
+    }
     kill() {
         this.dead = true;
     }
