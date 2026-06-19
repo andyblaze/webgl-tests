@@ -41,10 +41,7 @@ export default class CollisionSystem {
         // optional clamp so it doesn't go insane at edges
         const clampedHit = clamp(hitPos, -1, 1);
 
-        // tweak angle influence strength
-        const maxAngleFactor = 6;
-
-        ball.vx = clampedHit * maxAngleFactor;
+        ball.vx = clampedHit * paddle.maxAngleFactor;
         
     }
     isOutsideBounds(ball, bounds) {

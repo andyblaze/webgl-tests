@@ -2,13 +2,14 @@ import PaddleRenderer from "./paddle-renderer.js";
 import PaddleCollider from "./paddle-collider.js";
 
 export default class Paddle {
-    constructor(three, pos) {
-        this.x = pos.x;
-        this.y = pos.y;
-        this.speed = 8;
+    constructor(three, cfg) {
+        this.x = cfg.x;
+        this.y = cfg.y;
+        this.speed = cfg.speed;
+        this.maxAngleFactor = cfg.maxAngleFactor;
 
-        this.renderer = new PaddleRenderer(three, pos.width, pos.height);
-        this.collider = new PaddleCollider(pos.x, pos.y, pos.width, pos.height);
+        this.renderer = new PaddleRenderer(three, cfg.width, cfg.height);
+        this.collider = new PaddleCollider(cfg.x, cfg.y, cfg.width, cfg.height);
         this.renderer.setPosition(this.x, this.y);
     }
     addToScene(scene) {

@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js';
+import Config from './config.js';
 import CollisionSystem from './collision-system.js';
 import Ball from './ball.js';
 import Paddle from './paddle.js';
@@ -6,7 +7,8 @@ import InputManager from './input-manager.js';
 import Hud from './hud.js';
 import GameState from './gamestate.js';
 import Wall from './wall.js';
-import Brick from './brick.js';
+
+const config = new Config();
 
 const gamestate = new GameState();
 gamestate.addObserver(new Hud());
@@ -14,7 +16,8 @@ gamestate.notify();
 
 // Scene Setup
 const scene = new THREE.Scene();
-const camera = new THREE.OrthographicCamera(-10, 10, 7.5, -7.5, 0.1, 100);
+const { left, right, top, bottom } = {...config.edgesCfg};
+const camera = new THREE.OrthographicCamera(left, right, top, bottom, 0.1, 100);
 camera.position.z = 10;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -24,16 +27,16 @@ document.body.appendChild(renderer.domElement);
 // game items
 const collisions = new CollisionSystem();
 const input = new InputManager();
-const wall = new Wall(THREE, scene, { cols:16, rows: 10, brickW: 1, brickH: 0.5 });
+const wall = new Wall(THREE, scene, config.wallCfg);
 
-const paddle = new Paddle(THREE, { x: 0, y: -6, width: 3, height: 0.3 });
+const paddle = new Paddle(THREE, config.paddleCfg);
 paddle.addToScene(scene);
 
-const ball = new Ball(THREE, { x: 0, y: -2, radius: 0.2 });
+const ball = new Ball(THREE, config.ballCfg);
 ball.addToScene(scene);
 
 // World Bounds
-const edges = { left: -10, right: 10, top: 7.5, bottom: -7.5 };
+const edges = config.edgesCfg;
 
 // animation stuff
 const clock = new THREE.Clock();
