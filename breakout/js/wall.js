@@ -11,5 +11,5 @@ export default class Wall {
             b.addToScene(scene);
             this.bricks.push(b);
         }
-    }
+    } 
 }

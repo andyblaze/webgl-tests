@@ -72,8 +72,17 @@ export default class CollisionSystem {
     }
     ballVsWall(ball, wall, gamestate) {
         for ( const b of wall.bricks ) {
+
+            if ( b.destroyed ) continue;
+
             const hit = this.ballVsBrick(ball, b);
-            gamestate.registerHit(hit);
+            
+            if ( hit === 1 ) {
+                gamestate.registerHit(hit);
+                b.destroyed = true;
+                b.renderer.update(b);
+                break;
+            }
         }
     }
 }
