@@ -79,7 +79,7 @@ export default class CollisionSystem {
 
         return this.bounceY(ball, bounds.bottom - r);
     }
-    ballVsBrick0(ball, brick) {
+    /*ballVsBrickOld(ball, brick) {
         const r = ball.collider.radius;
         const bounds = brick.collider;
         if ( this.isOutsideBounds(ball, bounds) ) return 0;
@@ -95,7 +95,7 @@ export default class CollisionSystem {
 
         if ( ball.y - r <= bounds.bottom ) 
             return this.bounceY(ball, bounds.bottom - r);
-    }
+    }*/
     ballVsWall(ball, wall, gamestate) {
         for ( const b of wall.bricks ) {
 
