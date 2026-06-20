@@ -5,10 +5,14 @@ export default class Ball {
     constructor(three, cfg) {
         this.x = cfg.x;
         this.y = cfg.y;
+        this.startX = cfg.x;
+        this.startY = cfg.y;
         this.radius = cfg.radius;
 
         this.vx = cfg.vx;
         this.vy = cfg.vy;
+        this.startVx = cfg.vx;
+        this.startVy = cfg.vy;
 
         this.dead = false;
 
@@ -20,13 +24,17 @@ export default class Ball {
     addToScene(scene) {
         this.renderer.addToScene(scene);
     }
-    update(deltaTime, bounds) {
+    update(deltaTime) {
         this.x += this.vx * deltaTime;
         this.y += this.vy * deltaTime;
         this.renderer.setPosition(this.x, this.y);
     }
     reset() {
-        this.y = 0;
+        this.x = this.startX;
+        this.y = this.startY;
+        this.vx = this.startVx;
+        this.vy = this.startVy;
+        this.dead = false;
         this.renderer.setPosition(this.x, this.y);
     }
     kill() {

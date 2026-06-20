@@ -8,11 +8,29 @@ import Hud from './hud.js';
 import GameState from './gamestate.js';
 import Wall from './wall.js';
 
+class Rules {
+    constructor() {
+
+    }
+    update(ball, bounds, gamestate) {
+        const ballLost = ( false === ball.dead && ball.y <= bounds.bottom);
+        if ( true === ballLost ) {
+            ball.kill();                    
+            gamestate.registerLifeLoss();
+            ball.reset();
+            //ball.dead = false;
+            gamestate.togglePaused();
+        }
+    }
+}
+
 const config = new Config();
 
 const gamestate = new GameState();
 gamestate.addObserver(new Hud());
 gamestate.notify();
+
+const rules = new Rules();
 
 // Scene Setup
 const scene = new THREE.Scene();
@@ -46,12 +64,12 @@ function animate(timestamp) {
     if ( true === gamestate.paused() ) return;
     const deltaTime = clock.getDelta();    
 
-    ball.update(deltaTime, edges);
+    rules.update(ball, edges, gamestate);
+    ball.update(deltaTime);
     paddle.update(deltaTime, input, edges);    
     collisions.ballVsEdges(ball, edges, gamestate);
     collisions.ballVsPaddle(ball, paddle);
     collisions.ballVsWall(ball, wall, gamestate);
-    gamestate.update(ball);
     renderer.render(scene, camera);
 }
 animate(performance.now());

@@ -22,13 +22,6 @@ export default class CollisionSystem {
         if ( ball.x + r >= bounds.right ) 
             this.bounceX(ball, bounds.right - r);
 
-        const ballLost = ( false === ball.dead && ball.y <= -6);//bounds.bottom );
-            if ( true === ballLost ) {
-                ball.kill();                
-                gamestate.registerLifeLoss();
-                ball.reset();
-            }
-
         if ( ball.y + r >= bounds.top ) 
             this.bounceY(ball, bounds.top - r);
     }
@@ -57,6 +50,36 @@ export default class CollisionSystem {
             ball.y - r > bounds.top );
     }
     ballVsBrick(ball, brick) {
+        const r = ball.collider.radius;
+        const bounds = brick.collider;
+
+        if (this.isOutsideBounds(ball, bounds))
+            return 0;
+
+        const overlapLeft   = Math.abs((ball.x + r) - bounds.left);
+        const overlapRight  = Math.abs(bounds.right - (ball.x - r));
+        const overlapTop    = Math.abs(bounds.top - (ball.y - r));
+        const overlapBottom = Math.abs((ball.y + r) - bounds.bottom);
+
+        const minOverlap = Math.min(
+            overlapLeft,
+            overlapRight,
+            overlapTop,
+            overlapBottom
+        );
+
+        if (minOverlap === overlapLeft)
+            return this.bounceX(ball, bounds.left - r);
+
+        if (minOverlap === overlapRight)
+            return this.bounceX(ball, bounds.right + r);
+
+        if (minOverlap === overlapTop)
+            return this.bounceY(ball, bounds.top + r);
+
+        return this.bounceY(ball, bounds.bottom - r);
+    }
+    ballVsBrick0(ball, brick) {
         const r = ball.collider.radius;
         const bounds = brick.collider;
         if ( this.isOutsideBounds(ball, bounds) ) return 0;

@@ -4,7 +4,6 @@ export default class InputManager {
         this.right = false;
 
         window.addEventListener("keydown", (event) => this.onKeyDown(event));
-
         window.addEventListener("keyup", (event) => this.onKeyUp(event));
     }
     onKeyDown(event) {
