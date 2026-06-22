@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Low Pressure Sim</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.OrthographicCamera(
+  -1, 1, 1, -1, 0, 1
+);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const uniforms = {
+  u_time: { value: 0 },
+  u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+};
+
+const material = new THREE.ShaderMaterial({
+  uniforms,
+  fragmentShader: `
+    precision highp float;
+
+    uniform float u_time;
+    uniform vec2 u_resolution;
+
+    float hash(vec2 p){
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
+    float noise(vec2 p){
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+
+      float a = hash(i);
+      float b = hash(i + vec2(1.0, 0.0));
+      float c = hash(i + vec2(0.0, 1.0));
+      float d = hash(i + vec2(1.0, 1.0));
+
+      vec2 u = f * f * (3.0 - 2.0 * f);
+
+      return mix(a, b, u.x)
+           + (c - a)* u.y * (1.0 - u.x)
+           + (d - b)* u.x * u.y;
+    }
+
+    void main() {
+      vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+      uv.x *= u_resolution.x / u_resolution.y;
+
+      // Low pressure center moving left -> right
+      float t = u_time * 0.08;
+      vec2 center = vec2(mod(t, 1.2) - 0.1, 0.5);
+
+      vec2 p = uv - center;
+
+      float r = length(p);
+      float angle = atan(p.y, p.x);
+
+      // Spiral field (cyclone-like)
+      float spiral = sin(1.0 * angle + 10.0 * log(r + 0.001) - u_time * 1.5);
+
+      // Inward pull (low pressure)
+      float radial = exp(-3.0 * r);
+
+      // Cloud base noise
+      float n = noise(uv * 6.0 + u_time * 0.05);
+
+      // Combine into cloud density
+      float cloud = n * 0.6 + spiral * 0.25 + radial * 1.2;
+
+      // soften & clamp
+      cloud = smoothstep(0.2, 1.2, cloud);
+
+      // vignette like satellite lens
+      float vignette = smoothstep(1.2, 0.2, length(uv - 0.5));
+
+      float final = cloud * vignette;
+
+      gl_FragColor = vec4(vec3(final), 1.0);
+    }
+  `
+});
+
+const mesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2),
+  material
+);
+
+scene.add(mesh);
+
+function animate(t) {
+  uniforms.u_time.value = t * 0.001;
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+animate(0);
+
+window.addEventListener("resize", () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  uniforms.u_resolution.value.set(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>
