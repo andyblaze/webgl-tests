@@ -51,7 +51,7 @@ const ambient = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambient);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-dirLight.position.set(10, 20, 10);
+dirLight.position.set(10, 10, 10);
 scene.add(dirLight);
 
 // ---------------------------------------------------------------------
@@ -89,54 +89,13 @@ class Monolith {
             })
         );
         this.lith.position.y = cfg.posY;
-
-        //this.createGlyphs("ION");
     }
     addGlyphs(g) {
         this.glyphs = g;
         this.glyphs.create(this.canvas, this.ctx);
     }
-    createGlyphs(txt) {
-        this.canvas.width = 256;
-        this.canvas.height = 1024;
-
-        this.ctx.fillStyle = "rgba(0, 0, 0, 0)";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.ctx.font = "100px Kryptonian";
-        this.ctx.textAlign = "center";
-        this.ctx.textBaseline = "middle";
-
-        this.ctx.shadowColor = "#00ff00";
-        this.ctx.shadowBlur = 5;
-
-        this.ctx.fillStyle = "#00ff00";
-
-        const text = txt;
-
-        this.ctx.save();
-        this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
-        this.ctx.rotate(-Math.PI / 2);
-        this.ctx.fillText(text, 0, 0);
-        this.ctx.restore();
-    }
     renderGlyphs(three, scene) {
-
-        const textTexture = new three.CanvasTexture(this.canvas);
-
-        const textMaterial = new three.MeshBasicMaterial({
-            map: textTexture,
-            transparent: true
-        });
-
-        this.textPlane = new three.Mesh(
-           new three.PlaneGeometry(1.8, 7.2),
-           textMaterial
-        );
-
-        this.textPlane.position.set(0, this.cfg.height / 2, 0.51);
-
-        scene.add(this.textPlane);
+        this.glyphs.render(three, scene, this.canvas, this.cfg);
     }
     addToScene(scene) {
         scene.add(this.lith);
@@ -191,7 +150,7 @@ class Glyphs {
 const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, posY: 4, posZ: 0 });
 monolith.addGlyphs(new Glyphs("REW"));
 monolith.addToScene(scene);
-monolith.glyphs.render(THREE, scene, monolith.canvas, monolith.cfg);
+monolith.renderGlyphs(THREE, scene);//, monolith.canvas, monolith.cfg);
 
 // ---------------------------------------------------------------------
 // Controls
