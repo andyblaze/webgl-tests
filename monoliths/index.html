@@ -76,61 +76,80 @@ scene.add(ground);
 // Monolith
 // ---------------------------------------------------------------------
 
-const monolith = new THREE.Mesh(
-    new THREE.BoxGeometry(4, 8, 1),
-    new THREE.MeshStandardMaterial({
-        color: 0x020023
-    })
-);
+class Monolith {
+    constructor(three) {
+        this.lith = null;
+        this.size = {};
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d");
+        /*this.textTexture = new three.CanvasTexture(this.canvas);
+        this.textMaterial = new three.MeshBasicMaterial({
+            map: this.textTexture,
+            transparent: true
+        });*/
+    }
+    spawn(three, sz) {
+        this.size = {...sz};
+        this.lith = new three.Mesh(
+            new three.BoxGeometry(sz.w, sz.h, sz.d),
+            new three.MeshStandardMaterial({
+                color: 0x000024
+            })
+        );
+        this.lith.position.y = 4;
+    }
+    renderGlyphs(three, scene) {
+        //const canvas = document.createElement("canvas");
+        this.canvas.width = 312;
+        this.canvas.height = 1024;
 
-monolith.position.y = 4;
-scene.add(monolith);
+        //const ctx = canvas.getContext("2d");
 
-// ---------------------------------------------------------------------
-// Neon Green Text Texture
-// ---------------------------------------------------------------------
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-const canvas = document.createElement("canvas");
-canvas.width = 312;
-canvas.height = 1024;
+        this.ctx.font = "190px DistrictThin";
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
 
-const ctx = canvas.getContext("2d");
+        this.ctx.shadowColor = "#00ff00";
+        this.ctx.shadowBlur = 10;
 
-ctx.fillStyle = "rgba(0, 0, 0, 0)";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+        this.ctx.fillStyle = "#00ff00";
 
-ctx.font = "190px DistrictThin";
-ctx.textAlign = "center";
-ctx.textBaseline = "middle";
+        const text = "O";
 
-ctx.shadowColor = "#00ff00";
-ctx.shadowBlur = 10;
+        this.ctx.save();
+        this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+        this.ctx.rotate(-Math.PI / 2);
+        this.ctx.fillText(text, 0, 0);
+        this.ctx.restore();
 
-ctx.fillStyle = "#00ff00";
+        this.textTexture = new three.CanvasTexture(this.canvas);
 
-const text = "O";
+        this.textMaterial = new three.MeshBasicMaterial({
+            map: this.textTexture,
+            transparent: true
+        });
 
-ctx.save();
-ctx.translate(canvas.width / 2, canvas.height / 2);
-ctx.rotate(-Math.PI / 2);
-ctx.fillText(text, 0, 0);
-ctx.restore();
+        this.textPlane = new three.Mesh(
+            new three.PlaneGeometry(1.8, 7.2),
+            this.textMaterial
+        );
 
-const textTexture = new THREE.CanvasTexture(canvas);
+        this.textPlane.position.set(0, this.size.h / 2, 0.51);
 
-const textMaterial = new THREE.MeshBasicMaterial({
-    map: textTexture,
-    transparent: true
-});
+        scene.add(this.textPlane);
+    }
+    addToScene(scene) {
+        scene.add(this.lith);
+    }
+}
 
-const textPlane = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.8, 7.2),
-    textMaterial
-);
-
-textPlane.position.set(0, 4, 0.51);
-
-scene.add(textPlane);
+const monolith = new Monolith(THREE);
+monolith.spawn(THREE, { w: 4, h: 8, d: 1 });
+monolith.addToScene(scene);
+monolith.renderGlyphs(THREE, scene);
 
 // ---------------------------------------------------------------------
 // Controls
@@ -161,8 +180,9 @@ window.addEventListener("resize", () => {
 // ---------------------------------------------------------------------
 // Render
 // ---------------------------------------------------------------------
-
-function animate() {
+const clock = new THREE.Clock();
+function animate(timestamp) {
+    const dt = clock.getDelta();
 
     requestAnimationFrame(animate);
 
@@ -170,7 +190,7 @@ function animate() {
 
 }
 
-animate();
+animate(performance.now());
 
 </script>
 
