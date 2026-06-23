@@ -77,38 +77,33 @@ scene.add(ground);
 // ---------------------------------------------------------------------
 
 class Monolith {
-    constructor(three) {
+    constructor(three, cfg) {
         this.lith = null;
-        this.size = {};
+        this.cfg = {...cfg};
         this.canvas = document.createElement("canvas");
         this.ctx = this.canvas.getContext("2d");
-        /*this.textTexture = new three.CanvasTexture(this.canvas);
-        this.textMaterial = new three.MeshBasicMaterial({
-            map: this.textTexture,
-            transparent: true
-        });*/
-    }
-    spawn(three, sz) {
-        this.size = {...sz};
         this.lith = new three.Mesh(
-            new three.BoxGeometry(sz.w, sz.h, sz.d),
+            new three.BoxGeometry(cfg.width, cfg.height, cfg.depth),
             new three.MeshStandardMaterial({
                 color: 0x000024
             })
         );
-        this.lith.position.y = 4;
-    }
-    renderGlyphs(three, scene) {
-        //const canvas = document.createElement("canvas");
-        this.canvas.width = 312;
-        this.canvas.height = 1024;
+        this.lith.position.y = cfg.posY;
 
-        //const ctx = canvas.getContext("2d");
+        //this.createGlyphs("ION");
+    }
+    addGlyphs(g) {
+        this.glyphs = g;
+        this.glyphs.create(this.canvas, this.ctx);
+    }
+    createGlyphs(txt) {
+        this.canvas.width = 256;
+        this.canvas.height = 1024;
 
         this.ctx.fillStyle = "rgba(0, 0, 0, 0)";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.font = "190px Kryptonian";
+        this.ctx.font = "100px Kryptonian";
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "middle";
 
@@ -117,27 +112,29 @@ class Monolith {
 
         this.ctx.fillStyle = "#00ff00";
 
-        const text = "IOX";
+        const text = txt;
 
         this.ctx.save();
         this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
         this.ctx.rotate(-Math.PI / 2);
         this.ctx.fillText(text, 0, 0);
         this.ctx.restore();
+    }
+    renderGlyphs(three, scene) {
 
-        this.textTexture = new three.CanvasTexture(this.canvas);
+        const textTexture = new three.CanvasTexture(this.canvas);
 
-        this.textMaterial = new three.MeshBasicMaterial({
-            map: this.textTexture,
+        const textMaterial = new three.MeshBasicMaterial({
+            map: textTexture,
             transparent: true
         });
 
         this.textPlane = new three.Mesh(
-            new three.PlaneGeometry(1.8, 7.2),
-            this.textMaterial
+           new three.PlaneGeometry(1.8, 7.2),
+           textMaterial
         );
 
-        this.textPlane.position.set(0, this.size.h / 2, 0.51);
+        this.textPlane.position.set(0, this.cfg.height / 2, 0.51);
 
         scene.add(this.textPlane);
     }
@@ -146,10 +143,55 @@ class Monolith {
     }
 }
 
-const monolith = new Monolith(THREE);
-monolith.spawn(THREE, { w: 4, h: 8, d: 1 });
+class Glyphs {
+    constructor(txt) {
+        this.text = txt;
+    }
+    create(cnvs, ctx, txt) {
+        cnvs.width = 256;
+        cnvs.height = 1024;
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
+        ctx.fillRect(0, 0, cnvs.width, cnvs.height);
+
+        ctx.font = "100px Kryptonian";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.shadowColor = "#00ff00";
+        ctx.shadowBlur = 5;
+        ctx.fillStyle = "#00ff00";
+
+        ctx.save();
+        ctx.translate(cnvs.width / 2, cnvs.height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText(this.text, 0, 0);
+        ctx.restore();
+    }
+    render(three, scene, cnvs, cfg) {
+        const textTexture = new three.CanvasTexture(cnvs);
+
+        const textMaterial = new three.MeshBasicMaterial({
+            map: textTexture,
+            transparent: true
+        });
+
+        this.textPlane = new three.Mesh(
+           new three.PlaneGeometry(1.8, 7.2),
+           textMaterial
+        );
+
+        this.textPlane.position.set(0, cfg.height / 2, 0.51);
+
+        scene.add(this.textPlane);
+
+    }
+}
+
+const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, posY: 4, posZ: 0 });
+monolith.addGlyphs(new Glyphs("REW"));
 monolith.addToScene(scene);
-monolith.renderGlyphs(THREE, scene);
+monolith.glyphs.render(THREE, scene, monolith.canvas, monolith.cfg);
 
 // ---------------------------------------------------------------------
 // Controls
