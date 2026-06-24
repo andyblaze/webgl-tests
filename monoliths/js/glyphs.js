@@ -7,13 +7,13 @@ export default class Glyphs {
         this.textMaterial = null;
     }
     create(cnvs, ctx, txt) {
-        cnvs.width = 256;
-        cnvs.height = 1024;
+        cnvs.width = 1024;
+        cnvs.height = 4096;
 
         ctx.fillStyle = "hsla(0, 0%, 0%, 0)";
         ctx.fillRect(0, 0, cnvs.width, cnvs.height);
 
-        ctx.font = "100px Kryptonian";
+        ctx.font = "400px Kryptonian";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
@@ -27,7 +27,7 @@ export default class Glyphs {
         ctx.fillText(this.text, 0, 0);
         ctx.restore();
     }
-    update(dt, cnvs, ctx) { return;
+    update(dt, cnvs, ctx) { //return;
         const hue = mt_rand(20, 180);
         const c = { h: hue, s: 100, l:50, a: 1 };
         const hsla = HSLAString(c);
@@ -52,7 +52,7 @@ export default class Glyphs {
         });
 
         this.textPlane = new three.Mesh(
-           new three.PlaneGeometry(1.8, 7.2),
+           new three.PlaneGeometry(cfg.width * 0.45, cfg.height * 0.9),
            this.textMaterial
         );
 
