@@ -55,7 +55,7 @@ scene.add(ground);
 const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, posY: 4, posZ: 0 });
 monolith.addGlyphs(new Glyphs("REW"));
 monolith.addToScene(scene);
-monolith.renderGlyphs(THREE, scene);
+monolith.render(THREE, scene);
 monolith.update();
 
 // ---------------------------------------------------------------------
