@@ -97,6 +97,9 @@ class Monolith {
     renderGlyphs(three, scene) {
         this.glyphs.render(three, scene, this.canvas, this.cfg);
     }
+    update() {
+        this.glyphs.update();
+    }
     addToScene(scene) {
         scene.add(this.lith);
     }
@@ -110,7 +113,7 @@ class Glyphs {
         cnvs.width = 256;
         cnvs.height = 1024;
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0)";
+        ctx.fillStyle = "hsla(0, 0%, 0%, 0)";
         ctx.fillRect(0, 0, cnvs.width, cnvs.height);
 
         ctx.font = "100px Kryptonian";
@@ -126,6 +129,9 @@ class Glyphs {
         ctx.rotate(-Math.PI / 2);
         ctx.fillText(this.text, 0, 0);
         ctx.restore();
+    }
+    update() {
+
     }
     render(three, scene, cnvs, cfg) {
         const textTexture = new three.CanvasTexture(cnvs);
@@ -150,7 +156,8 @@ class Glyphs {
 const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, posY: 4, posZ: 0 });
 monolith.addGlyphs(new Glyphs("REW"));
 monolith.addToScene(scene);
-monolith.renderGlyphs(THREE, scene);//, monolith.canvas, monolith.cfg);
+monolith.renderGlyphs(THREE, scene);
+monolith.update();
 
 // ---------------------------------------------------------------------
 // Controls
