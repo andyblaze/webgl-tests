@@ -18,8 +18,8 @@ export default class Monolith {
     render(three, scene) {
         this.glyphs.render(three, scene, this.canvas, this.cfg);
     }
-    update() {
-        this.glyphs.update();
+    update(dt) {
+        this.glyphs.update(dt, this.canvas, this.ctx);
     }
     addToScene(scene) {
         scene.add(this.lith);

@@ -56,7 +56,6 @@ const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, p
 monolith.addGlyphs(new Glyphs("REW"));
 monolith.addToScene(scene);
 monolith.render(THREE, scene);
-monolith.update();
 
 // ---------------------------------------------------------------------
 // Controls
@@ -88,6 +87,7 @@ function animate(timestamp) {
 
     requestAnimationFrame(animate);
 
+    monolith.update(dt);
     renderer.render(scene, camera);
 
 }
