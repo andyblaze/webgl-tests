@@ -5,18 +5,19 @@ export default class Glyphs {
         this.text = txt;
         this.canvas = createElmnt("canvas");
         this.ctx = this.canvas.getContext("2d");
+        this.baseSize = 256;
         this.textTexture = null;
         this.textMaterial = null;
     }
-    create() {
+    create(cfg) {
         const { ctx, canvas } = this;
-        canvas.width = 1024;
-        canvas.height = 4096;
+        canvas.width = this.baseSize * cfg.width;
+        canvas.height = this.baseSize * cfg.height;
 
         ctx.fillStyle = "hsla(0, 10%, 10%, 1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.font = "400px Kryptonian";
+        ctx.font = "320px Kryptonian";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
@@ -24,11 +25,14 @@ export default class Glyphs {
         ctx.shadowBlur = 5;
         ctx.fillStyle = HSLAString(hexToHSLA("#00ff00"));
 
+        this.writeText(ctx, canvas, this.text);
+    }
+    writeText(ctx, canvas, txt) {
         ctx.save();
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.fillText(this.text, 0, 0);
-        ctx.restore();
+        ctx.fillText(txt, 0, 0);
+        ctx.restore();        
     }
     update(dt) { //return;
         const { ctx, canvas } = this;
@@ -40,11 +44,7 @@ export default class Glyphs {
         ctx.fillStyle = "hsla(0, 10%, 10%, 1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = hsla;
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate(-Math.PI / 2);
-        ctx.fillText(this.text, 0, 0);
-        ctx.restore();
+        this.writeText(ctx, canvas, this.text);
         this.textTexture.needsUpdate = true;
     }
     render(three, scene, cfg) {
