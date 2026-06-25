@@ -9,6 +9,10 @@ export function byQsArray(selector, parent = document) {
     return Array.from(parent.querySelectorAll(selector)); 
 }
 
+export function createElmnt(elTag) {
+    return document.createElement(elTag);
+}
+
 export function mt_rand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
