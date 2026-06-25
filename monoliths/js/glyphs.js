@@ -60,7 +60,7 @@ export default class Glyphs {
            this.textMaterial
         );
 
-        this.textPlane.position.set(0, cfg.height / 2, 0.51);
+        this.textPlane.position.set(0, cfg.height / 2, cfg.depth / 2 + 0.01);
 
         scene.add(this.textPlane);
 
