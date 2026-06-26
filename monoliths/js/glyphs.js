@@ -11,13 +11,6 @@ export default class Glyphs {
         this.textMesh = null;
         this.width = 0;
         this.height = 0;
-        this.NEON = [
-            { h: 180, s: 100, l: 50, a: 1 }, // cyan
-            { h: 140, s: 100, l: 50, a: 1 }, // green
-            { h: 300, s: 100, l: 50, a: 1 }, // magenta
-            { h: 270, s: 100, l: 60, a: 1 }, // violet
-            { h: 210, s: 100, l: 55, a: 1 }  // electric blue
-        ];
         this.time = 0;
     }
     initialise(width, height) {
@@ -30,7 +23,7 @@ export default class Glyphs {
         this.clearPlane(ctx, canvas);
 
         this.setFont(ctx);
-        this.setFontColor(ctx, HSLAString(hexToHSLA("#00ff00")));
+        //this.setFontColor(ctx, HSLAString({ h: 210, s: 100, l: 55, a: 1 }));
         this.writeText(ctx, canvas, this.text);
     }
     build(three) {
@@ -58,7 +51,7 @@ export default class Glyphs {
         ctx.textBaseline = "middle";
     }
     clearPlane(ctx, canvas) {
-        ctx.fillStyle = "hsla(0, 10%, 10%, 1)";
+        ctx.fillStyle = "hsla(0, 0%, 0%, 1)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);        
     }
     writeText(ctx, canvas, txt) {
@@ -68,17 +61,17 @@ export default class Glyphs {
         ctx.fillText(txt, 0, 0);
         ctx.restore();        
     }
-    update(dt) { // very much staging code, just to prove animation works from a RAF animate call
+    update(dt, cfg) {
         this.time += dt;
 
         const { ctx, canvas } = this;
 
-        const speed = 0.4;                  // colours per second
+        const speed = 0.6;                  // colours per second
         const t = this.time * speed;
 
-        const i1 = Math.floor(t) % this.NEON.length;
-        const i2 = (i1 + 1) % this.NEON.length;
-        const color = lerpHSLAColor(this.NEON[i1], this.NEON[i2], t % 1);
+        const i1 = Math.floor(t) % cfg.NEON.length;
+        const i2 = (i1 + 1) % cfg.NEON.length;
+        const color = lerpHSLAColor(cfg.NEON[i1], cfg.NEON[i2], t % 1);
         
         this.clearPlane(ctx, canvas);
 

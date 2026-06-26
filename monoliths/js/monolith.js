@@ -17,8 +17,8 @@ export default class Monolith {
         glyphsMesh.position.set(0, 0, this.cfg.depth / 2 + 0.01);
         this.mesh.add(glyphsMesh);
     }
-    update(dt) {
-        this.glyphs.update(dt);
+    update(dt, cfg) {
+        this.glyphs.update(dt, cfg);
     }
     addToScene(scene) {
         scene.add(this.mesh);

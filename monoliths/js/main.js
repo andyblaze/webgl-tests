@@ -4,6 +4,20 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.m
 import Monolith from "./monolith.js";
 import Glyphs from "./glyphs.js";
 
+class Config {
+    constructor() {
+        this.NEON = [
+            { h: 180, s: 100, l: 50, a: 1 }, // cyan
+            { h: 140, s: 100, l: 50, a: 1 }, // green
+            { h: 300, s: 100, l: 50, a: 1 }, // magenta
+            { h: 270, s: 100, l: 60, a: 1 }, // violet
+            { h: 210, s: 100, l: 55, a: 1 }  // electric blue
+        ];
+    }
+}
+
+const config = new Config();
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x081830);
 
@@ -86,7 +100,7 @@ function animate(timestamp) {
 
     requestAnimationFrame(animate);
 
-    monolith.update(dt);
+    monolith.update(dt, config);
     renderer.render(scene, camera);
 
 }
