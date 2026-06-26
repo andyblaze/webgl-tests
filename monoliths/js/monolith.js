@@ -1,26 +1,26 @@
 export default class Monolith {
     constructor(three, cfg) {
+        this.glyphs = null;
         this.cfg = {...cfg};
-        this.lith = new three.Mesh(
+        this.mesh = new three.Mesh(
             new three.BoxGeometry(cfg.width, cfg.height, cfg.depth),
             new three.MeshStandardMaterial({
                 color: 0x000024
             })
         );
-        this.lith.position.y = cfg.posY;
+        this.mesh.position.y = cfg.posY;
     }
-    addGlyphs(g) {
-        this.glyphs = g;
-        this.glyphs.create(this.cfg);
-    }
-    render(three, scene) {
-        this.glyphs.render(three, scene, this.cfg);
-        scene.add(this.lith);
+    build(three, glyphs) {
+        this.glyphs = glyphs;
+        this.glyphs.initialise(this.cfg.width, this.cfg.height);
+        const glyphsMesh = this.glyphs.build(three);
+        glyphsMesh.position.set(0, 0, this.cfg.depth / 2 + 0.01);
+        this.mesh.add(glyphsMesh);
     }
     update(dt) {
         this.glyphs.update(dt);
     }
     addToScene(scene) {
-        scene.add(this.lith);
+        scene.add(this.mesh);
     }
 }

@@ -8,24 +8,43 @@ export default class Glyphs {
         this.baseSize = 256;
         this.textTexture = null;
         this.textMaterial = null;
+        this.textMesh = null;
+        this.width = 0;
+        this.height = 0;
     }
-    create(cfg) {
+    initialise(width, height) {
+        this.width = width;
+        this.height = height;
         const { ctx, canvas } = this;
-        canvas.width = this.baseSize * cfg.width;
-        canvas.height = this.baseSize * cfg.height;
+        canvas.width = this.baseSize * this.width;
+        canvas.height = this.baseSize * this.height;
 
         this.clearPlane(ctx, canvas);
 
-        this.initFont(ctx);
+        this.setFont(ctx);
         this.setFontColor(ctx, HSLAString(hexToHSLA("#00ff00")));
         this.writeText(ctx, canvas, this.text);
+    }
+    build(three) {
+        this.textTexture = new three.CanvasTexture(this.canvas);
+
+        this.textMaterial = new three.MeshBasicMaterial({
+            map: this.textTexture,
+            transparent: true
+        });
+
+        this.textMesh = new three.Mesh(
+           new three.PlaneGeometry(this.width, this.height),
+           this.textMaterial
+        );
+        return this.textMesh;
     }
     setFontColor(ctx, color) {
         ctx.shadowColor = color;
         ctx.shadowBlur = 5;
         ctx.fillStyle = color;
     }
-    initFont(ctx) {
+    setFont(ctx) {
         ctx.font = "320px Kryptonian";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -41,7 +60,7 @@ export default class Glyphs {
         ctx.fillText(txt, 0, 0);
         ctx.restore();        
     }
-    update(dt) {
+    update(dt) { // very much staging code, just to prove animation works from a RAF animate call
         const { ctx, canvas } = this;
         const hue = mt_rand(20, 180);
         const c = { h: hue, s: 100, l:50, a: 1 };
@@ -52,23 +71,5 @@ export default class Glyphs {
         this.setFontColor(ctx, hsla);
         this.writeText(ctx, canvas, this.text);
         this.textTexture.needsUpdate = true;
-    }
-    render(three, scene, cfg) {
-        this.textTexture = new three.CanvasTexture(this.canvas);
-
-        this.textMaterial = new three.MeshBasicMaterial({
-            map: this.textTexture,
-            transparent: true
-        });
-
-        this.textPlane = new three.Mesh(
-           new three.PlaneGeometry(cfg.width, cfg.height),
-           this.textMaterial
-        );
-
-        this.textPlane.position.set(0, cfg.height / 2, cfg.depth / 2 + 0.01);
-
-        scene.add(this.textPlane);
-
     }
 }
