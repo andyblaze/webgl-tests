@@ -52,8 +52,14 @@ scene.add(dirLight);
 // Ground
 // ---------------------------------------------------------------------
 
+scene.fog = new THREE.FogExp2(0x0b1a2a, 0.02);
+scene.background = new THREE.Color(0xa5a7ad);
 const groundMat = new THREE.MeshStandardMaterial({
-    color: 0x330000
+    color: 0x0a0f1a,
+    roughness: 1,
+    metalness: 0,
+    transparent: true,
+    opacity: 0.64
 });
 
 const ground = new THREE.Mesh(
