@@ -14,18 +14,25 @@ export default class Glyphs {
         canvas.width = this.baseSize * cfg.width;
         canvas.height = this.baseSize * cfg.height;
 
-        ctx.fillStyle = "hsla(0, 10%, 10%, 1)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        this.clearPlane(ctx, canvas);
 
+        this.initFont(ctx);
+        this.setFontColor(ctx, HSLAString(hexToHSLA("#00ff00")));
+        this.writeText(ctx, canvas, this.text);
+    }
+    setFontColor(ctx, color) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 5;
+        ctx.fillStyle = color;
+    }
+    initFont(ctx) {
         ctx.font = "320px Kryptonian";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-
-        ctx.shadowColor = HSLAString(hexToHSLA("#00ff00"));
-        ctx.shadowBlur = 5;
-        ctx.fillStyle = HSLAString(hexToHSLA("#00ff00"));
-
-        this.writeText(ctx, canvas, this.text);
+    }
+    clearPlane(ctx, canvas) {
+        ctx.fillStyle = "hsla(0, 10%, 10%, 1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);        
     }
     writeText(ctx, canvas, txt) {
         ctx.save();
@@ -34,16 +41,15 @@ export default class Glyphs {
         ctx.fillText(txt, 0, 0);
         ctx.restore();        
     }
-    update(dt) { //return;
+    update(dt) {
         const { ctx, canvas } = this;
         const hue = mt_rand(20, 180);
         const c = { h: hue, s: 100, l:50, a: 1 };
         const hsla = HSLAString(c);
-        ctx.shadowColor = hsla;
         
-        ctx.fillStyle = "hsla(0, 10%, 10%, 1)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = hsla;
+        this.clearPlane(ctx, canvas);
+
+        this.setFontColor(ctx, hsla);
         this.writeText(ctx, canvas, this.text);
         this.textTexture.needsUpdate = true;
     }

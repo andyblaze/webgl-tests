@@ -54,7 +54,7 @@ scene.add(ground);
 
 const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, posY: 4, posZ: 0 });
 monolith.addGlyphs(new Glyphs("KAL EL"));
-monolith.addToScene(scene);
+//monolith.addToScene(scene);
 monolith.render(THREE, scene);
 
 // ---------------------------------------------------------------------
