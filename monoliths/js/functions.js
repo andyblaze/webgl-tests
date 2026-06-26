@@ -29,14 +29,6 @@ export function lerp(a, b, t) {
     return a + (b - a) * t;
 } 
 
-export function randHSLA(hRange, sRange, lRange, aRange) {
-    const h = mt_randf(hRange[0], hRange[1]);
-    const s = mt_randf(sRange[0], sRange[1]);
-    const l = mt_randf(lRange[0], lRange[1]);
-    const a = mt_randf(aRange[0], aRange[1]);
-    return `hsla(${h},${s}%,${l}%,${a})`;
-}
-
 export function lerpHSLAColor(c1, c2, t) {
     return {
         h: lerp(c1.h, c2.h, t),
@@ -44,6 +36,14 @@ export function lerpHSLAColor(c1, c2, t) {
         l: lerp(c1.l, c2.l, t),
         a: lerp(c1.a, c2.a, t)
     };
+}
+
+export function randHSLA(hRange, sRange, lRange, aRange) {
+    const h = mt_randf(hRange[0], hRange[1]);
+    const s = mt_randf(sRange[0], sRange[1]);
+    const l = mt_randf(lRange[0], lRange[1]);
+    const a = mt_randf(aRange[0], aRange[1]);
+    return `hsla(${h},${s}%,${l}%,${a})`;
 }
 
 export function hexToHSLA(hex) {

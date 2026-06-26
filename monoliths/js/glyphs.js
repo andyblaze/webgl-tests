@@ -1,4 +1,4 @@
-import { hexToHSLA, HSLAString, mt_rand, createElmnt } from "./functions.js";
+import { hexToHSLA, HSLAString, mt_rand, createElmnt, lerpHSLAColor } from "./functions.js";
 
 export default class Glyphs {
     constructor(txt) {
@@ -11,6 +11,14 @@ export default class Glyphs {
         this.textMesh = null;
         this.width = 0;
         this.height = 0;
+        this.NEON = [
+            { h: 180, s: 100, l: 50, a: 1 }, // cyan
+            { h: 140, s: 100, l: 50, a: 1 }, // green
+            { h: 300, s: 100, l: 50, a: 1 }, // magenta
+            { h: 270, s: 100, l: 60, a: 1 }, // violet
+            { h: 210, s: 100, l: 55, a: 1 }  // electric blue
+        ];
+        this.time = 0;
     }
     initialise(width, height) {
         this.width = width;
@@ -61,14 +69,20 @@ export default class Glyphs {
         ctx.restore();        
     }
     update(dt) { // very much staging code, just to prove animation works from a RAF animate call
+        this.time += dt;
+
         const { ctx, canvas } = this;
-        const hue = mt_rand(20, 180);
-        const c = { h: hue, s: 100, l:50, a: 1 };
-        const hsla = HSLAString(c);
+
+        const speed = 0.4;                  // colours per second
+        const t = this.time * speed;
+
+        const i1 = Math.floor(t) % this.NEON.length;
+        const i2 = (i1 + 1) % this.NEON.length;
+        const color = lerpHSLAColor(this.NEON[i1], this.NEON[i2], t % 1);
         
         this.clearPlane(ctx, canvas);
 
-        this.setFontColor(ctx, hsla);
+        this.setFontColor(ctx, HSLAString(color));
         this.writeText(ctx, canvas, this.text);
         this.textTexture.needsUpdate = true;
     }
