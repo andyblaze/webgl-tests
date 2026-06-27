@@ -8,7 +8,9 @@ export default class Monolith {
                 color: 0x000024
             })
         );
+        this.mesh.position.x = cfg.posX;
         this.mesh.position.y = cfg.posY;
+        this.mesh.position.z = cfg.posZ;
     }
     build(three, glyphs) {
         this.glyphs = glyphs;

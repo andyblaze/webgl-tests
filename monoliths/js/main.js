@@ -73,7 +73,7 @@ ground.position.y = 0;
 scene.add(ground);
 
 const monolith = new Monolith(THREE, { width: 4, height: 8, depth: 1, posX: 0, posY: 4, posZ: 0 });
-monolith.build(THREE, new Glyphs("KAL EL"));
+monolith.build(THREE, new Glyphs("JOR EL"));
 monolith.addToScene(scene);
 
 // ---------------------------------------------------------------------
