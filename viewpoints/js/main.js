@@ -36,7 +36,7 @@ controls.update();
 const renderTarget = new THREE.WebGLRenderTarget(512,512);
 const monitor = new Monitor(
     new Camera(THREE, { fov: 45, aspect: 1, near: 0.1, far: 100 }),
-    new Surface(THREE, renderTarget)
+    new Surface(THREE, { rt: renderTarget, radius: 2, widthSegs: 64, heightSegs: 64 })
 );
 monitor.setCameraPos(-8,7,-8).lookAt(0,1,0);
 monitor.setSurfacePos(-22, 3, -2).scaleSurface(2.2, 2.2, 2.2);
