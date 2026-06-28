@@ -59,26 +59,78 @@ controls.update();
 // SECOND CAMERA
 //-----------------------------------------------------
 
-class Monitor {
+class Camera {
+    constructor(cfg) {
+        this.c = new THREE.PerspectiveCamera(cfg.fov, cfg.aspect, cfg.near, cfg.far);
+    }
+    setPosition(x, y, z) {
+        this.c.position.set(x, y, z);
+    }
+    lookAt(x, y, z) {
+        this.c.lookAt(x, y, z);
+    }
+    get actual() {
+        return this.c;
+    }
+}
+
+class Surface {
     constructor(rt) {
-        this.visible = true;
-        this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-        this.camera.position.set(-8,7,-8);
-        this.camera.lookAt(0,1,0);
-        this.surface = new THREE.Mesh(
+        this.s = new THREE.Mesh(
             new THREE.SphereGeometry(2, 64, 64),
             new THREE.MeshBasicMaterial({ map: rt.texture })
         );
+    }
+    setPos(x, y, z) {
+        this.s.position.set(x, y, z);
+    }
+    scale(x, y, z) {
+        this.s.scale.set(x, y, z);
+    }
+    setVisible(v) {
+        this.s.visible = v;
+    }
+    get actual() {
+        return this.s;
+    }
+}
 
-        this.surface.position.set(-22, 3, -2);
-        this.surface.scale.set(2.2, 2.2, 2.2);
+class Monitor {
+    constructor(c, s) {
+        this.visible = true;
+        this.cam = c;//new Camera({ fov: 45, aspect: 1, near: 0.1, far: 100 });
+        this.setCameraPos(-8,7,-8);
+        this.lookAt(0,1,0);
+        this.surface = s;//new Surface(rt);
+        this.setSurfacePos(-22, 3, -2);
+        this.scaleSurface(2.2, 2.2, 2.2);
+    }
+    setCameraPos(x, y, z) {
+        this.cam.setPosition(-8, 7, -8);
+        return this;
+    }
+    lookAt(x, y, z) {
+        this.cam.lookAt(x, y, z);
+        return this;
+    }
+    setSurfacePos(x, y, z) {
+        this.surface.setPos(x, y, z);
+        return this;
+    }
+    scaleSurface(x, y, z) {
+        this.surface.scale(x, y, z);
+        return this;
     }
     addToScene(scene) {
-        scene.add(this.surface);
+        scene.add(this.surface.actual);
+        return this;
     }
     toggleVisibility() {
         this.visible = !this.visible;
-        this.surface.visible = this.visible;
+        this.surface.setVisible(this.visible);
+    }
+    get camera() {
+        return this.cam.actual;
     }
 }
 
@@ -89,7 +141,12 @@ class Monitor {
 //-----------------------------------------------------
 
 const renderTarget = new THREE.WebGLRenderTarget(512,512);
-const monitor = new Monitor(renderTarget);
+const monitor = new Monitor(
+    new Camera({ fov: 45, aspect: 1, near: 0.1, far: 100 }),
+    new Surface(renderTarget)
+);
+monitor.setCameraPos(-8,7,-8).lookAt(0,1,0);
+monitor.setSurfacePos(-22, 3, -2).scaleSurface(2.2, 2.2, 2.2);
 monitor.addToScene(scene);
 
 //-----------------------------------------------------
@@ -155,6 +212,7 @@ const clock = new THREE.Clock();
 //monitor.position.z += 0.05;
 //frame.position.z += 0.04;
 
+const monitorCam = monitor.camera;
 function animate(){
 
 requestAnimationFrame(animate);
@@ -164,7 +222,8 @@ const t = clock.getElapsedTime();
 //animate scene
 
 torus.rotation.x=t*0.5;
-torus.rotation.y=t;
+torus.rotation.y=t*0.2;
+torus.rotation.z=t*0.1;
 
 sphere.position.set(
 Math.cos(t)*3,
@@ -189,7 +248,7 @@ monitor.toggleVisibility();
 //frame.visible = false;
 
 renderer.setRenderTarget(renderTarget);
-renderer.render(scene, monitor.camera);
+renderer.render(scene, monitorCam);
 
 renderer.setRenderTarget(null);
 
