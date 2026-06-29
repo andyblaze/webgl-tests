@@ -1,10 +1,8 @@
-import Materials from "./materials.js";
-
 export class Knot {
-    constructor(three) {
+    constructor(three, material) {
         this.shape = new three.Mesh(
             new three.TorusKnotGeometry(1, 0.35, 128, 16),
-            Materials.brass(three)
+            material
         );
         this.shape.position.y = 1.8;
         this.shape.castShadow = true;
@@ -17,10 +15,10 @@ export class Knot {
 }
 
 export class Torus {
-    constructor(three) {
+    constructor(three, material) {
         this.shape = new three.Mesh(
             new three.TorusGeometry(0.35, 0.1),
-            Materials.brass(three)
+            material
         );
         this.shape.castShadow = true;
     }

@@ -4,6 +4,7 @@ import Monitor from "./monitor.js";
 import Camera from "./camera.js";
 import Surface from "./surface.js";
 import { Knot, Torus, Floor } from "./shapes.js";
+import Materials from "./materials.js";
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
@@ -64,9 +65,9 @@ scene.add(floor.shape);
 //-----------------------------------------------------
 
 
-const knot = new Knot(THREE);
+const knot = new Knot(THREE, Materials.brass(THREE));
 scene.add(knot.shape);
-const torus = new Torus(THREE);
+const torus = new Torus(THREE, Materials.brass(THREE));
 scene.add(torus.shape);
 
 const clock = new THREE.Clock();
