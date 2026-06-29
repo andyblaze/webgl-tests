@@ -3,10 +3,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Monitor from "./monitor.js";
 import Camera from "./camera.js";
 import Surface from "./surface.js";
+import { Knot, Torus, Floor } from "./shapes.js";
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // optional, but nicer
 document.body.appendChild(renderer.domElement);
 
 //-----------------------------------------------------
@@ -15,7 +18,7 @@ document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xc5c5c5);
-scene.fog = new THREE.Fog(0xa0a5a0, 6, 100);
+//scene.fog = new THREE.FogExp2(0xa0a5a0, 0.02);
 
 const mainCamera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
 
@@ -42,59 +45,29 @@ monitor.addToScene(scene);
 // Lighting
 //-----------------------------------------------------
 
-scene.add(new THREE.AmbientLight(0xffffff,1.0));
+//scene.add(new THREE.AmbientLight(0xffffff,1.0));
 
 const light = new THREE.DirectionalLight(0xffffff,2);
 light.position.set(5,8,3);
+light.castShadow = true;
 scene.add(light);
 
 //-----------------------------------------------------
 // Floor
 //-----------------------------------------------------
 
-const floor = new THREE.Mesh(
-
-    new THREE.PlaneGeometry(16, 16),
-
-    new THREE.MeshStandardMaterial({
-        color: 0x550000,
-        roughness: 0.95,
-        metalness: 0.05
-    })
-
-);
-
-floor.rotation.x = -Math.PI / 2;
-floor.receiveShadow = true;
-
-scene.add(floor);
+const floor = new Floor(THREE);
+scene.add(floor.shape);
 
 //-----------------------------------------------------
 // Objects
 //-----------------------------------------------------
 
-const torus = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(1,0.35,128,16),
-    new THREE.MeshStandardMaterial({
-        color:0x55ccff,
-        metalness:0.3,
-        roughness:0.2
-    })
-);
 
-torus.position.y=2;
-scene.add(torus);
-
-const sphere = new THREE.Mesh(
-    new THREE.TorusGeometry(0.35, 0.1),
-    new THREE.MeshStandardMaterial({
-        color:"orange",
-        emissive:"orange",
-        emissiveIntensity:0.3
-    })
-);
-
-scene.add(sphere);
+const knot = new Knot(THREE);
+scene.add(knot.shape);
+const torus = new Torus(THREE);
+scene.add(torus.shape);
 
 const clock = new THREE.Clock();
 const monitorCam = monitor.camera;
@@ -102,14 +75,8 @@ const monitorCam = monitor.camera;
 function animate() {
     const t = clock.getElapsedTime();
 
-    torus.rotation.x = t * 0.5;
-    torus.rotation.y = t * 0.2;
-    torus.rotation.z = t * 0.1;
-
-    sphere.position.set(Math.cos(t) * 3, 1.5 + Math.sin(t * 2) * 0.5, Math.sin(t) * 3);
-    sphere.rotation.x = t * 0.73;
-    sphere.rotation.y = t * 0.91;
-    //sphere.rotation.z = t * 0.17;
+    knot.update(t);
+    torus.update(t);
 
     monitor.toggleVisibility();
 
