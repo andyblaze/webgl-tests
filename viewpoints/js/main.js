@@ -34,10 +34,10 @@ controls.update();
 
 const renderTarget = new THREE.WebGLRenderTarget(512,512);
 const monitor = new Monitor(
-    new Camera(THREE, { fov: 45, aspect: 1, near: 0.1, far: 100 }),
+    new Camera(THREE, { fov: 50, aspect: 1, near: 0.1, far: 100 }),
     new Surface(THREE, { rt: renderTarget, radius: 2, widthSegs: 64, heightSegs: 64 })
 );
-monitor.setCameraPos(-8,7,-8).lookAt(0,1,0);
+monitor.setCameraPos(-8, 4, -8).lookAt(0, 1, 1.5);
 monitor.setSurfacePos(-22, 3, -2).scaleSurface(2.2, 2.2, 2.2);
 monitor.addToScene(scene);
 
@@ -45,10 +45,10 @@ monitor.addToScene(scene);
 // Lighting
 //-----------------------------------------------------
 
-//scene.add(new THREE.AmbientLight(0xffffff,1.0));
+scene.add(new THREE.AmbientLight(0xffffff,1.0));
 
 const light = new THREE.DirectionalLight(0xffffff,2);
-light.position.set(5,8,3);
+light.position.set(5,3,-3);
 light.castShadow = true;
 scene.add(light);
 

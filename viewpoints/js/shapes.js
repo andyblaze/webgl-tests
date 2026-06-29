@@ -1,12 +1,10 @@
+import Materials from "./materials.js";
+
 export class Knot {
     constructor(three) {
         this.shape = new three.Mesh(
-            new three.TorusKnotGeometry(1,0.35,128,16),
-            new three.MeshStandardMaterial({
-                color:0x55ccff,
-                metalness:0.3,
-                roughness:0.2
-            })
+            new three.TorusKnotGeometry(1, 0.35, 128, 16),
+            Materials.brass(three)
         );
         this.shape.position.y = 1.8;
         this.shape.castShadow = true;
@@ -22,11 +20,7 @@ export class Torus {
     constructor(three) {
         this.shape = new three.Mesh(
             new three.TorusGeometry(0.35, 0.1),
-            new three.MeshStandardMaterial({
-                color:"orange",
-                emissive:"orange",
-                emissiveIntensity:0.3
-            })
+            Materials.brass(three)
         );
         this.shape.castShadow = true;
     }
@@ -37,14 +31,21 @@ export class Torus {
         //sphere.rotation.z = t * 0.17;        
     }
 }
+
 export class Floor {
     constructor(three) {
+        const loader = new three.TextureLoader();
+        const normal = loader.load("./js/oce.png");
         this.shape = new three.Mesh(
             new three.PlaneGeometry(60, 60),
             new three.MeshStandardMaterial({
-                color: 0x550000,
-                roughness: 0.95,
-                metalness: 0.05
+                color:0x004422,
+                //roughness: 0.95,
+                //metalness: 0.05,
+                normalMap: normal,
+        normalScale: new three.Vector2(1,1),
+
+        wireframe: false
             })
         );
         this.shape.rotation.x = -Math.PI / 2;
