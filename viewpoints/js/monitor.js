@@ -9,7 +9,7 @@ export default class Monitor {
         this.scaleSurface(2.2, 2.2, 2.2);
     }
     setCameraPos(x, y, z) {
-        this.cam.setPosition(-8, 7, -8);
+        this.cam.setPosition(x, y, z);
         return this;
     }
     lookAt(x, y, z) {

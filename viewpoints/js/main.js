@@ -18,8 +18,41 @@ document.body.appendChild(renderer.domElement);
 //-----------------------------------------------------
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xc5c5c5);
-//scene.fog = new THREE.FogExp2(0xa0a5a0, 0.02);
+scene.background = new THREE.Color(0x000000);
+
+const starCount = 500;
+
+const positions = [];
+
+for (let i = 0; i < starCount; i++) {
+
+    positions.push(
+        (Math.random() - 0.5) * 100,
+        Math.random() * 2 + 10,
+        (Math.random() - 0.5) * 100
+    );
+
+}
+
+const geometry = new THREE.BufferGeometry();
+
+geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3)
+);
+
+const material = new THREE.PointsMaterial({
+
+    color: 0xffffff,
+    size: 0.5,
+    sizeAttenuation: true
+
+});
+
+const stars = new THREE.Points(geometry, material);
+
+scene.add(stars);
+//scene.fog = new THREE.FogExp2(0xa0a5a0, 0.12);
 
 const mainCamera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
 
@@ -35,10 +68,10 @@ controls.update();
 
 const renderTarget = new THREE.WebGLRenderTarget(512,512);
 const monitor = new Monitor(
-    new Camera(THREE, { fov: 50, aspect: 1, near: 0.1, far: 100 }),
+    new Camera(THREE, { fov: 50, aspect: 1, near: 0.1, far: 50 }),
     new Surface(THREE, { rt: renderTarget, radius: 2, widthSegs: 64, heightSegs: 64 })
 );
-monitor.setCameraPos(-8, 4, -8).lookAt(0, 1, 1.5);
+monitor.setCameraPos(-1, 15, -1).lookAt(-1, 0, -1);
 monitor.setSurfacePos(-22, 3, -2).scaleSurface(2.2, 2.2, 2.2);
 monitor.addToScene(scene);
 
@@ -100,4 +133,10 @@ window.addEventListener("resize",()=>{
     mainCamera.aspect=innerWidth/innerHeight;
     mainCamera.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);
+});
+
+controls.addEventListener("change", () => {
+    console.clear();
+    console.log("Camera", monitor.camera.position);
+    console.log("Target", controls.target);
 });
