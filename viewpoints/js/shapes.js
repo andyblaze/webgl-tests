@@ -33,7 +33,7 @@ export class Torus {
 export class Floor {
     constructor(three) {
         const loader = new three.TextureLoader();
-        const normal = loader.load("./js/oce.png");
+        const normal = loader.load("./oce.png");
         this.shape = new three.Mesh(
             new three.PlaneGeometry(60, 60),
             new three.MeshStandardMaterial({
