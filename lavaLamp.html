@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lava Lamp - Part 1</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:#111;
+}
+</style>
+
+</head>
+
+<body>
+
+<script type="module">
+
+import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+
+function makeCamera() {
+    const cam = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        100
+    );
+    cam.position.z = 12;
+    return cam;
+}
+
+function makeRenderer() {
+    const rdr = new THREE.WebGLRenderer({
+        antialias:true
+    });
+    rdr.setSize(window.innerWidth, window.innerHeight);
+    return rdr;
+}
+
+function makeLights(scene) {
+    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+    const light = new THREE.DirectionalLight(0xffffff, 2);
+    light.position.set(5, 10, 10);
+    scene.add(light);
+}
+
+function makeBlob(sz) {
+    const blob = new THREE.Mesh(
+        new THREE.SphereGeometry(sz, 48, 48),
+        new THREE.MeshStandardMaterial({
+            color:0xff5500,
+            emissive:0xaa2200,
+            roughness:0.35
+        })
+    );
+    blob.position.y = 0;
+    return blob;
+}
+
+class Blob {
+    constructor(sz) {
+        this.blb = makeBlob(sz);
+    }
+    update(v) {
+        const stretch = 1 + Math.abs(v) * 32;
+        this.blb.scale.y = stretch;
+        this.blb.scale.x = 1 / Math.sqrt(stretch);
+        this.blb.scale.z = 1 / Math.sqrt(stretch);
+    }
+    get posY() {
+        return this.blb.position.y;
+    }
+    set posY(y) {
+        this.blb.position.y = y;
+    }
+    get actual() {
+        return this.blb;
+    }
+}
+
+function clamp(mn, mx, val) {
+    return Math.max(mn, Math.min(mx, val));
+}
+
+function smoothstep(edge0, edge1, x) {
+    const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+    return t * t * (3 - 2 * t);
+}
+
+const scene = new THREE.Scene();
+const camera = makeCamera();
+const renderer = makeRenderer(); 
+document.body.appendChild(renderer.domElement);
+makeLights(scene);
+
+const blob = new Blob(0.5);
+scene.add(blob.actual);
+
+let temperature = 0;
+let velocity = 0;
+
+const heatRate = 2.65;
+const coolRate = 2.85;
+const drag = 50;
+const buoyancyFactor = 0.02;
+const top = 2;
+const bottom = -2;
+const boundaryZone = 0.4;   // how far from top/bottom it affects
+const boundaryDamping = 0.1; // how strong the slowdown is
+
+function physics(blob, dt) {
+    let targetTemp = temperature; // placeholder for now
+
+    if (blob.posY < bottom)
+        targetTemp += heatRate * dt;
+
+    if (blob.posY > top)
+        targetTemp -= coolRate * dt;
+
+    temperature += (targetTemp - temperature) * 0.15;
+    temperature = clamp(0, 1, temperature);
+    // Bottom heater
+    /*if (blob.posY < bottom)
+        temperature += heatRate * dt;
+    // Top cooling
+    if (blob.posY > top)
+        temperature -= coolRate * dt;
+    temperature = clamp(0, 1, temperature);*/
+
+    // Buoyancy
+    const buoyancy = (temperature - 0.5) * buoyancyFactor;
+    velocity += buoyancy;
+    // 🧪 NEW: fake boundary density layer
+    let boundaryFactor = 1.0;
+    // bottom zone
+    if (blob.posY < bottom + boundaryZone) {
+        const t = (blob.posY - bottom) / boundaryZone; // 0..1
+        boundaryFactor *= (boundaryDamping + (1 - boundaryDamping) * t);
+    }
+    // top zone
+    if (blob.posY > top - boundaryZone) {
+        const t = (top - blob.posY) / boundaryZone; // 0..1
+        boundaryFactor *= (boundaryDamping + (1 - boundaryDamping) * t);
+    }
+    // Drag (now boundary-aware)
+    velocity *= Math.exp(-drag * dt) * boundaryFactor;
+    blob.posY += velocity;
+    // Reset cycle (keep your logic)
+    if (blob.posY > top && velocity > 0)
+        velocity *= 0.98;
+
+    if (blob.posY < bottom && velocity < 0)
+        velocity *= 0.98;
+    return velocity;
+}
+
+const clock = new THREE.Clock();
+
+function animate(){    
+    const dt = clock.getDelta();
+    const elapsed = clock.getElapsedTime();
+    
+    velocity = physics(blob, dt);
+    blob.update(velocity); 
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize",()=>{
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+
+</body>
+</html>

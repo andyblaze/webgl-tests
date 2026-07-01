@@ -16,42 +16,14 @@ document.body.appendChild(renderer.domElement);
 //-----------------------------------------------------
 // Scene
 //-----------------------------------------------------
-
+const loader = new THREE.TextureLoader();
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
-
-const starCount = 500;
-
-const positions = [];
-
-for (let i = 0; i < starCount; i++) {
-
-    positions.push(
-        (Math.random() - 0.5) * 100,
-        Math.random() * 2 + 10,
-        (Math.random() - 0.5) * 100
-    );
-
-}
-
-const geometry = new THREE.BufferGeometry();
-
-geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(positions, 3)
-);
-
-const material = new THREE.PointsMaterial({
-
-    color: 0xffffff,
-    size: 0.5,
-    sizeAttenuation: true
-
+loader.load("./sbg.jpg", (texture) => {
+    scene.background = texture;
 });
+//scene.background = new THREE.Color(0x000000);
 
-const stars = new THREE.Points(geometry, material);
 
-scene.add(stars);
 //scene.fog = new THREE.FogExp2(0xa0a5a0, 0.12);
 
 const mainCamera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
