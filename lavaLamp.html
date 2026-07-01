@@ -8,7 +8,10 @@
 body{
     margin:0;
     overflow:hidden;
-    background:#111;
+    background:#fff;
+}
+canvas {
+    background:transparent;
 }
 </style>
 
@@ -90,13 +93,37 @@ function smoothstep(edge0, edge1, x) {
 }
 
 const scene = new THREE.Scene();
+//scene.background = 0xffffff;
 const camera = makeCamera();
 const renderer = makeRenderer(); 
 document.body.appendChild(renderer.domElement);
 makeLights(scene);
 
-const blob = new Blob(0.5);
+const blob = new Blob(0.25);
 scene.add(blob.actual);
+
+const radius = 0.6;
+const length = 3.4;
+
+const glassGeometry = new THREE.CapsuleGeometry(
+    radius,
+    length,
+    8,
+    4
+);
+
+const glassMaterial = new THREE.MeshPhysicalMaterial({
+    transmission: 0.371,
+    transparent: true,
+    opacity: 0.2492,
+    roughness: 0.8,
+    thickness: 0.8,
+});
+
+const glass = new THREE.Mesh(glassGeometry, glassMaterial);
+
+scene.add(glass);
+
 
 let temperature = 0;
 let velocity = 0;
