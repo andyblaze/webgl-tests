@@ -210,18 +210,14 @@ class Lamp {
     }
 }
 const lamps = [];
-let offsetX = -21;
-for ( let i = 0; i < 12; i++ ) {
-    let y = 5;    
-    offsetX += 3;
-    if ( i > 5 ) {
-        //offsetX = -21;
-        y = -1;
+for ( let y = 6; y > -8; y -= 6 ) {
+    for ( let x = -18; x < 7; x +=3  ) {
+        //console.log(x,y);
+        const lamp = new Lamp(THREE);
+        lamp.setPosition(x, y, -12);
+        scene.add(lamp.actual);
+        lamps.push(lamp);
     }
-    const lamp = new Lamp(THREE);
-    lamp.setPosition(offsetX, y, -10);
-    scene.add(lamp.actual);
-    lamps.push(lamp);
 }
 
 const clock = new THREE.Clock();
