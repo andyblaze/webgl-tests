@@ -23,6 +23,15 @@ canvas {
 
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 
+function clamp(mn, mx, val) {
+    return Math.max(mn, Math.min(mx, val));
+}
+
+function smoothstep(edge0, edge1, x) {
+    const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+    return t * t * (3 - 2 * t);
+}
+
 function makeCamera() {
     const cam = new THREE.PerspectiveCamera(
         45,
@@ -61,12 +70,62 @@ class Blob {
             })
         );
         this.blb.position.y = 0;
+        
+        this.temperature = 0;
+        this.velocity = 0;
+
+        this.heatRate = 2 + Math.random();
+        this.coolRate = 2 + Math.random();
+        this.drag = 50;
+        this.buoyancyFactor = 0.02;
+        this.top = 1.8;
+        this.bottom = -2;
+        this.boundaryZone = 0.4;   // how far from top/bottom it affects
+        this.boundaryDamping = 0.1; // how strong the slowdown is
     }
-    update(v) {
-        const stretch = 1 + Math.abs(v) * 32;
+    update(dt) {
+        this.applyPhysics(dt);
+        const stretch = 1 + Math.abs(this.velocity) * 48;
         this.blb.scale.y = stretch;
         this.blb.scale.x = 1 / Math.sqrt(stretch);
         this.blb.scale.z = 1 / Math.sqrt(stretch);
+    }
+    applyPhysics(dt) {
+        let targetTemp = this.temperature; // placeholder for now
+
+        if (this.posY < this.bottom)
+            targetTemp += this.heatRate * dt;
+
+        if (this.posY > this.top)
+            targetTemp -= this.coolRate * dt;
+
+        this.temperature += (targetTemp - this.temperature) * 0.15;
+        this.temperature = clamp(0, 1, this.temperature);
+        // Buoyancy
+        const buoyancy = (this.temperature - 0.5) * this.buoyancyFactor;
+        this.velocity += buoyancy;
+        // 🧪 NEW: fake boundary density layer
+        let boundaryFactor = 1.0;
+        // bottom zone
+        if (this.posY < this.bottom + this.boundaryZone) {
+            const t = (this.posY - this.bottom) / this.boundaryZone; // 0..1
+            boundaryFactor *= (this.boundaryDamping + (1 - this.boundaryDamping) * t);
+        }
+        // top zone
+        if (this.posY > this.top - this.boundaryZone) {
+            const t = (this.top - this.posY) / this.boundaryZone; // 0..1
+            boundaryFactor *= (this.boundaryDamping + (1 - this.boundaryDamping) * t);
+        }
+        // Drag (now boundary-aware)
+        this.velocity *= Math.exp(-this.drag * dt) * boundaryFactor;
+        this.posY += this.velocity;
+        // Reset cycle (keep your logic)
+        if (this.posY > this.top && this.velocity > 0)
+            this.velocity *= 0.98;
+
+        if (this.posY < this.bottom && this.velocity < 0)
+            this.velocity *= 0.98;
+        return this.velocity;
     }
     get posY() {
         return this.blb.position.y;
@@ -77,15 +136,6 @@ class Blob {
     get actual() {
         return this.blb;
     }
-}
-
-function clamp(mn, mx, val) {
-    return Math.max(mn, Math.min(mx, val));
-}
-
-function smoothstep(edge0, edge1, x) {
-    const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
-    return t * t * (3 - 2 * t);
 }
 
 const scene = new THREE.Scene();
@@ -143,53 +193,7 @@ class Lamp {
         this.group.position.z = z;
     }
     update(dt) {
-        velocity = this.physics(this.blob, dt);
-        this.blob.update(velocity);
-    }
-    physics(blob, dt) {
-        let targetTemp = temperature; // placeholder for now
-
-        if (blob.posY < bottom)
-            targetTemp += heatRate * dt;
-
-        if (blob.posY > top)
-            targetTemp -= coolRate * dt;
-
-        temperature += (targetTemp - temperature) * 0.15;
-        temperature = clamp(0, 1, temperature);
-        // Bottom heater
-        /*if (blob.posY < bottom)
-            temperature += heatRate * dt;
-        // Top cooling
-        if (blob.posY > top)
-            temperature -= coolRate * dt;
-        temperature = clamp(0, 1, temperature);*/
-
-        // Buoyancy
-        const buoyancy = (temperature - 0.5) * buoyancyFactor;
-        velocity += buoyancy;
-        // 🧪 NEW: fake boundary density layer
-        let boundaryFactor = 1.0;
-        // bottom zone
-        if (blob.posY < bottom + boundaryZone) {
-            const t = (blob.posY - bottom) / boundaryZone; // 0..1
-            boundaryFactor *= (boundaryDamping + (1 - boundaryDamping) * t);
-        }
-        // top zone
-        if (blob.posY > top - boundaryZone) {
-            const t = (top - blob.posY) / boundaryZone; // 0..1
-            boundaryFactor *= (boundaryDamping + (1 - boundaryDamping) * t);
-        }
-        // Drag (now boundary-aware)
-        velocity *= Math.exp(-drag * dt) * boundaryFactor;
-        blob.posY += velocity;
-        // Reset cycle (keep your logic)
-        if (blob.posY > top && velocity > 0)
-            velocity *= 0.98;
-
-        if (blob.posY < bottom && velocity < 0)
-            velocity *= 0.98;
-        return velocity;
+        this.blob.update(dt);
     }
     get actual() {
         return this.group;
@@ -197,27 +201,12 @@ class Lamp {
 }
 const lamps = [];
 
-const lamp1 = new Lamp(THREE);
-lamp1.setPosition(-14, 4, -6);
-scene.add(lamp1.actual);
-
-const lamp2 = new Lamp(THREE);
-lamp2.setPosition(-11, 4, -6);
-scene.add(lamp2.actual);
-
-lamps.push(lamp1); lamps.push(lamp2);
-
-let temperature = 0;
-let velocity = 0;
-
-const heatRate = 2.65;
-const coolRate = 2.85;
-const drag = 50;
-const buoyancyFactor = 0.02;
-const top = 1.8;
-const bottom = -2;
-const boundaryZone = 0.4;   // how far from top/bottom it affects
-const boundaryDamping = 0.1; // how strong the slowdown is
+for ( let i = 0; i < 6; i++ ) {
+    const lamp = new Lamp(THREE);
+    lamp.setPosition(-18 + (i * 3), 5, -10);
+    scene.add(lamp.actual);
+    lamps.push(lamp);
+}
 
 const clock = new THREE.Clock();
 
@@ -225,8 +214,8 @@ function animate(){
     const dt = clock.getDelta();
     const elapsed = clock.getElapsedTime();
     
-    for ( const l of lamps )
-        l.update(dt);
+    for ( const lamp of lamps )
+        lamp.update(dt);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
