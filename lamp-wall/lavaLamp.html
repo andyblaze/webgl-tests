@@ -32,6 +32,16 @@ function smoothstep(edge0, edge1, x) {
     return t * t * (3 - 2 * t);
 }
 
+function mt_rand(min = 0, max = 1) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function mt_randf(min = 0, max = 1) {
+    return Math.random() * (max - min) + min;
+}
+
 function makeCamera() {
     const cam = new THREE.PerspectiveCamera(
         45,
@@ -74,10 +84,10 @@ class Blob {
         this.temperature = 0;
         this.velocity = 0;
 
-        this.heatRate = 2 + Math.random();
-        this.coolRate = 2 + Math.random();
-        this.drag = 50;
-        this.buoyancyFactor = 0.02;
+        this.heatRate = 2 + mt_randf();
+        this.coolRate = 2 + mt_randf();
+        this.drag = mt_rand(40, 50);
+        this.buoyancyFactor = mt_randf(0.01, 0.02);
         this.top = 1.8;
         this.bottom = -2;
         this.boundaryZone = 0.4;   // how far from top/bottom it affects
@@ -200,10 +210,16 @@ class Lamp {
     }
 }
 const lamps = [];
-
-for ( let i = 0; i < 6; i++ ) {
+let offsetX = -21;
+for ( let i = 0; i < 12; i++ ) {
+    let y = 5;    
+    offsetX += 3;
+    if ( i > 5 ) {
+        //offsetX = -21;
+        y = -1;
+    }
     const lamp = new Lamp(THREE);
-    lamp.setPosition(-18 + (i * 3), 5, -10);
+    lamp.setPosition(offsetX, y, -10);
     scene.add(lamp.actual);
     lamps.push(lamp);
 }
