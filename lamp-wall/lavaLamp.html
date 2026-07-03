@@ -19,9 +19,18 @@ canvas {
 
 <body>
 
+<script type="importmap">
+{
+  "imports": {
+    "three":"https://cdn.jsdelivr.net/npm/three@0.170/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170/examples/jsm/"
+  }
+}
+</script>
+
 <script type="module">
 
-import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import * as THREE from "three";
 
 function clamp(mn, mx, val) {
     return Math.max(mn, Math.min(mx, val));
@@ -68,18 +77,33 @@ function makeLights(scene) {
     scene.add(light);
 }
 
+function randomFrom(arr) {
+    return arr[mt_rand(0, arr.length - 1)];
+}
+
+const colours = [
+    0xff3300, // red
+    0xff8800, // orange
+    0xffdd00, // yellow
+    0x00ff66, // green
+    0x00ccff, // cyan
+    0x3366ff, // blue
+    0xaa33ff, // purple
+    0xff33aa  // pink
+];
+
 class Blob {
     constructor(three, sz) {
         this.blb = new three.Mesh(
         new three.SphereGeometry(sz, 48, 48),
             new three.MeshStandardMaterial({
-                color:0xff5500,
+                color:randomFrom(colours),
                 emissive:0xaa2200,
                 emissiveIntensity: 0.8,
                 roughness:0.35
             })
         );
-        this.blb.position.y = 0;
+        this.blb.position.y = mt_randf(-0.5, 0.5);
         
         this.temperature = 0;
         this.velocity = 0;
@@ -164,6 +188,22 @@ class Lamp {
         this.blob = new Blob(three, 0.25);
         this.group.add(this.blob.actual);
 
+        this.makeGlass(three);
+
+        const capGeo = new three.CylinderGeometry(0.32, 0.38, 0.5);
+        const baseGeo = new three.CylinderGeometry(0.8, 0.6, 0.5, 32, 1, true);
+        const steelMat = new three.MeshPhysicalMaterial({
+            color: 0xb8bcc2,
+            metalness: 1.0,
+            roughness: 0.28,
+        });
+
+        this.makeCap(three, capGeo, steelMat);
+        this.makeBase(three, baseGeo, steelMat);        
+        this.makeLight(three);
+        
+    }
+    makeGlass(three) {
         const glassGeometry = new three.CylinderGeometry(0.32, 0.8, this.height);
         const glassMaterial = new three.MeshPhysicalMaterial({
             transmission: 0.371,
@@ -175,27 +215,21 @@ class Lamp {
 
         this.glass = new three.Mesh(glassGeometry, glassMaterial);
         this.group.add(this.glass);
-
-        const capGeo = new  three.CylinderGeometry(0.32, 0.38, 0.5);
-        const baseGeo = new  three.CylinderGeometry(0.8, 0.6, 0.5, 32, 1, true);
-        const steelMat = new  three.MeshPhysicalMaterial({
-            color: 0xb8bcc2,
-            metalness: 1.0,
-            roughness: 0.28,
-        });
-
-        this.cap = new  three.Mesh(capGeo, steelMat);
+    }
+    makeCap(three, geo, mat) {
+        this.cap = new  three.Mesh(geo, mat);
         this.cap.position.y = this.height - 2.2;
         this.group.add(this.cap);
-
-        this.base = new  three.Mesh(baseGeo, steelMat);
+    }
+    makeBase(three, geo, mat) {
+        this.base = new  three.Mesh(geo, mat);
         this.base.position.y = -(this.height - 1.8);
         this.group.add(this.base);
-        
+    }
+    makeLight(three) {
         this.lamplight = new three.PointLight(0xff6600, 100, 4);
         this.lamplight.position.y = -(this.height - 1.6);
         this.group.add(this.lamplight);
-        
     }
     setPosition(x, y, z) {
         this.group.position.x = x;
