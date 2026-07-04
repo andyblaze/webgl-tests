@@ -59,34 +59,6 @@ for ( let y = 6; y > -8; y -= 6 ) {
     }
 }
 
-const canvas = document.createElement("canvas");
-canvas.width = 1024;
-canvas.height = 256;
-
-const ctx = canvas.getContext("2d");
-
-const texture = new THREE.CanvasTexture(canvas);
-
-const debugMesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(7, 3),
-    new THREE.MeshBasicMaterial({ map: texture })
-);
-
-debugMesh.position.set(7.5, -1, -1);
-scene.add(debugMesh);
-
-function drawSignal(value) {
-
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "lime";
-    ctx.font = "148px monospace";
-    ctx.fillText(value, 20, 80);
-
-    texture.needsUpdate = true;
-}
-
 const clock = new THREE.Clock();
 
 const renderTarget = new THREE.WebGLRenderTarget(512,512);
@@ -100,11 +72,38 @@ monitor.addToScene(scene);
 const monitorCam = monitor.camera;
 
 class Output {
-    constructor() {
+    constructor(three) {
         this.width = 512;
         this.height = 512;
         this.buffer = new Uint8Array(this.width * this.height * 4);
         this.elapsedDt = 0;
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = 1024;
+        this.canvas.height = 256;
+
+        this.ctx = this.canvas.getContext("2d");
+
+        this.texture = new three.CanvasTexture(this.canvas);
+
+        this.debugMesh = new three.Mesh(
+            new three.PlaneGeometry(7, 3),
+            new three.MeshBasicMaterial({ map: this.texture })
+        );
+        this.debugMesh.position.set(7.5, -1, -1);
+    }
+    addToScene(scene) {
+        scene.add(this.debugMesh);
+    }
+
+    drawSignal(value) {
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = "lime";
+        this.ctx.font = "148px monospace";
+        this.ctx.fillText(value, 20, 80);
+
+        this.texture.needsUpdate = true;
     }
     update(dt, renderer, rt) {
         this.elapsedDt += dt;
@@ -125,13 +124,14 @@ class Output {
                 hash ^= this.buffer[i];
                 hash = Math.imul(hash, 16777619);
             }
-            drawSignal(hash >>> 0);
+            this.drawSignal(hash >>> 0);
             this.elapsedDt = 0;
         }
     }
 }
 
-const output = new Output();
+const output = new Output(THREE);
+output.addToScene(scene);
 
 function animate() {    
     const dt = clock.getDelta();
