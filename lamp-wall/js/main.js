@@ -91,23 +91,52 @@ const clock = new THREE.Clock();
 
 const renderTarget = new THREE.WebGLRenderTarget(512,512);
 const monitor = new Monitor(
-    new Camera(THREE, { fov: 60, aspect: 0.8, near: 0.1, far: 50 }),
+    new Camera(THREE, { fov: 45, aspect: 0.8, near: 0.1, far: 50 }),
     new Surface(THREE, { rt: renderTarget, radius: 2, widthSegs: 64, heightSegs: 64 })
 );
-monitor.setCameraPos(0, 0, 30).lookAt(0, 1, 0);
+monitor.setCameraPos(10, 0, 20).lookAt(0, 1, 0);
 monitor.setSurfacePos(7, 3, 0);//.scaleSurface(2.2, 2.2, 2.2);
 monitor.addToScene(scene);
 const monitorCam = monitor.camera;
 
-const width = 512;
-const height = 512;
+class Output {
+    constructor() {
+        this.width = 512;
+        this.height = 512;
+        this.buffer = new Uint8Array(this.width * this.height * 4);
+        this.elapsedDt = 0;
+    }
+    update(dt, renderer, rt) {
+        this.elapsedDt += dt;
+        //console.log(this.elapsedDt < 1);
+        if ( this.elapsedDt > 1 ) {
+            renderer.readRenderTargetPixels(
+                rt,
+                0,
+                0,
+                this.width,
+                this.height,
+                this.buffer
+            );
 
-const buffer = new Uint8Array(width * height * 4);
+            let hash = 2166136261; // FNV-ish seed
 
+            for ( let i = 0; i < this.buffer.length; i += 16 ) { // skip for speed
+                hash ^= this.buffer[i];
+                hash = Math.imul(hash, 16777619);
+            }
+            drawSignal(hash >>> 0);
+            this.elapsedDt = 0;
+        }
+    }
+}
+
+const output = new Output();
 
 function animate() {    
     const dt = clock.getDelta();
     const elapsed = clock.getElapsedTime();
+    
     
     for ( const lamp of lamps )
         lamp.update(dt);
@@ -119,24 +148,11 @@ function animate() {
     renderer.setRenderTarget(null);
 
     monitor.toggleVisibility();
+
     renderer.render(scene, camera);
-renderer.readRenderTargetPixels(
-    renderTarget,
-    0,
-    0,
-    width,
-    height,
-    buffer
-);
+    
+    output.update(dt, renderer, renderTarget);
 
-let hash = 2166136261; // FNV-ish seed
-
-for (let i = 0; i < buffer.length; i += 16) { // skip for speed
-    hash ^= buffer[i];
-    hash = Math.imul(hash, 16777619);
-}
-
-drawSignal(hash >>> 0);
     requestAnimationFrame(animate);
 }
 
