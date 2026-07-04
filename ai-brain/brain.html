@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cognitive Cell</title>
+
+<style>
+html, body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+canvas {
+    display: block;
+}
+</style>
+</head>
+
+<body>
+
+<script type="module">
+
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180/build/three.module.js";
+
+//
+// --------------------------------------------------------------------
+// "Mind"
+// --------------------------------------------------------------------
+//
+
+//
+// --------------------------------------------------------------------
+// Scene
+// --------------------------------------------------------------------
+//
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
+
+camera.position.z = 4;
+
+const renderer = new THREE.WebGLRenderer({
+    antialias:true
+});
+
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setClearColor(0x000000);
+
+document.body.appendChild(renderer.domElement);
+
+//
+// --------------------------------------------------------------------
+// Soft texture
+// --------------------------------------------------------------------
+//
+
+function makeGlowTexture()
+{
+    const size = 128;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext("2d");
+
+    const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+
+    g.addColorStop(0.00,"rgba(255, 255, 255, 1)");
+    g.addColorStop(0.15,"rgba(255, 255, 255, 0.8)");
+    g.addColorStop(0.40,"rgba(255, 255, 255, -.25)");
+    g.addColorStop(1.00,"rgba(255, 255, 255, 0)");
+
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+
+    return new THREE.CanvasTexture(canvas);
+}
+
+const glow = makeGlowTexture();
+
+//
+// --------------------------------------------------------------------
+// Mist
+// --------------------------------------------------------------------
+//
+const auraMaterial = new THREE.SpriteMaterial({
+    map: glow,
+    transparent:true,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false,
+    color:new THREE.Color()
+});
+
+const aura = new THREE.Sprite(auraMaterial);
+aura.scale.set(2, 2, 1);
+scene.add(aura);
+
+//
+// Core
+// --------------------------------------------------------------------
+//
+const coreMaterial = new THREE.SpriteMaterial({
+    map: glow,
+    transparent:true,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false,
+    color:0xffffff
+});
+
+const core = new THREE.Sprite(coreMaterial);
+core.scale.set(0.18, 0.18, 1);
+scene.add(core);
+
+class Cell {
+    constructor(three, g) {
+        this.position = new three.Vector3();
+        this.graphics = g;
+        this.color = new three.Color();
+        this.curiosity = 0.9;
+        this.caution = 0.2;
+        this.creativity = 0.8;
+        this.focus = 0.4;
+        this.energy = 1.0;
+    }
+    update(t) {
+        // tiny "living" movement
+        this.position.x = Math.sin(t * 0.35) * 0.4;
+        this.position.y = Math.cos(t * 0.22) * 0.25;
+
+        // slowly changing emotional state
+        this.curiosity = 0.75 + Math.sin(t * 0.45) * 0.25;
+        this.creativity = 0.75 + Math.cos(t * 0.27) * 0.25;
+        this.color.setRGB(
+            0.6 * this.creativity + 0.8 * this.caution,
+            0.25,
+            0.7 * this.curiosity + 0.5 * this.creativity
+        );
+        this.graphics.update(t, this.position, this.color, this);
+    }
+}
+class Wisp {
+    constructor(three, scene, color) {
+
+        this.scene = scene;
+
+        this.angle = Math.random() * Math.PI * 2;
+        this.radius = 0.8 + Math.random() * 0.6;
+        this.speed = 0.5 + Math.random() * 0.8;
+
+        this.noiseSeed = Math.random() * 1000;
+
+        this.position = new three.Vector3();
+
+        this.color = color.clone();
+
+        const mat = new three.SpriteMaterial({
+            map: glow,
+            transparent: true,
+            blending: three.AdditiveBlending,
+            depthWrite: false,
+            color: this.color
+        });
+
+        this.sprite = new three.Sprite(mat);
+        this.sprite.scale.set(0.6, 0.6, 1);
+
+        scene.add(this.sprite);
+    }
+
+    update(t, center, intensity) {
+
+        // orbit + slight instability
+        this.angle += this.speed * 0.01;
+
+        const wobble =
+            Math.sin(t * 1.5 + this.noiseSeed) * 0.15 +
+            Math.sin(t * 0.7 + this.noiseSeed * 2.0) * 0.2;
+
+        const r = this.radius + wobble * intensity;
+
+        this.position.x = center.x + Math.cos(this.angle) * r;
+        this.position.y = center.y + Math.sin(this.angle) * r;
+
+        this.sprite.position.copy(this.position);
+
+        // breathing brightness
+        const pulse = 0.5 + 0.5 * Math.sin(t * 2.0 + this.noiseSeed);
+
+        this.sprite.material.opacity = 0.15 + pulse * 0.35 * intensity;
+    }
+}
+class Graphics {
+    constructor(three, coreSprite, scene) {
+
+        this.core = coreSprite;
+        this.scene = scene;
+
+        this.wisps = [];
+
+        // start with ONE wisp
+        this.wisps.push(
+            new Wisp(three, scene, new three.Color(0.6, 0.4, 1.0))
+        );
+    }
+
+    update(t, pos, color, cell) {
+
+        // core follows cell
+        this.core.position.copy(pos);
+
+        // core colour reacts to mind
+        this.core.material.color.copy(color);
+
+        // scale core slightly with energy
+        const pulse = 1.0 + Math.sin(t * 2.0) * 0.05;
+        this.core.scale.setScalar(0.18 * pulse);
+
+        // wisp intensity = emotional state
+        const intensity =
+            cell.curiosity * 0.6 +
+            cell.creativity * 0.4;
+
+        for (const w of this.wisps) {
+            w.update(t, pos, intensity);
+        }
+    }
+}
+
+/*class Graphics {
+    constructor(a, c) {
+        this.aura = a;
+        this.core = c;
+    }
+    update(t, pos, color) {
+        this.aura.position.copy(pos);
+        this.core.position.copy(pos);
+        this.aura.material.color.copy(color);
+        //
+        // Organic breathing        
+        // 
+        const pulse = 1.0 + Math.sin(t * 2.0) * 0.05 + Math.sin(t * 0.7) * 0.12;
+        this.aura.scale.setScalar(2.8 * pulse); 
+    }
+}*/
+
+const cell = new Cell(THREE, new Graphics(THREE, core, scene));
+
+const clock = new THREE.Clock();
+
+function animate() {
+
+    const t = clock.getElapsedTime();
+
+    cell.update(t);
+
+    renderer.render(scene,camera);
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+//
+// --------------------------------------------------------------------
+// Resize
+// --------------------------------------------------------------------
+//
+
+addEventListener("resize",()=>{
+
+    camera.aspect = innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(innerWidth,innerHeight);
+
+});
+
+</script>
+
+</body>
+</html>
