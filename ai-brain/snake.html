@@ -95,27 +95,27 @@ class Builder {
 // DISC POOL
 //==================================================
 
-class Discs {
+class Points {
     constructor(cfg) {
         this.cfg = cfg;
-        this.discs = [];
+        this.points = [];
     }
     init(three, geo, mat, scene) {
         for ( let i = 0; i < this.cfg.maxPoints; i++ ) {
             const m = new three.Mesh(geo, mat.clone());
             m.visible=false;
             scene.add(m);
-            this.discs.push(m);
+            this.points.push(m);
         }        
     }
     update(three, camera, trail) {
-        for( let i=0; i < this.discs.length; i++ )
-            this.discs[i].visible = false;
+        for( let i=0; i < this.points.length; i++ )
+            this.points[i].visible = false;
 
         const n = trail.size;
 
         for( let i = 0; i < n; i++ ) {
-            const mesh = this.discs[i];
+            const mesh = this.points[i];
             mesh.visible = true;
             mesh.position.copy(trail.getPoint(i));
             mesh.quaternion.copy(camera.quaternion);
@@ -128,7 +128,7 @@ class Discs {
         }
     }
     getDisc(i) {
-        return this.discs[i];
+        return this.points[i];
     }
 }
 
@@ -175,24 +175,25 @@ class Trail {
 }
 
 class Emitter {
-    constructor(three, cfg, movement) {
+    constructor(three, cfg, movement, trail) {
         this.emitter = new three.Vector3();
         this.cfg = cfg;
         this.movement = movement;
+        this.trail = trail;
     }
     update(mouse, camera) {
         this.movement.update(mouse, camera, this.emitter, this.cfg);
+        this.trail.addPoint(this.emitter, this.cfg);
     }
     get actual() {
         return this.emitter;
     }
 }
 
-const discs = new Discs(CFG);
+const points = new Points(CFG);
 const builder = new Builder(THREE, CFG);
-discs.init(THREE, builder.geometry(), builder.material(), scene);
-const trail = new Trail();
-const emitter = new Emitter(THREE, CFG, new Movement(THREE));
+points.init(THREE, builder.geometry(), builder.material(), scene);
+const emitter = new Emitter(THREE, CFG, new Movement(THREE), new Trail());
 
 //==================================================
 // LOOP
@@ -204,8 +205,7 @@ function animate() {
     const elapsed = clock.getElapsedTime();
 
     emitter.update(mouse, camera);
-    trail.addPoint(emitter.actual, CFG);
-    discs.update(THREE, camera, trail);
+    points.update(THREE, camera, emitter.trail);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
