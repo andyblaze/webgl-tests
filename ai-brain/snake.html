@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>Snake Trail Experiment</title>
-
 <style>
 html,body{
     margin:0;
@@ -14,13 +13,11 @@ canvas{
     display:block;
 }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
 </head>
 <body>
+<script type="module">
 
-<script>
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180/build/three.module.js";
 
 //==================================================
 // CONFIG
@@ -32,7 +29,7 @@ const CFG = {
     headLag : 0.15,
     headRadius : 0.18,
     tailRadius : 0.055,
-    colour : 0xaa44ff
+    color : 0xaa44ff
 };
 
 //==================================================
@@ -79,42 +76,72 @@ const emitter = new THREE.Vector3();
 const desired = new THREE.Vector3();
 
 //==================================================
-// TRAIL STORAGE
-//==================================================
-
-const trail = [];
-
-//==================================================
 // DISC GEOMETRY
 //==================================================
 
-const discGeo =
-    new THREE.PlaneGeometry(1, 1);
-
-const discMat = new THREE.MeshBasicMaterial({
-        color:CFG.colour,
-        transparent:true,
-        opacity:1,
-        depthWrite:false,
-        blending:THREE.AdditiveBlending,
-        side:THREE.DoubleSide
-    });
+class Builder {
+    constructor(three, cfg) {
+        this.geo = new three.PlaneGeometry(1, 1);
+        this.mat = new three.MeshBasicMaterial({
+            color: cfg.color,
+            transparent: true,
+            opacity: 1,
+            depthWrite: false,
+            blending: three.AdditiveBlending,
+            side: three.DoubleSide
+        });
+    }
+    geometry() {
+        return this.geo;
+    }
+    material() {
+        return this.mat;
+    }
+}
+const builder = new Builder(THREE, CFG);
 
 //==================================================
 // DISC POOL
 //==================================================
 
-const discs = [];
+class Discs {
+    constructor(cfg) {
+        this.cfg = cfg;
+        this.discs = [];
+    }
+    init(three, geo, mat, scene) {
+        for ( let i = 0; i < this.cfg.maxPoints; i++ ) {
+            const m = new three.Mesh(geo, mat.clone());
+            m.visible=false;
+            scene.add(m);
+            this.discs.push(m);
+        }        
+    }
+    update(three, camera, trail) {
+        for( let i=0; i < this.discs.length; i++ )
+            this.discs[i].visible = false;
 
-for( let i = 0; i < CFG.maxPoints; i++ ) {
-    const m = new THREE.Mesh(
-        discGeo,
-        discMat.clone()
-    );
-    m.visible=false;
-    scene.add(m);
-    discs.push(m);
+        const n = trail.size;
+
+        for( let i = 0; i < n; i++ ) {
+            const mesh = this.discs[i];
+            mesh.visible = true;
+            mesh.position.copy(trail.getPoint(i));
+            mesh.quaternion.copy(camera.quaternion);
+
+            const t = i / Math.max(1, n - 1);
+
+            const r = three.MathUtils.lerp(this.cfg.headRadius, this.cfg.tailRadius, t);
+            mesh.scale.setScalar(r);
+            mesh.material.opacity = 1.0 - t;
+        }
+    }
+    getDisc(i) {
+        return this.discs[i];
+    }
 }
+const discs = new Discs(CFG);
+discs.init(THREE, builder.geometry(), builder.material(), scene);
 
 //==================================================
 // HELPERS
@@ -124,49 +151,40 @@ const raycaster = new THREE.Raycaster();
 
 const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
+class Trail {
+    constructor() {
+        this.trail = [];
+    }
+    addPoint(emitter, cfg) {
+        if (  this.trail.length === 0 ) {
+             this.trail.push(emitter.clone());
+            return;
+        }
+
+        const last = this.trail[ this.trail.length - 1];
+
+        if ( last.distanceTo(emitter) < cfg.sampleDistance )
+            return;
+
+         this.trail.push(emitter.clone());
+
+        while (  this.trail.length > cfg.maxPoints ) {
+             this.trail.shift();
+        }        
+    }
+    get size() {
+        return this.trail.length;
+    }
+    getPoint(p) {
+        return this.trail[p];
+    }
+}
+const trail = new Trail();
+
 function updateEmitter() {
     raycaster.setFromCamera(mouse,camera);
     raycaster.ray.intersectPlane(plane, desired);
     emitter.lerp(desired, CFG.headLag);
-}
-
-function addTrailPoint() {
-
-    if ( trail.length === 0 ) {
-        trail.push(emitter.clone());
-        return;
-    }
-
-    const last = trail[trail.length-1];
-
-    if ( last.distanceTo(emitter) < CFG.sampleDistance )
-        return;
-
-    trail.push(emitter.clone());
-
-    while ( trail.length>CFG.maxPoints ) {
-        trail.shift();
-    }
-}
-
-function updateDiscs() {
-    for( let i=0; i < discs.length; i++ )
-        discs[i].visible=false;
-
-    const n = trail.length;
-
-    for( let i = 0; i < n; i++ ) {
-        const mesh = discs[i];
-        mesh.visible = true;
-        mesh.position.copy(trail[i]);
-        mesh.quaternion.copy(camera.quaternion);
-
-        const t = i / Math.max(1, n - 1);
-
-        const r = THREE.MathUtils.lerp(CFG.headRadius, CFG.tailRadius, t);
-        mesh.scale.setScalar(r);
-        mesh.material.opacity = 1.0 - t;
-    }
 }
 
 //==================================================
@@ -177,9 +195,9 @@ function animate(){
     requestAnimationFrame(animate);
 
     updateEmitter();
-    addTrailPoint();
-    updateDiscs();
-    
+    trail.addPoint(emitter, CFG);
+    discs.update(THREE, camera, trail);
+
     renderer.render(scene, camera);
 }
 
