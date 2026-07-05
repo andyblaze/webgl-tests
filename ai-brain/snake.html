@@ -68,14 +68,6 @@ window.addEventListener("pointermove",(e)=>{
 });
 
 //==================================================
-// EMITTER
-//==================================================
-
-
-
-const desired = new THREE.Vector3();
-
-//==================================================
 // DISC GEOMETRY
 //==================================================
 
@@ -98,7 +90,6 @@ class Builder {
         return this.mat;
     }
 }
-const builder = new Builder(THREE, CFG);
 
 //==================================================
 // DISC POOL
@@ -140,16 +131,19 @@ class Discs {
         return this.discs[i];
     }
 }
-const discs = new Discs(CFG);
-discs.init(THREE, builder.geometry(), builder.material(), scene);
 
-//==================================================
-// HELPERS
-//==================================================
-
-const raycaster = new THREE.Raycaster();
-
-const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+class Movement {
+    constructor(three) {
+        this.raycaster = new three.Raycaster();
+        this.desired = new three.Vector3();
+        this.plane = new three.Plane(new three.Vector3(0, 0, 1), 0);        
+    }
+    update(mouse, camera, emitter, cfg) {
+        this.raycaster.setFromCamera(mouse, camera);
+        this.raycaster.ray.intersectPlane(this.plane, this.desired);
+        emitter.lerp(this.desired, cfg.headLag);        
+    }
+}
 
 class Trail {
     constructor() {
@@ -179,23 +173,26 @@ class Trail {
         return this.trail[p];
     }
 }
-const trail = new Trail();
 
 class Emitter {
-    constructor(three, cfg) {
+    constructor(three, cfg, movement) {
         this.emitter = new three.Vector3();
         this.cfg = cfg;
+        this.movement = movement;
     }
-    update(raycaster, mouse, camera, plane, desired) {
-        raycaster.setFromCamera(mouse, camera);
-        raycaster.ray.intersectPlane(plane, desired);
-        this.emitter.lerp(desired, this.cfg.headLag);
+    update(mouse, camera) {
+        this.movement.update(mouse, camera, this.emitter, this.cfg);
     }
     get actual() {
         return this.emitter;
     }
 }
-const emitter = new Emitter(THREE, CFG);
+
+const discs = new Discs(CFG);
+const builder = new Builder(THREE, CFG);
+discs.init(THREE, builder.geometry(), builder.material(), scene);
+const trail = new Trail();
+const emitter = new Emitter(THREE, CFG, new Movement(THREE));
 
 //==================================================
 // LOOP
@@ -206,7 +203,7 @@ function animate() {
     const dt = clock.getDelta();
     const elapsed = clock.getElapsedTime();
 
-    emitter.update(raycaster, mouse, camera, plane, desired);
+    emitter.update(mouse, camera);
     trail.addPoint(emitter.actual, CFG);
     discs.update(THREE, camera, trail);
 
