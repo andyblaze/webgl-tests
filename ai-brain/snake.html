@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Snake Trail Experiment</title>
+
+<style>
+html,body{
+    margin:0;
+    overflow:hidden;
+    background:#000;
+}
+canvas{
+    display:block;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+</head>
+<body>
+
+<script>
+
+//==================================================
+// CONFIG
+//==================================================
+
+const CFG = {
+    maxPoints : 20,
+    sampleDistance : 0.08,
+    headLag : 0.15,
+    headRadius : 0.18,
+    tailRadius : 0.055,
+    colour : 0xaa44ff
+};
+
+//==================================================
+// THREE
+//==================================================
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+
+camera.position.set(0, 0, 10);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth,window.innerHeight);
+
+document.body.appendChild(renderer.domElement);
+
+//==================================================
+// MOUSE
+//==================================================
+
+const mouse = new THREE.Vector3();
+
+window.addEventListener("pointermove",(e)=>{
+
+    mouse.x =
+        (e.clientX/window.innerWidth)*2-1;
+
+    mouse.y =
+       -(e.clientY/window.innerHeight)*2+1;
+
+    mouse.z = 0;
+
+});
+
+//==================================================
+// EMITTER
+//==================================================
+
+const emitter = new THREE.Vector3();
+
+const desired = new THREE.Vector3();
+
+//==================================================
+// TRAIL STORAGE
+//==================================================
+
+const trail = [];
+
+//==================================================
+// DISC GEOMETRY
+//==================================================
+
+const discGeo =
+    new THREE.PlaneGeometry(1, 1);
+
+const discMat = new THREE.MeshBasicMaterial({
+        color:CFG.colour,
+        transparent:true,
+        opacity:1,
+        depthWrite:false,
+        blending:THREE.AdditiveBlending,
+        side:THREE.DoubleSide
+    });
+
+//==================================================
+// DISC POOL
+//==================================================
+
+const discs = [];
+
+for( let i = 0; i < CFG.maxPoints; i++ ) {
+    const m = new THREE.Mesh(
+        discGeo,
+        discMat.clone()
+    );
+    m.visible=false;
+    scene.add(m);
+    discs.push(m);
+}
+
+//==================================================
+// HELPERS
+//==================================================
+
+const raycaster = new THREE.Raycaster();
+
+const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+function updateEmitter() {
+    raycaster.setFromCamera(mouse,camera);
+    raycaster.ray.intersectPlane(plane, desired);
+    emitter.lerp(desired, CFG.headLag);
+}
+
+function addTrailPoint() {
+
+    if ( trail.length === 0 ) {
+        trail.push(emitter.clone());
+        return;
+    }
+
+    const last = trail[trail.length-1];
+
+    if ( last.distanceTo(emitter) < CFG.sampleDistance )
+        return;
+
+    trail.push(emitter.clone());
+
+    while ( trail.length>CFG.maxPoints ) {
+        trail.shift();
+    }
+}
+
+function updateDiscs() {
+    for( let i=0; i < discs.length; i++ )
+        discs[i].visible=false;
+
+    const n = trail.length;
+
+    for( let i = 0; i < n; i++ ) {
+        const mesh = discs[i];
+        mesh.visible = true;
+        mesh.position.copy(trail[i]);
+        mesh.quaternion.copy(camera.quaternion);
+
+        const t = i / Math.max(1, n - 1);
+
+        const r = THREE.MathUtils.lerp(CFG.headRadius, CFG.tailRadius, t);
+        mesh.scale.setScalar(r);
+        mesh.material.opacity = 1.0 - t;
+    }
+}
+
+//==================================================
+// LOOP
+//==================================================
+
+function animate(){
+    requestAnimationFrame(animate);
+
+    updateEmitter();
+    addTrailPoint();
+    updateDiscs();
+    
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect=
+            window.innerWidth/
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+
+    });
+
+</script>
+
+</body>
+</html>
