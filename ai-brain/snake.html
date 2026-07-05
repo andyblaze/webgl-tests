@@ -71,7 +71,7 @@ window.addEventListener("pointermove",(e)=>{
 // EMITTER
 //==================================================
 
-const emitter = new THREE.Vector3();
+
 
 const desired = new THREE.Vector3();
 
@@ -181,24 +181,37 @@ class Trail {
 }
 const trail = new Trail();
 
-function updateEmitter() {
-    raycaster.setFromCamera(mouse,camera);
-    raycaster.ray.intersectPlane(plane, desired);
-    emitter.lerp(desired, CFG.headLag);
+class Emitter {
+    constructor(three, cfg) {
+        this.emitter = new three.Vector3();
+        this.cfg = cfg;
+    }
+    update(raycaster, mouse, camera, plane, desired) {
+        raycaster.setFromCamera(mouse, camera);
+        raycaster.ray.intersectPlane(plane, desired);
+        this.emitter.lerp(desired, this.cfg.headLag);
+    }
+    get actual() {
+        return this.emitter;
+    }
 }
+const emitter = new Emitter(THREE, CFG);
 
 //==================================================
 // LOOP
 //==================================================
+const clock = new THREE.Clock();
 
-function animate(){
-    requestAnimationFrame(animate);
+function animate() {
+    const dt = clock.getDelta();
+    const elapsed = clock.getElapsedTime();
 
-    updateEmitter();
-    trail.addPoint(emitter, CFG);
+    emitter.update(raycaster, mouse, camera, plane, desired);
+    trail.addPoint(emitter.actual, CFG);
     discs.update(THREE, camera, trail);
 
     renderer.render(scene, camera);
+    requestAnimationFrame(animate);
 }
 
 animate();
