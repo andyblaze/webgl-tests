@@ -48,8 +48,8 @@ const CFG = {
     maxPoints : 20,
     sampleDistance : 0.08,
     headLag : 0.15,
-    headRadius : 0.18,
-    tailRadius : 0.055,
+    headRadius : 0.018,
+    tailRadius : 0.55,
     color : 0xaa44ff
 };
 
@@ -161,7 +161,7 @@ class Movement {
     }
     update(mouse, camera, emitter, cfg) {
         this.raycaster.setFromCamera(mouse, camera);
-        this.raycaster.ray.intersectPlane(this.plane, this.desired);
+        this.raycaster.ray.intersectPlane(this.plane, this.desired);       
         emitter.lerp(this.desired, cfg.headLag);        
     }
 }
