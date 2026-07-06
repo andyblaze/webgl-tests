@@ -23,6 +23,27 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180/build/three.mod
 // CONFIG
 //==================================================
 
+function lerp(a, b, t) {
+    return a + (b - a) * t;
+}
+
+function clamp(x, min, max) {
+    return Math.max(min, Math.min(max, x));
+}
+
+function saturate(x) {
+    return clamp(x, 0, 1);
+}
+
+function smoothstep(a, b, x) {
+    x = saturate((x - a) / (b - a));
+    return x * x * (3 - 2 * x);
+}
+
+function remap(x, in0, in1, out0, out1) {
+    return out0 + (out1 - out0) * ((x - in0) / (in1 - in0));
+}
+
 const CFG = {
     maxPoints : 20,
     sampleDistance : 0.08,
@@ -108,7 +129,7 @@ class Points {
             this.points.push(m);
         }        
     }
-    update(three, camera, trail) {
+    update(camera, trail) {
         for( let i=0; i < this.points.length; i++ )
             this.points[i].visible = false;
 
@@ -122,7 +143,7 @@ class Points {
 
             const t = i / Math.max(1, n - 1);
 
-            const r = three.MathUtils.lerp(this.cfg.headRadius, this.cfg.tailRadius, t);
+            const r = lerp(this.cfg.headRadius, this.cfg.tailRadius, t);
             mesh.scale.setScalar(r);
             mesh.material.opacity = 1.0 - t;
         }
@@ -210,20 +231,14 @@ class EffectRenderer {
     init(three, geo, mat, scene) {
         this.points.init(three, geo, mat, scene);
     }
-    update() {
-        
+    update(camera, trail) {
+        this.points.update(camera, trail);
     }
 }
-/*Renderer
-    owns
-        geometry
-        materials
-        meshes*/
 
-const points = new Points(CFG);
 const builder = new Builder(THREE, CFG);
-points.init(THREE, builder.geometry(), builder.material(), scene);
-
+const effectRenderer = new EffectRenderer(new Points(CFG));
+effectRenderer.init(THREE, builder.geometry(), builder.material(), scene);
 
 //==================================================
 // LOOP
@@ -235,7 +250,7 @@ function animate() {
     const elapsed = clock.getElapsedTime();
 
     effect.update(mouse, camera);
-    points.update(THREE, camera, effect.trail);
+    effectRenderer.update(camera, effect.trail);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
