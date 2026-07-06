@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Boids on Crack (Stage 1)</title>
+<style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+</head>
+
+<body>
+<script>
+
+// ======================================================
+// CONFIG
+// ======================================================
+
+const CFG = {
+    boidCount: 200,
+
+    maxSpeed: 0.02, //1.6,
+    maxForce: 0.003,
+
+    perception: 8,
+    separationDist: 10.6,
+
+    alignWeight: 4,
+    cohesionWeight: 4,
+    separationWeight: 4,
+
+    bounds: 12
+};
+
+// ======================================================
+// THREE SETUP
+// ======================================================
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
+
+camera.position.set(0, 0, 18);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// ======================================================
+// BOID DATA (pure JS state)
+// ======================================================
+
+const boids = [];
+
+function rand(n) {
+    return (Math.random() - 0.5) * n;
+}
+
+for (let i = 0; i < CFG.boidCount; i++) {
+    boids.push({
+        pos: new THREE.Vector3(rand(10), rand(10), rand(10)),
+        vel: new THREE.Vector3(rand(1), rand(1), rand(1))
+    });
+}
+
+// ======================================================
+// THREE INSTANCED MESH
+// ======================================================
+
+const geometry = new THREE.SphereGeometry(0.08, 6, 6);
+const material = new THREE.MeshBasicMaterial({ color: 0xaa44ff });
+
+const mesh = new THREE.InstancedMesh(
+    geometry,
+    material,
+    CFG.boidCount
+);
+
+scene.add(mesh);
+
+const dummy = new THREE.Object3D();
+
+// ======================================================
+// BOID MATH
+// ======================================================
+
+function limit(vec, max) {
+    if (vec.lengthSq() > max * max) {
+        vec.setLength(max);
+    }
+}
+
+// Separation: avoid crowding
+function separation(i) {
+    const steer = new THREE.Vector3();
+    let count = 0;
+
+    const boid = boids[i];
+
+    for (let j = 0; j < boids.length; j++) {
+        if (i === j) continue;
+
+        const d = boid.pos.distanceTo(boids[j].pos);
+
+        if (d < CFG.separationDist && d > 0) {
+            const diff = boid.pos.clone().sub(boids[j].pos);
+            diff.divideScalar(d);
+            steer.add(diff);
+            count++;
+        }
+    }
+
+    if (count > 0) {
+        steer.divideScalar(count);
+    }
+
+    if (steer.length() > 0) {
+        steer.setLength(CFG.maxSpeed);
+        steer.sub(boid.vel);
+        limit(steer, CFG.maxForce);
+    }
+
+    return steer;
+}
+
+// Alignment: match velocity
+function alignment(i) {
+    const avg = new THREE.Vector3();
+    let count = 0;
+
+    const boid = boids[i];
+
+    for (let j = 0; j < boids.length; j++) {
+        if (i === j) continue;
+
+        const d = boid.pos.distanceTo(boids[j].pos);
+
+        if (d < CFG.perception) {
+            avg.add(boids[j].vel);
+            count++;
+        }
+    }
+
+    if (count > 0) {
+        avg.divideScalar(count);
+        avg.setLength(CFG.maxSpeed);
+
+        const steer = avg.sub(boid.vel);
+        limit(steer, CFG.maxForce);
+        return steer;
+    }
+
+    return new THREE.Vector3();
+}
+
+// Cohesion: move toward center
+function cohesion(i) {
+    const center = new THREE.Vector3();
+    let count = 0;
+
+    const boid = boids[i];
+
+    for (let j = 0; j < boids.length; j++) {
+        if (i === j) continue;
+
+        const d = boid.pos.distanceTo(boids[j].pos);
+
+        if (d < CFG.perception) {
+            center.add(boids[j].pos);
+            count++;
+        }
+    }
+
+    if (count > 0) {
+        center.divideScalar(count);
+
+        const desired = center.sub(boid.pos);
+        desired.setLength(CFG.maxSpeed);
+
+        const steer = desired.sub(boid.vel);
+        limit(steer, CFG.maxForce);
+        return steer;
+    }
+
+    return new THREE.Vector3();
+}
+
+// ======================================================
+// UPDATE
+// ======================================================
+
+function updateBoids() {
+
+    for (let i = 0; i < boids.length; i++) {
+
+        const b = boids[i];
+
+        const sep = separation(i).multiplyScalar(CFG.separationWeight);
+        const ali = alignment(i).multiplyScalar(CFG.alignWeight);
+        const coh = cohesion(i).multiplyScalar(CFG.cohesionWeight);
+
+        b.vel.add(sep);
+        b.vel.add(ali);
+        b.vel.add(coh);
+
+        limit(b.vel, CFG.maxSpeed);
+
+        b.pos.add(b.vel);
+
+        // simple wrap bounds
+        const B = CFG.bounds;
+
+        if (b.pos.x > B) b.pos.x = -B;
+        if (b.pos.x < -B) b.pos.x = B;
+        if (b.pos.y > B) b.pos.y = -B;
+        if (b.pos.y < -B) b.pos.y = B;
+        if (b.pos.z > B) b.pos.z = -B;
+        if (b.pos.z < -B) b.pos.z = B;
+    }
+}
+
+// ======================================================
+// RENDER
+// ======================================================
+
+function renderBoids() {
+
+    for (let i = 0; i < boids.length; i++) {
+
+        const b = boids[i];
+
+        dummy.position.copy(b.pos);
+
+        // orient along velocity
+        dummy.lookAt(b.pos.clone().add(b.vel));
+
+        dummy.updateMatrix();
+
+        mesh.setMatrixAt(i, dummy.matrix);
+    }
+
+    mesh.instanceMatrix.needsUpdate = true;
+}
+
+// ======================================================
+// LOOP
+// ======================================================
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    updateBoids();
+    renderBoids();
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+// ======================================================
+// RESIZE
+// ======================================================
+
+window.addEventListener('resize', () => {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+});
+
+</script>
+</body>
+</html>
