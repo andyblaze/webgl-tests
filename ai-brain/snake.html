@@ -103,7 +103,7 @@ class Points {
     init(three, geo, mat, scene) {
         for ( let i = 0; i < this.cfg.maxPoints; i++ ) {
             const m = new three.Mesh(geo, mat.clone());
-            m.visible=false;
+            m.visible = false;
             scene.add(m);
             this.points.push(m);
         }        
@@ -175,25 +175,55 @@ class Trail {
 }
 
 class Emitter {
-    constructor(three, cfg, movement, trail) {
-        this.emitter = new three.Vector3();
-        this.cfg = cfg;
-        this.movement = movement;
-        this.trail = trail;
-    }
-    update(mouse, camera) {
-        this.movement.update(mouse, camera, this.emitter, this.cfg);
-        this.trail.addPoint(this.emitter, this.cfg);
+    constructor(e) {
+        this.emitter = e;
     }
     get actual() {
         return this.emitter;
     }
 }
 
+
+class Effect {
+    constructor(e, t, c, m) {
+        this.emitter = e;
+        this.trail = t;
+        this.cfg = c;
+        this.movement = m;
+    }
+    update(mouse, camera) {
+        this.movement.update(mouse, camera, this.emitter.actual, this.cfg);
+        this.trail.addPoint(this.emitter.actual, this.cfg);
+    }
+}
+const effect = new Effect(
+    new Emitter(new THREE.Vector3()),
+    new Trail(),
+    CFG,
+    new Movement(THREE)
+);
+
+class EffectRenderer {
+    constructor(p) {
+        this.points = p;
+    }
+    init(three, geo, mat, scene) {
+        this.points.init(three, geo, mat, scene);
+    }
+    update() {
+        
+    }
+}
+/*Renderer
+    owns
+        geometry
+        materials
+        meshes*/
+
 const points = new Points(CFG);
 const builder = new Builder(THREE, CFG);
 points.init(THREE, builder.geometry(), builder.material(), scene);
-const emitter = new Emitter(THREE, CFG, new Movement(THREE), new Trail());
+
 
 //==================================================
 // LOOP
@@ -204,8 +234,8 @@ function animate() {
     const dt = clock.getDelta();
     const elapsed = clock.getElapsedTime();
 
-    emitter.update(mouse, camera);
-    points.update(THREE, camera, emitter.trail);
+    effect.update(mouse, camera);
+    points.update(THREE, camera, effect.trail);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
