@@ -19,17 +19,17 @@
 // ======================================================
 
 const CFG = {
-    boidCount: 200,
+    boidCount: 400,
 
     maxSpeed: 0.08, //1.6,
     maxForce: 0.003,
 
-    perception: 16,
+    perception: 4,
     separationDist: 4,
 
-    alignWeight: 4,
+    alignWeight: 5,
     cohesionWeight: 4,
-    separationWeight: 4,
+    separationWeight: 5,
 
     bounds: {top: 6, right: 16, bottom: -6, left: -16, front: 6, back: -6}
 };
@@ -47,7 +47,7 @@ const camera = new THREE.PerspectiveCamera(
     100
 );
 
-camera.position.set(0, 0, 18);
+camera.position.set(0, 0, 28);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -65,7 +65,7 @@ function rand(n) {
 
 for (let i = 0; i < CFG.boidCount; i++) {
     boids.push({
-        pos: new THREE.Vector3(rand(10), rand(10), rand(10)),
+        pos: new THREE.Vector3(rand(32), rand(12), rand(12)),
         vel: new THREE.Vector3(rand(1), rand(1), rand(1))
     });
 }
@@ -239,7 +239,7 @@ function renderBoids() {
         dummy.position.copy(b.pos);
 
         // orient along velocity
-        dummy.lookAt(b.pos.clone().add(b.vel));
+        //dummy.lookAt(b.pos.clone().add(b.vel));
 
         dummy.updateMatrix();
 
