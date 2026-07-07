@@ -24,14 +24,14 @@ const CFG = {
     maxSpeed: 0.08, //1.6,
     maxForce: 0.003,
 
-    perception: 4,
+    perception: 6,
     separationDist: 4,
 
     alignWeight: 5,
     cohesionWeight: 4,
     separationWeight: 5,
 
-    bounds: {top: 6, right: 16, bottom: -6, left: -16, front: 6, back: -6}
+    bounds: {top: 6, right: 16, bottom: -6, left: -16, front: 2, back: -2}
 };
 
 // ======================================================
@@ -65,7 +65,7 @@ function rand(n) {
 
 for (let i = 0; i < CFG.boidCount; i++) {
     boids.push({
-        pos: new THREE.Vector3(rand(32), rand(12), rand(12)),
+        pos: new THREE.Vector3(rand(32), rand(12), rand(4)),
         vel: new THREE.Vector3(rand(1), rand(1), rand(1))
     });
 }
@@ -223,6 +223,8 @@ function updateBoids() {
         if (b.pos.y < B.bottom) b.vel.y = -b.vel.y;
         if (b.pos.z > B.front) b.vel.z = -b.vel.z;
         if (b.pos.z < B.back) b.vel.z = -b.vel.z;
+
+        //if ( b.pos.x > 0 && b.vel.x < 0.00001 ) b.vel.x += 0.002;
     }
 }
 
