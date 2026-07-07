@@ -7,31 +7,30 @@
     body { margin: 0; overflow: hidden; background: #000; }
     canvas { display: block; }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 </head>
-
 <body>
-<script>
+<script type="module">
+
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180/build/three.module.js";
 
 // ======================================================
 // CONFIG
 // ======================================================
 
 const CFG = {
-    boidCount: 400,
+    boidCount: 600,
 
     maxSpeed: 0.08, //1.6,
     maxForce: 0.003,
 
-    perception: 6,
+    perception: 4,
     separationDist: 4,
 
-    alignWeight: 5,
-    cohesionWeight: 4,
-    separationWeight: 5,
+    alignWeight: 4,
+    cohesionWeight: 3,
+    separationWeight: 4,
 
-    bounds: {top: 6, right: 16, bottom: -6, left: -16, front: 2, back: -2}
+    bounds: {top: 6, right: 16, bottom: -6, left: -16, front: 6, back: -6}
 };
 
 // ======================================================
@@ -65,7 +64,7 @@ function rand(n) {
 
 for (let i = 0; i < CFG.boidCount; i++) {
     boids.push({
-        pos: new THREE.Vector3(rand(32), rand(12), rand(4)),
+        pos: new THREE.Vector3(rand(CFG.bounds.right * 2), rand(CFG.bounds.top * 2), rand(CFG.bounds.front * 2)),
         vel: new THREE.Vector3(rand(1), rand(1), rand(1))
     });
 }

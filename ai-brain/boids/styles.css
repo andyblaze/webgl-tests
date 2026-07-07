@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+canvas {
+  background: #222;
+  image-rendering: pixelated;
+  /* So small squares look sharp */
+}
+#fps-report {/*
+    z-index:12;
+    position:absolute;
+    left:0;
+    top:0;
+    font-size:20px;
+    color:#fff;
+    background:#000;
+    width:100px;
+    height:20px;
+    padding:8px;
+    border:1px solid #fff;*/
+}
