@@ -1,7 +1,16 @@
+//import SimplexNoise from "./simplex.js";
+//import CurlNoise from "./curl.js";
+
 export default class Model {
     constructor(cfg) {
         this.cfg = cfg;
         this.boids = [];
+        /*this.noiseField = (x, y, t) => {
+            return Math.sin(
+                t + x * 0.01 + y * 0.01
+            );
+        };
+        this.noise = new CurlNoise(this.noiseField);*/
         this.resetSAC();
         this.initBoids(cfg);
     }
@@ -85,6 +94,21 @@ export default class Model {
         };
         return noise;
     }
+computeNoise1(boid) {
+
+    const t = performance.now() * 0.001;
+
+    const noise = this.noise.get(
+        boid.position.x,
+        boid.position.y,
+        t * 0.02
+    );
+
+    return {
+        x: noise.x * this.cfg.noiseStrength,
+        y: noise.y * this.cfg.noiseStrength
+    };
+}
     limitSpeed(vx, vy) {
         const speed = Math.sqrt(vx * vx + vy * vy);
         if (speed > this.cfg.maxSpeed) {
@@ -155,7 +179,7 @@ export default class Model {
         const noise = this.computeNoise(boid);
 
         vx += noise.x;
-        vy += noise.y; vy += boid.personality.curiosity; vx += boid.personality.curiosity;
+        vy += noise.y; //vy += boid.personality.curiosity; vx += boid.personality.curiosity;
 
         [ vx, vy ] = this.limitSpeed(vx, vy);
         return { x: vx, y: vy };
