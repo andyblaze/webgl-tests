@@ -73,7 +73,7 @@ export default class View {
             this.dummy.updateMatrix();
             this.boidMesh.setMatrixAt(i, this.dummy.matrix);
 
-        });
+        }); 
 
         this.boidMesh.instanceMatrix.needsUpdate = true;
 

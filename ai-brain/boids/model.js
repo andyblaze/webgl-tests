@@ -179,7 +179,7 @@ computeNoise1(boid) {
         const noise = this.computeNoise(boid);
 
         vx += noise.x;
-        vy += noise.y; //vy += boid.personality.curiosity; vx += boid.personality.curiosity;
+        vy += noise.y; vy += boid.personality.curiosity; vx += boid.personality.curiosity;
 
         [ vx, vy ] = this.limitSpeed(vx, vy);
         return { x: vx, y: vy };
