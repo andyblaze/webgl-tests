@@ -1,7 +1,7 @@
 import config from "./config.js";
 import Controller from "./controller.js";
 import Model from "./model.js";
-import View from "./view.js";
+import View from "./three-view.js";
 
 window.addEventListener("DOMContentLoaded", () => {
     const controller = new Controller(

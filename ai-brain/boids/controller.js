@@ -7,6 +7,7 @@ export default class Controller {
         this.cfg = c;
         this.paused = false;
         this.frameCount = 0;
+        this.loop = this.loop.bind(this);
     }
     resize() {
         this.paused = true;
@@ -26,6 +27,6 @@ export default class Controller {
                 DeltaReport.log(timestamp);
             }
         }
-        requestAnimationFrame(this.loop.bind(this)); 
+        requestAnimationFrame(this.loop); 
     } 
 }
