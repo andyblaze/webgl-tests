@@ -10,7 +10,8 @@ export default class Model {
             this.boids.push({
                 position: { x: Math.random() * cfg.width, y: Math.random() * cfg.height },
                 velocity: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-                opacity:0.2
+                opacity:0.2,
+                personality: { curiosity: (Math.random() - 0.5) * 0.2 }
             });
         }
     }
@@ -154,7 +155,7 @@ export default class Model {
         const noise = this.computeNoise(boid);
 
         vx += noise.x;
-        vy += noise.y;
+        vy += noise.y; vy += boid.personality.curiosity; vx += boid.personality.curiosity;
 
         [ vx, vy ] = this.limitSpeed(vx, vy);
         return { x: vx, y: vy };

@@ -14,7 +14,7 @@ export default class View {
         this.camera.position.z = 1;
 
         this.boidMesh = new THREE.InstancedMesh(
-            new THREE.CircleGeometry(8, 24),
+            new THREE.CircleGeometry(4, 24),
             new THREE.MeshBasicMaterial({
                 color: 0x000000,
                 side: THREE.DoubleSide,
