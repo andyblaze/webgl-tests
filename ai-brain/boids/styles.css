@@ -7,14 +7,13 @@ body {
   height: 100vh;
 }
 canvas {
-  background: #87ceeb;
+  background: #80c5e0;
   image-rendering: pixelated;
   display: block;
   width: 100vw;
   height: 100vh;
-  /* So small squares look sharp */
 }
-#fps-report {/*
+/*#fps-report {
     z-index:12;
     position:absolute;
     left:0;
@@ -25,5 +24,5 @@ canvas {
     width:100px;
     height:20px;
     padding:8px;
-    border:1px solid #fff;*/
-}
+    border:1px solid #fff;
+}*/
