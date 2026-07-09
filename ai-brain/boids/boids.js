@@ -15,5 +15,5 @@ window.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("resize", controller.resize.bind(controller));
     window.addEventListener("click", function() {controller.paused = ! controller.paused;});
     controller.resize();
-    controller.loop();
+    controller.loop(performance.now());
 });
