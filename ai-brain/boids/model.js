@@ -1,16 +1,7 @@
-//import SimplexNoise from "./simplex.js";
-//import CurlNoise from "./curl.js";
-
 export default class Model {
     constructor(cfg) {
         this.cfg = cfg;
         this.boids = [];
-        /*this.noiseField = (x, y, t) => {
-            return Math.sin(
-                t + x * 0.01 + y * 0.01
-            );
-        };
-        this.noise = new CurlNoise(this.noiseField);*/
         this.resetSAC();
         this.initBoids(cfg);
     }
@@ -61,7 +52,7 @@ export default class Model {
         if (boid.position.y < 0) boid.position.y += this.cfg.height;
         if (boid.position.y > this.cfg.height) boid.position.y -= this.cfg.height;
     }
-    tick(elapsedTime) {
+    tick(dt, elapsedTime) {
         // Compute new velocities & positions
         for (const boid of this.boids) {
             const oldVel = { ...boid.velocity };
@@ -86,7 +77,8 @@ export default class Model {
         return this.boids;
     }
     computeNoise(boid, elapsedTime) {
-        // Example using a simple sin/cos drift
+        // Example using a simple sin/cos drift.  This "stupid" idea turns out to be the best for flocking. 
+        // tried simple, perlin, curl, elapsedTime - all are worse.
         const t = Date.now() * 0.001; // seconds
         const noise = {
             x: Math.sin(t + boid.position.y * 0.01) * this.cfg.noiseStrength,
@@ -94,21 +86,6 @@ export default class Model {
         };
         return noise;
     }
-computeNoise1(boid) {
-
-    const t = performance.now() * 0.001;
-
-    const noise = this.noise.get(
-        boid.position.x,
-        boid.position.y,
-        t * 0.02
-    );
-
-    return {
-        x: noise.x * this.cfg.noiseStrength,
-        y: noise.y * this.cfg.noiseStrength
-    };
-}
     limitSpeed(vx, vy) {
         const speed = Math.sqrt(vx * vx + vy * vy);
         if (speed > this.cfg.maxSpeed) {
@@ -179,7 +156,7 @@ computeNoise1(boid) {
         const noise = this.computeNoise(boid, elapsedTime);
 
         vx += noise.x;
-        vy += noise.y; //vy += boid.personality.curiosity; vx += boid.personality.curiosity;
+        vy += noise.y; 
 
         [ vx, vy ] = this.limitSpeed(vx, vy);
         return { x: vx, y: vy };

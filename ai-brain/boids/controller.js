@@ -26,7 +26,7 @@ export default class Controller {
                 const dt = this.clock.getDelta();
                 const elapsedTime = this.clock.getElapsedTime();
                 
-                const data = this.model.tick(elapsedTime);
+                const data = this.model.tick(dt, elapsedTime);
                 this.view.draw(data);
                 DeltaReport.log(timestamp);
             }
