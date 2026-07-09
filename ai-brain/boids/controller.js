@@ -23,7 +23,7 @@ export default class Controller {
     loop(timestamp) {
         if ( this.paused === false ) {            
             if ( this.frameReady() ) {
-                const dt = this.clock.getDelta();
+                const dt = this.clock.getDelta() * 60;
                 const elapsedTime = this.clock.getElapsedTime();
                 
                 const data = this.model.tick(dt, elapsedTime);

@@ -27,7 +27,7 @@ export default class Model {
         const cosTheta = dot / (magA * magB + 1e-6); 
         return Math.acos(Math.max(-1, Math.min(1, cosTheta))); // radians
     }
-    nudgeTowardCenter(boid) {
+    nudgeTowardCenter(boid, dt) {
         const centerX = this.cfg.width / 2;
         const centerY = this.cfg.height / 2;
 
@@ -35,16 +35,11 @@ export default class Model {
         const toCenterX = centerX - boid.position.x;
         const toCenterY = centerY - boid.position.y;
 
-        // Option 1: Random chance to apply nudge
-        if (Math.random() < this.cfg.edgeNudgeChance) {
-            boid.velocity.x += toCenterX * this.cfg.edgeNudgeStrength;
-            boid.velocity.y += toCenterY * this.cfg.edgeNudgeStrength;
+        const probability = 1 - Math.exp(-this.cfg.edgeNudgeChance * dt);
+        if ( Math.random() < probability ) {
+            boid.velocity.x += toCenterX * this.cfg.edgeNudgeStrength * dt;
+            boid.velocity.y += toCenterY * this.cfg.edgeNudgeStrength * dt;
         }
-
-        // Option 2: Always apply, but with random factor
-        // const factor = Math.random();
-        // boid.velocity.x += toCenterX * nudgeStrength * factor;
-        // boid.velocity.y += toCenterY * nudgeStrength * factor;
     }
     wrapAroundEdges(boid) {
         if (boid.position.x < 0) boid.position.x += this.cfg.width;
@@ -56,30 +51,32 @@ export default class Model {
         // Compute new velocities & positions
         for (const boid of this.boids) {
             const oldVel = { ...boid.velocity };
-            const { x, y } = this.computeVelocity(boid, elapsedTime);
+            const { x, y } = this.computeVelocity(boid, dt, elapsedTime);
+            const fadeRate = 1.2; // opacity per second
             boid.velocity.x = x;
             boid.velocity.y = y;
 
-            boid.position.x += boid.velocity.x;
-            boid.position.y += boid.velocity.y;
+            boid.position.x += boid.velocity.x * dt;
+            boid.position.y += boid.velocity.y * dt;
             
             const turnAngle = this.getTurnAngle(oldVel, boid.velocity);
             // If sharp turn, bump opacity
-            if (turnAngle > 0.1) {  // tweak threshold
+            if ( turnAngle > 0.1 ) {  // tweak threshold
                 boid.opacity = Math.min(0.4, boid.opacity + 0.3);
             } else {
                 // slowly fade back to normal
+                // boid.opacity = Math.max(0.2, fadeRate * dt);
                 boid.opacity = Math.max(0.2, boid.opacity - 0.02);
             }
-            this.nudgeTowardCenter(boid);
+            this.nudgeTowardCenter(boid, dt);
             this.wrapAroundEdges(boid);
         }
         return this.boids;
     }
-    computeNoise(boid, elapsedTime) {
+    computeNoise(boid, dt, elapsedTime) {
         // Example using a simple sin/cos drift.  This "stupid" idea turns out to be the best for flocking. 
         // tried simple, perlin, curl, elapsedTime - all are worse.
-        const t = Date.now() * 0.001; // seconds
+        const t = Date.now() * dt * 0.001; // seconds
         const noise = {
             x: Math.sin(t + boid.position.y * 0.01) * this.cfg.noiseStrength,
             y: Math.cos(t + boid.position.x * 0.01) * this.cfg.noiseStrength
@@ -107,19 +104,19 @@ export default class Model {
         const dy = pos1.y - pos2.y;
         return [dx, dy, Math.sqrt(dx * dx + dy * dy)];        
     }
-    setSeparation(dist, dx, dy) {
+    setSeparation(dist, dx, dy, dt) {
         if (dist < this.cfg.separationDistance && dist > 0) {
-            this.separation.x -= dx / dist;
-            this.separation.y -= dy / dist;
+            this.separation.x -= dx / dist * dt;
+            this.separation.y -= dy / dist * dt;
         }    
     }
-    setAlignment(velocity) {
-        this.alignment.x += velocity.x;
-        this.alignment.y += velocity.y;    
+    setAlignment(velocity, dt) {
+        this.alignment.x += velocity.x * dt;
+        this.alignment.y += velocity.y * dt;    
     }
-    setCohesion(position) {
-        this.cohesion.x += position.x;
-        this.cohesion.y += position.y; 
+    setCohesion(position, dt) {
+        this.cohesion.x += position.x * dt;
+        this.cohesion.y += position.y * dt; 
     }
     checkOnNeighbors(neighbors, position) {
         if ( neighbors > 0 ) {
@@ -130,7 +127,7 @@ export default class Model {
             this.cohesion.y = (this.cohesion.y / neighbors) - position.y;
         }
     }
-    computeVelocity(boid, elapsedTime) {
+    computeVelocity(boid, dt, elapsedTime) {
         this.resetSAC();
 
         let neighbors = 0;
@@ -142,9 +139,9 @@ export default class Model {
 
             if ( dist < this.cfg.neighborRadius ) {
                 neighbors++;
-                this.setSeparation(dist, dx, dy);
-                this.setAlignment(other.velocity);
-                this.setCohesion(other.position);
+                this.setSeparation(dist, dx, dy, dt);
+                this.setAlignment(other.velocity, dt);
+                this.setCohesion(other.position, dt);
             }
         }
 
@@ -153,7 +150,7 @@ export default class Model {
         let vx = this.weightedVelocity("x", boid.velocity);
         let vy = this.weightedVelocity("y", boid.velocity);
 
-        const noise = this.computeNoise(boid, elapsedTime);
+        const noise = this.computeNoise(boid, dt, elapsedTime);
 
         vx += noise.x;
         vy += noise.y; 
