@@ -61,11 +61,11 @@ export default class Model {
         if (boid.position.y < 0) boid.position.y += this.cfg.height;
         if (boid.position.y > this.cfg.height) boid.position.y -= this.cfg.height;
     }
-    tick() {
+    tick(elapsedTime) {
         // Compute new velocities & positions
         for (const boid of this.boids) {
             const oldVel = { ...boid.velocity };
-            const { x, y } = this.computeVelocity(boid);
+            const { x, y } = this.computeVelocity(boid, elapsedTime);
             boid.velocity.x = x;
             boid.velocity.y = y;
 
@@ -85,7 +85,7 @@ export default class Model {
         }
         return this.boids;
     }
-    computeNoise(boid) {
+    computeNoise(boid, elapsedTime) {
         // Example using a simple sin/cos drift
         const t = Date.now() * 0.001; // seconds
         const noise = {
@@ -153,7 +153,7 @@ computeNoise1(boid) {
             this.cohesion.y = (this.cohesion.y / neighbors) - position.y;
         }
     }
-    computeVelocity(boid) {
+    computeVelocity(boid, elapsedTime) {
         this.resetSAC();
 
         let neighbors = 0;
@@ -176,10 +176,10 @@ computeNoise1(boid) {
         let vx = this.weightedVelocity("x", boid.velocity);
         let vy = this.weightedVelocity("y", boid.velocity);
 
-        const noise = this.computeNoise(boid);
+        const noise = this.computeNoise(boid, elapsedTime);
 
         vx += noise.x;
-        vy += noise.y; vy += boid.personality.curiosity; vx += boid.personality.curiosity;
+        vy += noise.y; //vy += boid.personality.curiosity; vx += boid.personality.curiosity;
 
         [ vx, vy ] = this.limitSpeed(vx, vy);
         return { x: vx, y: vy };

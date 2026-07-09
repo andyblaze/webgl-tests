@@ -1,30 +1,30 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180/build/three.module.js";
+
 
 export default class View {
-    constructor(id, config) {
+    constructor(three, id, config) {
         this.cfg = config;
         this.canvas = document.getElementById(id);
-        this.renderer = new THREE.WebGLRenderer({
+        this.renderer = new three.WebGLRenderer({
             canvas: this.canvas,
             antialias: true
         });
         this.renderer.setClearColor(0x87ceeb);   // sky blue
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.OrthographicCamera(0, config.width, config.height, 0, -10, 10);
+        this.scene = new three.Scene();
+        this.camera = new three.OrthographicCamera(0, config.width, config.height, 0, -10, 10);
         this.camera.position.z = 1;
 
-        this.boidMesh = new THREE.InstancedMesh(
-            new THREE.CircleGeometry(4, 24),
-            new THREE.MeshBasicMaterial({
+        this.boidMesh = new three.InstancedMesh(
+            new three.CircleGeometry(4, 24),
+            new three.MeshBasicMaterial({
                 color: 0x000000,
-                side: THREE.DoubleSide,
+                side: three.DoubleSide,
                 transparent: true
             }),
             config.numBoids
         );
         this.scene.add(this.boidMesh);
 
-        this.dummy = new THREE.Object3D();
+        this.dummy = new three.Object3D();
     }
     resize(w, h) {
         this.renderer.setSize(w, h);

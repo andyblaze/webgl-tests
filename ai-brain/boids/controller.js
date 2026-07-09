@@ -1,13 +1,14 @@
 import DeltaReport from "./delta-report.js";
 
 export default class Controller {
-    constructor(m, v, c) {
+    constructor(three, m, v, c) {
         this.model = m;
         this.view = v;
         this.cfg = c;
         this.paused = false;
         this.frameCount = 0;
         this.loop = this.loop.bind(this);
+        this.clock = new three.Clock();
     }
     resize() {
         this.paused = true;
@@ -22,7 +23,10 @@ export default class Controller {
     loop(timestamp) {
         if ( this.paused === false ) {            
             if ( this.frameReady() ) {
-                const data = this.model.tick();
+                const dt = this.clock.getDelta();
+                const elapsedTime = this.clock.getElapsedTime();
+                
+                const data = this.model.tick(elapsedTime);
                 this.view.draw(data);
                 DeltaReport.log(timestamp);
             }
