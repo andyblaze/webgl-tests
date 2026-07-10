@@ -1,3 +1,5 @@
+import { mt_rand, mt_randf } from "./functions.js";
+
 export default class Model {
     constructor(cfg) {
         this.cfg = cfg;
@@ -8,8 +10,8 @@ export default class Model {
     initBoids(cfg) {
         for (let i = 0; i < cfg.numBoids; i++) {
             this.boids.push({
-                position: { x: Math.random() * cfg.width, y: Math.random() * cfg.height },
-                velocity: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
+                position: { x: mt_rand(1, cfg.width), y: mt_rand(1, cfg.height) },
+                velocity: { x: mt_randf(-1, 1), y: mt_randf(-1, 1) },
                 opacity:0.2,
                 personality: { curiosity: (Math.random() - 0.5) * 0.2 }
             });

@@ -13,8 +13,17 @@ export default class View {
         this.camera = new three.OrthographicCamera(0, config.width, config.height, 0, -10, 10);
         this.camera.position.z = 1;
 
+        const shape = new three.Shape();
+        shape.moveTo(6, 0);      // nose
+        shape.lineTo(-4, -3);    // left tail
+        shape.lineTo(-2, 0);      // notch (optional)
+        shape.lineTo(-4, 3);      // right tail
+        shape.closePath();
+
+const geometry = new three.ShapeGeometry(shape);
+
         this.boidMesh = new three.InstancedMesh(
-            new three.CircleGeometry(4, 24),
+            geometry,//new three.CircleGeometry(4, 24),
             new three.MeshBasicMaterial({
                 color: 0x000000,
                 side: three.DoubleSide,
@@ -39,10 +48,16 @@ export default class View {
     }
     draw(boids) {
         boids.forEach((boid, i) => {
+            const angle = Math.atan2(boid.velocity.y, boid.velocity.x);
+
             this.dummy.position.set(boid.position.x, boid.position.y, 0);
+
+            this.dummy.rotation.z = angle;
             this.dummy.updateMatrix();
             this.boidMesh.setMatrixAt(i, this.dummy.matrix);
-
+            /*this.dummy.position.set(boid.position.x, boid.position.y, 0);
+            this.dummy.updateMatrix();
+            this.boidMesh.setMatrixAt(i, this.dummy.matrix);*/
         }); 
 
         this.boidMesh.instanceMatrix.needsUpdate = true;
