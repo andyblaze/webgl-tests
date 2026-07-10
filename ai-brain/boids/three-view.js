@@ -60,6 +60,7 @@ export default class View {
             this.dummy.updateMatrix();
             this.boidMesh.setMatrixAt(i, this.dummy.matrix);
             this.color.setRGB(boid.opacity, boid.opacity, boid.opacity);   // 0 = black, 1 = white
+            //console.log(this.color);
 this.boidMesh.setColorAt(i, this.color);
             /*this.dummy.position.set(boid.position.x, boid.position.y, 0);
             this.dummy.updateMatrix();

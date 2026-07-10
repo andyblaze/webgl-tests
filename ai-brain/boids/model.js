@@ -61,14 +61,15 @@ export default class Model {
             boid.position.x += boid.velocity.x * dt;
             boid.position.y += boid.velocity.y * dt;
             
-            const turnAngle = this.getTurnAngle(oldVel, boid.velocity);
+            const turnAngle = this.getTurnAngle(oldVel, boid.velocity); 
+            //console.log(turnAngle > 0.1);
             // If sharp turn, bump opacity
             if ( turnAngle > 0.1 ) {  // tweak threshold
                 boid.opacity = 1;//Math.max(0.7, boid.opacity + 0.3);
             } else {
                 // slowly fade back to normal
                 // boid.opacity = Math.max(0.2, fadeRate * dt);
-                boid.opacity = Math.min(0, boid.opacity * 0.9985);
+                boid.opacity = Math.min(0, boid.opacity * 0.999985);
             }
             this.nudgeTowardCenter(boid, dt);
             this.wrapAroundEdges(boid);
@@ -78,7 +79,7 @@ export default class Model {
     computeNoise(boid, dt, elapsedTime) {
         // Example using a simple sin/cos drift.  This "stupid" idea turns out to be the best for flocking. 
         // tried simple, perlin, curl, elapsedTime - all are worse.
-        const t = Date.now() * dt * 0.001; // seconds
+        const t = elapsedTime * dt * 0.001; // seconds
         const noise = {
             x: Math.sin(t + boid.position.y * 0.01) * this.cfg.noiseStrength,
             y: Math.cos(t + boid.position.x * 0.01) * this.cfg.noiseStrength
