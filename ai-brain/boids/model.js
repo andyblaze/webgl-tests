@@ -51,7 +51,7 @@ export default class Model {
     }
     tick(dt, elapsedTime) {
         // Compute new velocities & positions
-        for (const boid of this.boids) {
+        for ( const boid of this.boids ) {
             const oldVel = { ...boid.velocity };
             const { x, y } = this.computeVelocity(boid, dt, elapsedTime);
             const fadeRate = 1.2; // opacity per second

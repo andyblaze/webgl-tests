@@ -20,7 +20,7 @@ export default class View {
         shape.lineTo(-4, 3);      // right tail
         shape.closePath();
 
-const geometry = new three.ShapeGeometry(shape);
+        const geometry = new three.ShapeGeometry(shape);
 
         this.boidMesh = new three.InstancedMesh(
             geometry,//new three.CircleGeometry(4, 24),
