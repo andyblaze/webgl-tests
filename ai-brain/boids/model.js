@@ -12,7 +12,7 @@ export default class Model {
             this.boids.push({
                 position: { x: mt_rand(1, cfg.width), y: mt_rand(1, cfg.height) },
                 velocity: { x: mt_randf(-1, 1), y: mt_randf(-1, 1) },
-                opacity:0.2,
+                opacity:0,
                 personality: { curiosity: (Math.random() - 0.5) * 0.2 }
             });
         }
@@ -64,11 +64,11 @@ export default class Model {
             const turnAngle = this.getTurnAngle(oldVel, boid.velocity);
             // If sharp turn, bump opacity
             if ( turnAngle > 0.1 ) {  // tweak threshold
-                boid.opacity = Math.min(0.4, boid.opacity + 0.3);
+                boid.opacity = 1;//Math.max(0.7, boid.opacity + 0.3);
             } else {
                 // slowly fade back to normal
                 // boid.opacity = Math.max(0.2, fadeRate * dt);
-                boid.opacity = Math.max(0.2, boid.opacity - 0.02);
+                boid.opacity = Math.min(0, boid.opacity * 0.9985);
             }
             this.nudgeTowardCenter(boid, dt);
             this.wrapAroundEdges(boid);
