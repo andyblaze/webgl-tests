@@ -73,7 +73,7 @@ boid.velocity.y += (desired.y - boid.velocity.y) * response;
             //console.log(turnAngle > 0.1);
             // If sharp turn, bump opacity
             if ( turnAngle > 0.1 ) {  // tweak threshold
-                boid.opacity = 1;//Math.max(0.7, boid.opacity + 0.3);
+                //boid.opacity = 1;//Math.max(0.7, boid.opacity + 0.3);
             } else {
                 // slowly fade back to normal
                 // boid.opacity = Math.max(0.2, fadeRate * dt);

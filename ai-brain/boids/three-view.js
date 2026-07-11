@@ -13,8 +13,8 @@ export default class View {
         this.camera = new three.OrthographicCamera(0, config.width, config.height, 0, -10, 10);
         this.camera.position.z = 1;
 
-        this.color = new three.Color();
-        this.color.setRGB(0.75, 0.75, 0.75);
+        this.color = new three.Color(0.975, 0.975, 0.975);
+        //this.color.setRGB();
 
         const shape = new three.Shape();
         const scale = 2.4;
@@ -60,9 +60,9 @@ export default class View {
             this.dummy.rotation.z = angle;
             this.dummy.updateMatrix();
             this.boidMesh.setMatrixAt(i, this.dummy.matrix);
-            this.color.setRGB(boid.opacity, boid.opacity, boid.opacity);   // 0 = black, 1 = white
+            //this.color.setRGB(boid.opacity, boid.opacity, boid.opacity);   // 0 = black, 1 = white
             //console.log(this.color);
-            this.boidMesh.setColorAt(i, this.color);
+            this.boidMesh.setColorAt(i, this.color); 
             /*this.dummy.position.set(boid.position.x, boid.position.y, 0);
             this.dummy.updateMatrix();
             this.boidMesh.setMatrixAt(i, this.dummy.matrix);*/
