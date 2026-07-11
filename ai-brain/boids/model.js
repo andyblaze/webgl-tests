@@ -12,7 +12,7 @@ export default class Model {
             this.boids.push({
                 position: { x: mt_rand(1, cfg.width), y: mt_rand(1, cfg.height) },
                 velocity: { x: mt_randf(-1, 1), y: mt_randf(-1, 1) },
-                opacity:0,
+                opacity:0.75,
                 personality: { curiosity: (Math.random() - 0.5) * 0.2 }
             });
         }
@@ -53,10 +53,18 @@ export default class Model {
         // Compute new velocities & positions
         for ( const boid of this.boids ) {
             const oldVel = { ...boid.velocity };
-            const { x, y } = this.computeVelocity(boid, dt, elapsedTime);
-            const fadeRate = 1.2; // opacity per second
-            boid.velocity.x = x;
-            boid.velocity.y = y;
+            const desired = this.computeVelocity(boid, dt, elapsedTime);
+//const desired = this.computeVelocity(boid, elapsedTime);
+
+const response = 0.8;
+
+boid.velocity.x += (desired.x - boid.velocity.x) * response;
+boid.velocity.y += (desired.y - boid.velocity.y) * response;
+
+//[boid.velocity.x, boid.velocity.y] = this.limitSpeed(boid.velocity.x, boid.velocity.y);
+            //const fadeRate = 1.2; // opacity per second
+            boid.velocity.x = desired.x;
+            boid.velocity.y = desired.y;
 
             boid.position.x += boid.velocity.x * dt;
             boid.position.y += boid.velocity.y * dt;
@@ -69,7 +77,7 @@ export default class Model {
             } else {
                 // slowly fade back to normal
                 // boid.opacity = Math.max(0.2, fadeRate * dt);
-                boid.opacity = Math.min(0, boid.opacity * 0.999985);
+                //boid.opacity = Math.max(0.79, boid.opacity * 0.999985);
             }
             this.nudgeTowardCenter(boid, dt);
             this.wrapAroundEdges(boid);
@@ -79,7 +87,7 @@ export default class Model {
     computeNoise(boid, dt, elapsedTime) {
         // Example using a simple sin/cos drift.  This "stupid" idea turns out to be the best for flocking. 
         // tried simple, perlin, curl, elapsedTime - all are worse.
-        const t = elapsedTime * dt * 0.001; // seconds
+        const t = Date.now() * dt * 0.001; // seconds
         const noise = {
             x: Math.sin(t + boid.position.y * 0.01) * this.cfg.noiseStrength,
             y: Math.cos(t + boid.position.x * 0.01) * this.cfg.noiseStrength
