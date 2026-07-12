@@ -57,47 +57,44 @@ scene.add(sun);
 // Ground
 //
 
+class Planet {
+    constructor(three) {
+        this.ground = new three.Mesh(
+            new three.PlaneGeometry(5000,5000),
+            new three.MeshLambertMaterial({ color:0x1d1d1d })
+        );
+        this.ground.rotation.x = -Math.PI/2;
+        this.grid = new three.GridHelper(
+            5000,      // overall size
+            250,       // divisions (20 units apart)
+            0x5070c0,  // major line colour
+            0x304060   // minor line colour
+        );
+        this.grid.position.y = 0.02;      // just above the ground        
+    }
+    addToScene(scene) {
+        scene.add(this.ground);
+        scene.add(this.grid);
+    }
+    move(camera) {
+        this.grid.position.x = Math.round(camera.position.x / 20) * 20;
+        this.grid.position.z = Math.round(camera.position.z / 20) * 20;
+    }
+}
 
-const ground = new THREE.Mesh(
+const planet = new Planet(THREE);
+planet.addToScene(scene);
 
-    new THREE.PlaneGeometry(5000,5000),
-
-    new THREE.MeshLambertMaterial({
-        color:0x1d1d1d
-    })
-
-);
-
-ground.rotation.x = -Math.PI/2;
-
-scene.add(ground);
-
-//
-// Grid
-//
-
-const grid = new THREE.GridHelper(
-
-    5000,      // overall size
-    250,       // divisions (20 units apart)
-
-    0x5070c0,  // major line colour
-    0x304060   // minor line colour
-
-);
-
-grid.position.y = 0.02;      // just above the ground
-scene.add(grid);
 
 //
 // Fog
 //
 
-scene.fog = new THREE.Fog(
+/*scene.fog = new THREE.Fog(
     0x0b1022,
     150,
     1200
-);
+);*/
 
 renderer.setClearColor(0x0b1022);
 
@@ -264,8 +261,9 @@ function animate()
 
     camera.position.z -= 0.30;
     // Keep the grid centred on the camera
-grid.position.x = Math.round(camera.position.x / 20) * 20;
-grid.position.z = Math.round(camera.position.z / 20) * 20;
+    planet.move(camera);
+//grid.position.x = Math.round(camera.position.x / 20) * 20;
+//grid.position.z = Math.round(camera.position.z / 20) * 20;
 
     //
     // Keep the sky centred on the camera
