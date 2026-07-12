@@ -9,7 +9,7 @@ const config = {
                               // bigger → flock acts more coherently
                               // smaller → more local chaos & splintering
 
-  separationDistance: 32,     // minimum comfortable distance
+  separationDistance: 36,     // minimum comfortable distance
                               // if neighbors are closer than this, boid steers away
 
   // --- weights / strengths ---

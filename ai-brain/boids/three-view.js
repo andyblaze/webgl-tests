@@ -1,4 +1,4 @@
-
+import { mt_randf } from "./functions.js";
 
 export default class View {
     constructor(three, id, config) {
@@ -17,7 +17,7 @@ export default class View {
         this.color.setRGB(0.25, 0.25, 0.25);
 
         const shape = new three.Shape();
-        const scale = 2.4;
+        const scale = mt_randf(2.4, 2.8);
 
         shape.moveTo(0, 0);
         shape.lineTo(-6 * scale, -3 * scale);
