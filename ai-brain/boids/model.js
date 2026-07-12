@@ -19,7 +19,7 @@ export default class Model {
                         x: mt_randf(-0.5, 0.5),
                         y: mt_randf(-0.5, 0.5)
                     },
-                    stubbornness: mt_randf(0, 0.9)
+                    stubbornness: mt_randf(0, 0.2)
                 }
             });
         }
@@ -64,7 +64,7 @@ export default class Model {
             const turnAngle = this.getTurnAngle(oldVel, boid.velocity); 
 //const desired = this.computeVelocity(boid, elapsedTime);
 
-const response = 0.7 + 0.15 * (1 - boid.personality.stubbornness);
+const response = 0.8 + (1 - boid.personality.stubbornness);
 
 boid.velocity.x += (desired.x - boid.velocity.x) * response;
 boid.velocity.y += (desired.y - boid.velocity.y) * response;
