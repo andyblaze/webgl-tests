@@ -13,7 +13,14 @@ export default class Model {
                 position: { x: mt_rand(1, cfg.width), y: mt_rand(1, cfg.height) },
                 velocity: { x: mt_randf(-1, 1), y: mt_randf(-1, 1) },
                 opacity:0.25,
-                personality: { curiosity: (Math.random() - 0.5) * 0.2 }
+                personality: { 
+                    curiosity: mt_randf(-0.1, 0.1),
+                    wander: {
+                        x: mt_randf(-0.5, 0.5),
+                        y: mt_randf(-0.5, 0.5)
+                    },
+                    stubbornness: mt_randf(0, 0.9)
+                }
             });
         }
     }
@@ -57,7 +64,7 @@ export default class Model {
             const turnAngle = this.getTurnAngle(oldVel, boid.velocity); 
 //const desired = this.computeVelocity(boid, elapsedTime);
 
-const response = 0.8;
+const response = 0.7 + 0.15 * (1 - boid.personality.stubbornness);
 
 boid.velocity.x += (desired.x - boid.velocity.x) * response;
 boid.velocity.y += (desired.y - boid.velocity.y) * response;
@@ -166,7 +173,8 @@ boid.velocity.y += (desired.y - boid.velocity.y) * response;
         const noise = this.computeNoise(boid, dt, elapsedTime);
 
         vx += noise.x;
-        vy += noise.y; 
+        vy += noise.y;  vx += boid.personality.wander.x * boid.personality.curiosity;
+vy += boid.personality.wander.y * boid.personality.curiosity;
 
         [ vx, vy ] = this.limitSpeed(vx, vy);
         return { x: vx, y: vy };
