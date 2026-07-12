@@ -21,7 +21,7 @@ const config = {
                               // bigger → flock aligns quickly, straighter flight
                               // smaller → flock looks messy / scattered
 
-  cohesionStrength: 0.001,     // how strongly a boid moves toward neighbor center
+  cohesionStrength: 0.0001,     // how strongly a boid moves toward neighbor center
                               // bigger → flock clumps tighter, denser formations
                               // smaller → flock drifts apart
 
@@ -30,7 +30,7 @@ const config = {
                               // bigger → flock moves faster, more energetic
                               // smaller → slower, gentler motion
 
-  maxForce: 0.0001,               // maximum steering adjustment per frame
+  maxForce: 0.00001,               // maximum steering adjustment per frame
                               // bigger → boids can make sharp, agile turns
                               // smaller → smooth but less responsive turns
 // --- environment ---

@@ -13,7 +13,8 @@ export default class View {
         this.camera = new three.OrthographicCamera(0, config.width, config.height, 0, -10, 10);
         this.camera.position.z = 1;
 
-        this.color = new three.Color(0.5, 0.5, 0.5);
+        this.color = new three.Color();
+        this.color.setRGB(0.25, 0.25, 0.25);
 
         const shape = new three.Shape();
         const scale = 2.4;

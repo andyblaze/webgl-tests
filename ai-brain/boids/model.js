@@ -12,7 +12,7 @@ export default class Model {
             this.boids.push({
                 position: { x: mt_rand(1, cfg.width), y: mt_rand(1, cfg.height) },
                 velocity: { x: mt_randf(-1, 1), y: mt_randf(-1, 1) },
-                opacity:0.5,
+                opacity:0.25,
                 personality: { curiosity: (Math.random() - 0.5) * 0.2 }
             });
         }
@@ -54,6 +54,7 @@ export default class Model {
         for ( const boid of this.boids ) {
             const oldVel = { ...boid.velocity };
             const desired = this.computeVelocity(boid, dt, elapsedTime);
+            const turnAngle = this.getTurnAngle(oldVel, boid.velocity); 
 //const desired = this.computeVelocity(boid, elapsedTime);
 
 const response = 0.8;
@@ -69,17 +70,17 @@ boid.velocity.y += (desired.y - boid.velocity.y) * response;
             boid.position.x += boid.velocity.x * dt;
             boid.position.y += boid.velocity.y * dt;
             
-            const turnAngle = this.getTurnAngle(oldVel, boid.velocity); 
-            //console.log(turnAngle > 0.1);
+            
+            //console.log(turnAngle );
             // If sharp turn, bump opacity
-            if ( turnAngle > 0.21 && boid.opacity !== 0.5 ) {  // tweak threshold
+            if ( turnAngle > 0.0005) {  // tweak threshold
                 boid.opacity = 0;//Math.max(0.7, boid.opacity + 0.3);
-            } else {
+            } 
                 // slowly fade back to normal
                 // boid.opacity = Math.max(0.2, fadeRate * dt);
-                if ( boid.opacity < 0.5 )
-                    boid.opacity += 0.001; //Math.max(0.5, boid.opacity + 0.0000000002);
-            }
+                if ( boid.opacity < 0.25 )
+                    boid.opacity += 0.05; //Math.max(0.5, boid.opacity + 0.0000000002);
+            
             this.nudgeTowardCenter(boid, dt);
             this.wrapAroundEdges(boid);
         }

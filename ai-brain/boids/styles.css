@@ -7,7 +7,7 @@ body {
   height: 100vh;
 }
 canvas {
-  background: #80c5e0;
+  /*background: #80c5e0;*/
   image-rendering: pixelated;
   display: block;
   width: 100vw;
