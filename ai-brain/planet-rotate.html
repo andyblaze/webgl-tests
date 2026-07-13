@@ -32,8 +32,8 @@ const camera = new THREE.PerspectiveCamera(
     10000
 );
 
-camera.position.set(0,3,0);
-
+//camera.position.set(0,3,0);
+camera.position.set(0, 10, 0);
 const renderer = new THREE.WebGLRenderer({
     antialias:true
 });
@@ -59,27 +59,50 @@ scene.add(sun);
 
 class Planet {
     constructor(three) {
+
         this.group = new three.Group();
-        const ground = new three.Mesh(
-            new three.PlaneGeometry(5000,5000),
-            new three.MeshLambertMaterial({ color:0x1d1d1d })
-        );
-        ground.rotation.x = -Math.PI/2;
-        this.group.add(ground);
-        const grid = new three.GridHelper(
-            5000,      // overall size
-            250,       // divisions (20 units apart)
-            0x5070c0,  // major line colour
-            0x304060   // minor line colour
-        );
-        grid.position.y = 0.02;      // just above the ground        
-        this.group.add(grid);
+
+        this.radius = 4000;
+
+const texture = new three.TextureLoader().load("oce.jpg");
+
+texture.wrapS = three.RepeatWrapping;
+texture.wrapT = three.RepeatWrapping;
+
+texture.repeat.set(14, 12);
+
+this.surface = new three.Mesh(
+    new three.SphereGeometry(this.radius, 128, 64),
+    new three.MeshLambertMaterial({
+        map: texture
+    })
+);
+
+        /*this.surface = new three.Mesh(
+            new three.SphereGeometry(this.radius, 128, 64),
+            new three.MeshLambertMaterial({
+                color: 0x00ff00
+            })
+        );*/
+
+        this.group.add(this.surface);
+
+        // Camera starts above the north pole, so move the
+        // whole planet down by its radius.
+        this.group.position.y = -this.radius;
     }
+
     addToScene(scene) {
         scene.add(this.group);
     }
+
     update(camera) {
-        this.group.position.x = Math.round(camera.position.x / 20) * 20;
+const metresTravelled = camera.position.x;
+
+const angle = metresTravelled / this.radius;
+
+this.group.rotation.x += 0.0001;
+
     }
 }
 
@@ -210,7 +233,7 @@ function animate()
 
     requestAnimationFrame(animate);
 
-    camera.position.z -= 0.30;
+    //camera.position.z -= 0.30;
     // Keep the grid centred on the camera
     planet.update(camera);
 //grid.position.x = Math.round(camera.position.x / 20) * 20;
@@ -220,7 +243,7 @@ function animate()
     // Keep the sky centred on the camera
     //
 
-    sky.copyPosition(camera.position);
+    //sky.copyPosition(camera.position);
     //stars.copyPosition(camera.position);
 
     renderer.render(scene,camera);
