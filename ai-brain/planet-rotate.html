@@ -147,7 +147,7 @@ class SkyDome {
         this.group.add(new three.Mesh(geometry, material));
     }
     update() {
-        
+        this.group.rotation.z += 0.0001;     
     }
     copyPosition(p) {
         this.group.position.copy(p);
@@ -230,15 +230,13 @@ function animate()
     //camera.position.z -= 0.30;
     // Keep the grid centred on the camera
     planet.update(camera);
-//grid.position.x = Math.round(camera.position.x / 20) * 20;
-//grid.position.z = Math.round(camera.position.z / 20) * 20;
 
     //
     // Keep the sky centred on the camera
     //
 
-    //sky.copyPosition(camera.position);
-    //stars.copyPosition(camera.position);
+    sky.copyPosition(camera.position);
+    sky.update();
 
     renderer.render(scene,camera);
 
