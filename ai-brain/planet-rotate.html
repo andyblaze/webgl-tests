@@ -59,26 +59,27 @@ scene.add(sun);
 
 class Planet {
     constructor(three) {
-        this.ground = new three.Mesh(
+        this.group = new three.Group();
+        const ground = new three.Mesh(
             new three.PlaneGeometry(5000,5000),
             new three.MeshLambertMaterial({ color:0x1d1d1d })
         );
-        this.ground.rotation.x = -Math.PI/2;
-        this.grid = new three.GridHelper(
+        ground.rotation.x = -Math.PI/2;
+        this.group.add(ground);
+        const grid = new three.GridHelper(
             5000,      // overall size
             250,       // divisions (20 units apart)
             0x5070c0,  // major line colour
             0x304060   // minor line colour
         );
-        this.grid.position.y = 0.02;      // just above the ground        
+        grid.position.y = 0.02;      // just above the ground        
+        this.group.add(grid);
     }
     addToScene(scene) {
-        scene.add(this.ground);
-        scene.add(this.grid);
+        scene.add(this.group);
     }
-    move(camera) {
-        this.grid.position.x = Math.round(camera.position.x / 20) * 20;
-        this.grid.position.z = Math.round(camera.position.z / 20) * 20;
+    update(camera) {
+        this.group.position.x = Math.round(camera.position.x / 20) * 20;
     }
 }
 
@@ -102,153 +103,105 @@ renderer.setClearColor(0x0b1022);
 // Sky dome
 //
 
-const skyGeometry = new THREE.SphereGeometry(1500,64,32);
+class SkyDome {
+    constructor(three, decor) {
+        this.group = new three.Group();
+        this.group.add(decor.actual);
 
-const skyMaterial = new THREE.ShaderMaterial({
+        const geometry = new three.SphereGeometry(1500, 64, 32);
+        const material = new three.ShaderMaterial({
+            side: three.BackSide,
+            uniforms:{
+                topColor :{ value: new three.Color(0x020206) },
+                bottomColor :{ value: new three.Color(0x153d80) }
+            },
+            vertexShader :`
+                varying vec3 vPosition;
+                void main() {
+                    vPosition = position;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+                }`,
 
-    side:THREE.BackSide,
+            fragmentShader :`
+                varying vec3 vPosition;
 
-    uniforms:{
+                uniform vec3 topColor;
+                uniform vec3 bottomColor;
 
-        topColor:{
-            value:new THREE.Color(0x020206)
-        },
+                void main() {
+                    float h = normalize(vPosition).y * 0.5 + 0.5;
+                    vec3 colour = mix(bottomColor, topColor, smoothstep(0.0,1.0,h));
+                    gl_FragColor = vec4(colour,1.0);
+                }`
 
-        bottomColor:{
-            value:new THREE.Color(0x153d80)
-        }
-
-    },
-
-    vertexShader:`
-
-        varying vec3 vPosition;
-
-        void main(){
-
-            vPosition = position;
-
-            gl_Position =
-                projectionMatrix *
-                modelViewMatrix *
-                vec4(position,1.0);
-
-        }
-
-    `,
-
-    fragmentShader:`
-
-        varying vec3 vPosition;
-
-        uniform vec3 topColor;
-        uniform vec3 bottomColor;
-
-        void main(){
-
-            float h =
-                normalize(vPosition).y * 0.5 + 0.5;
-
-            vec3 colour =
-                mix(
-                    bottomColor,
-                    topColor,
-                    smoothstep(0.0,1.0,h)
-                );
-
-            gl_FragColor =
-                vec4(colour,1.0);
-
-        }
-
-    `
-
-});
-
-const sky = new THREE.Mesh(
-    skyGeometry,
-    skyMaterial
-);
-
-scene.add(sky);
+        });
+        this.group.add(new three.Mesh(geometry, material));
+    }
+    copyPosition(p) {
+        this.group.position.copy(p);
+    }
+    addToScene(scene) {
+        scene.add(this.group);
+    }
+}
 
 //
 // Stars
 //
 
-const STAR_COUNT = 3500;
+class StarsDecor {
+    constructor(three, numStars) {
+        this.STAR_COUNT = numStars;
+        this.positions = [];
+        this.colours = [];
+        this.radius = 1450;
 
-const positions = [];
-const colours = [];
+        for ( let i =0 ; i < this.STAR_COUNT; i++ ) {
 
-const radius = 1450;
+            const u = Math.random();
+            const v = Math.random();
 
-for(let i=0;i<STAR_COUNT;i++)
-{
+            const theta = 2 * Math.PI * u;
+            const phi = Math.acos(2 * v - 1);
 
-    const u = Math.random();
-    const v = Math.random();
+            const x = this.radius * Math.sin(phi) * Math.cos(theta);
+            const y = this.radius * Math.cos(phi);
+            const z = this.radius * Math.sin(phi) * Math.sin(theta);
+            this.positions.push(x, y, z);
 
-    const theta = 2*Math.PI*u;
-    const phi = Math.acos(2*v-1);
+            const b = 0.65 + Math.random() * 0.35;
+            this.colours.push(b, b, b);
 
-    const x =
-        radius *
-        Math.sin(phi) *
-        Math.cos(theta);
+        }
 
-    const y =
-        radius *
-        Math.cos(phi);
+        const geometry = new three.BufferGeometry();
+        geometry.setAttribute("position", new three.Float32BufferAttribute(this.positions, 3));
+        geometry.setAttribute("color", new three.Float32BufferAttribute(this.colours, 3));
 
-    const z =
-        radius *
-        Math.sin(phi) *
-        Math.sin(theta);
+        const material = new THREE.PointsMaterial({
+            size:2,
+            sizeAttenuation:false,
+            vertexColors:true
+        });
 
-    positions.push(x,y,z);
-
-    const b = 0.65 + Math.random()*0.35;
-
-    colours.push(b,b,b);
-
+        this.stars = new three.Points(geometry, material);
+    }
+    get actual() {
+        return this.stars;
+    }
+    copyPosition(p) {
+        this.stars.position.copy(p);
+    }    
+    addToScene(scene) {
+        scene.add(this.stars);
+    }
 }
 
-const starGeometry = new THREE.BufferGeometry();
+const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
+sky.addToScene(scene);
 
-starGeometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(
-        positions,
-        3
-    )
-);
-
-starGeometry.setAttribute(
-    "color",
-    new THREE.Float32BufferAttribute(
-        colours,
-        3
-    )
-);
-
-const starMaterial = new THREE.PointsMaterial({
-
-    size:2,
-
-    sizeAttenuation:false,
-
-    vertexColors:true
-
-});
-
-const stars =
-    new THREE.Points(
-        starGeometry,
-        starMaterial
-    );
-
-scene.add(stars);
+//const stars = new StarsDecor(THREE, 2000);
+//stars.addToScene(scene);
 
 //
 // Animation
@@ -261,7 +214,7 @@ function animate()
 
     camera.position.z -= 0.30;
     // Keep the grid centred on the camera
-    planet.move(camera);
+    planet.update(camera);
 //grid.position.x = Math.round(camera.position.x / 20) * 20;
 //grid.position.z = Math.round(camera.position.z / 20) * 20;
 
@@ -269,8 +222,8 @@ function animate()
     // Keep the sky centred on the camera
     //
 
-    sky.position.copy(camera.position);
-    stars.position.copy(camera.position);
+    sky.copyPosition(camera.position);
+    //stars.copyPosition(camera.position);
 
     renderer.render(scene,camera);
 
