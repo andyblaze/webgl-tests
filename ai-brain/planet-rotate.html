@@ -83,8 +83,6 @@ class Planet {
     }
 }
 
-const planet = new Planet(THREE);
-planet.addToScene(scene);
 
 
 //
@@ -200,8 +198,8 @@ class StarsDecor {
 const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
 sky.addToScene(scene);
 
-//const stars = new StarsDecor(THREE, 2000);
-//stars.addToScene(scene);
+const planet = new Planet(THREE);
+planet.addToScene(scene);
 
 //
 // Animation
