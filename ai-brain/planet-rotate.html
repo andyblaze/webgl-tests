@@ -59,33 +59,21 @@ scene.add(sun);
 
 class Planet {
     constructor(three) {
-
         this.group = new three.Group();
+        this.radius = 1000;
+        const texture = new three.TextureLoader().load("oce.jpg");
 
-        this.radius = 4000;
+        texture.wrapS = three.RepeatWrapping;
+        texture.wrapT = three.RepeatWrapping;
+        texture.repeat.set(14, 12);
 
-const texture = new three.TextureLoader().load("oce.jpg");
-
-texture.wrapS = three.RepeatWrapping;
-texture.wrapT = three.RepeatWrapping;
-
-texture.repeat.set(14, 12);
-
-this.surface = new three.Mesh(
-    new three.SphereGeometry(this.radius, 128, 64),
-    new three.MeshLambertMaterial({
-        map: texture
-    })
-);
-
-        /*this.surface = new three.Mesh(
+        const surface = new three.Mesh(
             new three.SphereGeometry(this.radius, 128, 64),
             new three.MeshLambertMaterial({
-                color: 0x00ff00
+                map: texture
             })
-        );*/
-
-        this.group.add(this.surface);
+        );
+        this.group.add(surface);
 
         // Camera starts above the north pole, so move the
         // whole planet down by its radius.
@@ -158,6 +146,9 @@ class SkyDome {
         });
         this.group.add(new three.Mesh(geometry, material));
     }
+    update() {
+        
+    }
     copyPosition(p) {
         this.group.position.copy(p);
     }
@@ -212,7 +203,10 @@ class StarsDecor {
     }
     copyPosition(p) {
         this.stars.position.copy(p);
-    }    
+    }  
+    update() {
+
+    }  
     addToScene(scene) {
         scene.add(this.stars);
     }
