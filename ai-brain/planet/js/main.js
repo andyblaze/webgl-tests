@@ -1,4 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.179.1/build/three.module.js";
+import Mind from "./mind.js";
 import Ship from "./ship.js";
 import Planet from "./planet.js";
 import SkyDome from "./sky.js";
@@ -43,7 +44,7 @@ planet.addToScene(scene);
 
 // Animation
 
-const ship = new Ship(THREE);
+const ship = new Ship(THREE, new Mind());
 const cam = ship.camera;
 const clock = new THREE.Clock();
 
