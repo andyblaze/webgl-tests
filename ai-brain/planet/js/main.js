@@ -54,6 +54,8 @@ function animate(timestamp) {
     sky.copyPosition(cam.position);
     sky.update();
 
+    ship.update(dt);
+
     renderer.render(scene, cam);
     requestAnimationFrame(animate);
 }
