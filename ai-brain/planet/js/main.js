@@ -2,7 +2,8 @@ import * as THREE from "https://unpkg.com/three@0.179.1/build/three.module.js";
 import Ship from "./ship.js";
 import Planet from "./planet.js";
 import SkyDome from "./sky.js";
-import StarsDecor from "../stars.js";
+import StarsDecor from "./stars.js";
+import Sun from "./sun.js";
 
 const scene = new THREE.Scene();
 
@@ -21,6 +22,9 @@ scene.add(new THREE.HemisphereLight(0x99bbff, 0x222222, 1.2));
 const sun = new THREE.DirectionalLight(0xffffff, 0.7);
 sun.position.set(5, 10, 4);
 scene.add(sun);
+
+const sunVisual = new Sun(THREE);
+sunVisual.addToScene(scene);
 
 
 /*scene.fog = new THREE.Fog(
@@ -46,6 +50,8 @@ const clock = new THREE.Clock();
 function animate(timestamp) {    
     const dt = clock.getDelta(); 
     const elapsedTime = clock.getElapsedTime();
+
+    sunVisual.update(dt);
     // Keep the grid centred on the camera
     planet.update(cam);
     //

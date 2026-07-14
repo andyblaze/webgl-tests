@@ -1,11 +1,27 @@
+function degToRad(deg) {
+    return deg * Math.PI / 180;
+}
+
 export default class Ship {
     constructor(three) {
         const aspect = window.innerWidth / window.innerHeight;
         this.camera = new three.PerspectiveCamera(60, aspect, 0.1, 10000);
         this.camera.position.set(0, 10, 0);
-this.yaw = 0;
-this.targetYaw = 0;
-this.yawVelocity = 0;
+        this.yaw = {
+            angle: 0,
+            target: 0,
+            velocity: 0
+        };
+        this.pitch = {
+            angle: 0,
+            target: 0,
+            velocity: 0
+        };
+        this.roll = {
+            angle: 0,
+            target: 0,
+            velocity: 0
+        };
         this.time = 0;
     }
     get actual() {
@@ -14,56 +30,101 @@ this.yawVelocity = 0;
     get position() {
         return this.camera.position;
     }
-update(dt) {
+updateRotation(axis, dt, deg) {
 
-    this.time += dt;
+    const maxTurnRate = 0.06;
+    const turnAccel = 0.03;
+    const errorGain = 0.8;
 
-    const t = this.time % 24;
+    const error = axis.target - axis.angle;
 
-    if (t < 8) {
-        this.targetYaw = 0;
-    }
-    else if (t < 16) {
-        this.targetYaw = Math.PI / 8;
-    }
-    else {
-        this.targetYaw = 0;
-    }
+    let targetVelocity = error * errorGain;
 
-    const maxTurnRate = 0.06;      // radians/sec
-    const turnAccel  = 0.03;       // radians/sec²
-
-    const error = this.targetYaw - this.yaw;
-
-    // Desired turn rate
-    let targetTurnRate = error * 0.8;
-
-    // Clamp to the ship's maximum turning speed
-    targetTurnRate = Math.max(
+    targetVelocity = Math.max(
         -maxTurnRate,
-        Math.min(maxTurnRate, targetTurnRate)
+        Math.min(maxTurnRate, targetVelocity)
     );
 
-    // Accelerate/decelerate towards that turn rate
-    const delta = targetTurnRate - this.yawVelocity;
+    const delta = targetVelocity - axis.velocity;
     const maxDelta = turnAccel * dt;
 
     if (Math.abs(delta) < maxDelta) {
-        this.yawVelocity = targetTurnRate;
+        axis.velocity = targetVelocity;
     }
     else {
-        this.yawVelocity += Math.sign(delta) * maxDelta;
+        axis.velocity += Math.sign(delta) * maxDelta;
     }
 
-    // Apply the turn
-    this.yaw += this.yawVelocity * dt;
-
-    this.camera.rotation.y = this.yaw;
+    axis.angle += axis.velocity * dt;
 }
-    setPosition(x, y, z) {
+applyYaw(dt) {
+    this.updateRotation(this.yaw, dt);
+    this.camera.rotation.y = this.yaw.angle;
+}
 
-    }
-    lookAt(x, y, z) {
+applyPitch(dt) {
+    this.updateRotation(this.pitch, dt);
+    this.camera.rotation.x = this.pitch.angle;
+}
 
+applyRoll(dt) {
+    this.updateRotation(this.roll, dt);
+    this.camera.rotation.z = this.roll.angle;
+}
+update(dt) {
+
+    this.time += dt; //return;
+
+    //
+    // Pitch - slow climb and descent
+    //
+    let pitchT = this.time % 24;
+
+    if (pitchT < 8) {
+        this.pitch.target = degToRad(0);
     }
+    else if (pitchT < 16) {
+        this.pitch.target = degToRad(15);
+    }
+    else {
+        this.pitch.target = degToRad(0);
+    }
+
+
+    //
+    // Yaw - look around
+    //
+    let yawT = this.time % 37;
+
+    if (yawT < 12) {
+        this.yaw.target = degToRad(0);
+    }
+    else if (yawT < 25) {
+        this.yaw.target = degToRad(20);
+    }
+    else {
+        this.yaw.target = degToRad(-10);
+    }
+
+
+    //
+    // Roll - gentle banking
+    //
+    let rollT = this.time % 17;
+
+    if (rollT < 6) {
+        this.roll.target = degToRad(0);
+    }
+    else if (rollT < 12) {
+        this.roll.target = degToRad(5);
+    }
+    else {
+        this.roll.target = degToRad(-3);
+    }
+
+
+    this.applyPitch(dt);
+    this.applyYaw(dt);
+    this.applyRoll(dt);
+}
 }
