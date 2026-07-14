@@ -1,14 +1,15 @@
 export default class SkyDome {
     constructor(three, decor) {
         this.group = new three.Group();
-        this.group.add(decor.actual);
+        this.stars = decor.actual;
+        this.group.add(this.stars);
 
-        const geometry = new three.SphereGeometry(1500, 64, 32);
+        const geometry = new three.SphereGeometry(2500, 64, 32);
         const material = new three.ShaderMaterial({
             side: three.BackSide,
             uniforms:{
                 topColor :{ value: new three.Color(0x020206) },
-                bottomColor :{ value: new three.Color(0x153d80) }
+                bottomColor :{ value: new three.Color(0x051d90) }
             },
             vertexShader :`
                 varying vec3 vPosition;
@@ -33,7 +34,7 @@ export default class SkyDome {
         this.group.add(new three.Mesh(geometry, material));
     }
     update() {
-        this.group.rotation.z += 0.0001;     
+        this.stars.rotation.z += 0.0001;     
     }
     copyPosition(p) {
         this.group.position.copy(p);

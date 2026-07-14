@@ -7,7 +7,7 @@ export default class Sun {
         this.time = 0;
 
         const geometry = new three.SphereGeometry(
-            80,    // size of visible sun
+            100,    // size of visible sun
             64,
             32
         );
@@ -29,7 +29,7 @@ export default class Sun {
         this.group.position.set(
             -900,
             400,
-            -1100
+            -2100
         );
     }
 
