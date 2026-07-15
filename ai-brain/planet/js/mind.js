@@ -2,8 +2,8 @@ export default class Mind {
     constructor() {
         this.time = 0;
         this.vectors = {
-            pitch: { t: 24, reset: 8, turn: 16, min: 0, max: 5 },
-            yaw: { t: 37, reset: 12, turn: 25, min: -5, max: 3 },
+            pitch: { mod: 24, reset: 8, turn: 16, min: 0, max: 5 },
+            yaw: { mod: 37, reset: 12, turn: 25, min: -5, max: 3 },
             roll: { mod: 17, reset: 6, turn: 12, min: -3, max: 5}
         };
     }
