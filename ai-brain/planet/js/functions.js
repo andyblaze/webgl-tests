@@ -30,3 +30,23 @@ export function noise(x, y) {
         d * u * v
     );
 }
+
+export function fractalNoise(x, y) {
+    let value = 0;
+    let amplitude = 1;
+    let frequency = 1;
+    let total = 0;
+
+    for ( let i = 0; i < 5; i++ ) {
+        value += noise(
+            x * frequency,
+            y * frequency
+        ) * amplitude;
+
+        total += amplitude;
+
+        amplitude *= 0.5;
+        frequency *= 2;
+    }
+    return value / total;
+}

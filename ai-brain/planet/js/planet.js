@@ -1,4 +1,4 @@
-import { hash, noise } from "./functions.js";
+import { hash, fractalNoise, noise } from "./functions.js";
 
 class Color {
     constructor() {
@@ -19,6 +19,13 @@ class Color {
         this.c.r *= r;
         this.c.g *= g;
         this.c.b *= b;
+    }
+    getRgba() {
+        this.c.r = Math.min(255, this.c.r);
+        this.c.g = Math.min(255, this.c.g);
+        this.c.b = Math.min(255, this.c.b);
+        this.c.a = Math.min(255, this.c.a);
+        return this.c;
     }
 }
 
@@ -67,14 +74,14 @@ export default class Planet {
 
 
                 // Big ice plates
-                const large = this.fractalNoise(
+                const large = fractalNoise(
                     nx * 45,
                     ny * 95
                 );
 
 
                 // Medium broken ice structure
-                const medium = this.fractalNoise(
+                const medium = fractalNoise(
                     nx * 142,
                     ny * 92
                 );
@@ -150,7 +157,6 @@ export default class Planet {
                         210 + fine * 30,
                         225 + fine * 25,
                         245 + fine * 10
-
                     );
                     r = 210 + fine * 30;
                     g = 225 + fine * 25;
@@ -191,10 +197,13 @@ export default class Planet {
 
                 const index = (y * width + x) * 4;
 
-                image.data[index] = Math.min(255, r);
-                image.data[index + 1] = Math.min(255, g);
-                image.data[index + 2] = Math.min(255, b);
-                image.data[index + 3] = 255;
+                const finalColor = color.getRgba();
+                //console.log(r, g, b, finalColor);
+
+                image.data[index] = finalColor.r;
+                image.data[index + 1] = finalColor.g;
+                image.data[index + 2] = finalColor.b;
+                image.data[index + 3] = finalColor.a;
             }
         }
 
@@ -208,44 +217,9 @@ export default class Planet {
 
         return texture;
     }
-
-
-    fractalNoise(x, y) {
-
-        let value = 0;
-        let amplitude = 1;
-        let frequency = 1;
-        let total = 0;
-
-
-        for (let i = 0; i < 5; i++) {
-
-            value += noise(
-                x * frequency,
-                y * frequency
-            ) * amplitude;
-
-            total += amplitude;
-
-            amplitude *= 0.5;
-            frequency *= 2;
-        }
-
-
-        return value / total;
-    }
-
-
-
-
-
-    
-
     addToScene(scene) {
         scene.add(this.group);
     }
-
-
     update(camera) {
         this.group.rotation.x += 0.0001;
     }
