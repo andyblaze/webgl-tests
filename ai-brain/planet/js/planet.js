@@ -1,3 +1,5 @@
+import { hash, noise } from "./functions.js";
+
 export default class Planet {
     constructor(three) {
         this.group = new three.Group();
@@ -21,8 +23,8 @@ export default class Planet {
 
     createIceTexture(three) {
 
-        const width = 1024;
-        const height = 512;
+        const width = 2048;
+        const height = 1024;
 
         const canvas = document.createElement("canvas");
         canvas.width = width;
@@ -45,28 +47,28 @@ export default class Planet {
                 // Big ice plates
                 const large = this.fractalNoise(
                     nx * 45,
-                    ny * 5
+                    ny * 95
                 );
 
 
                 // Medium broken ice structure
                 const medium = this.fractalNoise(
                     nx * 142,
-                    ny * 42
+                    ny * 92
                 );
 
 
                 // Fine surface variation
-                const fine = this.noise(
-                    nx * 80,
-                    ny * 800
+                const fine = noise(
+                    nx * 8,
+                    ny * 8
                 );
 
 
                 // Long ice fractures
-                const cracks = this.noise(
+                const cracks = noise(
                     nx * 10.5,
-                    ny * 20.8
+                    ny * 10.8
                 );
 
 
@@ -176,7 +178,7 @@ export default class Planet {
 
         for (let i = 0; i < 5; i++) {
 
-            value += this.noise(
+            value += noise(
                 x * frequency,
                 y * frequency
             ) * amplitude;
@@ -192,40 +194,10 @@ export default class Planet {
     }
 
 
-    noise(x, y) {
-
-        const ix = Math.floor(x);
-        const iy = Math.floor(y);
-
-        const fx = x - ix;
-        const fy = y - iy;
-
-        const a = this.hash(ix, iy);
-        const b = this.hash(ix + 1, iy);
-        const c = this.hash(ix, iy + 1);
-        const d = this.hash(ix + 1, iy + 1);
-
-        const u = fx * fx * (3 - 2 * fx);
-        const v = fy * fy * (3 - 2 * fy);
-
-        return (
-            a * (1-u) * (1-v) +
-            b * u * (1-v) +
-            c * (1-u) * v +
-            d * u * v
-        );
-    }
 
 
-    hash(x, y) {
 
-        let n = x * 374761393 + y * 668265263;
-
-        n = (n ^ (n >> 13)) * 1274126177;
-
-        return ((n ^ (n >> 16)) >>> 0) / 4294967295;
-    }
-
+    
 
     addToScene(scene) {
         scene.add(this.group);

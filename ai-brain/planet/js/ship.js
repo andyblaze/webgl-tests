@@ -1,6 +1,4 @@
-function degToRad(deg) {
-    return deg * Math.PI / 180;
-}
+import { degToRad } from "./functions.js";
 
 export default class Ship {
     constructor(three, mind) {
