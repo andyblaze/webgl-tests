@@ -27,13 +27,6 @@ scene.add(sun);
 const sunVisual = new Sun(THREE);
 sunVisual.addToScene(scene);
 
-
-/*scene.fog = new THREE.Fog(
-    0x0b1022,
-    150,
-    1200
-);*/
-
 renderer.setClearColor(0x0b1022);
 
 const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
@@ -42,10 +35,9 @@ sky.addToScene(scene);
 const planet = new Planet(THREE);
 planet.addToScene(scene);
 
-// Animation
-
 const ship = new Ship(THREE, new Mind());
 const cam = ship.camera;
+
 const clock = new THREE.Clock();
 
 function animate(timestamp) {    
