@@ -20,17 +20,12 @@ export default class Planet {
         // whole planet down by its radius.
         this.group.position.y = -this.radius;
     }
-
     addToScene(scene) {
         scene.add(this.group);
     }
-
     update(camera) {
-const metresTravelled = camera.position.x;
-
-const angle = metresTravelled / this.radius;
-
-this.group.rotation.x += 0.0001;
-
+        const metresTravelled = camera.position.x;
+        const angle = metresTravelled / this.radius;
+        this.group.rotation.x += 0.0001;
     }
 }
