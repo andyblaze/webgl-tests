@@ -22,6 +22,9 @@ export default class Ship {
             target: 0,
             velocity: 0
         };
+        this.maxTurnRate = 0.06;
+        this.turnAccel = 0.03;
+        this.errorGain = 0.8;
         this.mind = mind;
     }
     get actual() {
@@ -32,21 +35,14 @@ export default class Ship {
     }
     updateRotation(axis, dt, deg) {
 
-        const maxTurnRate = 0.06;
-        const turnAccel = 0.03;
-        const errorGain = 0.8;
-
         const error = axis.target - axis.angle;
 
-        let targetVelocity = error * errorGain;
+        let targetVelocity = error * this.errorGain;
 
-        targetVelocity = Math.max(
-            -maxTurnRate,
-            Math.min(maxTurnRate, targetVelocity)
-        );
+        targetVelocity = Math.max(-this.maxTurnRate, Math.min(this.maxTurnRate, targetVelocity));
 
         const delta = targetVelocity - axis.velocity;
-        const maxDelta = turnAccel * dt;
+        const maxDelta = this.turnAccel * dt;
 
         if (Math.abs(delta) < maxDelta) {
             axis.velocity = targetVelocity;
@@ -66,7 +62,6 @@ export default class Ship {
         this.updateRotation(this.pitch, dt);
         this.camera.rotation.x = this.pitch.angle;
     }
-
     applyRoll(dt) {
         this.updateRotation(this.roll, dt);
         this.camera.rotation.z = this.roll.angle;
