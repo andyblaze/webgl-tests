@@ -1,5 +1,27 @@
 import { hash, noise } from "./functions.js";
 
+class Color {
+    constructor() {
+        this.c = {r: 0, g: 0, b: 0, a: 255 };
+    }
+    setRgba(r, g, b, a=255) {
+        this.c.r = r;
+        this.c.g = g;
+        this.c.b = b;
+        this.c.a = a;
+    }
+    scalarAdd(r, g, b) {
+        this.c.r += r;
+        this.c.g += g;
+        this.c.b += b;
+    }
+    multiplyBy(r, g, b) {
+        this.c.r *= r;
+        this.c.g *= g;
+        this.c.b *= b;
+    }
+}
+
 export default class Planet {
     constructor(three) {
         this.group = new three.Group();
@@ -79,11 +101,13 @@ export default class Planet {
                     fine * 0.15;
 
 
+                const color = new Color();
                 let r, g, b;
 
 
                 // Deep frozen ocean
                 if (ice < 0.28) {
+                    color.setRgba(20, 45, 90);
 
                     r = 20;
                     g = 45;
@@ -93,6 +117,11 @@ export default class Planet {
 
                 // Dark blue ice fields
                 else if (ice < 0.45) {
+                    color.setRgba(
+                        50 + medium * 50,
+                        110 + medium * 60,
+                        170 + medium * 60
+                    );
 
                     r = 50 + medium * 50;
                     g = 110 + medium * 60;
@@ -103,6 +132,12 @@ export default class Planet {
                 // Blue-white fractured ice
                 else if (ice < 0.65) {
 
+                    color.setRgba(
+                        130 + fine * 60,
+                        180 + fine * 50,
+                        220 + fine * 35
+                    );
+
                     r = 130 + fine * 60;
                     g = 180 + fine * 50;
                     b = 220 + fine * 35;
@@ -111,7 +146,12 @@ export default class Planet {
 
                 // Bright ice ridges
                 else {
+                    color.setRgba(
+                        210 + fine * 30,
+                        225 + fine * 25,
+                        245 + fine * 10
 
+                    );
                     r = 210 + fine * 30;
                     g = 225 + fine * 25;
                     b = 245 + fine * 10;
@@ -121,6 +161,7 @@ export default class Planet {
 
                 // Polar tint, but subtle
                 const polar = latitude * 20;
+                color.scalarAdd(polar);
 
                 r += polar;
                 g += polar;
@@ -129,7 +170,7 @@ export default class Planet {
 
                 // Dark winding cracks
                 if (cracks < 0.16) {
-
+                    color.multiplyBy(0.55, 0.65, 0.8);
                     r *= 0.55;
                     g *= 0.65;
                     b *= 0.80;
@@ -139,6 +180,7 @@ export default class Planet {
 
                 // Random icy sparkle
                 if (fine > 0.085) {
+                    color.scalarAdd(20);
 
                     r += 20;
                     g += 20;
