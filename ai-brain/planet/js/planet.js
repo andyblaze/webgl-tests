@@ -108,58 +108,61 @@ export default class Planet {
                 const cracks = noise(nx * 10.5, ny * 10.8);
                 // Combine scales
                 const ice = large * 0.55 + medium * 0.30 + fine * 0.15;
-
-                color.reset();
-
-                // Deep frozen ocean
-                if (ice < 0.28) {
-                    color.setRgba(20, 45, 90);
-                }
-                // Dark blue ice fields
-                else if (ice < 0.45) {
-                    color.setRgba(
-                        50 + medium * 50,
-                        110 + medium * 60,
-                        170 + medium * 60
-                    );
-                }
-                // Blue-white fractured ice
-                else if (ice < 0.65) {
-                    color.setRgba(
-                        130 + fine * 60,
-                        180 + fine * 50,
-                        220 + fine * 35
-                    );
-                }
-                // Bright ice ridges
-                else {
-                    color.setRgba(
-                        210 + fine * 30,
-                        225 + fine * 25,
-                        245 + fine * 10
-                    );
-                }
-
                 // Polar tint, but subtle
                 const polar = latitude * 20;
-                color.scalarAdd(polar);
-
-                // Dark winding cracks
-                if (cracks < 0.16) {
-                    color.multiplyBy(0.55, 0.65, 0.8);
-                }
-
-                // Random icy sparkle
-                if (fine > 0.85) {
-                    color.scalarAdd(20);
-                }
-
                 const index = (y * width + x) * 4;
+
+                this.colorise(color, ice, medium, fine, polar, cracks);
                 canvas.setImgData(index, color);
             }
         }
         canvas.putImgData();
         return canvas.actual;
+    }
+    colorise(color, ice, medium, fine, polar, cracks) {
+        color.reset();
+
+        // Deep frozen ocean
+        if (ice < 0.28) {
+            color.setRgba(20, 45, 90);
+        }
+        // Dark blue ice fields
+        else if (ice < 0.45) {
+            color.setRgba(
+                50 + medium * 50,
+                110 + medium * 60,
+                170 + medium * 60
+            );
+        }
+        // Blue-white fractured ice
+        else if (ice < 0.65) {
+            color.setRgba(
+                130 + fine * 60,
+                180 + fine * 50,
+                220 + fine * 35
+            );
+        }
+        // Bright ice ridges
+        else {
+            color.setRgba(
+                210 + fine * 30,
+                225 + fine * 25,
+                245 + fine * 10
+            );
+        }
+
+        color.scalarAdd(polar);
+
+        // Dark winding cracks
+        if (cracks < 0.16) {
+            color.multiplyBy(0.55, 0.65, 0.8);
+        }
+
+        // Random icy sparkle
+        if (fine > 0.85) {
+            color.scalarAdd(20);
+        }
+
     }
     createTexture(three, canvas) {
         const texture = new three.CanvasTexture(canvas);
