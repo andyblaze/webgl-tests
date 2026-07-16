@@ -75,7 +75,7 @@ export default class Planet {
         const maps = this.createCanvas(canvasWidth, canvasHeight);
         const texture = this.createTexture(three, maps.tex);
         const bump = this.createTexture(three, maps.bump);
-        //document.body.appendChild(maps.bump);
+        document.body.appendChild(maps.bump);
 
 
 
@@ -114,7 +114,7 @@ const surface = new three.Mesh(
                 // Fine surface variation
                 const fine = noise(nx * 8, ny * 8);
                 // Long ice fractures
-                const cracks = noise(nx * 10.5, ny * 10.8);
+                const cracks = noise(nx * 10, ny * 11);
                 // Combine scales
                 const ice = large * 0.55 + medium * 0.30 + fine * 0.15;
                 // Polar tint, but subtle
@@ -123,7 +123,8 @@ const surface = new three.Mesh(
 
                 let bumpHeight = large * 0.3 + medium * 0.5 + fine * 0.2;
                 bumpHeight -= cracks * 0.25;
-                //bumpHeight = Math.pow(bumpHeight, 13);
+                //bumpHeight = Math.pow(bumpHeight, 3);
+                bumpHeight = clamp(bumpHeight, 0, 1);
                 const h = Math.floor(bumpHeight * 255);
 
 bumpCanvas.image.data[index] = h;
