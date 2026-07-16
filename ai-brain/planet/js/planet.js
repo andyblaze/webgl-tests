@@ -69,13 +69,13 @@ class TempCanvas {
 export default class Planet {
     constructor(three) {
         this.group = new three.Group();
-        this.radius = 1000;
+        this.radius = 200;
         const canvasWidth = 2048;
         const canvasHeight = 1024;
         const maps = this.createCanvas(canvasWidth, canvasHeight);
         const texture = this.createTexture(three, maps.tex);
         const bump = this.createTexture(three, maps.bump);
-        document.body.appendChild(maps.bump);
+        //document.body.appendChild(maps.bump);
 
 
 
@@ -85,8 +85,8 @@ const surface = new three.Mesh(
         map: texture,
         bumpMap: bump,
         bumpScale: 120,
-        roughness: 0.85,
-        metalness: 0.0
+        roughness: 0.4,
+        metalness: 0.5
     })
 );
         this.group.add(surface);
@@ -122,7 +122,7 @@ const surface = new three.Mesh(
                 const index = (y * width + x) * 4;
 
                 let bumpHeight = large * 0.3 + medium * 0.5 + fine * 0.2;
-                bumpHeight -= cracks * 0.25;
+                bumpHeight -= cracks * 0.725;
                 //bumpHeight = Math.pow(bumpHeight, 3);
                 bumpHeight = clamp(bumpHeight, 0, 1);
                 const h = Math.floor(bumpHeight * 255);

@@ -21,7 +21,7 @@ document.body.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0x99bbff, 0x222222, 1.2));
 
 const sun = new THREE.DirectionalLight(0xffffff, 0.7);
-sun.position.set(5, 10, 4);
+sun.position.set(-9, 4, -21);//5, 10, 4);
 scene.add(sun);
 
 const sunVisual = new Sun(THREE);
