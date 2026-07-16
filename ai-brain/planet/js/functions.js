@@ -2,6 +2,10 @@ export function degToRad(deg) {
     return deg * Math.PI / 180;
 }
 
+export function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
 export function hash(x, y) {
     let n = x * 374761393 + y * 668265263;
     n = (n ^ (n >> 13)) * 1274126177;

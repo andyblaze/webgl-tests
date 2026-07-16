@@ -1,4 +1,4 @@
-import { hash, fractalNoise, noise } from "./functions.js";
+import { hash, fractalNoise, noise, clamp } from "./functions.js";
 
 class Color {
     constructor() {
@@ -72,22 +72,31 @@ export default class Planet {
         this.radius = 1000;
         const canvasWidth = 2048;
         const canvasHeight = 1024;
-        const canvas = this.createCanvas(canvasWidth, canvasHeight);
-        const texture = this.createTexture(three, canvas);
+        const maps = this.createCanvas(canvasWidth, canvasHeight);
+        const texture = this.createTexture(three, maps.tex);
+        const bump = this.createTexture(three, maps.bump);
+        //document.body.appendChild(maps.bump);
 
-        const surface = new three.Mesh(
-            new three.SphereGeometry(this.radius, 128, 64),
-            new three.MeshLambertMaterial({
-                map: texture
-            })
-        );
+
+
+const surface = new three.Mesh(
+    new three.SphereGeometry(this.radius, 128, 64),
+    new three.MeshStandardMaterial({
+        map: texture,
+        bumpMap: bump,
+        bumpScale: 120,
+        roughness: 0.85,
+        metalness: 0.0
+    })
+);
         this.group.add(surface);
 
         // Camera starts above the north pole
         this.group.position.y = -this.radius;
     }
     createCanvas(width, height) {
-        const canvas = new TempCanvas(width, height);
+        const textureCanvas = new TempCanvas(width, height);
+        const bumpCanvas = new TempCanvas(width, height);
         const color = new Color();
 
         for (let y = 0; y < height; y++) {
@@ -112,57 +121,59 @@ export default class Planet {
                 const polar = latitude * 20;
                 const index = (y * width + x) * 4;
 
+                let bumpHeight = large * 0.3 + medium * 0.5 + fine * 0.2;
+                bumpHeight -= cracks * 0.25;
+                //bumpHeight = Math.pow(bumpHeight, 13);
+                const h = Math.floor(bumpHeight * 255);
+
+bumpCanvas.image.data[index] = h;
+bumpCanvas.image.data[index + 1] = h;
+bumpCanvas.image.data[index + 2] = h;
+bumpCanvas.image.data[index + 3] = 255;
+                //bumpCanvas.setImgData(index, clamp(bumpHeight, 0, 255));
+
                 this.colorise(color, ice, medium, fine, polar, cracks);
-                canvas.setImgData(index, color);
+                textureCanvas.setImgData(index, color);
             }
         }
-        canvas.putImgData();
-        return canvas.actual;
+        textureCanvas.putImgData();
+        bumpCanvas.putImgData();
+        return { tex: textureCanvas.actual, bump: bumpCanvas.actual };
     }
     colorise(color, ice, medium, fine, polar, cracks) {
         color.reset();
-
         // Deep frozen ocean
-        if (ice < 0.28) {
+        if (ice < 0.28) 
             color.setRgba(20, 45, 90);
-        }
         // Dark blue ice fields
-        else if (ice < 0.45) {
+        else if (ice < 0.45) 
             color.setRgba(
                 50 + medium * 50,
                 110 + medium * 60,
                 170 + medium * 60
             );
-        }
         // Blue-white fractured ice
-        else if (ice < 0.65) {
+        else if (ice < 0.65) 
             color.setRgba(
                 130 + fine * 60,
                 180 + fine * 50,
                 220 + fine * 35
             );
-        }
         // Bright ice ridges
-        else {
+        else 
             color.setRgba(
                 210 + fine * 30,
                 225 + fine * 25,
                 245 + fine * 10
             );
-        }
 
         color.scalarAdd(polar);
-
         // Dark winding cracks
-        if (cracks < 0.16) {
+        if (cracks < 0.16) 
             color.multiplyBy(0.55, 0.65, 0.8);
-        }
-
         // Random icy sparkle
-        if (fine > 0.85) {
+        if (fine > 0.85) 
             color.scalarAdd(20);
-        }
-
     }
     createTexture(three, canvas) {
         const texture = new three.CanvasTexture(canvas);
