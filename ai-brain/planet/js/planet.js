@@ -70,8 +70,10 @@ export default class Planet {
     constructor(three) {
         this.group = new three.Group();
         this.radius = 1000;
-
-        const texture = this.createIceTexture(three);
+        const canvasWidth = 2048;
+        const canvasHeight = 1024;
+        const canvas = this.createCanvas(canvasWidth, canvasHeight);
+        const texture = this.createTexture(three, canvas);
 
         const surface = new three.Mesh(
             new three.SphereGeometry(this.radius, 128, 64),
@@ -79,19 +81,12 @@ export default class Planet {
                 map: texture
             })
         );
-
         this.group.add(surface);
 
         // Camera starts above the north pole
         this.group.position.y = -this.radius;
     }
-
-
-    createIceTexture(three) {
-
-        const width = 2048;
-        const height = 1024;
-
+    createCanvas(width, height) {
         const canvas = new TempCanvas(width, height);
         const color = new Color();
 
@@ -155,7 +150,7 @@ export default class Planet {
                 }
 
                 // Random icy sparkle
-                if (fine > 0.085) {
+                if (fine > 0.85) {
                     color.scalarAdd(20);
                 }
 
@@ -164,11 +159,12 @@ export default class Planet {
             }
         }
         canvas.putImgData();
-
-        const texture = new three.CanvasTexture(canvas.actual);
+        return canvas.actual;
+    }
+    createTexture(three, canvas) {
+        const texture = new three.CanvasTexture(canvas);
         texture.wrapS = three.RepeatWrapping;
         texture.wrapT = three.ClampToEdgeWrapping;
-
         return texture;
     }
     addToScene(scene) {
