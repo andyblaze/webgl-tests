@@ -2,7 +2,10 @@ import { hash, fractalNoise, noise } from "./functions.js";
 
 class Color {
     constructor() {
-        this.c = {r: 0, g: 0, b: 0, a: 255 };
+        this.c = { r: 0, g: 0, b: 0, a: 255 };
+    }
+    reset() {
+        this.c = { r: 0, g: 0, b: 0, a: 255 };
     }
     setRgba(r, g, b, a=255) {
         this.c.r = r;
@@ -10,15 +13,27 @@ class Color {
         this.c.b = b;
         this.c.a = a;
     }
-    scalarAdd(r, g, b) {
-        this.c.r += r;
-        this.c.g += g;
-        this.c.b += b;
+    scalarAdd(n) {
+        this.c.r += n;
+        this.c.g += n;
+        this.c.b += n;
     }
     multiplyBy(r, g, b) {
         this.c.r *= r;
         this.c.g *= g;
         this.c.b *= b;
+    }
+    get red() {
+        return Math.min(255, this.c.r);
+    }
+    get green() {
+        return Math.min(255, this.c.g);
+    }
+    get blue() {
+        return Math.min(255, this.c.b);
+    }
+    get alpha() {
+        return  Math.min(255, this.c.a);
     }
     getRgba() {
         this.c.r = Math.min(255, this.c.r);
@@ -26,6 +41,28 @@ class Color {
         this.c.b = Math.min(255, this.c.b);
         this.c.a = Math.min(255, this.c.a);
         return this.c;
+    }
+}
+
+class TempCanvas {
+    constructor(w, h) {
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = w;
+        this.canvas.height = h;
+        this.ctx = this.canvas.getContext("2d");
+        this.image = this.ctx.createImageData(w, h);        
+    }
+    setImgData(index, color) {
+        this.image.data[index] = color.red;
+        this.image.data[index + 1] = color.green;
+        this.image.data[index + 2] = color.blue;
+        this.image.data[index + 3] = color.alpha;
+    }
+    putImgData() {
+        this.ctx.putImageData(this.image, 0, 0);
+    }
+    get actual() {
+        return this.canvas;
     }
 }
 
@@ -55,73 +92,34 @@ export default class Planet {
         const width = 2048;
         const height = 1024;
 
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext("2d");
-        const image = ctx.createImageData(width, height);
-
+        const canvas = new TempCanvas(width, height);
+        const color = new Color();
 
         for (let y = 0; y < height; y++) {
 
             const latitude = Math.abs((y / height) - 0.5) * 2;
 
             for (let x = 0; x < width; x++) {
-
                 const nx = x / width;
                 const ny = y / height;
 
-
                 // Big ice plates
-                const large = fractalNoise(
-                    nx * 45,
-                    ny * 95
-                );
-
-
+                const large = fractalNoise(nx * 45, ny * 95);
                 // Medium broken ice structure
-                const medium = fractalNoise(
-                    nx * 142,
-                    ny * 92
-                );
-
-
+                const medium = fractalNoise(nx * 142, ny * 92);
                 // Fine surface variation
-                const fine = noise(
-                    nx * 8,
-                    ny * 8
-                );
-
-
+                const fine = noise(nx * 8, ny * 8);
                 // Long ice fractures
-                const cracks = noise(
-                    nx * 10.5,
-                    ny * 10.8
-                );
-
-
+                const cracks = noise(nx * 10.5, ny * 10.8);
                 // Combine scales
-                const ice =
-                    large * 0.55 +
-                    medium * 0.30 +
-                    fine * 0.15;
+                const ice = large * 0.55 + medium * 0.30 + fine * 0.15;
 
-
-                const color = new Color();
-                let r, g, b;
-
+                color.reset();
 
                 // Deep frozen ocean
                 if (ice < 0.28) {
                     color.setRgba(20, 45, 90);
-
-                    r = 20;
-                    g = 45;
-                    b = 90;
-
                 }
-
                 // Dark blue ice fields
                 else if (ice < 0.45) {
                     color.setRgba(
@@ -129,28 +127,15 @@ export default class Planet {
                         110 + medium * 60,
                         170 + medium * 60
                     );
-
-                    r = 50 + medium * 50;
-                    g = 110 + medium * 60;
-                    b = 170 + medium * 60;
-
                 }
-
                 // Blue-white fractured ice
                 else if (ice < 0.65) {
-
                     color.setRgba(
                         130 + fine * 60,
                         180 + fine * 50,
                         220 + fine * 35
                     );
-
-                    r = 130 + fine * 60;
-                    g = 180 + fine * 50;
-                    b = 220 + fine * 35;
-
                 }
-
                 // Bright ice ridges
                 else {
                     color.setRgba(
@@ -158,60 +143,29 @@ export default class Planet {
                         225 + fine * 25,
                         245 + fine * 10
                     );
-                    r = 210 + fine * 30;
-                    g = 225 + fine * 25;
-                    b = 245 + fine * 10;
-
                 }
-
 
                 // Polar tint, but subtle
                 const polar = latitude * 20;
                 color.scalarAdd(polar);
 
-                r += polar;
-                g += polar;
-                b += polar;
-
-
                 // Dark winding cracks
                 if (cracks < 0.16) {
                     color.multiplyBy(0.55, 0.65, 0.8);
-                    r *= 0.55;
-                    g *= 0.65;
-                    b *= 0.80;
-
                 }
-
 
                 // Random icy sparkle
                 if (fine > 0.085) {
                     color.scalarAdd(20);
-
-                    r += 20;
-                    g += 20;
-                    b += 20;
-
                 }
 
-
                 const index = (y * width + x) * 4;
-
-                const finalColor = color.getRgba();
-                //console.log(r, g, b, finalColor);
-
-                image.data[index] = finalColor.r;
-                image.data[index + 1] = finalColor.g;
-                image.data[index + 2] = finalColor.b;
-                image.data[index + 3] = finalColor.a;
+                canvas.setImgData(index, color);
             }
         }
+        canvas.putImgData();
 
-
-        ctx.putImageData(image, 0, 0);
-
-
-        const texture = new three.CanvasTexture(canvas);
+        const texture = new three.CanvasTexture(canvas.actual);
         texture.wrapS = three.RepeatWrapping;
         texture.wrapT = three.ClampToEdgeWrapping;
 
