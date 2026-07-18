@@ -72,32 +72,45 @@ export default class Planet {
         this.radius = 200;
         const canvasWidth = 2048;
         const canvasHeight = 1024;
-        const maps = this.createCanvas(canvasWidth, canvasHeight);
+        const maps = this.createCanvasses(canvasWidth, canvasHeight);
         const texture = this.createTexture(three, maps.tex);
         const bump = this.createTexture(three, maps.bump);
-        //document.body.appendChild(maps.bump);
+        const loader = new three.ImageLoader();
+        const image = loader.load("NormalMap.png");
+        const norm = this.createTexture(three, image);
+        //document.body.appendChild(maps.bump);  //will use later for saving bump & convert to normal
 
-
-
-const surface = new three.Mesh(
-    new three.SphereGeometry(this.radius, 128, 64),
-    new three.MeshStandardMaterial({
-        map: texture,
-        bumpMap: bump,
-        bumpScale: 120,
-        roughness: 0.4,
-        metalness: 0.5
-    })
-);
+        const surface = new three.Mesh(
+            new three.SphereGeometry(this.radius, 128, 64),
+            new three.MeshStandardMaterial({
+                map: texture,
+                bumpMap: bump,
+                normalMap: norm,
+                bumpScale: 20,
+                roughness: 0.4,
+                metalness: 0.5
+            })
+        );
+        const atmos = new three.Mesh(
+            new three.SphereGeometry(this.radius * 1.002, 128, 64),
+            new three.MeshBasicMaterial({
+                color: 0xbbccff,
+                transparent: true,
+                opacity: 0.15,
+                side: three.BackSide,
+                blending: three.AdditiveBlending
+            })
+        );
         this.group.add(surface);
+        this.group.add(atmos);
 
         // Camera starts above the north pole
         this.group.position.y = -this.radius;
     }
-    createCanvas(width, height) {
+    createCanvasses(width, height) {
         const textureCanvas = new TempCanvas(width, height);
         const bumpCanvas = new TempCanvas(width, height);
-        const color = new Color();
+        const color = new Color(); // for texture only
 
         for (let y = 0; y < height; y++) {
 
@@ -121,17 +134,18 @@ const surface = new three.Mesh(
                 const polar = latitude * 20;
                 const index = (y * width + x) * 4;
 
+                // improve this code later
                 let bumpHeight = large * 0.3 + medium * 0.5 + fine * 0.2;
                 bumpHeight -= cracks * 0.725;
                 //bumpHeight = Math.pow(bumpHeight, 3);
                 bumpHeight = clamp(bumpHeight, 0, 1);
                 const h = Math.floor(bumpHeight * 255);
 
-bumpCanvas.image.data[index] = h;
-bumpCanvas.image.data[index + 1] = h;
-bumpCanvas.image.data[index + 2] = h;
-bumpCanvas.image.data[index + 3] = 255;
-                //bumpCanvas.setImgData(index, clamp(bumpHeight, 0, 255));
+                bumpCanvas.image.data[index] = h;
+                bumpCanvas.image.data[index + 1] = h;
+                bumpCanvas.image.data[index + 2] = h;
+                bumpCanvas.image.data[index + 3] = 255;
+                //bumpCanvas.setImgData(index, clamp(bumpHeight, 0, 255)); 
 
                 this.colorise(color, ice, medium, fine, polar, cracks);
                 textureCanvas.setImgData(index, color);
