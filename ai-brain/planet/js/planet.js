@@ -78,14 +78,14 @@ export default class Planet {
         const loader = new three.ImageLoader();
         const image = loader.load("NormalMap.png");
         const norm = this.createTexture(three, image);
-        //document.body.appendChild(maps.bump);  //will use later for saving bump & convert to normal
+        //document.body.appendChild(maps.clouds);  //will use later for saving bump & convert to normal
 
         const surface = new three.Mesh(
             new three.SphereGeometry(this.radius, 128, 64),
             new three.MeshStandardMaterial({
                 map: texture,
                 bumpMap: bump,
-                normalMap: norm,
+                //normalMap: norm,
                 bumpScale: 20,
                 roughness: 0.4,
                 metalness: 0.5
@@ -101,8 +101,39 @@ export default class Planet {
                 blending: three.AdditiveBlending
             })
         );
+const lr = new three.TextureLoader();
+
+//const cloudTexture = lr.load("hd-cloud.png");
+
+const cloudTexture = lr.load(
+    "hd-cloud.png",
+    (tex) => {
+        tex.wrapS = three.RepeatWrapping;
+        tex.wrapT = three.ClampToEdgeWrapping;
+        tex.needsUpdate = true;
+    }
+);
+
+//cloudTexture.wrapS = three.RepeatWrapping;
+//cloudTexture.wrapT = three.ClampToEdgeWrapping;
+
+        const clouds = new three.Mesh(
+            new three.SphereGeometry(this.radius * 1.04, 128, 64),
+            new three.MeshStandardMaterial({
+                map: cloudTexture,
+                transparent: true,
+                opacity: 0.825,
+                //depthWrite: false,
+                side: three.BackSide,
+                //blending: three.AdditiveBlending,
+                roughness: 0,
+                metalness: 0.0
+            })
+        );
+
         this.group.add(surface);
         this.group.add(atmos);
+        this.group.add(clouds);
 
         // Camera starts above the north pole
         this.group.position.y = -this.radius;
@@ -110,6 +141,7 @@ export default class Planet {
     createCanvasses(width, height) {
         const textureCanvas = new TempCanvas(width, height);
         const bumpCanvas = new TempCanvas(width, height);
+        const cloudCanvas = new TempCanvas(width, height);
         const color = new Color(); // for texture only
 
         for (let y = 0; y < height; y++) {
@@ -147,13 +179,68 @@ export default class Planet {
                 bumpCanvas.image.data[index + 3] = 255;
                 //bumpCanvas.setImgData(index, clamp(bumpHeight, 0, 255)); 
 
+//-------------------------------------------------------
+            // CLOUDS
+            //-------------------------------------------------------
+
+            // Low-frequency distortion field
+            const warp = fractalNoise(
+                nx * 3,
+                ny * 3
+            );
+
+            const wx = nx + (warp - 0.5) * 0.08;
+            const wy = ny + (warp - 0.5) * 0.08;
+
+            // Stretched cloud field
+            let cloud =
+                fractalNoise(
+                    wx * 8,
+                    wy * 2
+                );
+
+            // Break up long streaks
+            cloud =
+                cloud * 0.75 +
+                fractalNoise(
+                    wx * 20,
+                    wy * 8
+                ) * 0.25;
+
+            // Slight equatorial preference
+            cloud += (1 - latitude) * 0.05;
+            cloud = (cloud - 0.5) * 2.0 + 0.5;
+cloud = clamp(cloud, 0, 1);
+
+            // Soft threshold
+            let alpha = (cloud - 0.52) / 0.18;
+            alpha = clamp(alpha, 0, 1);
+            alpha = Math.random() * 255;
+            alpha = cloud;
+
+// increase contrast
+alpha = (alpha - 0.5) * 4.0 + 0.5;
+
+alpha = clamp(alpha, 0, 1) * 255;
+
+            //alpha = alpha * alpha;
+
+            const c = Math.floor(cloud * 255);
+
+
+            cloudCanvas.image.data[index]     = c;
+            cloudCanvas.image.data[index + 1] = c;
+            cloudCanvas.image.data[index + 2] = c;
+            cloudCanvas.image.data[index + 3] = 255;
+
                 this.colorise(color, ice, medium, fine, polar, cracks);
                 textureCanvas.setImgData(index, color);
             }
         }
         textureCanvas.putImgData();
         bumpCanvas.putImgData();
-        return { tex: textureCanvas.actual, bump: bumpCanvas.actual };
+        cloudCanvas.putImgData();
+        return { tex: textureCanvas.actual, bump: bumpCanvas.actual, clouds: cloudCanvas.actual };
     }
     colorise(color, ice, medium, fine, polar, cracks) {
         color.reset();
