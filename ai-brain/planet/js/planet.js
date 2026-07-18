@@ -119,14 +119,14 @@ const cloudTexture = lr.load(
 
         const clouds = new three.Mesh(
             new three.SphereGeometry(this.radius * 1.04, 128, 64),
-            new three.MeshStandardMaterial({
+            new three.MeshBasicMaterial({
                 map: cloudTexture,
                 transparent: true,
-                opacity: 0.825,
-                //depthWrite: false,
+                opacity: 0.25,
+                depthWrite: false,
                 side: three.BackSide,
                 //blending: three.AdditiveBlending,
-                roughness: 0,
+                roughness: 1.0,
                 metalness: 0.0
             })
         );
