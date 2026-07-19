@@ -74,9 +74,9 @@ export default class Ship {
         this.roll.target = degToRad(deg);
     }
     update(dt) {
-        this.mind.navigate(dt, this);
+        /*this.mind.navigate(dt, this);
         this.applyPitch(dt);
         this.applyYaw(dt);
-        this.applyRoll(dt);
+        this.applyRoll(dt);*/
     }
 }

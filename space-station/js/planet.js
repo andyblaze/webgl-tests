@@ -69,7 +69,7 @@ class TempCanvas {
 export default class Planet {
     constructor(three) {
         this.group = new three.Group();
-        this.radius = 200;
+        this.radius = 100;
         const canvasWidth = 2048;
         const canvasHeight = 1024;
         const maps = this.createCanvasses(canvasWidth, canvasHeight);
@@ -102,12 +102,13 @@ const norm = lr.load(
         );
         const atmos = new three.Mesh(
             new three.SphereGeometry(this.radius * 1.002, 128, 64),
-            new three.MeshBasicMaterial({
+            new three.MeshStandardMaterial({
                 color: 0xbbccff,
                 transparent: true,
                 opacity: 0.15,
                 side: three.BackSide,
-                blending: three.AdditiveBlending
+                blending: three.AdditiveBlending,
+                metalness: 0.2
             })
         );
 
@@ -136,17 +137,17 @@ const cloudTexture = lr.load(
                 //side: three.BackSide,
                 blending: three.AdditiveBlending,
                 roughness: 1.0,
-                metalness: 0.0
+                metalness: 0.2
             })
         );
 
         this.group.add(surface);
         this.group.add(atmos);
-        this.group.add(this.clouds);
+        //this.group.add(this.clouds);
 
         // Camera starts above the north pole
-        this.group.position.y = -this.radius;
-        //this.group.position.z = -520;
+        this.group.position.y = -this.radius +150;
+        this.group.position.z = -520;
     }
     createCanvasses(width, height) {
         const textureCanvas = new TempCanvas(width, height);
@@ -298,6 +299,7 @@ alpha = clamp(alpha, 0, 1) * 255;
     }
     update(camera) {
         this.group.rotation.x += 0.0002;
-        this.clouds.rotation.y += 0.0001;
+        this.group.rotation.z += 0.0002;
+        this.clouds.rotation.y += 0.01;
     }
 }
