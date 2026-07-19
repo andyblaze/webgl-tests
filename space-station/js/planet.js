@@ -132,7 +132,7 @@ const cloudTexture = lr.load(
             new three.MeshStandardMaterial({
                 map: cloudTexture,
                 transparent: true,
-                opacity: 0.97325,
+                opacity: 0.325,
                 depthWrite: false,
                 //side: three.BackSide,
                 blending: three.AdditiveBlending,
@@ -143,7 +143,7 @@ const cloudTexture = lr.load(
 
         this.group.add(surface);
         this.group.add(atmos);
-        //this.group.add(this.clouds);
+        this.group.add(this.clouds);
 
         // Camera starts above the north pole
         this.group.position.y = -this.radius +150;
@@ -300,6 +300,6 @@ alpha = clamp(alpha, 0, 1) * 255;
     update(camera) {
         this.group.rotation.x += 0.0002;
         this.group.rotation.z += 0.0002;
-        this.clouds.rotation.y += 0.01;
+        this.clouds.rotation.y += 0.0001;
     }
 }
