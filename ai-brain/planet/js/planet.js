@@ -76,8 +76,17 @@ export default class Planet {
         const texture = this.createTexture(three, maps.tex);
         const bump = this.createTexture(three, maps.bump);
         const loader = new three.ImageLoader();
-        const image = loader.load("NormalMap.png");
-        const norm = this.createTexture(three, image);
+        //const image = loader.load("NormalMap.png");
+const lr = new three.TextureLoader();
+const norm = lr.load(
+    "NormalMap.png",
+    (tex) => {
+        tex.wrapS = three.RepeatWrapping;
+        tex.wrapT = three.ClampToEdgeWrapping;
+        tex.needsUpdate = true;
+    }
+);
+        //const norm = this.createTexture(three, image);
         //document.body.appendChild(maps.clouds);  //will use later for saving bump & convert to normal
 
         const surface = new three.Mesh(
@@ -85,7 +94,7 @@ export default class Planet {
             new three.MeshStandardMaterial({
                 map: texture,
                 bumpMap: bump,
-                //normalMap: norm,
+                normalMap: norm,
                 bumpScale: 20,
                 roughness: 0.4,
                 metalness: 0.5
@@ -101,12 +110,12 @@ export default class Planet {
                 blending: three.AdditiveBlending
             })
         );
-const lr = new three.TextureLoader();
+
 
 //const cloudTexture = lr.load("hd-cloud.png");
 
 const cloudTexture = lr.load(
-    "hd-cloud.png",
+    "2hd-cloud.png",
     (tex) => {
         tex.wrapS = three.RepeatWrapping;
         tex.wrapT = three.ClampToEdgeWrapping;
@@ -117,15 +126,15 @@ const cloudTexture = lr.load(
 //cloudTexture.wrapS = three.RepeatWrapping;
 //cloudTexture.wrapT = three.ClampToEdgeWrapping;
 
-        const clouds = new three.Mesh(
-            new three.SphereGeometry(this.radius * 1.04, 128, 64),
-            new three.MeshBasicMaterial({
+        this.clouds = new three.Mesh(
+            new three.SphereGeometry(this.radius * 1.004, 128, 64),
+            new three.MeshStandardMaterial({
                 map: cloudTexture,
                 transparent: true,
-                opacity: 0.25,
+                opacity: 0.97325,
                 depthWrite: false,
-                side: three.BackSide,
-                //blending: three.AdditiveBlending,
+                //side: three.BackSide,
+                blending: three.AdditiveBlending,
                 roughness: 1.0,
                 metalness: 0.0
             })
@@ -133,10 +142,11 @@ const cloudTexture = lr.load(
 
         this.group.add(surface);
         this.group.add(atmos);
-        this.group.add(clouds);
+        this.group.add(this.clouds);
 
         // Camera starts above the north pole
         this.group.position.y = -this.radius;
+        //this.group.position.z = -520;
     }
     createCanvasses(width, height) {
         const textureCanvas = new TempCanvas(width, height);
@@ -287,6 +297,7 @@ alpha = clamp(alpha, 0, 1) * 255;
         scene.add(this.group);
     }
     update(camera) {
-        this.group.rotation.x += 0.0001;
+        this.group.rotation.x += 0.0002;
+        this.clouds.rotation.y += 0.0001;
     }
 }

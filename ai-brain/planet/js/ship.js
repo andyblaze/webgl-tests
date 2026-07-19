@@ -4,7 +4,7 @@ export default class Ship {
     constructor(three, mind) {
         const aspect = window.innerWidth / window.innerHeight;
         this.camera = new three.PerspectiveCamera(60, aspect, 0.1, 10000);
-        this.camera.position.set(0, 5, 0);
+        this.camera.position.set(0, 5, -1);
         this.yaw = {
             angle: 0,
             target: 0,
