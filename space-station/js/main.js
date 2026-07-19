@@ -5,6 +5,7 @@ import Planet from "./planet.js";
 import SkyDome from "./sky.js";
 import StarsDecor from "./stars.js";
 import Sun from "./sun.js";
+import { degToRad } from "./functions.js";
 
 const scene = new THREE.Scene();
 
@@ -34,6 +35,22 @@ renderer.setClearColor(0x0b1022);
 
 const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
 sky.addToScene(scene);
+
+const geometry = new THREE.CylinderGeometry( 20, 20, 280, 32 );
+const material = new THREE.MeshBasicMaterial({ 
+    color: 0x2f5021,
+    roughness: 0.5,
+    metalness: 0.925,
+    emissive: 1 
+});
+const cylinder = new THREE.Mesh( geometry, material );
+cylinder.position.x = 180;
+cylinder.position.y = 10;
+cylinder.position.z = -400;
+cylinder.rotation.x = degToRad(-22);
+cylinder.rotation.z = degToRad(-22);
+scene.add( cylinder );
+
 
 const planet = new Planet(THREE);
 planet.addToScene(scene);
