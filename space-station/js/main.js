@@ -36,20 +36,56 @@ renderer.setClearColor(0x0b1022);
 const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
 sky.addToScene(scene);
 
-const geometry = new THREE.CylinderGeometry( 20, 20, 280, 32 );
-const material = new THREE.MeshBasicMaterial({ 
-    color: 0x2f5021,
-    roughness: 0.5,
-    metalness: 0.925,
-    emissive: 1 
-});
-const cylinder = new THREE.Mesh( geometry, material );
-cylinder.position.x = 180;
-cylinder.position.y = 10;
-cylinder.position.z = -400;
-cylinder.rotation.x = degToRad(-22);
-cylinder.rotation.z = degToRad(-22);
-scene.add( cylinder );
+class Satellite5 {
+    constructor(three) {
+        this.group = new three.Group();
+        this.group.position.x = 180;
+        this.group.position.y = 10;
+        this.group.position.z = -400;
+        this.group.rotation.x = degToRad(-22);
+        this.group.rotation.z = degToRad(-22);
+        this.texLoader = new three.TextureLoader();
+        this.cylinder = this.makeCylinder(three);
+        this.group.add(this.cylinder);
+    }
+    makeTexture(three, filename) {
+        const texture = this.texLoader.load(
+            filename,
+            (tex) => {
+                tex.wrapS = three.RepeatWrapping;
+                tex.wrapT = three.ClampToEdgeWrapping;
+                tex.needsUpdate = true;
+            }
+        );
+        return texture;
+    }
+    makeCylinder(three) {
+        const norm = this.makeTexture(three, "norm-brick.png");
+        const bump = this.makeTexture(three, "brick.png");
+
+        const material = new three.MeshStandardMaterial({ 
+            color: 0x42352F,
+            roughness: 0.5,
+            bumpMap: bump,
+            normalMap: norm,
+            bumpScale: 2,
+            metalness: 0.5
+        });
+        return new three.Mesh(
+            new three.CylinderGeometry(20, 20, 280, 32),
+            material
+        );
+    }
+    addToScene(scene) {
+        scene.add(this.group);
+    }
+    update() {
+        this.cylinder.rotation.y -= 0.002;
+    }
+}
+
+const satellite = new Satellite5(THREE);
+satellite.addToScene(scene);
 
 
 const planet = new Planet(THREE);
@@ -74,6 +110,7 @@ function animate(timestamp) {
     sky.update();
 
     ship.update(dt);
+    satellite.update();
 
     renderer.render(scene, cam);
     requestAnimationFrame(animate);

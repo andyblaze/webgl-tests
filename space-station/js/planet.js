@@ -298,8 +298,8 @@ alpha = clamp(alpha, 0, 1) * 255;
         scene.add(this.group);
     }
     update(camera) {
-        this.group.rotation.x += 0.0002;
-        this.group.rotation.z += 0.0002;
-        this.clouds.rotation.y += 0.0001;
+        this.group.rotation.x += 0.0003;
+        this.group.rotation.y += 0.0003;
+        this.clouds.rotation.z += 0.0002;
     }
 }
