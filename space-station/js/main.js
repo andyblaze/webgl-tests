@@ -1,4 +1,4 @@
-import * as THREE from "https://unpkg.com/three@0.179.1/build/three.module.js";
+import * as THREE from "./three.module.js";
 import Mind from "./mind.js";
 import Ship from "./ship.js";
 import Planet from "./planet.js";
@@ -46,18 +46,56 @@ class Satellite5 {
         this.group.rotation.z = degToRad(-22);
         this.texLoader = new three.TextureLoader();
         this.cylinder = this.makeCylinder(three);
+        this.ring1 = this.makeRing(three);
+        this.ring1.rotation.x = degToRad(90);
+        this.ring1.position.y = 100;
+        this.ring2 = this.makeRing(three);
+        this.ring2.rotation.x = degToRad(90);
+        this.ring2.position.y = 0;
+        this.ring3 = this.makeRing(three);
+        this.ring3.rotation.x = degToRad(90);
+        this.ring3.position.y = -100;
         this.group.add(this.cylinder);
+        this.group.add(this.ring1);
+        this.group.add(this.ring2);
+        this.group.add(this.ring3);
     }
-    makeTexture(three, filename) {
+    makeTexture(three, filename, repeatX=1) {
         const texture = this.texLoader.load(
             filename,
             (tex) => {
+                tex.repeatX = repeatX;
+                //tex.repeatY = repeatX;
                 tex.wrapS = three.RepeatWrapping;
                 tex.wrapT = three.ClampToEdgeWrapping;
                 tex.needsUpdate = true;
             }
         );
         return texture;
+    }
+    makeRing(three) {
+        const geometry = new three.TorusGeometry( 80, 10, 16, 100 );
+        const norm = this.makeTexture(three, "norm-ring.png", 6);
+        const bump = this.makeTexture(three, "ring.png", 6);
+
+        const material = new three.MeshStandardMaterial({ 
+            color: 0x42352F,
+            roughness: 0.5,
+            bumpMap: bump,
+            normalMap: norm,
+            bumpScale: 2,
+            metalness: 0.5
+        });
+
+        const torus = new three.Mesh( geometry, material ); 
+        const truss = new three.Mesh(
+            new three.CylinderGeometry(4, 4, 180, 32),
+            material
+        );
+        const g = new three.Group();
+        g.add(torus);
+        g.add(truss);
+        return g;       
     }
     makeCylinder(three) {
         const norm = this.makeTexture(three, "norm-brick.png");
@@ -81,6 +119,9 @@ class Satellite5 {
     }
     update() {
         this.cylinder.rotation.y -= 0.002;
+        this.ring1.rotation.z += 0.002;
+        this.ring2.rotation.z -= 0.002;
+        this.ring3.rotation.z += 0.002;
     }
 }
 
