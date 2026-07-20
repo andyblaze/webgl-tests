@@ -47,14 +47,8 @@ class Satellite5 {
         this.texLoader = new three.TextureLoader();
         this.cylinder = this.makeCylinder(three);
         this.ring1 = this.makeRing(three, 100, 90);
-        //this.ring1.rotation.x = degToRad(90);
-        //this.ring1.position.y = 100;
         this.ring2 = this.makeRing(three, 0, 90);
-        //this.ring2.rotation.x = degToRad(90);
-        //this.ring2.position.y = 0;
         this.ring3 = this.makeRing(three, -100, 90);
-        //this.ring3.rotation.x = degToRad(90);
-        //this.ring3.position.y = -100;
         this.group.add(this.cylinder);
         this.group.add(this.ring1);
         this.group.add(this.ring2);
