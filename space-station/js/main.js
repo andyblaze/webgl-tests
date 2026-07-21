@@ -38,18 +38,40 @@ sky.addToScene(scene);
 
 class Satellite5 {
     constructor(three) {
+        const cfg = {
+            length: 280,
+            trussSize: 4,
+            rings: 3,
+            ringStart: 100,
+            ringSeparation: 100,
+            ringRadius: 90,
+            pos: { x: 180, y: 10, z: -400 },
+            tilt: { x: -22, y: 0, z: -22 },
+        };
         this.group = new three.Group();
-        this.group.position.x = 180;
-        this.group.position.y = 10;
-        this.group.position.z = -400;
-        this.group.rotation.x = degToRad(-22);
-        this.group.rotation.z = degToRad(-22);
+        this.group.position.x = cfg.pos.x;
+        this.group.position.y = cfg.pos.y;
+        this.group.position.z = cfg.pos.z;
+        this.group.rotation.x = degToRad(cfg.tilt.x);
+        this.group.rotation.z = degToRad(cfg.tilt.z);
         this.texLoader = new three.TextureLoader();
-        this.cylinder = this.makeCylinder(three);
+        this.spine = this.makeSpine(three, cfg.length);
+        this.cylinder1 = this.makeCylinder(three, -142);
+        this.cylinder2 = this.makeCylinder(three, -56);
+        this.cylinder3 = this.makeCylinder(three, 40);
+        /*let t = 1;
+        for ( let idx = 1; idx > -cfg.rings; idx-- ) {
+            const p = idx * cfg.ringSeparation;
+            this["ring" + t] = this.makeRing(three, p, cfg.ringRadius);
+            t++;
+        }*/
         this.ring1 = this.makeRing(three, 100, 90);
         this.ring2 = this.makeRing(three, 0, 90);
         this.ring3 = this.makeRing(three, -100, 90);
-        this.group.add(this.cylinder);
+        this.group.add(this.spine);
+        this.group.add(this.cylinder1);
+        this.group.add(this.cylinder2);
+        this.group.add(this.cylinder3);
         this.group.add(this.ring1);
         this.group.add(this.ring2);
         this.group.add(this.ring3);
@@ -68,7 +90,7 @@ class Satellite5 {
         return texture;
     }
     makeRing(three, pos, rot) {
-        const geometry = new three.TorusGeometry( 80, 10, 16, 100 );
+        //const geometry = ;
         const norm = this.makeTexture(three, "norm-ring.png", 6);
         const bump = this.makeTexture(three, "ring.png", 6);
 
@@ -81,7 +103,10 @@ class Satellite5 {
             metalness: 0.5
         });
 
-        const torus = new three.Mesh( geometry, material ); 
+        const torus = new three.Mesh( 
+            new three.TorusGeometry( 80, 10, 16, 100 ),
+            material 
+        ); 
         const truss = new three.Mesh(
             new three.CylinderGeometry(4, 4, 180, 32),
             material
@@ -93,9 +118,20 @@ class Satellite5 {
         g.position.y = pos;
         return g;       
     }
-    makeCylinder(three) {
-        const norm = this.makeTexture(three, "norm-brick2.png");
-        const bump = this.makeTexture(three, "brick2.png");
+    makeSpine(three, length) {
+        const material = new three.MeshStandardMaterial({ 
+            color: 0x000000,
+            roughness: 0.5,
+            metalness: 0.5
+        });
+        return new three.Mesh(
+            new three.CylinderGeometry(10, 10, length, 32),
+            material
+        );
+    }
+    makeCylinder(three, pos) {
+        const norm = this.makeTexture(three, "norm-brick.png");
+        const bump = this.makeTexture(three, "brick.png");
 
         const material = new three.MeshStandardMaterial({ 
             color: 0x42352F,
@@ -105,16 +141,20 @@ class Satellite5 {
             bumpScale: 2,
             metalness: 0.5
         });
-        return new three.Mesh(
-            new three.CylinderGeometry(20, 20, 280, 32),
+        const c = new three.Mesh(
+            new three.CylinderGeometry(20, 20, 80, 32),
             material
         );
+        c.position.y = pos;
+        return c;
     }
     addToScene(scene) {
         scene.add(this.group);
     }
     update() {
-        this.cylinder.rotation.y -= 0.002;
+        this.cylinder1.rotation.y -= 0.002;
+        this.cylinder2.rotation.y -= 0.002;
+        this.cylinder3.rotation.y -= 0.002;
         this.ring1.rotation.z += 0.002;
         this.ring2.rotation.z -= 0.002;
         this.ring3.rotation.z += 0.002;
