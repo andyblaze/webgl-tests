@@ -46,7 +46,7 @@ class Satellite5 {
             ringSeparation: 100,
             ringRadius: 80,
             ringTilt: 90,
-            cylinderLength: 70,
+            cylinderLength: 100,
             cylinderRadius: 20,
             pos: { x: 180, y: 10, z: -400 },
             tilt: { x: -22, y: 0, z: -22 },
@@ -61,13 +61,15 @@ class Satellite5 {
         this.spine = this.makeSpine(three, cfg.length);
         const cylinderCount = cfg.ringCount + 1;
         let cyTop = (cfg.length / 2);
-        let cyLen = cfg.cylinderLength - cfg.trussSize;
+        let cyLen = 80 - (cfg.trussSize * 1);//(cfg.length - (cfg.ringSeparation * 2) / 2) - cfg.trussSize;
         this.cylinder0 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
         console.log(cyTop, cyLen);
+        cyLen = 100;
         cyTop -= (cfg.trussSize + cyLen);
         this.cylinder1 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
         cyTop -= (cfg.trussSize + cyLen);
         this.cylinder2 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
+        cyLen = 40;
         cyTop -= (cfg.trussSize + cyLen);
         this.cylinder3 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
         this.makeRings(three, cfg);
