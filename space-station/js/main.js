@@ -60,18 +60,18 @@ class Satellite5 {
         this.texLoader = new three.TextureLoader();
         this.spine = this.makeSpine(three, cfg.length);
         const cylinderCount = cfg.ringCount + 1;
-        let cyTop = (cfg.length / 2);
-        let cyLen = 80 - (cfg.trussSize * 1);//(cfg.length - (cfg.ringSeparation * 2) / 2) - cfg.trussSize;
+        let cyTop = 140;//(cfg.length / 2);
+        let cyLen = 36;//80 - (cfg.trussSize * 1);//(cfg.length - (cfg.ringSeparation * 2) / 2) - cfg.trussSize;
         this.cylinder0 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
-        console.log(cyTop, cyLen);
-        cyLen = 100;
-        cyTop -= (cfg.trussSize + cyLen);
+        /*console.log(cyTop, cyLen);
+        cyLen = 92;
+        cyTop = 104;//-= (cfg.trussSize + cyLen);
         this.cylinder1 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
-        cyTop -= (cfg.trussSize + cyLen);
+        cyTop = -4;//-= (cfg.trussSize + cyLen);
         this.cylinder2 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
-        cyLen = 40;
-        cyTop -= (cfg.trussSize + cyLen);
-        this.cylinder3 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
+        cyLen = 36;
+        cyTop = -104;//-= (cfg.trussSize + cyLen);
+        this.cylinder3 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);*/
         this.makeRings(three, cfg);
         /*let t = 1;
         for ( let i = 1; i <= cfg.ringCount; i++ ) {
@@ -83,9 +83,9 @@ class Satellite5 {
         }*/
         this.group.add(this.spine);
         this.group.add(this.cylinder0);
-        this.group.add(this.cylinder1);
+        /*this.group.add(this.cylinder1);
         this.group.add(this.cylinder2);
-        this.group.add(this.cylinder3);
+        this.group.add(this.cylinder3);*/
         //this.group.add(this.ring1);
         //this.group.add(this.ring2);
         //this.group.add(this.ring3);
@@ -93,7 +93,7 @@ class Satellite5 {
     makeRings(three, cfg) {
         let t = 1;
         for ( let i = 1; i <= cfg.ringCount; i++ ) {
-            const p = t * cfg.ringSeparation;
+            const p = t * cfg.ringSeparation; console.log(p);
             const idx = "ring" + i;
             this[idx] = this.makeRing(three, p, cfg.ringTilt, cfg.ringRadius);
             this.group.add(this[idx]);
@@ -177,9 +177,9 @@ class Satellite5 {
     }
     update() {
         this.cylinder0.rotation.y -= 0.002;
-        this.cylinder1.rotation.y -= 0.002;
+        /*this.cylinder1.rotation.y -= 0.002;
         this.cylinder2.rotation.y -= 0.002;
-        this.cylinder3.rotation.y -= 0.002;
+        this.cylinder3.rotation.y -= 0.002;*/
         this.ring1.rotation.z += 0.002;
         this.ring2.rotation.z -= 0.002;
         this.ring3.rotation.z += 0.002;
