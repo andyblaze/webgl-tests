@@ -41,10 +41,13 @@ class Satellite5 {
         const cfg = {
             length: 280,
             trussSize: 4,
-            rings: 3,
+            ringCount: 3,
             ringStart: 100,
             ringSeparation: 100,
-            ringRadius: 90,
+            ringRadius: 80,
+            ringTilt: 90,
+            cylinderLength: 70,
+            cylinderRadius: 20,
             pos: { x: 180, y: 10, z: -400 },
             tilt: { x: -22, y: 0, z: -22 },
         };
@@ -56,25 +59,44 @@ class Satellite5 {
         this.group.rotation.z = degToRad(cfg.tilt.z);
         this.texLoader = new three.TextureLoader();
         this.spine = this.makeSpine(three, cfg.length);
-        this.cylinder1 = this.makeCylinder(three, -142);
-        this.cylinder2 = this.makeCylinder(three, -56);
-        this.cylinder3 = this.makeCylinder(three, 40);
+        const cylinderCount = cfg.ringCount + 1;
+        let cyTop = (cfg.length / 2);
+        let cyLen = cfg.cylinderLength - cfg.trussSize;
+        this.cylinder0 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
+        console.log(cyTop, cyLen);
+        cyTop -= (cfg.trussSize + cyLen);
+        this.cylinder1 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
+        cyTop -= (cfg.trussSize + cyLen);
+        this.cylinder2 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
+        cyTop -= (cfg.trussSize + cyLen);
+        this.cylinder3 = this.makeCylinder(three, cfg.cylinderRadius, cyLen, cyTop);
+        this.makeRings(three, cfg);
         /*let t = 1;
-        for ( let idx = 1; idx > -cfg.rings; idx-- ) {
-            const p = idx * cfg.ringSeparation;
-            this["ring" + t] = this.makeRing(three, p, cfg.ringRadius);
-            t++;
+        for ( let i = 1; i <= cfg.ringCount; i++ ) {
+            const p = t * cfg.ringSeparation;
+            const idx = "ring" + i;
+            this[idx] = this.makeRing(three, p, cfg.ringTilt, cfg.ringRadius);
+            this.group.add(this[idx]);
+            t--;
         }*/
-        this.ring1 = this.makeRing(three, 100, 90);
-        this.ring2 = this.makeRing(three, 0, 90);
-        this.ring3 = this.makeRing(three, -100, 90);
         this.group.add(this.spine);
+        this.group.add(this.cylinder0);
         this.group.add(this.cylinder1);
         this.group.add(this.cylinder2);
         this.group.add(this.cylinder3);
-        this.group.add(this.ring1);
-        this.group.add(this.ring2);
-        this.group.add(this.ring3);
+        //this.group.add(this.ring1);
+        //this.group.add(this.ring2);
+        //this.group.add(this.ring3);
+    }
+    makeRings(three, cfg) {
+        let t = 1;
+        for ( let i = 1; i <= cfg.ringCount; i++ ) {
+            const p = t * cfg.ringSeparation;
+            const idx = "ring" + i;
+            this[idx] = this.makeRing(three, p, cfg.ringTilt, cfg.ringRadius);
+            this.group.add(this[idx]);
+            t--;
+        }       
     }
     makeTexture(three, filename, repeatX=1) {
         const texture = this.texLoader.load(
@@ -89,7 +111,7 @@ class Satellite5 {
         );
         return texture;
     }
-    makeRing(three, pos, rot) {
+    makeRing(three, pos, rot, radius) {
         //const geometry = ;
         const norm = this.makeTexture(three, "norm-ring.png", 6);
         const bump = this.makeTexture(three, "ring.png", 6);
@@ -104,11 +126,11 @@ class Satellite5 {
         });
 
         const torus = new three.Mesh( 
-            new three.TorusGeometry( 80, 10, 16, 100 ),
+            new three.TorusGeometry( radius, 10, 16, 100 ),
             material 
         ); 
         const truss = new three.Mesh(
-            new three.CylinderGeometry(4, 4, 180, 32),
+            new three.CylinderGeometry(4, 4, radius * 2, 32),
             material
         );
         const g = new three.Group();
@@ -129,7 +151,7 @@ class Satellite5 {
             material
         );
     }
-    makeCylinder(three, pos) {
+    makeCylinder(three, radius, length, pos) {
         const norm = this.makeTexture(three, "norm-brick.png");
         const bump = this.makeTexture(three, "brick.png");
 
@@ -142,7 +164,7 @@ class Satellite5 {
             metalness: 0.5
         });
         const c = new three.Mesh(
-            new three.CylinderGeometry(20, 20, 80, 32),
+            new three.CylinderGeometry(radius, radius, length, 32),
             material
         );
         c.position.y = pos;
@@ -152,6 +174,7 @@ class Satellite5 {
         scene.add(this.group);
     }
     update() {
+        this.cylinder0.rotation.y -= 0.002;
         this.cylinder1.rotation.y -= 0.002;
         this.cylinder2.rotation.y -= 0.002;
         this.cylinder3.rotation.y -= 0.002;
