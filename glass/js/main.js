@@ -19,10 +19,10 @@ camera.position.set(0, 1.5, 8);
 
 new OrbitControls(camera, renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+scene.add(new THREE.AmbientLight(0xffffff, 2));
 
-const dl = new THREE.DirectionalLight(0xffffff, 2);
-dl.position.set(5, 8, 5);
+const dl = new THREE.DirectionalLight(0xffffff, 1);
+dl.position.set(0, -18, 12);
 scene.add(dl);
 
 for ( let i = 0; i < 300; i++ ) {
