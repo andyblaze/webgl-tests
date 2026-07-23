@@ -83,7 +83,7 @@ this.diffuser = new three.Mesh(
         // Actual light
         this.light = new three.PointLight(col, 1, 1);
 
-        this.grp.add(this.core, this.diffuser, this.shell, this.light);
+        this.grp.add(this.diffuser, this.shell, this.light);
     }
 
     update(elapsed, i) {
