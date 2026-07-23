@@ -46,11 +46,13 @@ export default class Orb {
             new three.SphereGeometry(1, 64, 64),
             new three.MeshPhysicalMaterial({
                 color: col,
-                transmission: 0.95,
-                thickness: 0.92,
+                transmission: 0.095,
+                thickness: 10.92,
                 roughness: 0.855,
                 ior: 1.4,
-                metalness: 0.84
+                metalness: 0.84,
+                transparent: false,
+                side: three.BackSide
             })
         );
 

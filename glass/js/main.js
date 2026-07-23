@@ -21,7 +21,7 @@ new OrbitControls(camera, renderer.domElement);
 
 scene.add(new THREE.AmbientLight(0xffffff, 2));
 
-const dl = new THREE.DirectionalLight(0xffffff, 1);
+const dl = new THREE.DirectionalLight(0xc6c6c6, 1);
 dl.position.set(0, -18, 12);
 scene.add(dl);
 
@@ -31,9 +31,9 @@ for ( let i = 0; i < 300; i++ ) {
         new THREE.MeshBasicMaterial({color: 0xffffff})
     );
     sp.position.set(
-        mt_rand(-30, 30),
         mt_rand(-20, 20),
-        mt_rand(-30, 30)
+        mt_rand(-10, 10),
+        mt_rand(-14, 30)
     );
     scene.add(sp);
 }
