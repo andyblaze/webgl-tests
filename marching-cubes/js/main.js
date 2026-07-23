@@ -16,7 +16,7 @@ document.body.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0, 0, 8);
+camera.position.set(0, 0, 24);
 
 new OrbitControls(camera, renderer.domElement);
 
@@ -44,7 +44,7 @@ const metaball = new MarchingCubes(
 );
 
 metaball.position.set(0, 0, 0);
-metaball.scale.set(3, 3, 3);
+metaball.scale.set(16, 9, 4);
 
 scene.add(metaball);
 
@@ -64,7 +64,7 @@ const t = elapsed;
 metaball.reset();
 
 metaball.addBall(
-    0.35 + Math.sin(t) * 0.15,
+    0.5135 + Math.sin(t) * 0.15,
     0.5,// + Math.sin(t) * 0.15,
     0.5,
     0.5,
@@ -73,14 +73,14 @@ metaball.addBall(
 );
 
 metaball.addBall(
-    0.35 + Math.cos(t * 1.3) * 0.15,
+    0.5135 + Math.cos(t * 1.3) * 0.15,
     0.5,
     0.5,
     0.5,
     20,
     5
 );
-/*
+
 metaball.addBall(
     0.5,
     0.5 + Math.sin(t * 0.8) * 0.15,
@@ -96,7 +96,7 @@ metaball.addBall(
     0.5,
     12
 );
-*/
+
 metaball.update();
     composer.render();
     requestAnimationFrame(animate);
