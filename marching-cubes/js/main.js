@@ -27,7 +27,7 @@ dl.position.set(0, 10, 12);
 scene.add(dl);
 
 const material = new THREE.MeshPhysicalMaterial({
-    color: 0x44aaff,
+    color: 0x00ff00,
     roughness: 0.25,
     metalness: 0.03,
     transmission: 0.2,
@@ -50,9 +50,9 @@ scene.add(metaball);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-composer.addPass(
+/*composer.addPass(
     new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.3, 0.5, 0.2)
-);
+);*/
 
 const clock = new THREE.Clock();
 function animate() {
@@ -64,7 +64,7 @@ const t = elapsed;
 metaball.reset();
 
 metaball.addBall(
-    0.5135 + Math.sin(t) * 0.15,
+    0.5135 + Math.sin(t) * 0.515,
     0.5,// + Math.sin(t) * 0.15,
     0.5,
     0.5,
@@ -73,7 +73,7 @@ metaball.addBall(
 );
 
 metaball.addBall(
-    0.5135 + Math.cos(t * 1.3) * 0.15,
+    0.5135 + Math.cos(t * 1.3) * 0.415,
     0.5,
     0.5,
     0.5,
@@ -83,7 +83,7 @@ metaball.addBall(
 
 metaball.addBall(
     0.5,
-    0.5 + Math.sin(t * 0.8) * 0.15,
+    0.5 + Math.sin(t * 0.8) * 0.415,
     0.5,
     0.5,
     12
@@ -92,7 +92,7 @@ metaball.addBall(
 metaball.addBall(
     0.5,
     0.5,
-    0.5 + Math.sin(t * 0.8) * 0.215,
+    0.5 + Math.sin(t * 0.8) * 0.34,
     0.5,
     12
 );
