@@ -77,7 +77,7 @@ const canvasTexture = loader.load("canvas.png");
 const normalTexture = loader.load("normal.png");
 
 const cube = new THREE.Mesh(
-    new RoundedBoxGeometry(4,4,4, 6, 0.08),
+    new RoundedBoxGeometry(5,5,5, 6, 0.08),
     new THREE.MeshPhysicalMaterial({
 
         color: 0x444444,
@@ -108,9 +108,9 @@ rimLight.lookAt(cube.position);
 scene.add(rimLight);
 
 const geometry = new RoundedBoxGeometry(
-    4.05,
-    4.05,
-    4.05,
+    5.05,
+    5.05,
+    5.05,
     6,
     0.08
 );
@@ -190,9 +190,23 @@ for (let i = 0; i < sphereCount; i++) {
         0.8,
         0.5
     );
-
+    if ( Math.random() < 0.1 ) {
+        sphere.material.emissive = sphere.material.color;
+        sphere.material.emissiveIntensity = 2;
+    }
     scene.add(sphere);
     spheres.push(sphere);
+
+    if ( Math.random() < -0.1 ) {
+        const glow = new THREE.PointLight(
+            0xff2244,
+            3,
+            4
+        );
+
+        glow.position.copy(sphere.position);
+        scene.add(glow);
+    }
 }
 
 const composer = new EffectComposer(renderer);
@@ -210,6 +224,10 @@ function animate(){
 spheres.forEach((sphere, i) => {
 
     const t = elapsed * 0.5 + i;
+
+const pulse = (Math.sin(elapsed * 0.5) + 1) * 0.5;
+
+areaLight.intensity = 3 + pulse * 2;
 
     sphere.position.y += Math.sin(t) * 0.002;
     sphere.rotation.x += 0.01;
