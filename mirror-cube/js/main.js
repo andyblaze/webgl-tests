@@ -4,6 +4,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { mt_rand } from "./functions.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
@@ -12,33 +13,189 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
+
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050505);
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512, {
+    generateMipmaps: true,
+    minFilter: THREE.LinearMipmapLinearFilter
+});
+
+const cubeCamera = new THREE.CubeCamera(
+    0.1,
+    100,
+    cubeRenderTarget
+);
+
+scene.add(cubeCamera);
 
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
-camera.position.set(0, 0, 0);
+camera.position.set(0, 0, 2);
 
 new OrbitControls(camera, renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 2));
+scene.add(new THREE.AmbientLight(0xffffff, 0.15));
 
-const dl = new THREE.DirectionalLight(0xc6c6c6, 1);
-dl.position.set(0, 10, 12);
-scene.add(dl);
+const key = new THREE.DirectionalLight(0xffffff, 2);
+key.position.set(4, 5, 6);
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0x88aaff, 0.6);
+fill.position.set(-5, -2, 3);
+scene.add(fill);
+
+const loader = new THREE.TextureLoader();
+
+const canvasTexture = loader.load("canvas.png");
+const normalTexture = loader.load("normal.png");
+
+const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(4,4,4),
+    new THREE.MeshPhysicalMaterial({
+
+        color: 0x444444,
+        transparent: true,
+        opacity: 1,
+
+        metalness: 1,
+        roughness: 0.08,
+
+        clearcoat: 1,
+        clearcoatRoughness: 0.05,
+
+        envMap: cubeRenderTarget.texture,
+        envMapIntensity: 2.5,
+
+        normalMap: normalTexture,
+        normalScale: new THREE.Vector2(0.15, 0.15)
+
+    })
+);
+
+cube.position.set(0,0,-8);
+scene.add(cube);
+
+const shell = new THREE.Mesh(
+    new THREE.BoxGeometry(4.05,4.05,4.05),
+    new THREE.MeshBasicMaterial({
+        color:0xffffff,
+        transparent:true,
+        opacity:0.05
+    })
+);
+
+shell.position.copy(cube.position);
+scene.add(shell);
+
+const sphereCount = 100;
+
+const sphereGeometry = new THREE.SphereGeometry(
+    0.125,
+    32,
+    32
+);
+
+const sphereMaterial = new THREE.MeshStandardMaterial({
+    color: 0xff2244,
+    roughness: 0.25,
+    metalness: 0.1
+});
+
+const spheres = [];
+
+const cubeBounds = {
+    x: 2,
+    y: 2,
+    zFront: -6,   // front face of cube
+    zBack: -10
+};
+
+const sphereRadius = 0.125;
+
+
+for (let i = 0; i < sphereCount; i++) {
+
+    const sphere = new THREE.Mesh(
+        sphereGeometry,
+        sphereMaterial.clone()
+    );
+
+    sphere.position.set(
+        THREE.MathUtils.randFloat(-6, 6),
+        THREE.MathUtils.randFloat(-3, 3),
+        THREE.MathUtils.randFloat(-2, -12)
+    );
+
+
+    // if sphere would intersect cube volume, move it in front
+    const intersectsCube =
+        Math.abs(sphere.position.x) < cubeBounds.x + sphereRadius &&
+        Math.abs(sphere.position.y) < cubeBounds.y + sphereRadius &&
+        sphere.position.z < cubeBounds.zFront + sphereRadius &&
+        sphere.position.z > cubeBounds.zBack - sphereRadius;
+
+
+    if (intersectsCube) {
+        sphere.position.z = cubeBounds.zFront + sphereRadius + 0.5;
+    }
+
+
+    sphere.material.color.setHSL(
+        Math.random(),
+        0.8,
+        0.5
+    );
+
+    scene.add(sphere);
+    spheres.push(sphere);
+}
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-composer.addPass(
+/*composer.addPass(
     new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.3, 0.5, 0.2)
-);
+);*/
 
 const clock = new THREE.Clock();
-function animate() {
+
+function animate(){
+
     const elapsed = clock.getElapsedTime();
 
-    // scene & objects update code here
+spheres.forEach((sphere, i) => {
+
+    const t = elapsed * 0.5 + i;
+
+    sphere.position.y += Math.sin(t) * 0.002;
+    sphere.rotation.x += 0.01;
+    sphere.rotation.y += 0.01;
+
+});
+
+cube.rotation.x = elapsed * 0.17;
+cube.rotation.y = elapsed * 0.19;
+cube.rotation.z = elapsed * 0.18;
+shell.rotation.x = elapsed * 0.17;
+shell.rotation.y = elapsed * 0.19;
+shell.rotation.z = elapsed * 0.18;
+
+
+// capture environment from cube position
+cube.visible = false;
+
+cubeCamera.position.copy(cube.position);
+cubeCamera.update(renderer, scene);
+
+cube.visible = true;
+
+
+composer.render();
+
     composer.render();
+
     requestAnimationFrame(animate);
 }
+
 animate();
 
 addEventListener('resize', ()=>{
