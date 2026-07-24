@@ -5,6 +5,8 @@ import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { mt_rand } from "./functions.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RectAreaLightHelper } from "three/addons/helpers/RectAreaLightHelper.js";
 
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
@@ -34,7 +36,7 @@ camera.position.set(0, 0, 2);
 
 new OrbitControls(camera, renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+scene.add(new THREE.AmbientLight(0xffffff, 2));
 
 const key = new THREE.DirectionalLight(0xffffff, 2);
 key.position.set(4, 5, 6);
@@ -44,13 +46,38 @@ const fill = new THREE.DirectionalLight(0x88aaff, 0.6);
 fill.position.set(-5, -2, 3);
 scene.add(fill);
 
+const areaLight = new THREE.RectAreaLight(
+    0xffffff,
+    4,
+    8,
+    8
+);
+
+areaLight.position.set(0, 3, 2);
+areaLight.lookAt(0,0,-8);
+
+const rimLight = new THREE.DirectionalLight(
+    0x6688ff,
+    2
+);
+
+rimLight.position.set(
+    -5,
+    5,
+    -5
+);
+
+
+
+scene.add(areaLight);
+
 const loader = new THREE.TextureLoader();
 
 const canvasTexture = loader.load("canvas.png");
 const normalTexture = loader.load("normal.png");
 
 const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(4,4,4),
+    new RoundedBoxGeometry(4,4,4, 6, 0.08),
     new THREE.MeshPhysicalMaterial({
 
         color: 0x444444,
@@ -64,28 +91,46 @@ const cube = new THREE.Mesh(
         clearcoatRoughness: 0.05,
 
         envMap: cubeRenderTarget.texture,
-        envMapIntensity: 2.5,
+        envMapIntensity: 8,
+
+        reflectivity: 1,
+        ior: 1.5,
 
         normalMap: normalTexture,
         normalScale: new THREE.Vector2(0.15, 0.15)
 
     })
 );
-
 cube.position.set(0,0,-8);
 scene.add(cube);
+rimLight.lookAt(cube.position);
+
+scene.add(rimLight);
+
+const geometry = new RoundedBoxGeometry(
+    4.05,
+    4.05,
+    4.05,
+    6,
+    0.08
+);
 
 const shell = new THREE.Mesh(
-    new THREE.BoxGeometry(4.05,4.05,4.05),
+    geometry,//new THREE.BoxGeometry(4.05,4.05,4.05),
     new THREE.MeshBasicMaterial({
         color:0xffffff,
         transparent:true,
-        opacity:0.05
+        opacity:0.05,
+        ior: 1.5
     })
 );
 
 shell.position.copy(cube.position);
 scene.add(shell);
+
+/*const grp = new THREE.Group();
+grp.add(cube, shell);
+grp.position.set(0,0,-8);*/
 
 const sphereCount = 100;
 
@@ -172,12 +217,12 @@ spheres.forEach((sphere, i) => {
 
 });
 
-cube.rotation.x = elapsed * 0.17;
-cube.rotation.y = elapsed * 0.19;
-cube.rotation.z = elapsed * 0.18;
-shell.rotation.x = elapsed * 0.17;
-shell.rotation.y = elapsed * 0.19;
-shell.rotation.z = elapsed * 0.18;
+cube.rotation.x = elapsed * 0.07;
+cube.rotation.y = elapsed * 0.09;
+cube.rotation.z = elapsed * 0.08;
+shell.rotation.x = elapsed * 0.07;
+shell.rotation.y = elapsed * 0.09;
+shell.rotation.z = elapsed * 0.08;
 
 
 // capture environment from cube position
