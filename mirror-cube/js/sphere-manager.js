@@ -3,8 +3,14 @@ import Sphere from "./sphere.js";
 export default class SphereManager {
     constructor(three) {
         this.sphereRadius = 0.125;
-        this.sphereCount = 100;
+        this.sphereCount = 60;
         this.spheres = [];
+
+        this.activeSphereIndices = [];
+
+        for (let i = 0; i < 10; i++) {
+            this.activeSphereIndices.push(i);
+        }
 
         this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
         this.sphereMaterial = new three.MeshStandardMaterial({
@@ -14,12 +20,11 @@ export default class SphereManager {
         });        
     }
     createSpheres(three, cfg, scene) {
-        //const cubeRadius = Math.sqrt(3) * cubeSize * 0.5;
         const exclusionRadius = cfg.cubeRadius + this.sphereRadius + 0.25;
 
         for ( let i = 0; i < this.sphereCount; i++ ) {
             const pos = this.getPosition(three, cfg.cubeCentre, exclusionRadius);
-            const sphere = new Sphere(three, pos);
+            const sphere = new Sphere(three, pos, cfg.cubeCentre);
 
             scene.add(sphere.mesh);        
 
@@ -39,11 +44,14 @@ export default class SphereManager {
         );
         return p;
     }
-    update(elapsed) {
-        this.spheres.forEach((sphere, i) => {
-            const t = elapsed * 0.5 + i;
-            const p = Math.sin(t) * 0.002;
-            sphere.update(p);
-        });
-    }
+update(elapsed) {
+    this.activeSphereIndices.forEach((index) => {
+        const sphere = this.spheres[index];
+
+        const t = elapsed * 0.5 + index;
+        const p = Math.sin(t) * 0.002;
+
+        sphere.update(p);
+    });
+}
 }
