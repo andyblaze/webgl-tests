@@ -1,0 +1,73 @@
+class Sphere {
+    constructor(three, pos) {
+        this.sphereRadius = 0.125;
+        this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
+        this.sphereMaterial = new three.MeshStandardMaterial({
+            color: 0xff2244,
+            roughness: 0.25,
+            metalness: 0.1
+        }); 
+
+        this.sphere = new three.Mesh(
+            this.sphereGeometry,
+            this.sphereMaterial.clone()
+        );
+
+        this.sphere.position.copy(pos);
+        this.sphere.material.color.setHSL(Math.random(), 0.8, 0.5);
+    }
+    get mesh() {
+        return this.sphere
+    }
+    update(p) {
+        this.sphere.position.y += p;//Math.sin(t) * 0.002;
+    }
+}
+
+export default class SphereManager {
+    constructor(three) {
+        this.sphereRadius = 0.125;
+        this.sphereCount = 100;
+        this.spheres = [];
+
+        this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
+        this.sphereMaterial = new three.MeshStandardMaterial({
+            color: 0xff2244,
+            roughness: 0.25,
+            metalness: 0.1
+        });        
+    }
+    createSpheres(three, cfg, scene) {
+        //const cubeRadius = Math.sqrt(3) * cubeSize * 0.5;
+        const exclusionRadius = cfg.cubeRadius + this.sphereRadius + 0.25;
+
+        for ( let i = 0; i < this.sphereCount; i++ ) {
+            const pos = this.getPosition(three, cfg.cubeCentre, exclusionRadius);
+            const sphere = new Sphere(three, pos);
+
+            scene.add(sphere.mesh);        
+
+            this.spheres.push(sphere);
+        }
+    }
+    getPosition(three, cubeCentre, exclusionRadius) {
+        const p = new three.Vector3();
+        do {
+            p.set(
+                three.MathUtils.randFloat(-6, 6),
+                three.MathUtils.randFloat(-3, 3),
+                three.MathUtils.randFloat(-2, -10)
+            );
+        } while (
+            p.distanceTo(cubeCentre) < exclusionRadius
+        );
+        return p;
+    }
+    update(elapsed) {
+        this.spheres.forEach((sphere, i) => {
+            const t = elapsed * 0.5 + i;
+            const p = Math.sin(t) * 0.002;
+            sphere.update(p);
+        });
+    }
+}
