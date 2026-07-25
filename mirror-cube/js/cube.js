@@ -43,7 +43,7 @@ export default class Cube {
                 color:0xffffff,
                 transparent:true,
                 opacity:0.05,
-                ior: 1.5
+                //ior: 1.5
             })
         );
 

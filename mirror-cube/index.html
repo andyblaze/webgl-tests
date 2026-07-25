@@ -23,5 +23,9 @@
   }
 }
 </script>
-<script type="module" src="js/main.js"></script>
+<script>
+const version = Date.now();
+const mainJs = `js/main.js?v=${version}`;
+</script>
+<script type="module" src="js/main.js?v=" + version></script>
 </body></html>
