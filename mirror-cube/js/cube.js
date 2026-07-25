@@ -1,5 +1,7 @@
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+
 export default class Cube {
-    constructor(three, cfg, scene) {
+    constructor(three, cfg, renderTarget, scene) {
         this.visible = true;
         const loader = new three.TextureLoader();
         const canvasTexture = loader.load("canvas.png");
@@ -18,7 +20,7 @@ export default class Cube {
                 clearcoat: 1,
                 clearcoatRoughness: 0.05,
 
-                envMap: cubeRenderTarget.texture,
+                envMap: renderTarget.texture,
                 envMapIntensity: 8,
 
                 reflectivity: 1,
