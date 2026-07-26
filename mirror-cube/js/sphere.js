@@ -26,7 +26,7 @@ export default class Sphere {
         );
 
         this.orbitAngle = Math.atan2(offset.z, offset.x);
-        this.orbitSpeed = 0.001;
+        this.orbitSpeed = 0.01;
         this.targetAngle = 0;
         this.arcRemaining = 0;
         this.currentAngle = this.orbitAngle;

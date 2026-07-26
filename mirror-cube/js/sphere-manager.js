@@ -1,12 +1,12 @@
 import Sphere from "./sphere.js";
-import { mt_rand } from "./functions.js";
+import { randomFrom } from "./functions.js";
 
 export default class SphereManager {
     constructor(three) {
         this.sphereRadius = 0.125;
-        this.sphereCount = 60;
+        this.sphereCount = 80;
         this.spheres = [];
-        this.activeSphereIndices = [];
+        this.activeSpheres = [];
         this.nextTrigger = 3;
 
         this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
@@ -42,19 +42,18 @@ export default class SphereManager {
         return p;
     }
     getSpheres(n) {
-        this.activeSphereIndices = [];
+        this.activeSpheres = [];
         for (let i = 0; i < n; i++) {
-            const idx = mt_rand(0, this.spheres.length - 1);
-            this.activeSphereIndices.push(idx);
+            const item = randomFrom(this.spheres);
+            this.activeSpheres.push(item);
         }
     }
     update(elapsed) {
         if ( elapsed >= this.nextTrigger ) {
-            this.getSpheres(10);
-            this.activeSphereIndices.forEach((index) => {
-                const sphere = this.spheres[index];
-                sphere.startOrbit(0.262);
-            }); 
+            this.getSpheres(30);
+            for ( const s of this.activeSpheres ) 
+                s.startOrbit(0.824);
+
             this.nextTrigger += 3; 
         }
         for ( const s of this.spheres ) 

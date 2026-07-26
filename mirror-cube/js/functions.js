@@ -15,3 +15,8 @@ export function mt_randf(lo, hi) {
 export function mt_randfs(range) {
     return (Math.random() * 2 - 1) * range;
 }
+
+export function randomFrom(arr) {
+    const idx = mt_rand(0, arr.length - 1);
+    return arr[idx];
+}
