@@ -6,12 +6,11 @@ export default class SphereManager {
         this.sphereRadius = 0.125;
         this.sphereCount = 120;
         this.spheres = [];
-        this.activeGroups = [
-            [],
-            [],
-            [],
-            []
-        ];
+        this.numGroups = 4;
+        this.activeGroups = Array.from(
+            { length: this.numGroups },
+            () => []
+        );
 
         this.activeGroupIndex = 0;
         this.nextTrigger = 3;
@@ -34,10 +33,9 @@ export default class SphereManager {
 
             this.spheres.push(sphere);
         }
-        this.activeGroups[0] = this.spheres.slice(0, 30);
-        this.activeGroups[1] = this.spheres.slice(30, 60);
-        this.activeGroups[2] = this.spheres.slice(60, 90);
-        this.activeGroups[3] = this.spheres.slice(90, 120);
+        const grpSize = this.sphereCount / this.numGroups;
+        for ( let i = 0; i < this.numGroups; i++ )
+            this.activeGroups[i] = this.spheres.slice(grpSize * i, grpSize * (i+1));
     }
     getPosition(three, cubeCentre, exclusionRadius) {
         const p = new three.Vector3();
@@ -52,22 +50,17 @@ export default class SphereManager {
         );
         return p;
     }
-    getSpheres(n) {
-        this.activeSpheres = [];
-        for (let i = 0; i < n; i++) {
-            const item = randomFrom(this.spheres);
-            this.activeSpheres.push(item);
-        }
+    getGroup() {
+        this.activeGroupIndex++;
+        if ( this.activeGroupIndex > this.activeGroups.length - 1 )
+            this.activeGroupIndex = 0;
+        return this.activeGroups[this.activeGroupIndex];
     }
     update(elapsed) {
         if ( elapsed >= this.nextTrigger ) {
-            const group = this.activeGroups[this.activeGroupIndex];
+            const group = this.getGroup();
             for ( const s of group ) 
                 s.startOrbit(mt_randf(0.8, 1.2));
-
-            this.activeGroupIndex++;// = 1 - this.activeGroupIndex;
-            if ( this.activeGroupIndex > 3 )
-                this.activeGroupIndex = 0;
 
             this.nextTrigger += mt_randf(3, 4); 
         }
