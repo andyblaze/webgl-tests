@@ -1,5 +1,7 @@
 export default class Sphere {
     constructor(three, pos, cubeCentre) {
+        this.setIdle();
+        this.lastOrbitTime = 0;
         this.sphereRadius = 0.125;
         this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
         this.sphereMaterial = new three.MeshStandardMaterial({
@@ -25,13 +27,40 @@ export default class Sphere {
 
         this.orbitAngle = Math.atan2(offset.z, offset.x);
         this.orbitSpeed = 0.001;
+        this.targetAngle = 0;
+        this.arcRemaining = 0;
+        this.currentAngle = this.orbitAngle;
+    }
+    startOrbit(arc) {
+        if ( this.isIdle() ) this.setMoving(arc);
+    }
+    isIdle() {
+        return this.state === "idle";
+    }
+    isMoving() {
+        return this.state === "moving";
+    }
+    setIdle() {
+        this.state = "idle";
+        this.lastOrbitTime = Date.now();
+    }
+    setMoving(arc) {
+        this.targetAngle = this.currentAngle + arc;
+        this.arcRemaining = arc;
+        this.state = "moving";
     }
     get mesh() {
         return this.sphere
     }
     update() {
+        if ( this.isIdle() ) return;
+
         this.orbitAngle += this.orbitSpeed;
+        this.currentAngle += this.orbitSpeed;
+        this.arcRemaining -= this.orbitSpeed;
         this.sphere.position.x = this.orbitCentre.x + Math.cos(this.orbitAngle) * this.orbitRadius;
         this.sphere.position.z = this.orbitCentre.z + Math.sin(this.orbitAngle) * this.orbitRadius;
+
+        if ( this.arcRemaining <= 0 ) this.setIdle();
     }
 }

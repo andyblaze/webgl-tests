@@ -1,16 +1,13 @@
 import Sphere from "./sphere.js";
+import { mt_rand } from "./functions.js";
 
 export default class SphereManager {
     constructor(three) {
         this.sphereRadius = 0.125;
         this.sphereCount = 60;
         this.spheres = [];
-
         this.activeSphereIndices = [];
-
-        for (let i = 0; i < 10; i++) {
-            this.activeSphereIndices.push(i);
-        }
+        this.nextTrigger = 3;
 
         this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
         this.sphereMaterial = new three.MeshStandardMaterial({
@@ -44,14 +41,23 @@ export default class SphereManager {
         );
         return p;
     }
-update(elapsed) {
-    this.activeSphereIndices.forEach((index) => {
-        const sphere = this.spheres[index];
-
-        const t = elapsed * 0.5 + index;
-        const p = Math.sin(t) * 0.002;
-
-        sphere.update(p);
-    });
-}
+    getSpheres(n) {
+        this.activeSphereIndices = [];
+        for (let i = 0; i < n; i++) {
+            const idx = mt_rand(0, this.spheres.length - 1);
+            this.activeSphereIndices.push(idx);
+        }
+    }
+    update(elapsed) {
+        if ( elapsed >= this.nextTrigger ) {
+            this.getSpheres(10);
+            this.activeSphereIndices.forEach((index) => {
+                const sphere = this.spheres[index];
+                sphere.startOrbit(0.262);
+            }); 
+            this.nextTrigger += 3; 
+        }
+        for ( const s of this.spheres ) 
+            s.update();                  
+    }
 }
