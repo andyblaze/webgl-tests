@@ -1,12 +1,18 @@
 import Sphere from "./sphere.js";
-import { randomFrom } from "./functions.js";
+import { randomFrom, mt_randf } from "./functions.js";
 
 export default class SphereManager {
     constructor(three) {
         this.sphereRadius = 0.125;
-        this.sphereCount = 80;
+        this.sphereCount = 90;
         this.spheres = [];
-        this.activeSpheres = [];
+        this.activeGroups = [
+            [],
+            [],
+            []
+        ];
+
+        this.activeGroupIndex = 0;
         this.nextTrigger = 3;
 
         this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
@@ -27,6 +33,9 @@ export default class SphereManager {
 
             this.spheres.push(sphere);
         }
+        this.activeGroups[0] = this.spheres.slice(0, 30);
+        this.activeGroups[1] = this.spheres.slice(30, 60);
+        this.activeGroups[2] = this.spheres.slice(60, 90);
     }
     getPosition(three, cubeCentre, exclusionRadius) {
         const p = new three.Vector3();
@@ -50,9 +59,13 @@ export default class SphereManager {
     }
     update(elapsed) {
         if ( elapsed >= this.nextTrigger ) {
-            this.getSpheres(30);
-            for ( const s of this.activeSpheres ) 
-                s.startOrbit(0.824);
+            const group = this.activeGroups[this.activeGroupIndex];
+            for ( const s of group ) 
+                s.startOrbit(mt_randf(0.8, 1.2));
+
+            this.activeGroupIndex++;// = 1 - this.activeGroupIndex;
+            if ( this.activeGroupIndex > 2 )
+                this.activeGroupIndex = 0;
 
             this.nextTrigger += 3; 
         }

@@ -51,11 +51,11 @@ export default class Cube {
         scene.add(this.shell);
     }
     update(elapsed) {
-        this.cube.rotation.x = elapsed * 0.07;
-        this.cube.rotation.y = elapsed * 0.09;
+        this.cube.rotation.x = elapsed * 0.17;
+        this.cube.rotation.y = elapsed * 0.11;
         this.cube.rotation.z = elapsed * 0.08;
-        this.shell.rotation.x = elapsed * 0.07;
-        this.shell.rotation.y = elapsed * 0.09;
+        this.shell.rotation.x = elapsed * 0.17;
+        this.shell.rotation.y = elapsed * 0.11;
         this.shell.rotation.z = elapsed * 0.08;
     }
     getPosition() {

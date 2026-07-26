@@ -20,6 +20,7 @@ document.body.appendChild(renderer.domElement);
 
 
 const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 4, 14);
 
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512, {
     generateMipmaps: true,

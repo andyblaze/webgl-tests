@@ -1,3 +1,5 @@
+import { mt_randf } from "./functions.js";
+
 export default class Sphere {
     constructor(three, pos, cubeCentre) {
         this.setIdle();
@@ -7,7 +9,7 @@ export default class Sphere {
         this.sphereMaterial = new three.MeshStandardMaterial({
             color: 0xff2244,
             roughness: 0.25,
-            metalness: 0.1
+            metalness: 0.75
         }); 
 
         this.sphere = new three.Mesh(
@@ -19,17 +21,24 @@ export default class Sphere {
         this.sphere.material.color.setHSL(Math.random(), 0.8, 0.5);
 
         this.orbitCentre = cubeCentre.clone();
-        const offset = pos.clone().sub(cubeCentre);
+        /*const offset = pos.clone().sub(cubeCentre);
         this.orbitRadius = Math.sqrt(
             offset.x * offset.x +
             offset.z * offset.z
-        );
+        );*/
 
-        this.orbitAngle = Math.atan2(offset.z, offset.x);
+        this.orbitAngle = 0;
+this.currentAngle = 0;
         this.orbitSpeed = 0.01;
         this.targetAngle = 0;
         this.arcRemaining = 0;
-        this.currentAngle = this.orbitAngle;
+        //this.currentAngle = this.orbitAngle;
+        this.offset = pos.clone().sub(cubeCentre);
+        this.orbitAxis = new three.Vector3(
+            mt_randf(0.1, 0.5),
+            mt_randf(0.1, 0.5),
+            mt_randf(0.1, 0.5) 
+        ).normalize();
     }
     startOrbit(arc) {
         if ( this.isIdle() ) this.setMoving(arc);
@@ -52,7 +61,21 @@ export default class Sphere {
     get mesh() {
         return this.sphere
     }
-    update() {
+update() {
+    if (this.isIdle()) return;
+
+    this.orbitAngle += this.orbitSpeed;
+    this.currentAngle += this.orbitSpeed;
+    this.arcRemaining -= this.orbitSpeed;
+
+    const rotatedOffset = this.offset.clone();
+    rotatedOffset.applyAxisAngle(this.orbitAxis, this.orbitAngle);
+
+    this.sphere.position.copy(this.orbitCentre).add(rotatedOffset);
+
+    if (this.arcRemaining <= 0) this.setIdle();
+}
+    updateolk() {
         if ( this.isIdle() ) return;
 
         this.orbitAngle += this.orbitSpeed;
