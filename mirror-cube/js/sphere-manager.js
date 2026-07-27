@@ -21,6 +21,11 @@ export default class SphereManager {
             metalness: 0.1
         });        
     }
+    createGroups() {
+        const grpSize = this.sphereCount / this.numGroups;
+        for ( let i = 0; i < this.numGroups; i++ )
+            this.activeGroups[i] = this.spheres.slice(grpSize * i, grpSize * (i+1));
+    }
     createSpheres(three, cfg, scene) {
         const exclusionRadius = cfg.cubeRadius + cfg.sphereRadius + 0.25;
 
@@ -32,9 +37,7 @@ export default class SphereManager {
 
             this.spheres.push(sphere);
         }
-        const grpSize = this.sphereCount / this.numGroups;
-        for ( let i = 0; i < this.numGroups; i++ )
-            this.activeGroups[i] = this.spheres.slice(grpSize * i, grpSize * (i+1));
+        this.createGroups();
     }
     getPosition(three, cubeCentre, exclusionRadius) {
         const p = new three.Vector3();
