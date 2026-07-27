@@ -1,12 +1,7 @@
 import * as THREE from "three";
-//import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-//import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { mt_rand } from "./functions.js";
-//import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-//import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-//import { RectAreaLightHelper } from "three/addons/helpers/RectAreaLightHelper.js";
 import Config from "./config.js";
 import Cube from "./cube.js";
 import SphereManager from "./sphere-manager.js";
@@ -33,11 +28,6 @@ scene.add(cubeCamera);
 
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
 camera.position.set(0, 0, 2);
-
-//new OrbitControls(camera, renderer.domElement);
-
-
-
 
 const cube = new Cube(THREE, config, cubeRenderTarget, scene);
 
@@ -69,9 +59,6 @@ sphereManager.createSpheres(THREE, config, scene);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-/*composer.addPass(
-    new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.6, 0.5, 0.2)
-);*/
 
 const clock = new THREE.Clock();
 
