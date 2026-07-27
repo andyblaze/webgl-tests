@@ -67,10 +67,10 @@ composer.addPass(new RenderPass(scene, camera));
 const clock = new THREE.Clock();
 
 function animate() {
-
+    const delta = clock.getDelta();
     const elapsed = clock.getElapsedTime();
 
-    sphereManager.update(elapsed, config);
+    sphereManager.update(delta, elapsed, config);
 
     const pulse = (Math.sin(elapsed * config.lightPulseSpeed) + 1) * 0.5;
     areaLight.intensity = config.lightPulseBaseIntensity + pulse * config.lightPulseRange;

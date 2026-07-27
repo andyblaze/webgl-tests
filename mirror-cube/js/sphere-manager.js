@@ -58,7 +58,7 @@ export default class SphereManager {
             this.activeGroupIndex = 0;
         return this.activeGroups[this.activeGroupIndex];
     }
-    update(elapsed, cfg) {
+    update(dt, elapsed, cfg) {
         if ( elapsed >= this.nextTrigger ) {
             const group = this.getGroup();
             for ( const s of group ) 
@@ -67,6 +67,6 @@ export default class SphereManager {
             this.nextTrigger += mt_rand(4, 6); 
         }
         for ( const s of this.spheres ) 
-            s.update();                  
+            s.update(dt);                  
     }
 }

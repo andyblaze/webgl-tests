@@ -65,33 +65,33 @@ export default class Sphere {
     get mesh() {
         return this.sphere
     }
-    accelerate() {
+    accelerate(dt) {
         if ( this.orbitSpeed < this.maxOrbitSpeed )
-            this.orbitSpeed += this.acceleration;
+            this.orbitSpeed += this.acceleration * dt;;
 
         if ( this.orbitSpeed >= this.maxOrbitSpeed )
             this.orbitSpeed = this.maxOrbitSpeed;
     }
-    decelerate() {
-        this.orbitSpeed -= this.deceleration;
+    decelerate(dt) {
+        this.orbitSpeed -= this.deceleration * dt;;
 
         if ( this.orbitSpeed <= 0 )
             this.orbitSpeed = 0;
     }
-    update() {
+    update(dt) {
         if (this.isIdle()) return;
 
         const progressRemaining = this.arcRemaining / this.arcLength;
 
         if ( progressRemaining < 0.25 ) {
-            this.decelerate();
+            this.decelerate(dt);
         } else {
-            this.accelerate();
+            this.accelerate(dt);
         }
 
-        this.orbitAngle += this.orbitSpeed;
+        this.orbitAngle += this.orbitSpeed * dt;;
         this.currentAngle += this.orbitSpeed;
-        this.arcRemaining -= this.orbitSpeed;
+        this.arcRemaining -= this.orbitSpeed * dt;;
 
         const rotatedOffset = this.offset.clone();
         rotatedOffset.applyAxisAngle(this.orbitAxis, this.orbitAngle);
