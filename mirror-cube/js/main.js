@@ -33,26 +33,30 @@ const cube = new Cube(THREE, config, cubeRenderTarget, scene);
 
 // lighting
 
-scene.add(new THREE.AmbientLight(0xffffff, 2));
-const key = new THREE.DirectionalLight(0xffffff, 2);
-key.position.set(4, 5, 6);
-scene.add(key);
+function addLighting(three, scene, cube) {
 
-const fill = new THREE.DirectionalLight(0x88aaff, 0.6);
-fill.position.set(-5, -2, 3);
-scene.add(fill);
+    scene.add(new three.AmbientLight(0xffffff, 2));
+    const key = new three.DirectionalLight(0xffffff, 2);
+    key.position.set(4, 5, 6);
+    scene.add(key);
 
-const areaLight = new THREE.RectAreaLight(0xffffff, 4, 8, 8);
+    const fill = new three.DirectionalLight(0x88aaff, 0.6);
+    fill.position.set(-5, -2, 3);
+    scene.add(fill);
 
-areaLight.position.set(0, 3, 2);
-areaLight.lookAt(cube.getPosition());
-scene.add(areaLight);
+    const areaLight = new three.RectAreaLight(0xffffff, 4, 8, 8);
+    areaLight.position.set(0, 3, 2);
+    areaLight.lookAt(cube.getPosition());
+    scene.add(areaLight);
 
-const rimLight = new THREE.DirectionalLight(0x6688ff, 2);
-rimLight.position.set(-5, 5, -5);
-rimLight.lookAt(cube.getPosition());
-scene.add(rimLight);
+    const rimLight = new three.DirectionalLight(0x6688ff, 2);
+    rimLight.position.set(-5, 5, -5);
+    rimLight.lookAt(cube.getPosition());
+    scene.add(rimLight);
+    return areaLight;
+}
 
+const areaLight = addLighting(THREE, scene, cube);
 
 const sphereManager = new SphereManager(THREE, config);
 sphereManager.createSpheres(THREE, config, scene);
@@ -68,8 +72,8 @@ function animate() {
 
     sphereManager.update(elapsed, config);
 
-    const pulse = (Math.sin(elapsed * 0.5) + 1) * 0.5;
-    areaLight.intensity = 3 + pulse * 2;
+    const pulse = (Math.sin(elapsed * config.lightPulseSpeed) + 1) * 0.5;
+    areaLight.intensity = config.lightPulseBaseIntensity + pulse * config.lightPulseRange;
 
     cube.update(elapsed);
     // capture environment from cube position

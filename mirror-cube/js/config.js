@@ -13,5 +13,8 @@ export default class Config {
         this.maxArc = 1.4;
         this.fogNear = 4;
         this.fogFar = 14;
+        this.lightPulseSpeed = 1.5;
+        this.lightPulseBaseIntensity = 1.2;
+        this.lightPulseRange = 6;
     }
 }
