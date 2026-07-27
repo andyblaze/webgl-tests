@@ -21,18 +21,16 @@ export default class Sphere {
         this.sphere.material.color.setHSL(Math.random(), 0.8, 0.5);
 
         this.orbitCentre = cubeCentre.clone();
-        /*const offset = pos.clone().sub(cubeCentre);
-        this.orbitRadius = Math.sqrt(
-            offset.x * offset.x +
-            offset.z * offset.z
-        );*/
 
         this.orbitAngle = 0;
-this.currentAngle = 0;
-        this.orbitSpeed = 0.01;
+        this.currentAngle = 0;
+        this.orbitSpeed = 0;
+        this.maxOrbitSpeed = 0.01;
+        this.acceleration = 0.0001;
+        this.deceleration = 0.0001;
         this.targetAngle = 0;
         this.arcRemaining = 0;
-        //this.currentAngle = this.orbitAngle;
+
         this.offset = pos.clone().sub(cubeCentre);
         this.orbitAxis = new three.Vector3(
             mt_randf(0.1, 0.5),
@@ -54,36 +52,52 @@ this.currentAngle = 0;
         this.lastOrbitTime = Date.now();
     }
     setMoving(arc) {
+        this.arcRemaining = arc;
+        this.orbitSpeed = 0;
+        this.state = "moving";
+    }
+    setMoving1(arc) {
         this.targetAngle = this.currentAngle + arc;
+        this.arcLength = arc;
         this.arcRemaining = arc;
         this.state = "moving";
     }
     get mesh() {
         return this.sphere
     }
-update() {
-    if (this.isIdle()) return;
+    accelerate() {
+        if ( this.orbitSpeed < this.maxOrbitSpeed )
+            this.orbitSpeed += this.acceleration;
 
-    this.orbitAngle += this.orbitSpeed;
-    this.currentAngle += this.orbitSpeed;
-    this.arcRemaining -= this.orbitSpeed;
+        if ( this.orbitSpeed >= this.maxOrbitSpeed )
+            this.orbitSpeed = this.maxOrbitSpeed;
+    }
+    decelerate() {
+        this.orbitSpeed -= this.deceleration;
 
-    const rotatedOffset = this.offset.clone();
-    rotatedOffset.applyAxisAngle(this.orbitAxis, this.orbitAngle);
+        if ( this.orbitSpeed <= 0 )
+            this.orbitSpeed = 0;
+    }
+    update() {
+        if (this.isIdle()) return;
 
-    this.sphere.position.copy(this.orbitCentre).add(rotatedOffset);
+        const progressRemaining = this.arcRemaining / this.arcLength;
 
-    if (this.arcRemaining <= 0) this.setIdle();
-}
-    updateolk() {
-        if ( this.isIdle() ) return;
+        if ( progressRemaining < 0.25 ) {
+            this.decelerate();
+        } else {
+            this.accelerate();
+        }
 
         this.orbitAngle += this.orbitSpeed;
         this.currentAngle += this.orbitSpeed;
         this.arcRemaining -= this.orbitSpeed;
-        this.sphere.position.x = this.orbitCentre.x + Math.cos(this.orbitAngle) * this.orbitRadius;
-        this.sphere.position.z = this.orbitCentre.z + Math.sin(this.orbitAngle) * this.orbitRadius;
 
-        if ( this.arcRemaining <= 0 ) this.setIdle();
+        const rotatedOffset = this.offset.clone();
+        rotatedOffset.applyAxisAngle(this.orbitAxis, this.orbitAngle);
+
+        this.sphere.position.copy(this.orbitCentre).add(rotatedOffset);
+
+        if (this.arcRemaining <= 0) this.setIdle();
     }
 }

@@ -1,5 +1,5 @@
 import Sphere from "./sphere.js";
-import { randomFrom, mt_randf } from "./functions.js";
+import { randomFrom, mt_randf, mt_rand } from "./functions.js";
 
 export default class SphereManager {
     constructor(three) {
@@ -60,9 +60,9 @@ export default class SphereManager {
         if ( elapsed >= this.nextTrigger ) {
             const group = this.getGroup();
             for ( const s of group ) 
-                s.startOrbit(mt_randf(0.8, 1.2));
+                s.startOrbit(mt_randf(0.9, 1.4));
 
-            this.nextTrigger += mt_randf(3, 4); 
+            this.nextTrigger += mt_rand(4, 6); 
         }
         for ( const s of this.spheres ) 
             s.update();                  
