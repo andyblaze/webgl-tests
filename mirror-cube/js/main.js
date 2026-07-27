@@ -56,13 +56,11 @@ const areaLight = new THREE.RectAreaLight(0xffffff, 4, 8, 8);
 
 areaLight.position.set(0, 3, 2);
 areaLight.lookAt(cube.getPosition());
+scene.add(areaLight);
 
 const rimLight = new THREE.DirectionalLight(0x6688ff, 2);
-
 rimLight.position.set(-5, 5, -5);
-scene.add(areaLight);
 rimLight.lookAt(cube.getPosition());
-
 scene.add(rimLight);
 
 
