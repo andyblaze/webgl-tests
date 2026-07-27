@@ -11,6 +11,7 @@ import Config from "./config.js";
 import Cube from "./cube.js";
 import SphereManager from "./sphere-manager.js";
 
+const config = new Config(THREE);
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(innerWidth, innerHeight);
@@ -20,7 +21,7 @@ document.body.appendChild(renderer.domElement);
 
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x000000, 4, 14);
+scene.fog = new THREE.Fog(0x000000, config.fogNear, config.fogFar);
 
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(512, {
     generateMipmaps: true,
@@ -36,7 +37,7 @@ camera.position.set(0, 0, 2);
 //new OrbitControls(camera, renderer.domElement);
 
 
-const config = new Config(THREE);
+
 
 const cube = new Cube(THREE, config, cubeRenderTarget, scene);
 
@@ -65,7 +66,7 @@ rimLight.lookAt(cube.getPosition());
 scene.add(rimLight);
 
 
-const sphereManager = new SphereManager(THREE);
+const sphereManager = new SphereManager(THREE, config);
 sphereManager.createSpheres(THREE, config, scene);
 
 const composer = new EffectComposer(renderer);
@@ -80,7 +81,7 @@ function animate() {
 
     const elapsed = clock.getElapsedTime();
 
-    sphereManager.update(elapsed);
+    sphereManager.update(elapsed, config);
 
     const pulse = (Math.sin(elapsed * 0.5) + 1) * 0.5;
     areaLight.intensity = 3 + pulse * 2;

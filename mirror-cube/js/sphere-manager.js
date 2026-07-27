@@ -2,11 +2,10 @@ import Sphere from "./sphere.js";
 import { randomFrom, mt_randf, mt_rand } from "./functions.js";
 
 export default class SphereManager {
-    constructor(three) {
-        this.sphereRadius = 0.125;
-        this.sphereCount = 120;
+    constructor(three, cfg) {
+        this.sphereCount = cfg.sphereCount;
+        this.numGroups = cfg.groupSize;
         this.spheres = [];
-        this.numGroups = 4;
         this.activeGroups = Array.from(
             { length: this.numGroups },
             () => []
@@ -15,7 +14,7 @@ export default class SphereManager {
         this.activeGroupIndex = 0;
         this.nextTrigger = 3;
 
-        this.sphereGeometry = new three.SphereGeometry(this.sphereRadius, 32, 32);
+        this.sphereGeometry = new three.SphereGeometry(cfg.sphereRadius, 32, 32);
         this.sphereMaterial = new three.MeshStandardMaterial({
             color: 0xff2244,
             roughness: 0.25,
@@ -23,11 +22,11 @@ export default class SphereManager {
         });        
     }
     createSpheres(three, cfg, scene) {
-        const exclusionRadius = cfg.cubeRadius + this.sphereRadius + 0.25;
+        const exclusionRadius = cfg.cubeRadius + cfg.sphereRadius + 0.25;
 
         for ( let i = 0; i < this.sphereCount; i++ ) {
             const pos = this.getPosition(three, cfg.cubeCentre, exclusionRadius);
-            const sphere = new Sphere(three, pos, cfg.cubeCentre);
+            const sphere = new Sphere(three, pos, cfg);
 
             scene.add(sphere.mesh);        
 
@@ -56,11 +55,11 @@ export default class SphereManager {
             this.activeGroupIndex = 0;
         return this.activeGroups[this.activeGroupIndex];
     }
-    update(elapsed) {
+    update(elapsed, cfg) {
         if ( elapsed >= this.nextTrigger ) {
             const group = this.getGroup();
             for ( const s of group ) 
-                s.startOrbit(mt_randf(0.9, 1.4));
+                s.startOrbit(mt_randf(cfg.minArc, cfg.maxArc));
 
             this.nextTrigger += mt_rand(4, 6); 
         }
