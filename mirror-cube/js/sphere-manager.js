@@ -64,7 +64,7 @@ export default class SphereManager {
             for ( const s of group ) 
                 s.startOrbit(mt_randf(cfg.minArc, cfg.maxArc));
 
-            this.nextTrigger += mt_rand(4, 6); 
+            this.nextTrigger += mt_randf(4, 6); 
         }
         for ( const s of this.spheres ) 
             s.update(dt);                  

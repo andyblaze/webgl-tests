@@ -16,6 +16,11 @@ export function mt_randfs(range) {
     return (Math.random() * 2 - 1) * range;
 }
 
+export function randomizePercent(x, percent) {
+    const factor = 1 + (Math.random() * 2 - 1) * (percent / 100);
+    return x * factor;
+}
+
 export function randomFrom(arr) {
     const idx = mt_rand(0, arr.length - 1);
     return arr[idx];

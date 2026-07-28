@@ -10,29 +10,29 @@ export default class Cube {
         this.cube = new three.Mesh(
             new three.SphereGeometry(cfg.cubeSize, 96, 96),//cfg.cubeSize, cfg.cubeSize, 6, 0.08),
             new three.MeshPhysicalMaterial({
-                color: 0x888888,
+                color: 0xaaaaaa,
                 transparent: false,
                 //opacity: 1,
 
                 metalness: 0.95,
                 roughness: 0.1,
-                emissiveIntensity: 0.0251,
+                emissiveIntensity: 0.1251,
                 emissive: 0x00ffff,
 
                 clearcoat: 1,
-                clearcoatRoughness: 0.5,
+                clearcoatRoughness: 0.125,
 
                 bumpMap: canvasTexture,
                 bumpScale: 20,
 
                 envMap: renderTarget.texture,
-                envMapIntensity: 6,
+                envMapIntensity: 8,
 
                 reflectivity: 1,
                 ior: 1.5,
 
                 normalMap: normalTexture,
-                normalScale: new three.Vector2(0.25, 0.25)
+                normalScale: new three.Vector2(0.125, 0.125)
 
             })
         );
