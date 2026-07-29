@@ -15,7 +15,9 @@ class Config {
             transmission: 0.2,
             transparent: true,
             opacity: 0.8,
-            clearcoat: 1
+            clearcoat: 1,
+            emissive: 0xff00ff,
+            emissiveIntensity: 0.5
         };
     }
 }
