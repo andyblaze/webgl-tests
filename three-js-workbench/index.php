@@ -5,6 +5,10 @@ $data = [
     'css' => link_tag('css/sys.css')
 ];
 
-extract($data);
+$html = file_get_contents('php/view.html');
 
-include('php/view.php');
+foreach ( $data as $key=>$val ) {
+    $html = str_replace('{{' . $key . '}}', $val, $html);
+}
+
+echo $html;

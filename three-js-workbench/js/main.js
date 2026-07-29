@@ -8,6 +8,15 @@ class Config {
         this.clientW = this.workspace.clientWidth;
         this.clientH = this.workspace.clientHeight;
         this.aspectRatio = this.clientW / this.clientH;
+        this.material = {
+            color: 0xff0000,
+            roughness: 0.25,
+            metalness: 0.03,
+            transmission: 0.2,
+            transparent: true,
+            opacity: 0.8,
+            clearcoat: 1
+        };
     }
 }
 
@@ -43,16 +52,10 @@ class Camera extends ThreeObject {
 }
 
 class Model extends ThreeObject {
-    constructor(three) {
+    constructor(three, cfg) {
         super();
         const geometry = new three.SphereGeometry(5, 32, 32);
-        const material = new three.MeshPhysicalMaterial({
-            color: 0x00ff00,
-            roughness: 0.25,
-            metalness: 0.03,
-            transmission: 0.2,
-            clearcoat: 1
-        });
+        const material = new three.MeshPhysicalMaterial(cfg.material);
         this.nativeObj = new three.Mesh( geometry, material );
     }
 }
@@ -78,7 +81,7 @@ const renderer = new Renderer(THREE, config);
 const scene = new THREE.Scene();
 const lighting = new Lighting();
 const camera = new Camera(THREE, config.aspectRatio);
-const model = new Model(THREE);
+const model = new Model(THREE, config);
 
 scene.add(model.native);
 scene.add(lighting.ambient(THREE, "amb1"));
