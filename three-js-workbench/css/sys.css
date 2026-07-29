@@ -1,0 +1,196 @@
+  body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+    background-color: #000;
+    color: white;
+  }
+
+  #ui-panel {
+    flex: 0.6;
+    padding: 10px 1% 10px 1%;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  #ui-panel h3, #ui-panel h4 {
+    margin: 0;
+  }
+    
+  #ui-panel label {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+  }
+    #ui-panel .col-2 label {
+      width: 49.5%;
+      display: inline-block;
+    } 
+    #ui-panel .col-3 label {
+      width: 33%;
+      display: inline-block;
+    } 
+    #ui-panel .col-4 label {
+      width: 24.5%;
+      display: inline-block;
+    } 
+    /*#ui-panel .col-4 label.color-ctrl { 
+      width: 8% !important;
+    }*/
+    #ui-panel .col-5 label {
+      width: 19.5%;
+      display: inline-block;
+    } 
+    #ui-panel #renderer-select {
+      font-size: 1.2rem;
+    }
+
+  label input {
+    display: inline-block;
+    width: 100%;
+  }
+  #ui-panel .inlined label, #ui-panel .inlined input {
+    width: auto !important;
+  }
+
+
+  #workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 0 0 0 1rem;
+  }
+   #workspace div {
+    display: block;
+    width: 100%;
+   }
+#workspace #hud {
+    position: absolute;
+    top:0px;
+    right: 0px;
+    width: 9rem;
+    height: 5rem;
+    padding: 0.5rem;
+    font-size: 1.5rem;
+   }
+#fps-report, #pos-report {
+  display: inline-block;
+  width:3rem;
+  height: 2.2rem;
+}
+   .import-export {
+    margin: 1rem 0 1rem 0;
+   }
+    .import-export, .import-export * {
+      font-size: 1.2rem;
+    }
+    .import-export button {
+      padding: 0.25rem;
+    }
+   .import-export label {
+    margin: 0 0.5rem 0 1rem;
+   }
+  
+  #workspace canvas {
+    background-color: #00000000;
+    border: 1px solid #ffffff;
+    
+  }
+  /* help tooltips */
+  .help {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: #444;
+    padding: 0.1rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: normal !important;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 6px;
+    position: relative;
+}
+
+.help-tooltip {
+    position: absolute;
+    top: 24px;
+    left: 0;
+    border: 1px solid #fff;
+    background: #222;
+    color: #fff;
+    padding: 0.3rem 0.4rem;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+/* fps report */
+#fps-report.fps-best { color: lime; }
+#fps-report.fps-ok   { color: orange; }
+#fps-report.fps-bad  { color: red; }
+
+/* modal stuff */
+/* Overlay background */
+#screen-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4); /* semi-transparent */
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* above everything else */
+    font-family: sans-serif;
+}
+
+/* Modal content box */
+#screen-warning .modal-content {
+    background-color: #fff;
+    color: #222;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 800px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Heading */
+#screen-warning .modal-content h2 {
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
+/* Paragraphs */
+#screen-warning .modal-content p {
+    margin: 1rem 0;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* Continue button */
+#screen-warning #continue-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #0077cc;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#screen-warning #continue-btn:hover {
+    background-color: #005fa3;
+}
