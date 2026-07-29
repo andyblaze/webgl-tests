@@ -14,7 +14,8 @@ class Config {
 const config = new Config("workspace");
 
 class ThreeObject {
-    constructor() {
+    constructor(three) {
+        this.three = three;
         this.nativeObj = null;
     }
     get native() {
