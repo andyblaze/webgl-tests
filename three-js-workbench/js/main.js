@@ -2,6 +2,14 @@ import * as THREE from "./three.module.js";
 import DeltaReport from "./delta-report.js";
 import { byId, byQsArray } from "./functions.js";
 
+function fixType(c) {
+    const type = c.dataset.type;
+    if ( type === "str" )   return c.value;
+    if ( type === "float" ) return parseFloat(c.value);
+    if ( type === "int" )   return parseInt(c.value);
+    if ( type === "bool" )  return c.value === 1 ? true : false;
+}
+
 class Config {
     constructor(htmlElementId) {
         this.workspace = byId(htmlElementId);
@@ -12,7 +20,8 @@ class Config {
     }
     update(ctrls) {
         for ( const c of ctrls )
-            this.material[c.dataset.property] = c.value;
+            this.material[c.dataset.property] = fixType(c);
+        console.log(this.material);
     }
 }
 
@@ -77,12 +86,19 @@ class Camera extends ThreeObject {
 class Model extends ThreeObject {
     constructor(three, cfg) {
         super();
-        const geometry = new three.SphereGeometry(5, 32, 32);
-        const material = new three.MeshPhysicalMaterial(cfg.material);
-        this.nativeObj = new three.Mesh( geometry, material );
+        this.geometry = new three.SphereGeometry(5, 32, 32);
+        this.material = new three.MeshPhysicalMaterial(cfg.material);
+        this.update(cfg.material);
+        this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
-    update(properties) {
-        
+    update(material) {
+        for ( const prop in material ) {
+            const val = material[prop];
+            if ( typeof val === "string" )
+                this.material[prop].set(val);
+            else 
+                this.material[prop] = val;
+        }
     }
 }
 
