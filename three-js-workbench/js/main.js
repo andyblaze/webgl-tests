@@ -14,10 +14,20 @@ class Config {
             metalness: 0.03,
             transmission: 0.2,
             transparent: true,
-            opacity: 0.8,
+            opacity: 1,
             clearcoat: 1,
+            clearcoatRoughness: 0.5,
             emissive: 0xff00ff,
-            emissiveIntensity: 0.5
+            emissiveIntensity: 0.5,
+            ior: 1.5,
+            iridescence: 0.5,
+            iridescenceIOR: 1.3,
+            reflectivity: 0.5,
+            sheen: 0.2,
+            sheenColor: 0x0000ff,
+            thickness: 0.5,
+            anisotropy: 1,
+            attenuationColor: 0x00ff00
         };
     }
 }
