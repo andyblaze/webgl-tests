@@ -1,6 +1,6 @@
 import * as THREE from "./three.module.js";
 import DeltaReport from "./delta-report.js";
-import { byId } from "./functions.js";
+import { byId, byQsArray } from "./functions.js";
 
 class Config {
     constructor(htmlElementId) {
@@ -8,31 +8,42 @@ class Config {
         this.clientW = this.workspace.clientWidth;
         this.clientH = this.workspace.clientHeight;
         this.aspectRatio = this.clientW / this.clientH;
-        this.material = {
-            color: "#00ffff",
-            roughness: 0.25,
-            metalness: 0.03,
-            transmission: 0.2,
-            transparent: true,
-            opacity: 1,
-            clearcoat: 1,
-            clearcoatRoughness: 0.5,
-            emissive: "#ff00ff",
-            emissiveIntensity: 0.5,
-            ior: 1.5,
-            iridescence: 0.5,
-            iridescenceIOR: 1.3,
-            reflectivity: 0.5,
-            sheen: 0.2,
-            sheenColor: "#0000ff",
-            thickness: 0.5,
-            anisotropy: 1,
-            attenuationColor: "#00ff00"
-        };
+        this.material = {};
+    }
+    update(ctrls) {
+        for ( const c of ctrls )
+            this.material[c.dataset.property] = c.value;
     }
 }
 
 const config = new Config("workspace");
+
+class UiControls {
+    constructor(selector) {
+        this.ctrls = byQsArray(selector);
+        this.observers = [];
+        for ( const ctrl of this.ctrls ) {
+            ctrl.oninput = () => this.synch(ctrl);
+        }
+    }
+    synch(ctrl) {
+        const label = ctrl.dataset.label ?? null; 
+        if ( typeof label === "string" )
+            byId(label).textContent = ctrl.value;
+        this.notify();
+    }
+    addObserver(o) {
+        this.observers.push(o);
+    }
+    notify() {
+        for ( const o of this.observers )
+            o.update(this.ctrls);
+    }
+}
+
+const uiControls = new UiControls("#ui-panel input")
+uiControls.addObserver(config);
+uiControls.notify();
 
 class ThreeObject {
     constructor() {
@@ -69,6 +80,9 @@ class Model extends ThreeObject {
         const geometry = new three.SphereGeometry(5, 32, 32);
         const material = new three.MeshPhysicalMaterial(cfg.material);
         this.nativeObj = new three.Mesh( geometry, material );
+    }
+    update(properties) {
+        
     }
 }
 

@@ -21,7 +21,7 @@
     },
     "transparent": {
         "value": 1,
-        "type": "float",
+        "type": "bool",
         "ctrl": "range",
         "min": 0,
         "max": 1,
