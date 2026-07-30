@@ -28,7 +28,7 @@
         "step": 1
     },
     "opacity": {
-        "value": 0.8,
+        "value": 0.58,
         "type": "float",
         "ctrl": "range"
     },

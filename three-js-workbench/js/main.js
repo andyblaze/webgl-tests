@@ -7,7 +7,7 @@ function fixType(c) {
     if ( type === "str" )   return c.value;
     if ( type === "float" ) return parseFloat(c.value);
     if ( type === "int" )   return parseInt(c.value);
-    if ( type === "bool" )  return c.value === 1 ? true : false;
+    if ( type === "bool" )  return c.value === "1";
 }
 
 class Config {
@@ -17,11 +17,19 @@ class Config {
         this.clientH = this.workspace.clientHeight;
         this.aspectRatio = this.clientW / this.clientH;
         this.material = {};
+        this.observers = [];
+    }
+    addObserver(o) {
+        this.observers.push(o);
+    }
+    notify() {
+        for ( const o of this.observers )
+            o.update(this.material);
     }
     update(ctrls) {
         for ( const c of ctrls )
             this.material[c.dataset.property] = fixType(c);
-        console.log(this.material);
+        //console.log(this.material);
     }
 }
 
@@ -45,8 +53,10 @@ class UiControls {
         this.observers.push(o);
     }
     notify() {
-        for ( const o of this.observers )
+        for ( const o of this.observers ) {
             o.update(this.ctrls);
+            o.notify();
+        }
     }
 }
 
@@ -88,12 +98,11 @@ class Model extends ThreeObject {
         super();
         this.geometry = new three.SphereGeometry(5, 32, 32);
         this.material = new three.MeshPhysicalMaterial(cfg.material);
-        this.update(cfg.material);
+        //this.update(cfg.material);
         this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
     update(material) {
-        for ( const prop in material ) {
-            const val = material[prop];
+        for ( const [prop, val] of Object.entries(material) ) {
             if ( typeof val === "string" )
                 this.material[prop].set(val);
             else 
@@ -124,6 +133,8 @@ const scene = new THREE.Scene();
 const lighting = new Lighting();
 const camera = new Camera(THREE, config.aspectRatio);
 const model = new Model(THREE, config);
+
+config.addObserver(model);
 
 scene.add(model.native);
 scene.add(lighting.ambient(THREE, "amb1"));
