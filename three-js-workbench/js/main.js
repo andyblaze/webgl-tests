@@ -96,9 +96,8 @@ class Camera extends ThreeObject {
 class Model extends ThreeObject {
     constructor(three, cfg) {
         super();
-        this.geometry = new three.SphereGeometry(5, 32, 32);
+        this.geometry = new three.BoxGeometry(6, 6, 6);
         this.material = new three.MeshPhysicalMaterial(cfg.material);
-        //this.update(cfg.material);
         this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
     update(material) {
@@ -119,8 +118,8 @@ class Lighting {
         this.lights[id] = new three.AmbientLight(0xffffff, 2);
         return this.lights[id];
     }
-    directional(three, id) {
-        this.lights[id] = new THREE.DirectionalLight(0xc6c6c6, 1);
+    directional(three, id, col) {
+        this.lights[id] = new THREE.DirectionalLight(col, 1);
         return this.lights[id];
     }
     setPosition(id, x, y, z) {
@@ -138,14 +137,20 @@ config.addObserver(model);
 
 scene.add(model.native);
 scene.add(lighting.ambient(THREE, "amb1"));
-scene.add(lighting.directional(THREE, "dir1"));
-lighting.setPosition("dir1", 0, 10, 12);
+scene.add(lighting.directional(THREE, "dir1", 0xc60000));
+scene.add(lighting.directional(THREE, "dir2", 0x0000c6));
+lighting.setPosition("dir1", -10, 16, 10);
+lighting.setPosition("dir2", 10, -16, 10);
 
 const clock = new THREE.Clock();
+const cube = model.native;
 
 function animate(timestamp) {    
     const dt = clock.getDelta(); 
     const elapsedTime = clock.getElapsedTime();
+    cube.rotation.x += 0.0017;
+    cube.rotation.y += 0.0011;
+    cube.rotation.z += 0.008;
 
     renderer.render(scene, camera.native);
 

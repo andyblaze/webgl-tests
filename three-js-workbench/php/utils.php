@@ -27,14 +27,6 @@ function saneItems($name, $property, $prefix) {
     return [$lbl, $prop, $name];    
 }
 
-function slider1($name, $val, $min=0, $max=1, $step=0.01, $type='flt', $property='', $prefix='') {
-    list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
-    return "<label>
-      {$lbl}: <span id=\"{$name}-lbl\">{$val}</span> 
-      <input type=\"range\" id=\"{$name}-slider\" min=\"{$min}\" max=\"{$max}\" step=\"{$step}\" value=\"{$val}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$type}\" />
-    </label>";
-}
-
 function slider(string $name, object $val, $property='', $prefix='') {
     $min  = $val->min  ?? 0;
     $max  = $val->max  ?? 1;
@@ -42,7 +34,7 @@ function slider(string $name, object $val, $property='', $prefix='') {
     list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
     return "<label>
         {$lbl}: <span id=\"{$name}-lbl\">{$val->value}</span> 
-        <input type=\"range\" id=\"{$name}-slider\" min=\"{$min}\" max=\"{$max}\" step=\"{$step}\" value=\"{$val->value}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$val->type}\" />
+        <input type=\"range\" id=\"{$name}-slider\" min=\"{$min}\" max=\"{$max}\" step=\"{$step}\" value=\"{$val->value}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$val->type}\" autocomplete=\"off\" />
     </label>";
 }
 
