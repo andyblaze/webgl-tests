@@ -1,100 +1,102 @@
 {
-    "color": {
-        "value": "#00ffff",
-        "type": "str",
-        "ctrl": "color"
-    },
-    "roughness": {
-        "value": 0.25,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "metalness": {
-        "value": 0.03,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "transmission": {
-        "value": 0.2,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "transparent": {
-        "value": 1,
-        "type": "bool",
-        "ctrl": "range",
-        "min": 0,
-        "max": 1,
-        "step": 1
-    },
-    "opacity": {
-        "value": 0.58,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "clearcoat": {
-        "value": 1,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "clearcoatRoughness": {
-        "value": 0.05,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "emissive": {
-        "value": "#ff00ff",
-        "type": "str",
-        "ctrl": "color"
-    },
-    "emissiveIntensity": {
-        "value": 0.5,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "ior": {
-        "value": 1.5,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "iridescence": {
-        "value": 0.5,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "iridescenceIOR": {
-        "value": 1.3,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "reflectivity": {
-        "value": 0.5,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "sheen": {
-        "value": 0.2,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "sheenColor": {
-        "value": "#0000ff",
-        "type": "str",
-        "ctrl": "color"
-    },
-    "thickness": {
-        "value": 0.5,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "anisotropy": {
-        "value": 1,
-        "type": "float",
-        "ctrl": "range"
-    },
-    "attenuationColor": {
-        "value": "#00ff00",
-        "type": "str",
-        "ctrl": "color"
+    "material": {
+        "color": {
+            "value": "#00ffff",
+            "type": "str",
+            "ctrl": "color"
+        },
+        "roughness": {
+            "value": 0.25,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "metalness": {
+            "value": 0.03,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "transmission": {
+            "value": 0.2,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "transparent": {
+            "value": 1,
+            "type": "bool",
+            "ctrl": "range",
+            "min": 0,
+            "max": 1,
+            "step": 1
+        },
+        "opacity": {
+            "value": 0.58,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "clearcoat": {
+            "value": 1,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "clearcoatRoughness": {
+            "value": 0.05,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "emissive": {
+            "value": "#ff00ff",
+            "type": "str",
+            "ctrl": "color"
+        },
+        "emissiveIntensity": {
+            "value": 0.5,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "ior": {
+            "value": 1.5,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "iridescence": {
+            "value": 0.5,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "iridescenceIOR": {
+            "value": 1.3,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "reflectivity": {
+            "value": 0.5,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "sheen": {
+            "value": 0.2,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "sheenColor": {
+            "value": "#0000ff",
+            "type": "str",
+            "ctrl": "color"
+        },
+        "thickness": {
+            "value": 0.5,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "anisotropy": {
+            "value": 1,
+            "type": "float",
+            "ctrl": "range"
+        },
+        "attenuationColor": {
+            "value": "#00ff00",
+            "type": "str",
+            "ctrl": "color"
+        }
     }
 }

@@ -114,17 +114,24 @@ class Model extends ThreeObject {
 
 class Lighting {
     constructor() {
+        this.ambients = [];
+        this.directionals = [];
+        this.points = [];
         this.lights = {};
     }
-    ambient(three, id, col, strength) {
-        this.lights[id] = new three.AmbientLight(col, strength);
-        return this.lights[id];
+    addLight(type, light) {
+        const id = this[type].length;
+        this[type][id] = light;
+        this.lights[type + id] = this[type][id];
+        return this[type][id];
     }
-    directional(three, id, col, strength) {
-        this.lights[id] = new three.DirectionalLight(col, strength);
-        return this.lights[id];
+    ambient(three, col, strength) {
+        return this.addLight("ambients", new three.AmbientLight(col, strength));
     }
-    setPosition(id, x, y, z) {
+    directional(three, col, strength) {
+        return this.addLight("directionals", new three.DirectionalLight(col, strength));
+    }
+    setPosition(id, x, y, z) { console.log(this.lights);
         this.lights[id].position.set(x, y, z);
     }
     setColor(id, col) {
@@ -143,17 +150,17 @@ const model = new Model(THREE, config);
 
 config.addObserver(model);
 
-const ctrl = byId("dir2");
+const ctrl = byId("directionals0");
 ctrl.oninput = () => {
-    lighting.setColor("dir2", ctrl.value);
+    lighting.setColor("directionals0", ctrl.value);
 };
 
 scene.add(model.native);
-scene.add(lighting.ambient(THREE, "amb1", 0xffffff, 2));
-scene.add(lighting.directional(THREE, "dir1", 0xc60000, 2));
-scene.add(lighting.directional(THREE, "dir2", 0x00c600, 2));
-lighting.setPosition("dir1", 0, 0, 7);
-lighting.setPosition("dir2", -8, 8, 7);
+scene.add(lighting.ambient(THREE, 0xffffff, 2));
+scene.add(lighting.directional(THREE, 0xc60000, 12));
+scene.add(lighting.directional(THREE, 0x00c600, 2));
+lighting.setPosition("directionals0", 0, 8, 0);
+lighting.setPosition("directionals1", -8, 8, 7);
 
 const clock = new THREE.Clock();
 const cube = model.native;
