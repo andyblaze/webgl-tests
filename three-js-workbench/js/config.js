@@ -20,9 +20,9 @@ export default class Config {
     addObserver(o) {
         this.observers.push(o);
     }
-    notify() {
+    notify(type) {
         for ( const o of this.observers )
-            o.update(this.material);
+            o.update(this[type]);
     }
     update(key, ctrls) {
         const item = this[key];

@@ -1,11 +1,19 @@
 import { byId, byQsArray } from "./functions.js";
 
 export default class UiControls {
-    constructor(selector) {
-        this.ctrls = byQsArray(selector);
+    constructor() { //selector) {
+        //this.ctrls = byQsArray(selector);
         this.observers = [];
+        //for ( const ctrl of this.ctrls ) {
+        //    ctrl.oninput = () => this.synch(ctrl);
+        //}
+    }
+    init(selector, type, target) {
+        this.ctrls = byQsArray(selector);
+        this.type = type;
+        this.observers = [target];
         for ( const ctrl of this.ctrls ) {
-            ctrl.oninput = () => this.synch(ctrl);
+            ctrl.oninput = () => this.synch(ctrl, this.type);
         }
     }
     synch(ctrl) {
@@ -19,8 +27,8 @@ export default class UiControls {
     }
     notify() {
         for ( const o of this.observers ) {
-            o.update("material", this.ctrls);
-            o.notify();
+            o.update(this.type, this.ctrls);
+            o.notify(this.type);
         }
     }
 }

@@ -9,8 +9,9 @@ import Lighting from "./lighting.js";
 
 const config = new Config("workspace");
 
-const uiControls = new UiControls("#material input");
-uiControls.addObserver(config);
+const uiControls = new UiControls();
+uiControls.init("#material input", "material", config)
+//uiControls.addObserver(config);
 uiControls.notify();
 
 const renderer = new Renderer(THREE, config);
