@@ -9,39 +9,36 @@ import Lighting from "./lighting.js";
 
 const config = new Config("workspace");
 
-const uiControls = new UiControls("#material input")
+const uiControls = new UiControls("#material input");
 uiControls.addObserver(config);
 uiControls.notify();
 
 const renderer = new Renderer(THREE, config);
 const scene = new THREE.Scene();
-const lighting = new Lighting();
+const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
 const model = new Model(THREE, config);
 
 config.addObserver(model);
 
-/*const ctrl = byId("directionals0");
-ctrl.oninput = () => {
-    lighting.setColor("directionals0", ctrl.value);
-};*/
+const shape = model.native;
 
-scene.add(model.native);
-scene.add(lighting.ambient(THREE, 0xffffff, 2));
-scene.add(lighting.directional(THREE, 0xc60000, 12));
-scene.add(lighting.directional(THREE, 0x00c600, 2));
+scene.add(shape);
+scene.add(lighting.ambient(0xffffff, 2));
+scene.add(lighting.directional(0xc60000, 12));
+scene.add(lighting.directional(0x00c600, 2));
 lighting.setPosition("directionals0", 0, 8, 0);
 lighting.setPosition("directionals1", -8, 8, 7);
 
 const clock = new THREE.Clock();
-const cube = model.native;
+
 
 function animate(timestamp) {    
     const dt = clock.getDelta(); 
     const elapsedTime = clock.getElapsedTime();
-    cube.rotation.x += 0.0017;
-    cube.rotation.y += 0.0011;
-    cube.rotation.z += 0.008;
+    shape.rotation.x += 0.002;
+    shape.rotation.y += 0.005;
+    shape.rotation.z += 0.001;
 
     renderer.render(scene, camera.native);
 

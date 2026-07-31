@@ -1,7 +1,4 @@
-import { byQsArray } from "./functions.js";
-
-
-
+import { byId, byQsArray } from "./functions.js";
 
 export default class UiControls {
     constructor(selector) {

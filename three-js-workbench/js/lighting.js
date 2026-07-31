@@ -1,5 +1,6 @@
 export default class Lighting {
-    constructor() {
+    constructor(three) {
+        this.three = three;
         this.ambients = [];
         this.directionals = [];
         this.points = [];
@@ -11,11 +12,11 @@ export default class Lighting {
         this.lights[type + id] = this[type][id];
         return this[type][id];
     }
-    ambient(three, col, strength) {
-        return this.addLight("ambients", new three.AmbientLight(col, strength));
+    ambient(col, strength) {
+        return this.addLight("ambients", new this.three.AmbientLight(col, strength));
     }
-    directional(three, col, strength) {
-        return this.addLight("directionals", new three.DirectionalLight(col, strength));
+    directional(col, strength) {
+        return this.addLight("directionals", new this.three.DirectionalLight(col, strength));
     }
     setPosition(id, x, y, z) { console.log(this.lights);
         this.lights[id].position.set(x, y, z);
