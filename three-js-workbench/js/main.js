@@ -17,6 +17,7 @@ class Config {
         this.clientH = this.workspace.clientHeight;
         this.aspectRatio = this.clientW / this.clientH;
         this.material = {};
+        this.lights = {};
         this.observers = [];
     }
     addObserver(o) {
@@ -26,9 +27,10 @@ class Config {
         for ( const o of this.observers )
             o.update(this.material);
     }
-    update(ctrls) {
+    update(key, ctrls) {
+        const item = this[key];
         for ( const c of ctrls )
-            this.material[c.dataset.property] = fixType(c);
+            item[c.dataset.property] = fixType(c);
         //console.log(this.material);
     }
 }
@@ -54,13 +56,13 @@ class UiControls {
     }
     notify() {
         for ( const o of this.observers ) {
-            o.update(this.ctrls);
+            o.update("material", this.ctrls);
             o.notify();
         }
     }
 }
 
-const uiControls = new UiControls("#ui-panel input")
+const uiControls = new UiControls("#material input")
 uiControls.addObserver(config);
 uiControls.notify();
 
@@ -86,9 +88,9 @@ class Renderer extends ThreeObject {
 }
 
 class Camera extends ThreeObject {
-    constructor(three, aspect) {
+    constructor(three, fov, aspect, near, far) {
         super();
-        this.nativeObj = new three.PerspectiveCamera(60, aspect, 0.1, 100);
+        this.nativeObj = new three.PerspectiveCamera(fov, aspect, near, far);
         this.nativeObj.position.set(0, 0, 15);
     }
 }
@@ -114,33 +116,44 @@ class Lighting {
     constructor() {
         this.lights = {};
     }
-    ambient(three, id) {
-        this.lights[id] = new three.AmbientLight(0xffffff, 2);
+    ambient(three, id, col, strength) {
+        this.lights[id] = new three.AmbientLight(col, strength);
         return this.lights[id];
     }
-    directional(three, id, col) {
-        this.lights[id] = new THREE.DirectionalLight(col, 1);
+    directional(three, id, col, strength) {
+        this.lights[id] = new three.DirectionalLight(col, strength);
         return this.lights[id];
     }
     setPosition(id, x, y, z) {
         this.lights[id].position.set(x, y, z);
+    }
+    setColor(id, col) {
+        this.lights[id].color.set(col);
+    }
+    setStrength(id, strength) {
+        this.lights[id].intensity = strength;
     }
 }
 
 const renderer = new Renderer(THREE, config);
 const scene = new THREE.Scene();
 const lighting = new Lighting();
-const camera = new Camera(THREE, config.aspectRatio);
+const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
 const model = new Model(THREE, config);
 
 config.addObserver(model);
 
+const ctrl = byId("dir2");
+ctrl.oninput = () => {
+    lighting.setColor("dir2", ctrl.value);
+};
+
 scene.add(model.native);
-scene.add(lighting.ambient(THREE, "amb1"));
-scene.add(lighting.directional(THREE, "dir1", 0xc60000));
-scene.add(lighting.directional(THREE, "dir2", 0x0000c6));
-lighting.setPosition("dir1", -10, 16, 10);
-lighting.setPosition("dir2", 10, -16, 10);
+scene.add(lighting.ambient(THREE, "amb1", 0xffffff, 2));
+scene.add(lighting.directional(THREE, "dir1", 0xc60000, 2));
+scene.add(lighting.directional(THREE, "dir2", 0x00c600, 2));
+lighting.setPosition("dir1", 0, 0, 7);
+lighting.setPosition("dir2", -8, 8, 7);
 
 const clock = new THREE.Clock();
 const cube = model.native;
