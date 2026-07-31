@@ -25,13 +25,10 @@ const shape = model.native;
 
 scene.add(shape);
 scene.add(lighting.ambient(0xffffff, 2));
-scene.add(lighting.directional(0xc60000, 12));
-scene.add(lighting.directional(0x00c600, 2));
-lighting.setPosition("directionals0", 0, 8, 0);
-lighting.setPosition("directionals1", -8, 8, 7);
+scene.add(lighting.directional(0xc60000, 2, { x: 0, y: 8, z: 0 }));
+scene.add(lighting.directional(0x00c600, 2, { x: -8, y: 8, z: 7 }));
 
 const clock = new THREE.Clock();
-
 
 function animate(timestamp) {    
     const dt = clock.getDelta(); 

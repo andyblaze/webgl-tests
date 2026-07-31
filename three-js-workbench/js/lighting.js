@@ -15,10 +15,12 @@ export default class Lighting {
     ambient(col, strength) {
         return this.addLight("ambients", new this.three.AmbientLight(col, strength));
     }
-    directional(col, strength) {
-        return this.addLight("directionals", new this.three.DirectionalLight(col, strength));
+    directional(col, strength, pos) {
+        const light = this.addLight("directionals", new this.three.DirectionalLight(col, strength));
+        light.position.set(pos.x, pos.y, pos.z);
+        return light;
     }
-    setPosition(id, x, y, z) { console.log(this.lights);
+    setPosition(id, x, y, z) {
         this.lights[id].position.set(x, y, z);
     }
     setColor(id, col) {
