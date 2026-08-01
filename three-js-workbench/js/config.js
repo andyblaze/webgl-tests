@@ -10,7 +10,7 @@ export default class Config {
         this.lights = {};
         this.observers = {};
     }
-    fixType(c) {
+    fixValue(c) {
         const type = c.dataset.type;
         if ( type === "str" )   return c.value;
         if ( type === "float" ) return parseFloat(c.value);
@@ -27,6 +27,6 @@ export default class Config {
     update(type, ctrls) {
         const item = this[type];
         for ( const c of ctrls )
-            item[c.dataset.property] = this.fixType(c);
+            item[c.dataset.property] = this.fixValue(c);
     }
 }

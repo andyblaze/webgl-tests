@@ -20,14 +20,17 @@ const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
 const model = new Model(THREE, config);
 
+for ( const light of lightsCfg )
+    lighting.addLight(scene, light);
+
 config.addObserver("material", model);
 
 const shape = model.native;
 
 scene.add(shape);
-scene.add(lighting.ambient(0xffffff, 2));
+/*scene.add(lighting.ambient(0xffffff, 2));
 scene.add(lighting.directional(0xc60000, 2, { x: 0, y: 8, z: 0 }));
-scene.add(lighting.directional(0x00c600, 2, { x: -8, y: 8, z: 7 }));
+scene.add(lighting.directional(0x00c600, 2, { x: -8, y: 8, z: 7 }));*/
 
 const clock = new THREE.Clock();
 

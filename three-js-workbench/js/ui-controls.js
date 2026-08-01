@@ -2,7 +2,7 @@ import { byId, byQsArray } from "./functions.js";
 
 export default class UiControls {
     constructor() { //selector) {
-        //this.ctrls = byQsArray(selector);
+        this.ctrls = [];
         this.observer = null;
         this.types = [];
         this.targets = [];
@@ -12,7 +12,7 @@ export default class UiControls {
         //}
     }
     add(selector) {
-        this.ctrls = byQsArray(selector);
+        this.ctrls = this.ctrls.concat(byQsArray(selector));
         //this.types.push(type);
         //this.targets.push(target);
         //this.lookup[type] = target;
