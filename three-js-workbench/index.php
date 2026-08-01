@@ -5,9 +5,9 @@ $ctrlsCfg = json_decode(file_get_contents('ctrls-config.json'));
 $ctrls = '';
 foreach ( $ctrlsCfg->material as $key=>$val ) {
     if ( $val->ctrl === "range" )
-        $ctrls .= slider($key, $val);
+        $ctrls .= slider($key, $val, 'material');
     if ( $val->ctrl === "color" )
-        $ctrls .= colorPicker($key, $val);
+        $ctrls .= colorPicker($key, $val, 'material');
 }
 
 $data = [

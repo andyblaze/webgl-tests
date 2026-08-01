@@ -8,7 +8,7 @@ export default class Config {
         this.aspectRatio = this.clientW / this.clientH;
         this.material = {};
         this.lights = {};
-        this.observers = [];
+        this.observers = {};
     }
     fixType(c) {
         const type = c.dataset.type;
@@ -17,15 +17,15 @@ export default class Config {
         if ( type === "int" )   return parseInt(c.value);
         if ( type === "bool" )  return c.value === "1";
     }
-    addObserver(o) {
-        this.observers.push(o);
+    addObserver(type, o) {
+        this.observers[type] = o;
     }
     notify(type) {
-        for ( const o of this.observers )
+        for ( const [type, o] of Object.entries(this.observers) )
             o.update(this[type]);
     }
-    update(key, ctrls) {
-        const item = this[key];
+    update(type, ctrls) {
+        const item = this[type];
         for ( const c of ctrls )
             item[c.dataset.property] = this.fixType(c);
     }

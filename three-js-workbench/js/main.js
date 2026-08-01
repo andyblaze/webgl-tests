@@ -10,9 +10,9 @@ import Lighting from "./lighting.js";
 const config = new Config("workspace");
 
 const uiControls = new UiControls();
-uiControls.init("#material input", "material", config)
-//uiControls.addObserver(config);
-uiControls.notify();
+uiControls.add("#material input", config);
+uiControls.addObserver(config);
+//uiControls.notify();
 
 const renderer = new Renderer(THREE, config);
 const scene = new THREE.Scene();
@@ -20,7 +20,7 @@ const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
 const model = new Model(THREE, config);
 
-config.addObserver(model);
+config.addObserver("material", model);
 
 const shape = model.native;
 

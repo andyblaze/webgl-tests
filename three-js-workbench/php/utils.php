@@ -27,22 +27,22 @@ function saneItems($name, $property, $prefix) {
     return [$lbl, $prop, $name];    
 }
 
-function slider(string $name, object $val, $property='', $prefix='') {
+function slider(string $name, object $val, string $index, $property='', $prefix='') {
     $min  = $val->min  ?? 0;
     $max  = $val->max  ?? 1;
     $step = $val->step ?? 0.01;
     list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
     return "<label>
         {$lbl}: <span id=\"{$name}-lbl\">{$val->value}</span> 
-        <input type=\"range\" id=\"{$name}-slider\" min=\"{$min}\" max=\"{$max}\" step=\"{$step}\" value=\"{$val->value}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$val->type}\" autocomplete=\"off\" />
+        <input type=\"range\" id=\"{$name}-slider\" min=\"{$min}\" max=\"{$max}\" step=\"{$step}\" value=\"{$val->value}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$val->type}\" data-index=\"{$index}\" autocomplete=\"off\" />
     </label>";
 }
 
-function colorPicker(string $name, object $val, $property='', $prefix='color-') {
+function colorPicker(string $name, object $val, string $index, $property='', $prefix='color-') {
     list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
     return "<label class=\"color-ctrl\">
         {$lbl}: <span id=\"{$name}-lbl\">{$val->value}</span>
-        <input type=\"color\" id=\"{$name}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$val->type}\" value=\"{$val->value}\" />
+        <input type=\"color\" id=\"{$name}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"{$val->type}\" data-index=\"{$index}\" value=\"{$val->value}\" autocomplete=\"off\" />
     </label>";
 }
 

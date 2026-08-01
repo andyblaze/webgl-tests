@@ -3,32 +3,37 @@ import { byId, byQsArray } from "./functions.js";
 export default class UiControls {
     constructor() { //selector) {
         //this.ctrls = byQsArray(selector);
-        this.observers = [];
+        this.observer = null;
+        this.types = [];
+        this.targets = [];
+        this.lookup = {};
         //for ( const ctrl of this.ctrls ) {
         //    ctrl.oninput = () => this.synch(ctrl);
         //}
     }
-    init(selector, type, target) {
+    add(selector) {
         this.ctrls = byQsArray(selector);
-        this.type = type;
-        this.observers = [target];
+        //this.types.push(type);
+        //this.targets.push(target);
+        //this.lookup[type] = target;
         for ( const ctrl of this.ctrls ) {
-            ctrl.oninput = () => this.synch(ctrl, this.type);
+            ctrl.oninput = () => this.synch(ctrl);
         }
     }
     synch(ctrl) {
         const label = ctrl.dataset.label ?? null; 
         if ( typeof label === "string" )
             byId(label).textContent = ctrl.value;
-        this.notify();
+        const index = ctrl.dataset.index;
+        this.notify(index);
     }
     addObserver(o) {
-        this.observers.push(o);
+        this.observer = o;
     }
-    notify() {
-        for ( const o of this.observers ) {
-            o.update(this.type, this.ctrls);
-            o.notify(this.type);
-        }
+    notify(index) {
+        //for ( const o of this.observers ) {
+            this.observer.update(index, this.ctrls);
+            this.observer.notify(index);
+        //}
     }
 }
