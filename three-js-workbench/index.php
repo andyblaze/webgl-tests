@@ -9,11 +9,7 @@ foreach ( $ctrlsCfg->material as $key=>$val ) {
     if ( $val->ctrl === "color" )
         $ctrls .= colorPicker($key, $val, 'material');
 }
-$lightsCfg = 'const lightsCfg = [
-    {"type": "ambient", "color": "#ffffff", "intensity": 2},
-    {"type": "directional", "color": "#c60000", "intensity": 2, "pos": { "x": 0, "y": 8, "z": 0 }},
-    {"type": "directional", "color": "#00c600", "intensity": 2, "pos": { "x": -8, "y": 8, "z": 7 }}
-];';
+$lightsCfg = 'const lightsCfg = ' . json_encode($ctrlsCfg->lights) . ';'; 
 
 foreach ( $ctrlsCfg->lights as $key=>$light ) {
     $name = $light->type . $key;

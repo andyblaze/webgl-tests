@@ -26,11 +26,9 @@ for ( const light of lightsCfg )
 config.addObserver("material", model);
 
 const shape = model.native;
+const cam = camera.native;
 
 scene.add(shape);
-/*scene.add(lighting.ambient(0xffffff, 2));
-scene.add(lighting.directional(0xc60000, 2, { x: 0, y: 8, z: 0 }));
-scene.add(lighting.directional(0x00c600, 2, { x: -8, y: 8, z: 7 }));*/
 
 const clock = new THREE.Clock();
 
@@ -41,7 +39,7 @@ function animate(timestamp) {
     shape.rotation.y += 0.005;
     shape.rotation.z += 0.001;
 
-    renderer.render(scene, camera.native);
+    renderer.render(scene, cam);
 
     DeltaReport.log(timestamp);
     requestAnimationFrame(animate);
