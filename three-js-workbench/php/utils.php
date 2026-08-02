@@ -46,6 +46,33 @@ function colorPicker(string $name, object $val, string $index, $property='', $pr
     </label>";
 }
 
+function lightColor(string $name, object $light, string $index, $property='', $prefix='') {
+    list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
+    return "<label class=\"color-ctrl\">
+        {$lbl}: <span id=\"{$name}-lbl\">{$light->color}</span>
+        <input type=\"color\" id=\"{$name}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"str\" data-index=\"{$index}\" value=\"{$light->color}\" data-lightid=\"{$name}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
+    </label>";
+}
+
+function lightSlider(string $name, object $light, string $index, $property='', $prefix='') {
+    list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
+    return "<label>
+        {$lbl}: <span id=\"{$name}-lbl\">{$light->intensity}</span> 
+        <input type=\"range\" id=\"{$name}-slider\" min=\"0\" max=\"5\" step=\"0.5\" value=\"{$light->intensity}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" data-type=\"int\" data-index=\"{$index}\" data-lightid=\"{$name}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
+    </label>";
+}
+
+function lightPos(string $name, object $light, string $axis, int $key, string $index, $property='', $prefix='') {
+    list($lbl, $prop, $name) = saneItems($name, $property, $prefix);
+    $name .= $key;
+    $val = $light->pos->{$axis};
+    $lblId = "{$axis}{$key}-lbl";
+    return "<label>
+        {$lbl}: <span id=\"{$lblId}\">{$light->pos->x}</span> 
+        <input type=\"range\" id=\"{$name}-slider\" min=\"-10\" max=\"10\" step=\"1\" value=\"{$val}\" data-label=\"{$lblId}\" data-property=\"{$prop}\" data-type=\"int\" data-index=\"{$index}\" data-axis=\"{$axis}\" data-lightid=\"{$name}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
+    </label>";
+}
+
 function pre($data) {
     echo '<pre>'; var_dump($data); echo '</pre>';
 }

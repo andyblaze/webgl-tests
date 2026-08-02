@@ -13,9 +13,6 @@ export default class UiControls {
     }
     add(selector) {
         this.ctrls = this.ctrls.concat(byQsArray(selector));
-        //this.types.push(type);
-        //this.targets.push(target);
-        //this.lookup[type] = target;
         for ( const ctrl of this.ctrls ) {
             ctrl.oninput = () => this.synch(ctrl);
         }

@@ -6,6 +6,7 @@ import Renderer from "./renderer.js";
 import Camera from "./camera.js";
 import Model from "./model.js";
 import Lighting from "./lighting.js";
+import { byQsArray, byId } from "./functions.js";
 
 const config = new Config("workspace");
 
@@ -24,6 +25,22 @@ for ( const light of lightsCfg )
     lighting.addLight(scene, light);
 
 config.addObserver("material", model);
+config.addObserver("lights", lighting);
+
+
+const ctrls = byQsArray("#lights input");
+for ( const ctrl of ctrls ) {
+    ctrl.oninput = () => synch(ctrl);
+}
+
+function synch(ctrl) {
+    const label = ctrl.dataset.label ?? null; 
+    if ( typeof label === "string" )
+        byId(label).textContent = ctrl.value;
+    const index = ctrl.dataset.index;
+    config.update(index, ctrls);
+    //console.log(config);
+}
 
 const shape = model.native;
 const cam = camera.native;
