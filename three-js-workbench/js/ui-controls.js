@@ -4,18 +4,16 @@ export default class UiControls {
     constructor() { //selector) {
         this.ctrls = [];
         this.observer = null;
-        this.types = [];
-        this.targets = [];
-        this.lookup = {};
-        //for ( const ctrl of this.ctrls ) {
-        //    ctrl.oninput = () => this.synch(ctrl);
-        //}
     }
-    add(selector) {
-        this.ctrls = this.ctrls.concat(byQsArray(selector));
+    connect(selector) {
+        this.ctrls = byQsArray(selector);
         for ( const ctrl of this.ctrls ) {
             ctrl.oninput = () => this.synch(ctrl);
         }
+        return this;
+    }
+    toObserver(o) {
+        this.observer = o;
     }
     synch(ctrl) {
         const label = ctrl.dataset.label ?? null; 
@@ -28,9 +26,6 @@ export default class UiControls {
         this.observer = o;
     }
     notify(index) {
-        //for ( const o of this.observers ) {
-            this.observer.update(index, this.ctrls);
-            this.observer.notify(index);
-        //}
+        this.observer.update(index, this.ctrls);
     }
 }

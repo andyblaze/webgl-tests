@@ -25,32 +25,41 @@ export default class Config {
         const o = this.observers[type];
         o.update(this[type]);
     }
+    updatePos(item, ctrl) {
+        const axis = ctrl.dataset.axis;
+        item["pos"][axis] = this.fixValue(ctrl); 
+    }
+    initLight(id, lightType) {
+        return { 
+            "id": id, "type": lightType, 
+            "color": "", "intensity": 0, 
+            "pos": { "x": 0, "y": 0, "z": 0 } 
+        };
+    }
     updateLights(type, ctrls) {
         const item = this[type];
         for ( const c of ctrls ) {
             const id = c.dataset.lightid;
             const key = c.dataset.property;
-            const lightType = c.dataset.lighttype;
-            //console.log(key, val);
-            if ( typeof item[id] !== "object" ) {
-                item[id] = { "type": lightType, "color": "", "intensity": 0, "pos": { "x": 0, "y": 0, "z": 0 } };
-            }
-            if ( key === "pos" ) {
-                const axis = c.dataset.axis;
-                item[id]["pos"][axis] = this.fixValue(c);  
-            }
-            else {
+            if ( typeof item[id] !== "object" ) 
+                item[id] = this.initLight(id, c.dataset.lighttype);
+
+            if ( key === "pos" ) 
+                this.updatePos(item[id], c);  
+            else 
                 item[id][key] = this.fixValue(c);
-            }
         }
-        this.notify(type);
-        //console.log(this[type]);
     }
-    update(type, ctrls) {
-        if ( type === "lights" )
-            return this.updateLights(type, ctrls);
+    updateMaterial(type, ctrls) {
         const item = this[type];
         for ( const c of ctrls )
             item[c.dataset.property] = this.fixValue(c);
+    }
+    update(type, ctrls) {
+        if ( type === "lights" )
+            this.updateLights(type, ctrls);
+        if ( type === "material" )
+            this.updateMaterial(type, ctrls);
+        this.notify(type);
     }
 }

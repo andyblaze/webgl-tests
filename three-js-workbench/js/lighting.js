@@ -24,29 +24,28 @@ export default class Lighting {
         if ( l.sort === "ambient" ) scene.add(this.ambient(l.color, l.intensity));
         if ( l.sort === "directional" ) scene.add(this.directional(l.color, l.intensity, l.pos));
     }
+    keyNotFound(id) {
+        const keys = Object.keys(this.lights);
+        return keys.indexOf(id) === -1;
+    }
     setPosition(id, x, y, z) {
+        if ( this.keyNotFound(id) ) return;
         this.lights[id].position.set(x, y, z);
     }
     setColor(id, col) {
-        const keys = Object.keys(this.lights);
-        console.log(keys, id, keys.indexOf(id));
+        if ( this.keyNotFound(id) ) return;
         this.lights[id].color.set(col);
     }
     setStrength(id, strength) {
-        const keys = Object.keys(this.lights);
-        console.log(keys, id, keys.indexOf(id));
+        if ( this.keyNotFound(id) ) return;
         this.lights[id].intensity = strength;
     }
     update(lights) {
-        console.log(this.lights, lights);
-        for ( const [id, l] of Object.entries(lights) ) { 
-            const fid = id.slice(0, -1) + "s" + id.slice(-1);
-            console.log(l);
-            
-            this.setColor(fid, l.color);
-            this.setStrength(fid, l.intensity);
+        for ( const [id, l] of Object.entries(lights) ) {          
+            this.setColor(l.id, l.color);
+            this.setStrength(l.id, l.intensity);
             if ( l.type === "directional" ) {
-                this.setPosition(fid, l.pos.x, l.pos.y, l.pos.z);
+                this.setPosition(l.id, l.pos.x, l.pos.y, l.pos.z);
             }
         }
     }
