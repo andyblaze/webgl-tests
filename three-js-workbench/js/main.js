@@ -23,7 +23,6 @@ for ( const light of lightsCfg )
 config.addObserver("material", model);
 config.addObserver("lights", lighting);
 
-//uiControls.addObserver(config);
 uiControls.connect("#ui-panel input").toObserver(config);
 
 const shape = model.native;

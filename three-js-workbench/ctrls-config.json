@@ -71,7 +71,10 @@
         "ior": {
             "value": 1.5,
             "type": "float",
-            "ctrl": "range"
+            "ctrl": "range",
+            "min": 1,
+            "max": 2.333,
+            "step": 0.01
         },
         "iridescence": {
             "value": 0.5,
