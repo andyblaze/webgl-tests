@@ -4,12 +4,22 @@ include('php/utils.php');
 $controls = new Controls();
 
 $ctrlsCfg = json_decode(file_get_contents('ctrls-config.json'));
+
 $ctrls = $lights = '';
-foreach ( $ctrlsCfg->material as $key=>$val ) {
-    if ( $val->ctrl === "range" )
-        $ctrls .= $controls->slider($key, $val, 'material');
-    if ( $val->ctrl === "color" )
-        $ctrls .= $controls->colorPicker($key, $val, 'material');
+foreach ( $ctrlsCfg->material as $ctrlSet ) { 
+    $wrapTagOpen = $wrapTagClose = '';
+    if ( $ctrlSet->wrapping === true ) {
+        $wrapTagOpen = "<div class=\"{$ctrlSet->wrapClass}\">";
+        $wrapTagClose = '</div>';
+    }
+    $ctrls .= $wrapTagOpen;
+    foreach ( $ctrlSet->controls as $key=>$val ) {
+        if ( $val->ctrl === "range" )
+            $ctrls .= $controls->slider($key, $val, 'material');
+        if ( $val->ctrl === "color" )
+            $ctrls .= $controls->colorPicker($key, $val, 'material');        
+    }
+    $ctrls .= $wrapTagClose;
 }
 $lightsCfg = 'const lightsCfg = ' . json_encode($ctrlsCfg->lights) . ';'; 
 
