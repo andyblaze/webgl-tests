@@ -31,12 +31,12 @@ class Controls {
     public function html(string $type, mixed $val, string $name, string $property, string $prefix) {
         list($lbl, $prop, $name) = $this->saneItems($name, $property, $prefix);      
 
-        $tagOpen = "<label class=\"{$type}-ctrl\">
+        $tagOpen = "\n<label class=\"{$type}-ctrl\">
                     {$lbl}: <span id=\"{$name}-lbl\">{$val}</span>";
 
         $ctrl = "\n<input type=\"{$type}\" id=\"{$name}\" value=\"{$val}\" data-label=\"{$name}-lbl\" data-property=\"{$prop}\" autocomplete=\"off\"";
 
-        $tagClose = ' /></label>';
+        $tagClose = " /></label>\n";
         return [$tagOpen, $ctrl, $tagClose];
     }
     public function slider(string $name, object $item, string $index, $property='', $prefix='') {
@@ -68,10 +68,10 @@ class Controls {
         $name .= $key;
         $val = $light->pos->{$axis};
         $lblId = "{$axis}{$key}-lbl";
-        return "<label>
+        return "\n<label>
             {$lbl}: <span id=\"{$lblId}\">{$light->pos->x}</span> 
             <input type=\"range\" id=\"{$name}-slider\" min=\"-10\" max=\"10\" step=\"1\" value=\"{$val}\" data-label=\"{$lblId}\" data-property=\"{$prop}\" data-type=\"int\" data-index=\"{$index}\" data-axis=\"{$axis}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
-        </label>";
+        </label>\n";
     }
 }
 
