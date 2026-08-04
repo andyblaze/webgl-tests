@@ -16,13 +16,25 @@
     ],
     "material": [
         {
-            "wrapping": false,
+            "wrapping": true,
+            "wrapClass": "col-2",
             "controls": {
                 "color": {
                     "value": "#00ffff",
                     "type": "str",
                     "ctrl": "color"
                 },
+                "transmission": {
+                    "value": 0.2,
+                    "type": "float",
+                    "ctrl": "range"
+                }
+            }
+        },
+        {
+            "wrapping": true,
+            "wrapClass": "col-2",
+            "controls": {
                 "roughness": {
                     "value": 0.25,
                     "type": "float",
@@ -30,11 +42,6 @@
                 },
                 "metalness": {
                     "value": 0.03,
-                    "type": "float",
-                    "ctrl": "range"
-                },
-                "transmission": {
-                    "value": 0.2,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -60,7 +67,8 @@
             }
         },
         {
-            "wrapping": false,
+            "wrapping": true,
+            "wrapClass": "col-2",
             "controls": {
                 "clearcoat": {
                     "value": 1,
@@ -71,7 +79,13 @@
                     "value": 0.05,
                     "type": "float",
                     "ctrl": "range"
-                },
+                }
+            }
+        },
+        {
+            "wrapping": true,
+            "wrapClass": "col-2",
+            "controls": {
                 "emissive": {
                     "value": "#ff00ff",
                     "type": "str",
@@ -81,7 +95,13 @@
                     "value": 0.5,
                     "type": "float",
                     "ctrl": "range"
-                },
+                }
+            }
+        },
+        {
+            "wrapping": true,
+            "wrapClass": "col-3",
+            "controls": {
                 "ior": {
                     "value": 1.5,
                     "type": "float",
@@ -99,22 +119,38 @@
                     "value": 1.3,
                     "type": "float",
                     "ctrl": "range"
-                },
+                }
+            }
+        },
+        {
+            "wrapping": false,
+            "controls": {
                 "reflectivity": {
                     "value": 0.5,
                     "type": "float",
                     "ctrl": "range"
-                },
-                "sheen": {
-                    "value": 0.2,
-                    "type": "float",
-                    "ctrl": "range"
-                },
+                }
+            }
+        },
+        {
+            "wrapping": true,
+            "wrapClass": "col-2",
+            "controls": {
                 "sheenColor": {
                     "value": "#0000ff",
                     "type": "str",
                     "ctrl": "color"
                 },
+                "sheen": {
+                    "value": 0.2,
+                    "type": "float",
+                    "ctrl": "range"
+                }
+            }
+        },
+        {
+            "wrapping": false,
+            "controls": {
                 "thickness": {
                     "value": 0.5,
                     "type": "float",

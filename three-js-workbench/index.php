@@ -6,6 +6,7 @@ $controls = new Controls();
 $ctrlsCfg = json_decode(file_get_contents('ctrls-config.json'));
 
 $ctrls = $lights = '';
+$ctrls = "<h4>Material</h4>\n<div class=\"section\"\n";
 foreach ( $ctrlsCfg->material as $ctrlSet ) { 
     $wrapTagOpen = $wrapTagClose = '';
     if ( $ctrlSet->wrapping === true ) {
@@ -21,8 +22,10 @@ foreach ( $ctrlsCfg->material as $ctrlSet ) {
     }
     $ctrls .= $wrapTagClose;
 }
+$ctrls .= "</div>";
 $lightsCfg = 'const lightsCfg = ' . json_encode($ctrlsCfg->lights) . ';'; 
 
+$lights = "<h4>Lighting</h4>";
 foreach ( $ctrlsCfg->lights as $key=>$light ) {
     $lights .= '<div class="col-2">' .
         $controls->lightColor($light->sort . $key, $light, 'lights', 'color') . 
