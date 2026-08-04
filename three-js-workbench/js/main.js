@@ -6,6 +6,7 @@ import Renderer from "./renderer.js";
 import Camera from "./camera.js";
 import Model from "./model.js";
 import Lighting from "./lighting.js";
+import Accordion from "./accordion.js";
 import { byQsArray, byId } from "./functions.js";
 
 const config = new Config("workspace");
@@ -25,10 +26,12 @@ config.addObserver("lights", lighting);
 
 uiControls.connect("#ui-panel input").toObserver(config);
 
+const accordion = new Accordion("#accordion");
+
 const shape = model.native;
 const cam = camera.native;
 
-scene.add(shape);
+scene.add(shape); 
 
 const clock = new THREE.Clock();
 

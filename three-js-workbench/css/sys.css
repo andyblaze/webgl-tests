@@ -55,6 +55,26 @@
     width: auto !important;
   }
 
+#accordion .section {
+    border-bottom: 1px solid #444;
+}
+
+#accordion h4 {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+#accordion .controls {
+    display: none;
+    padding: 1rem;
+}
+
+#accordion .section.active .controls {
+    display: block;
+}
+
 
   #workspace {
     flex: 1;
