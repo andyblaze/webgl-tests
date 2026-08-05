@@ -8,6 +8,56 @@ import Model from "./model.js";
 import Lighting from "./lighting.js";
 import Accordion from "./accordion.js";
 
+const materials = ["MeshStandardMaterial", "MeshPhysicalMaterial", "MeshPhongMaterial", "MeshBasicMaterial"];
+const properties = new Map();
+const IGNORED_PROPERTIES = new Set([
+    // Object identity
+    "id",
+    "uuid",
+    "type",
+    "name",
+
+    // Runtime state
+    "version",
+    "needsUpdate",
+
+    // Type flags
+    "isMaterial",
+    "isMeshBasicMaterial",
+    "isMeshStandardMaterial",
+    "isMeshPhysicalMaterial",
+    "isMeshPhongMaterial",
+
+    // Internal
+    "defines",
+    "userData",
+
+    // Methods accidentally encountered
+    "constructor"
+]);
+for (const materialName of materials) {
+
+    const material = new THREE[materialName]();
+
+    for (const key in material) {
+        if (IGNORED_PROPERTIES.has(key))
+            continue;
+
+        let prop = properties.get(key);
+
+        if (!prop) {
+            prop = {
+                materials: new Set(),
+                type: typeof material[key]
+            };
+            properties.set(key, prop);
+        }
+
+        prop.materials.add(materialName);
+    }
+}
+console.log(properties);
+
 const config = new Config("workspace");
 
 const uiControls = new UiControls();

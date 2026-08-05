@@ -6,6 +6,40 @@
 {{css}}
 </head>
 <body>
+<label>
+    <span id="testlbl"></span>
+    <input type="range" min="0", max="2" step="1" id="testo" data-lbl="testlbl" data-assoc="geometry" />
+</label>
+<script>
+class Associations {
+    constructor() {
+        this.geometry = [
+            {
+                label: "Sphere"
+            },
+            {
+                label: "Box"
+            },
+            {
+                label: "Torus Knot"
+            }
+        ];
+    }
+    get(group, index) {
+        return this[group][index];
+    }
+}
+const associations = new Associations();
+
+function syncho(ctrl) {
+    const item = associations.get(ctrl.dataset.assoc, Number(ctrl.value));
+    document.getElementById(ctrl.dataset.lbl).textContent = item.label;
+}
+const ctrl = document.getElementById("testo");
+ctrl.oninput = () => syncho(ctrl);
+syncho(ctrl);
+
+</script>
 <form id="ui-panel" autocomplete="off">
 <div id="accordion">
      <div class="section">
