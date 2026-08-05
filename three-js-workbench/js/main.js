@@ -7,7 +7,6 @@ import Camera from "./camera.js";
 import Model from "./model.js";
 import Lighting from "./lighting.js";
 import Accordion from "./accordion.js";
-import { byQsArray, byId } from "./functions.js";
 
 const config = new Config("workspace");
 
