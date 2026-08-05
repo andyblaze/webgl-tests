@@ -7,8 +7,12 @@
 </head>
 <body>
 <label>
-    <span id="testlbl"></span>
-    <input type="range" min="0", max="2" step="1" id="testo" data-lbl="testlbl" data-assoc="geometry" />
+    <span id="geometry-lbl"></span>
+    <input type="range" min="0" step="1" value="0" id="geometry" class="associative" data-lbl="geometry-lbl" data-assoc="geometry" autocomplete="off" />
+</label>
+<label>
+    <span id="material-lbl"></span>
+    <input type="range" min="0" step="1" value="0" id="material" class="associative" data-lbl="material-lbl" data-assoc="material" autocomplete="off" />
 </label>
 <script>
 class Associations {
@@ -24,9 +28,26 @@ class Associations {
                 label: "Torus Knot"
             }
         ];
+        this.material = [
+            {
+                label: "Basic"
+            },
+            {
+                label: "Physical"
+            },
+            {
+                label: "Phong"
+            }
+        ];
+    }
+    groupLength(group) {
+        return this[group].length;
     }
     get(group, index) {
         return this[group][index];
+    }
+    bind(ctrl) {
+        ctrl.max = this.groupLength(ctrl.dataset.assoc) - 1;
     }
 }
 const associations = new Associations();
@@ -35,10 +56,12 @@ function syncho(ctrl) {
     const item = associations.get(ctrl.dataset.assoc, Number(ctrl.value));
     document.getElementById(ctrl.dataset.lbl).textContent = item.label;
 }
-const ctrl = document.getElementById("testo");
-ctrl.oninput = () => syncho(ctrl);
-syncho(ctrl);
-
+const ctrls = document.getElementsByClassName("associative");
+for ( const ctrl of ctrls) {
+    associations.bind(ctrl);
+    ctrl.oninput = () => syncho(ctrl);
+    syncho(ctrl);
+}
 </script>
 <form id="ui-panel" autocomplete="off">
 <div id="accordion">

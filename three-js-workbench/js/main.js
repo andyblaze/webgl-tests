@@ -8,6 +8,7 @@ import Model from "./model.js";
 import Lighting from "./lighting.js";
 import Accordion from "./accordion.js";
 
+/*
 const materials = ["MeshStandardMaterial", "MeshPhysicalMaterial", "MeshPhongMaterial", "MeshBasicMaterial"];
 const properties = new Map();
 const IGNORED_PROPERTIES = new Set([
@@ -56,7 +57,8 @@ for (const materialName of materials) {
         prop.materials.add(materialName);
     }
 }
-console.log(properties);
+    */
+//console.log(properties);
 
 const config = new Config("workspace");
 
