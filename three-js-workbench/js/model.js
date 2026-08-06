@@ -9,7 +9,7 @@ export default class Model extends ThreeObject {
         this.material = new three.MeshPhysicalMaterial({
             ...cfg.material,
             bumpMap,
-            bumpScale: 0.2,
+            bumpScale: 2,
             normalMap
         });
         //this.material = new three.MeshStandardMaterial(cfg.material);
