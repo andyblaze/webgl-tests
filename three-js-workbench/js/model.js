@@ -3,8 +3,16 @@ import ThreeObject from "./three-object.js";
 export default class Model extends ThreeObject {
     constructor(three, cfg) {
         super();
-        this.geometry = new three.TorusKnotGeometry( 3, 1, 128, 64 );
-        this.material = new three.MeshStandardMaterial(cfg.material);
+        this.geometry = new three.BoxGeometry(6, 6, 6);
+        const bumpMap = new three.TextureLoader().load("./stone.png");
+        const normalMap = new three.TextureLoader().load("./stone-normal.png");
+        this.material = new three.MeshPhysicalMaterial({
+            ...cfg.material,
+            bumpMap,
+            bumpScale: 0.2,
+            normalMap
+        });
+        //this.material = new three.MeshStandardMaterial(cfg.material);
         this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
     update(material) {
