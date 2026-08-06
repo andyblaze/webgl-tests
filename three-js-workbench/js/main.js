@@ -8,9 +8,8 @@ import Model from "./model.js";
 import Lighting from "./lighting.js";
 import Accordion from "./accordion.js";
 
-/*
-const materials = ["MeshStandardMaterial", "MeshPhysicalMaterial", "MeshPhongMaterial", "MeshBasicMaterial"];
-const properties = new Map();
+
+const materials = ["MeshStandardMaterial", "MeshPhysicalMaterial", "MeshPhongMaterial", "MeshBasicMaterial", "MeshLambertMaterial", "MeshNormalMaterial", "MeshToonMaterial"];
 const IGNORED_PROPERTIES = new Set([
     // Object identity
     "id",
@@ -36,13 +35,53 @@ const IGNORED_PROPERTIES = new Set([
     // Methods accidentally encountered
     "constructor"
 ]);
+const INCLUDED_PROPERTIES = new Set([
+    "color",
+    "roughness",
+    "metalness",
+    "transparent",
+    "opacity",
+    "emissive",
+    "emissiveIntensity",
+    "clearcoat",
+    "clearcoatRoughness",
+    "transmission",
+    "ior",
+    "thickness",
+    "sheen",
+    "sheenColor",
+    "reflectivity",
+    "iridescence",
+    "iridescenceIOR",
+    "attenuationColor",
+    "anisotropy",
+    "bumpMap",
+    "bumpScale",
+    "displacementMap",
+    "displacementScale",
+    "normalMap",
+    "normalScale",
+    "map",
+    "aoMap",
+    "aoMapIntensity",
+    "emissiveMap",
+]);
+const properties = new Map();
+const materialProperties = new Map();
+
 for (const materialName of materials) {
 
     const material = new THREE[materialName]();
+    const props = new Set();
 
     for (const key in material) {
+        if ( ! INCLUDED_PROPERTIES.has(key) )
+            continue;
+
         if (IGNORED_PROPERTIES.has(key))
             continue;
+
+        props.add(key);
 
         let prop = properties.get(key);
 
@@ -56,9 +95,11 @@ for (const materialName of materials) {
 
         prop.materials.add(materialName);
     }
+
+    materialProperties.set(materialName, props);
 }
-    */
-//console.log(properties);
+    
+console.log(materialProperties);
 
 const config = new Config("workspace");
 
