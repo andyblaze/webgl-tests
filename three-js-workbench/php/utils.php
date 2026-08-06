@@ -60,7 +60,7 @@ class Controls {
     }
     public function lightSlider(string $name, object $light, string $index, $property='', $prefix='') {
         list($tagOpen, $ctrl, $tagClose) = $this->html('range', $light->intensity, $name, $property, $prefix);
-        $ctrl .=  " data-type=\"int\" data-index=\"{$index}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\" min=\"0\" max=\"5\" step=\"0.5\"";
+        $ctrl .=  " data-type=\"int\" data-index=\"{$index}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\" min=\"0\" max=\"5\" step=\"1\"";
         return $tagOpen . $ctrl . $tagClose;
     }
     public function lightPos(string $name, object $light, string $axis, int $key, string $index, $property='', $prefix='') {
