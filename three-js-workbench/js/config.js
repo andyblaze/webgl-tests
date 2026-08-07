@@ -8,12 +8,14 @@ export default class Config {
         this.aspectRatio = this.clientW / this.clientH;
         this.material = {};
         this.lights = {};
+        this.maps = {}
         this.observers = {};
     }
     fixValue(c) {
         const type = c.dataset.type;
         if ( type === "str" )   return c.value;
         if ( type === "float" ) return parseFloat(c.value);
+        if ( type === "vec2" ) return [parseFloat(c.value), parseFloat(c.value)];
         if ( type === "int" )   return parseInt(c.value);
         if ( type === "bool" )  return c.value === "1";
     }

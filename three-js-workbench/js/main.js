@@ -21,6 +21,7 @@ for ( const light of lightsCfg )
     lighting.addLight(scene, light);
 
 config.addObserver("material", model);
+config.addObserver("maps", model);
 config.addObserver("lights", lighting);
 
 uiControls.connect("#ui-panel input").toObserver(config);

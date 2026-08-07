@@ -5,7 +5,8 @@ $controls = new Controls();
 
 $ctrlsCfg = json_decode(file_get_contents('ctrls-config.json'));
 
-$material = $lights = '';
+$material = $lights = $maps = '';
+
 foreach ( $ctrlsCfg->material as $ctrlSet ) { 
     $wrapTagOpen = $wrapTagClose = '';
     if ( $ctrlSet->wrapping === true ) {
@@ -20,6 +21,22 @@ foreach ( $ctrlsCfg->material as $ctrlSet ) {
             $material .= $controls->colorPicker($key, $val, 'material');        
     }
     $material .= $wrapTagClose;
+}
+
+foreach ( $ctrlsCfg->maps as $ctrlSet ) { 
+    $wrapTagOpen = $wrapTagClose = '';
+    if ( $ctrlSet->wrapping === true ) {
+        $wrapTagOpen = "<div class=\"{$ctrlSet->wrapClass}\">";
+        $wrapTagClose = '</div>';
+    }
+    $maps .= $wrapTagOpen;
+    foreach ( $ctrlSet->controls as $key=>$val ) {
+        if ( $val->ctrl === "range" )
+            $maps .= $controls->slider($key, $val, 'material');
+        if ( $val->ctrl === "color" )
+            $maps .= $controls->colorPicker($key, $val, 'material');        
+    }
+    $maps .= $wrapTagClose;
 }
 
 $lightsCfg = 'const lightsCfg = ' . json_encode($ctrlsCfg->lights) . ';'; 
@@ -43,7 +60,8 @@ $data = [
     'css' => link_tag('css/sys.css'),
     'lightsCfg' => $lightsCfg,
     'material' => $material,
-    'lights' => $lights
+    'lights' => $lights,
+    'maps' => $maps
 ];
 
 $html = file_get_contents('php/view.html');
