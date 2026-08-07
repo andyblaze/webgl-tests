@@ -70,7 +70,7 @@ class Controls {
         $lblId = "{$axis}{$key}-lbl";
         return "\n<label>
             {$lbl}: <span id=\"{$lblId}\">{$light->pos->x}</span> 
-            <input type=\"range\" id=\"{$name}-slider\" min=\"-10\" max=\"10\" step=\"1\" value=\"{$val}\" data-label=\"{$lblId}\" data-property=\"{$prop}\" data-type=\"int\" data-index=\"{$index}\" data-axis=\"{$axis}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
+            <input type=\"range\" id=\"{$name}-slider\" min=\"-20\" max=\"20\" step=\"1\" value=\"{$val}\" data-label=\"{$lblId}\" data-property=\"{$prop}\" data-type=\"int\" data-index=\"{$index}\" data-axis=\"{$axis}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
         </label>\n";
     }
 }
