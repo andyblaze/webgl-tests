@@ -4,12 +4,12 @@ export default class Model extends ThreeObject {
     constructor(three, cfg) {
         super();
         this.geometry = new three.BoxGeometry(6, 6, 6);
-        const bumpMap = new three.TextureLoader().load("./cloud.png");
-        const normalMap = new three.TextureLoader().load("./cloud-normal.png");
+        const bumpMap = new three.TextureLoader().load("./brush.png");
+        const normalMap = new three.TextureLoader().load("./brush-normal.png");
         this.material = new three.MeshPhysicalMaterial({
             ...cfg.material,
             bumpMap,
-            bumpScale: 0.2,
+            bumpScale: 2,
             normalMap
         });
         //this.material = new three.MeshStandardMaterial(cfg.material);
