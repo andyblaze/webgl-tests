@@ -13,7 +13,7 @@ export default class Config {
     }
     fixValue(c) {
         const type = c.dataset.type;
-        if ( type === "str" )   return c.value;
+        if ( type === "color" )   return c.value;
         if ( type === "float" ) return parseFloat(c.value);
         if ( type === "vec2" ) return [parseFloat(c.value), parseFloat(c.value)];
         if ( type === "int" )   return parseInt(c.value);
@@ -55,7 +55,7 @@ export default class Config {
     updateMaterial(type, ctrls) {
         const item = this[type];
         for ( const c of ctrls )
-            item[c.dataset.property] = this.fixValue(c);
+            item[c.dataset.property] = { "type": c.dataset.type, "value": this.fixValue(c) };
     }
     update(type, ctrls) {
         if ( type === "lights" )

@@ -16,16 +16,37 @@ export default class Model extends ThreeObject {
         this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
     update(material) {
-        for ( const [prop, val] of Object.entries(material) ) {
-            if ( Array.isArray(val) ) {
-                this.material[prop].set(val[0], val[1]);
+        for ( const [prop, data] of Object.entries(material) ) {
+
+            switch (data.type) {
+                case "float":
+                case "int":
+                case "bool":
+                this.material[prop] = item.value;
+                break;
+
+                case "color":
+                    this.material[prop].set(data.value);
+                    break;
+
+                case "vec2":
+                    this.material[prop].set(data.value[0], data.value[1]);
+                    break;
+
+                case "map":
+                    this.setMap(prop, data.value);
+                    break;
+            }
+            
+           /* if ( data.type === "vec2" )  {
+                this.material[prop].set(data.value[0], data.value[1]);
                 return;
             }
 
-            if ( typeof val === "string" )
-                this.material[prop].set(val);
+            if ( data.type === "color" )
+                this.material[prop].set(data.value);
             else 
-                this.material[prop] = val;
+                this.material[prop] = data.value;*/
         }
     }
 }
