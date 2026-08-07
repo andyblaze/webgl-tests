@@ -37,16 +37,6 @@ export default class Model extends ThreeObject {
                     this.setMap(prop, data.value);
                     break;
             }
-            
-           /* if ( data.type === "vec2" )  {
-                this.material[prop].set(data.value[0], data.value[1]);
-                return;
-            }
-
-            if ( data.type === "color" )
-                this.material[prop].set(data.value);
-            else 
-                this.material[prop] = data.value;*/
         }
     }
 }
