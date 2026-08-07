@@ -52,15 +52,15 @@
 }
 const associations = new Associations();
 
-function syncho(ctrl) {
+function synch(ctrl) {
     const item = associations.get(ctrl.dataset.assoc, Number(ctrl.value));
     document.getElementById(ctrl.dataset.lbl).textContent = item.label;
 }
 const ctrls = document.getElementsByClassName("associative");
 for ( const ctrl of ctrls) {
     associations.bind(ctrl);
-    ctrl.oninput = () => syncho(ctrl);
-    syncho(ctrl);
+    ctrl.oninput = () => synch(ctrl);
+    synch(ctrl);
 }*/
 </script>
 <form id="ui-panel" autocomplete="off">
