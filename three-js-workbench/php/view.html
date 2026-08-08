@@ -14,8 +14,14 @@
     <span id="material-lbl"></span>
     <input type="range" min="0" step="1" value="0" id="material" class="associative" data-lbl="material-lbl" data-assoc="material" autocomplete="off" />
 </label>-->
+<div>
+<label>
+    <span id="maps-lbl"></span>
+    <input type="range" min="0" step="1" value="0" id="maps" class="associative" data-lbl="maps-lbl" data-img="maps-img" data-assoc="maps" autocomplete="off" />
+<img id="maps-img" src="" width="120" height="120" /></label>
+</div>
 <script>
-/*class Associations {
+class Associations {
     constructor() {
         this.geometry = [
             {
@@ -39,6 +45,10 @@
                 label: "Phong"
             }
         ];
+        this.maps = [
+            { label: "spots", img: "./textures/spots-normal.png" },
+            { label: "pave", img: "./textures/pave-normal.png" }
+        ];
     }
     groupLength(group) {
         return this[group].length;
@@ -55,13 +65,14 @@ const associations = new Associations();
 function synch(ctrl) {
     const item = associations.get(ctrl.dataset.assoc, Number(ctrl.value));
     document.getElementById(ctrl.dataset.lbl).textContent = item.label;
+    document.getElementById(ctrl.dataset.img).src = item.img;
 }
 const ctrls = document.getElementsByClassName("associative");
 for ( const ctrl of ctrls) {
     associations.bind(ctrl);
     ctrl.oninput = () => synch(ctrl);
     synch(ctrl);
-}*/
+}
 </script>
 <form id="ui-panel" autocomplete="off">
 <div id="accordion">
