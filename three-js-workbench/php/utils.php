@@ -55,7 +55,7 @@ class Controls {
     public function lightColor(string $name, object $light, string $index, $property='', $prefix='color-') {
         list($tagOpen, $ctrl, $tagClose) = $this->html('color', $light->color, $name, $property, $prefix);
 
-        $ctrl .=  " data-type=\"str\" data-index=\"{$index}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\"";
+        $ctrl .=  " data-type=\"color\" data-index=\"{$index}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\"";
         return $tagOpen . $ctrl . $tagClose;
     }
     public function lightSlider(string $name, object $light, string $index, $property='', $prefix='') {

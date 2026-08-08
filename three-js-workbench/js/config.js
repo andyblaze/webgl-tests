@@ -31,9 +31,9 @@ export default class Config {
         const axis = ctrl.dataset.axis;
         item["pos"][axis] = this.fixValue(ctrl); 
     }
-    initLight(id, lightType) {
+    initLight(id, lightType, type) {
         return { 
-            "id": id, "type": lightType, 
+            "id": id, "sort": lightType, "type": type,
             "color": "", "intensity": 0, 
             "pos": { "x": 0, "y": 0, "z": 0 } 
         };
@@ -44,7 +44,7 @@ export default class Config {
             const id = c.dataset.lightid;
             const key = c.dataset.property;
             if ( typeof item[id] !== "object" ) 
-                item[id] = this.initLight(id, c.dataset.lighttype);
+                item[id] = this.initLight(id, c.dataset.lighttype, c.dataset.type);
 
             if ( key === "pos" ) 
                 this.updatePos(item[id], c);  

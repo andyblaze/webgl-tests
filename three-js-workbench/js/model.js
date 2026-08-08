@@ -22,7 +22,7 @@ export default class Model extends ThreeObject {
                 case "float":
                 case "int":
                 case "bool":
-                this.material[prop] = item.value;
+                this.material[prop] = data.value;
                 break;
 
                 case "color":
