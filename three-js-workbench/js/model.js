@@ -1,11 +1,22 @@
 import ThreeObject from "./three-object.js";
 
+class TexLoader {
+    constructor(three) {
+        this.loader = new three.TextureLoader();
+    }
+    load(tex) {
+        return this.loader.load(tex);
+    }
+}
+
 export default class Model extends ThreeObject {
     constructor(three, cfg) {
         super();
+        this.loader = new TexLoader(three);
         this.geometry = new three.BoxGeometry(6, 6, 6);
-        const bumpMap = new three.TextureLoader().load("./textures/spots.png");
-        const normalMap = new three.TextureLoader().load("./textures/spots-normal.png");
+        this.normalMap = "./textures/spots-normal.png";
+        const bumpMap = this.loader.load("./textures/spots.png");
+        const normalMap = this.loader.load("./textures/spots-normal.png");
         this.material = new three.MeshPhysicalMaterial({
             ...cfg.material,
             bumpMap,
@@ -14,6 +25,12 @@ export default class Model extends ThreeObject {
         });
         //this.material = new three.MeshStandardMaterial(cfg.material);
         this.nativeObj = new three.Mesh(this.geometry, this.material);
+    }
+    setMap(prop, val) { console.log(prop, val);
+        if ( val === this[prop] ) return;
+        const tex = this.loader.load(val);
+        this.material[prop] = tex;
+        this[prop] = val;
     }
     update(material) {
         for ( const [prop, data] of Object.entries(material) ) {

@@ -13,6 +13,7 @@ export default class Config {
     }
     fixValue(c) {
         const type = c.dataset.type;
+        if ( type === "map" ) return c.dataset.mapsrc;
         if ( type === "color" )   return c.value;
         if ( type === "float" ) return parseFloat(c.value);
         if ( type === "vec2" ) return [parseFloat(c.value), parseFloat(c.value)];
@@ -20,7 +21,7 @@ export default class Config {
         if ( type === "bool" )  return c.value === "1";
     }
     addObserver(type, o) {
-        this.observers[type] = o;
+        this.observers[type] = o; //console.log("obs", this.observers);
     }
     notify(type) {
         //for ( const [type, o] of Object.entries(this.observers) )
@@ -57,11 +58,19 @@ export default class Config {
         for ( const c of ctrls )
             item[c.dataset.property] = { "type": c.dataset.type, "value": this.fixValue(c) };
     }
+    updateMaps(type, ctrls) { //console.log("t", type)
+        const item = this[type];
+        for ( const c of ctrls )
+            item[c.dataset.property] = { "type": c.dataset.type, "value": this.fixValue(c) };
+        //console.log(item);
+    }
     update(type, ctrls) {
         if ( type === "lights" )
             this.updateLights(type, ctrls);
         if ( type === "material" )
             this.updateMaterial(type, ctrls);
+        if ( type === "maps" )
+            this.updateMaps(type, ctrls);
         this.notify(type);
     }
 }

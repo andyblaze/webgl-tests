@@ -1,0 +1,51 @@
+import { byId } from "./functions.js";
+
+export default class Associations {
+    constructor() {
+        this.geometry = [
+            {
+                label: "Sphere"
+            },
+            {
+                label: "Box"
+            },
+            {
+                label: "Torus Knot"
+            }
+        ];
+        this.material = [
+            {
+                label: "Basic"
+            },
+            {
+                label: "Physical"
+            },
+            {
+                label: "Phong"
+            }
+        ];
+        this.normalMaps = [
+            { label: "spots", img: "./textures/spots-normal.png" },
+            { label: "pave", img: "./textures/pave-normal.png" },
+            { label: "stone", img: "./textures/stone-normal.png" },
+            { label: "brush", img: "./textures/brush-normal.png" },
+            { label: "cloud", img: "./textures/cloud-normal.png" },
+            { label: "marble", img: "./textures/marble-normal.png" },
+            { label: "speck", img: "./textures/speck-normal.png" }
+        ];
+    }
+    groupLength(group) {
+        return this[group].length;
+    }
+    get(group, index) {
+        return this[group][index];
+    }
+    update(ctrl) {
+        if ( !ctrl.dataset.assoc ) return;
+        ctrl.max = this.groupLength(ctrl.dataset.assoc) - 1;
+        const item = this.get(ctrl.dataset.assoc, Number(ctrl.value));
+        byId(ctrl.dataset.lbl).textContent = item.label;
+        byId(ctrl.dataset.img).src = item.img;
+        ctrl.dataset.mapsrc = item.img;
+    }
+}

@@ -14,67 +14,14 @@
     <span id="material-lbl"></span>
     <input type="range" min="0" step="1" value="0" id="material" class="associative" data-lbl="material-lbl" data-assoc="material" autocomplete="off" />
 </label>-->
+
+<form id="ui-panel" autocomplete="off">
 <div>
 <label>
-    <span id="maps-lbl"></span>
-    <input type="range" min="0" step="1" value="0" id="maps" class="associative" data-lbl="maps-lbl" data-img="maps-img" data-assoc="maps" autocomplete="off" />
-<img id="maps-img" src="" width="120" height="120" /></label>
+    <span id="normalMap-lbl"></span>
+    <input type="range" min="0" step="1" value="0" id="maps" class="associative" data-lbl="normalMap-lbl" data-img="normalMap-img" data-assoc="normalMaps" data-property="normalMap" data-type="map" data-index="maps" data-mapPath="" autocomplete="off" />
+<img id="normalMap-img" class="assoc-img" src="" /></label>
 </div>
-<script>
-class Associations {
-    constructor() {
-        this.geometry = [
-            {
-                label: "Sphere"
-            },
-            {
-                label: "Box"
-            },
-            {
-                label: "Torus Knot"
-            }
-        ];
-        this.material = [
-            {
-                label: "Basic"
-            },
-            {
-                label: "Physical"
-            },
-            {
-                label: "Phong"
-            }
-        ];
-        this.maps = [
-            { label: "spots", img: "./textures/spots-normal.png" },
-            { label: "pave", img: "./textures/pave-normal.png" }
-        ];
-    }
-    groupLength(group) {
-        return this[group].length;
-    }
-    get(group, index) {
-        return this[group][index];
-    }
-    bind(ctrl) {
-        ctrl.max = this.groupLength(ctrl.dataset.assoc) - 1;
-    }
-}
-const associations = new Associations();
-
-function synch(ctrl) {
-    const item = associations.get(ctrl.dataset.assoc, Number(ctrl.value));
-    document.getElementById(ctrl.dataset.lbl).textContent = item.label;
-    document.getElementById(ctrl.dataset.img).src = item.img;
-}
-const ctrls = document.getElementsByClassName("associative");
-for ( const ctrl of ctrls) {
-    associations.bind(ctrl);
-    ctrl.oninput = () => synch(ctrl);
-    synch(ctrl);
-}
-</script>
-<form id="ui-panel" autocomplete="off">
 <div id="accordion">
      <div class="section">
         <h4>Lighting</h4>

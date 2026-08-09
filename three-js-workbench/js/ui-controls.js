@@ -5,11 +5,11 @@ export default class UiControls {
         this.ctrls = [];
         this.observer = null;
     }
-    connect(selector) {
-        this.ctrls = byQsArray(selector);
-        for ( const ctrl of this.ctrls ) {
+    connect(ctrls) {
+        this.ctrls = ctrls;
+        /*for ( const ctrl of this.ctrls ) {
             ctrl.oninput = () => this.synch(ctrl);
-        }
+        }*/
         return this;
     }
     toObserver(o) {

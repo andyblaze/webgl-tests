@@ -7,6 +7,8 @@ import Camera from "./camera.js";
 import Model from "./model.js";
 import Lighting from "./lighting.js";
 import Accordion from "./accordion.js"; 
+import Associations from "./associations.js";
+import { byQsArray } from "./functions.js";
 
 const config = new Config("workspace");
 
@@ -17,6 +19,8 @@ const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
 const model = new Model(THREE, config);
 
+const associations = new Associations();
+
 for ( const light of lightsCfg )
     lighting.addLight(scene, light);
 
@@ -24,7 +28,19 @@ config.addObserver("material", model);
 config.addObserver("maps", model);
 config.addObserver("lights", lighting);
 
-uiControls.connect("#ui-panel input").toObserver(config);
+const ctrls = byQsArray("#ui-panel input");
+
+uiControls.connect(ctrls).toObserver(config);
+
+for ( const ctrl of ctrls ) {
+    ctrl.oninput = () => {
+        associations.update(ctrl);
+        uiControls.synch(ctrl);
+    };    
+    // synch ctrl on page load
+    associations.update(ctrl);
+    uiControls.synch(ctrl);
+}
 
 const accordion = new Accordion("#accordion");
 
