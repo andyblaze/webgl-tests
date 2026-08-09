@@ -35,6 +35,8 @@ foreach ( $ctrlsCfg->maps as $ctrlSet ) {
             $maps .= $controls->slider($key, $val, 'material');
         if ( $val->ctrl === "color" )
             $maps .= $controls->colorPicker($key, $val, 'material');        
+        if ( $val->ctrl === "assoc" )
+            $maps .= $controls->associative($key, $val, 'maps');        
     }
     $maps .= $wrapTagClose;
 }

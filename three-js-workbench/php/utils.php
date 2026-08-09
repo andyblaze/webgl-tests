@@ -52,6 +52,13 @@ class Controls {
         $ctrl .=  " data-type=\"{$item->type}\" data-index=\"{$index}\"";
         return $tagOpen . $ctrl . $tagClose;
     }
+    public function associative() {
+        return '<label>
+            <span id="normalMap-lbl"></span>
+            <input type="range" min="0" step="1" value="0" id="maps" class="associative" data-lbl="normalMap-lbl" data-img="normalMap-img" data-assoc="normalMaps" data-property="normalMap" data-type="map" data-index="maps" data-mapPath="" autocomplete="off" />
+        <img id="normalMap-img" class="assoc-img" src="" />
+        </label>';
+    }
     public function lightColor(string $name, object $light, string $index, $property='', $prefix='color-') {
         list($tagOpen, $ctrl, $tagClose) = $this->html('color', $light->color, $name, $property, $prefix);
 

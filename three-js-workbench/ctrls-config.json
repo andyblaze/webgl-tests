@@ -19,17 +19,26 @@
             "wrapping": true,
             "wrapClass": "col-2",
             "controls": {
-                "bumpScale": {
-                    "value": 0.2,
-                    "type": "float",
-                    "ctrl": "range",
-                    "min": 0.01,
-                    "max": 2,
-                    "step": 0.01
+                "normalMap": {
+                    "type": "map",
+                    "ctrl": "assoc"
                 },
                 "normalScale": {
                     "value": 0.2,
                     "type": "vec2",
+                    "ctrl": "range",
+                    "min": 0.01,
+                    "max": 2,
+                    "step": 0.01
+                }
+            }
+        },
+        {
+            "wrapping": false,
+            "controls": {
+                "bumpScale": {
+                    "value": 0.2,
+                    "type": "float",
                     "ctrl": "range",
                     "min": 0.01,
                     "max": 2,
