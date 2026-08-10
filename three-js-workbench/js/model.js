@@ -14,16 +14,21 @@ export default class Model extends ThreeObject {
         super();
         this.loader = new TexLoader(three);
         this.geometry = new three.BoxGeometry(6, 6, 6);
-
+        this.normalMap = "";
+        this.roughnessMap = "";
         this.material = new three.MeshPhysicalMaterial(cfg.material);
         //this.material = new three.MeshStandardMaterial(cfg.material);
         this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
-    setMap(prop, val) { //console.log(prop, val);
+    setMap(prop, val) {
+        if ( val.length === 0 ) return;
         if ( val === this[prop] ) return;
         const tex = this.loader.load(val);
+        
         this.material[prop] = tex;
         this[prop] = val;
+        console.log(prop, this[prop], val, this.material[prop] === tex, tex);
+        this.material.needsUpdate = true;
     }
     update(material) {
         for ( const [prop, data] of Object.entries(material) ) {

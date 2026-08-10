@@ -33,6 +33,15 @@ export default class Associations {
             { label: "marble", img: "./textures/marble-normal.png" },
             { label: "speck", img: "./textures/speck-normal.png" }
         ];
+        this.roughnessMaps = [
+            { label: "spots", img: "./textures/spots.png" },
+            { label: "pave", img: "./textures/pave.png" },
+            { label: "stone", img: "./textures/stone.png" },
+            { label: "brush", img: "./textures/brush.png" },
+            { label: "cloud", img: "./textures/cloud.png" },
+            { label: "marble", img: "./textures/marble.png" },
+            { label: "speck", img: "./textures/speck.png" }
+        ];
     }
     groupLength(group) {
         return this[group].length;

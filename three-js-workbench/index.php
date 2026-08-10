@@ -25,4 +25,4 @@ foreach ( $data as $key=>$val ) {
     $html = str_replace('{{' . $key . '}}', $val, $html);
 }
 
-echo $html;
+echo $html; 
