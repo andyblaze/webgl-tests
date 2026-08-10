@@ -10,6 +10,34 @@ import Accordion from "./accordion.js";
 import Associations from "./associations.js";
 import { byQsArray } from "./functions.js";
 
+class Registry {
+    constructor(three) {
+        this.geometries = {
+            sphere: { ctor: three.SphereGeometry, defaults: [15, 32, 16] },
+            box: { ctor: three.BoxGeometry, defaults: [1, 1, 1] },
+            torus: { ctor: three.TorusGeometry, defaults: [10, 3, 16, 100] },
+            torusknot: { ctor: three.TorusKnotGeometry, defaults: [10, 3, 100, 16] },
+            capsule: { ctor: three.CapsuleGeometry, defaults: [1, 1, 4, 8, 1] },
+            cylinder: { ctor: three.CylinderGeometry, defaults: [5, 5, 20, 32] }
+        }
+        this.materials = {
+            basic: { ctor: three.MeshBasicMaterial },
+            phong: { ctor: three.MeshPhongMaterial },
+            physical: { ctor: three.MeshPhysicalMaterial },
+            standard: { ctor: three.MeshStandardMaterial },
+            lambert: { ctor: three.MeshLambertMaterial }
+        }
+    }
+    createGeometry(type) {
+        const geo = this.geometries[type];
+        return new geo.ctor(...geo.defaults);
+    }
+    createMaterial(type, cfg) {
+        const mat = this.materials[type];
+        return new mat.ctor(cfg);
+    }
+}
+
 const config = new Config("workspace");
 
 const uiControls = new UiControls();
