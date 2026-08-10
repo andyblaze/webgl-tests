@@ -17,7 +17,7 @@
     "maps": [
         {
             "wrapping": true,
-            "wrapClass": "col-2",
+            "wrapClass": "col-2 associative",
             "controls": {
                 "normalMap": {
                     "type": "map",

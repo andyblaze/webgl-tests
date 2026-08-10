@@ -46,6 +46,14 @@
     #ui-panel #renderer-select {
       font-size: 1.2rem;
     }
+
+    .associative label, .associative img {
+      display: inline-block !important;
+    }
+    .associative label {
+      width: 40% !important;
+      margin: 0 0 0 4px;
+    }
     .assoc-img {
        width: 120px;
        height: 120px;

@@ -14,19 +14,12 @@ export default class Model extends ThreeObject {
         super();
         this.loader = new TexLoader(three);
         this.geometry = new three.BoxGeometry(6, 6, 6);
-        this.normalMap = "./textures/spots-normal.png";
-        const bumpMap = this.loader.load("./textures/spots.png");
-        const normalMap = this.loader.load("./textures/spots-normal.png");
-        this.material = new three.MeshPhysicalMaterial({
-            ...cfg.material,
-            bumpMap,
-            bumpScale: 2,
-            normalMap
-        });
+
+        this.material = new three.MeshPhysicalMaterial(cfg.material);
         //this.material = new three.MeshStandardMaterial(cfg.material);
         this.nativeObj = new three.Mesh(this.geometry, this.material);
     }
-    setMap(prop, val) { console.log(prop, val);
+    setMap(prop, val) { //console.log(prop, val);
         if ( val === this[prop] ) return;
         const tex = this.loader.load(val);
         this.material[prop] = tex;

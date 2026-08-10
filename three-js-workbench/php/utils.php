@@ -52,12 +52,11 @@ class Controls {
         $ctrl .=  " data-type=\"{$item->type}\" data-index=\"{$index}\"";
         return $tagOpen . $ctrl . $tagClose;
     }
-    public function associative() {
-        return '<label>
-            <span id="normalMap-lbl"></span>
-            <input type="range" min="0" step="1" value="0" id="maps" class="associative" data-lbl="normalMap-lbl" data-img="normalMap-img" data-assoc="normalMaps" data-property="normalMap" data-type="map" data-index="maps" data-mapPath="" autocomplete="off" />
-        <img id="normalMap-img" class="assoc-img" src="" />
-        </label>';
+    public function associative(string $key, object $item, string $index) {
+        return "<img id=\"{$key}-img\" class=\"assoc-img\" src=\"\" /><label class=\"assoc\">
+            <span id=\"{$key}-lbl\"></span>
+            <input type=\"range\" min=\"0\" step=\"1\" value=\"0\" class=\"associative\" data-lbl=\"{$key}-lbl\" data-img=\"{$key}-img\" data-assoc=\"{$key}s\" data-property=\"{$key}\" data-type=\"map\" data-index=\"{$index}\" data-mapsrc=\"\" autocomplete=\"off\" />        
+        </label>";
     }
     public function lightColor(string $name, object $light, string $index, $property='', $prefix='color-') {
         list($tagOpen, $ctrl, $tagClose) = $this->html('color', $light->color, $name, $property, $prefix);
@@ -79,6 +78,52 @@ class Controls {
             {$lbl}: <span id=\"{$lblId}\">{$light->pos->x}</span> 
             <input type=\"range\" id=\"{$name}-slider\" min=\"-20\" max=\"20\" step=\"1\" value=\"{$val}\" data-label=\"{$lblId}\" data-property=\"{$prop}\" data-type=\"int\" data-index=\"{$index}\" data-axis=\"{$axis}\" data-lightid=\"{$light->id}\" data-lighttype=\"{$light->sort}\" autocomplete=\"off\" />
         </label>\n";
+    }
+}
+
+class ControlsBuilder {
+    private ?Controls $controls = null;
+    public function __construct(object $controls) {
+        $this->controls = $controls;
+    }
+    public function build(array $ctrls, string $index) {
+        $html = '';
+        foreach ( $ctrls as $ctrlSet ) { 
+            $wrapTagOpen = $wrapTagClose = '';
+            if ( $ctrlSet->wrapping === true ) {
+                $wrapTagOpen = "<div class=\"{$ctrlSet->wrapClass}\">";
+                $wrapTagClose = '</div>';
+            }
+            $html .= $wrapTagOpen;
+            foreach ( $ctrlSet->controls as $key=>$val ) {
+                if ( $val->ctrl === "range" )
+                    $html .= $this->controls->slider($key, $val, $index);
+                if ( $val->ctrl === "color" )
+                    $html .= $this->controls->colorPicker($key, $val, $index);  
+                if ( $val->ctrl === "assoc" )
+                    $html .= $this->controls->associative($key, $val, 'maps');                     
+            }
+            $html .= $wrapTagClose;
+        }
+        return $html;       
+    }
+    public function buildLights(array $lights) {
+        $html = '';
+        foreach ( $lights as $key=>$light ) {
+            $html .= '<div class="col-2">' .
+                $this->controls->lightColor($light->sort . $key, $light, 'lights', 'color') . 
+                $this->controls->lightSlider($light->sort . $key, $light, 'lights', 'intensity') . 
+            '</div>';
+
+            if ( isset($light->pos) ) {
+                $html .= '<div class="col-3">' . 
+                    $this->controls->lightPos($light->sort, $light, 'x', $key, 'lights', 'pos') . 
+                    $this->controls->lightPos($light->sort, $light, 'y', $key, 'lights', 'pos') . 
+                    $this->controls->lightPos($light->sort, $light, 'z', $key, 'lights', 'pos') . 
+                '</div>';
+            }
+        }
+        return $html;
     }
 }
 

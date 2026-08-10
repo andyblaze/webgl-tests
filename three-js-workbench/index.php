@@ -1,62 +1,15 @@
 <?php 
 include('php/utils.php');
 
-$controls = new Controls();
+$ctrlsBuilder = new ControlsBuilder(new Controls());
 
 $ctrlsCfg = json_decode(file_get_contents('ctrls-config.json'));
 
-$material = $lights = $maps = '';
-
-foreach ( $ctrlsCfg->material as $ctrlSet ) { 
-    $wrapTagOpen = $wrapTagClose = '';
-    if ( $ctrlSet->wrapping === true ) {
-        $wrapTagOpen = "<div class=\"{$ctrlSet->wrapClass}\">";
-        $wrapTagClose = '</div>';
-    }
-    $material .= $wrapTagOpen;
-    foreach ( $ctrlSet->controls as $key=>$val ) {
-        if ( $val->ctrl === "range" )
-            $material .= $controls->slider($key, $val, 'material');
-        if ( $val->ctrl === "color" )
-            $material .= $controls->colorPicker($key, $val, 'material');        
-    }
-    $material .= $wrapTagClose;
-}
-
-foreach ( $ctrlsCfg->maps as $ctrlSet ) { 
-    $wrapTagOpen = $wrapTagClose = '';
-    if ( $ctrlSet->wrapping === true ) {
-        $wrapTagOpen = "<div class=\"{$ctrlSet->wrapClass}\">";
-        $wrapTagClose = '</div>';
-    }
-    $maps .= $wrapTagOpen;
-    foreach ( $ctrlSet->controls as $key=>$val ) {
-        if ( $val->ctrl === "range" )
-            $maps .= $controls->slider($key, $val, 'material');
-        if ( $val->ctrl === "color" )
-            $maps .= $controls->colorPicker($key, $val, 'material');        
-        if ( $val->ctrl === "assoc" )
-            $maps .= $controls->associative($key, $val, 'maps');        
-    }
-    $maps .= $wrapTagClose;
-}
+$material = $ctrlsBuilder->build($ctrlsCfg->material, 'material');
+$lights = $ctrlsBuilder->buildLights($ctrlsCfg->lights);
+$maps = $ctrlsBuilder->build($ctrlsCfg->maps, 'maps');
 
 $lightsCfg = 'const lightsCfg = ' . json_encode($ctrlsCfg->lights) . ';'; 
-
-foreach ( $ctrlsCfg->lights as $key=>$light ) {
-    $lights .= '<div class="col-2">' .
-        $controls->lightColor($light->sort . $key, $light, 'lights', 'color') . 
-        $controls->lightSlider($light->sort . $key, $light, 'lights', 'intensity') . 
-    '</div>';
-
-    if ( isset($light->pos) ) {
-        $lights .= '<div class="col-3">' . 
-            $controls->lightPos($light->sort, $light, 'x', $key, 'lights', 'pos') . 
-            $controls->lightPos($light->sort, $light, 'y', $key, 'lights', 'pos') . 
-            $controls->lightPos($light->sort, $light, 'z', $key, 'lights', 'pos') . 
-        '</div>';
-    }
-}
 
 $data = [
     'css' => link_tag('css/sys.css'),
