@@ -1,24 +1,15 @@
 import ThreeObject from "./three-object.js";
 
-class TexLoader {
-    constructor(three) {
-        this.loader = new three.TextureLoader();
-    }
-    load(tex) {
-        return this.loader.load(tex);
-    }
-}
-
 export default class Model extends ThreeObject {
-    constructor(three, factory, cfg) {
+    constructor(loader, factory, cfg) {
         super();
-        this.loader = new TexLoader(three);
+        this.loader = loader;
         this.geometry = factory.createGeometry(cfg.geometry);//new three.BoxGeometry(6, 6, 6);
         this.normalMap = "";
         this.roughnessMap = "";
-        this.material = new three.MeshPhysicalMaterial(cfg.material);
+        this.material = factory.createMaterial(cfg.materialType, cfg.material); //new three.MeshPhysicalMaterial(cfg.material);
         //this.material = new three.MeshStandardMaterial(cfg.material);
-        this.nativeObj = new three.Mesh(this.geometry, this.material);
+        this.nativeObj = factory.createMesh(this.geometry, this.material); //new three.Mesh(this.geometry, this.material);
     }
     setMap(prop, val) {
         if ( val.length === 0 ) return;

@@ -6,7 +6,8 @@ export default class Config {
         this.clientW = this.workspace.clientWidth;
         this.clientH = this.workspace.clientHeight;
         this.aspectRatio = this.clientW / this.clientH;
-        this.geometry = "torusknot";
+        this.geometry = "cylinder";
+        this.materialType = "physical";
         this.material = {};
         this.lights = {};
         this.maps = {}

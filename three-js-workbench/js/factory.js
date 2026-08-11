@@ -10,4 +10,7 @@ export default class Factory {
         const mat = this.registry.materials[type];
         return new mat.ctor(cfg);
     }
+    static createMesh(geo, mat) {
+        return new this.registry.mesh(geo, mat);
+    }
 }

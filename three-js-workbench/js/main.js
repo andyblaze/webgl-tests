@@ -11,6 +11,7 @@ import Associations from "./associations.js";
 import { byQsArray } from "./functions.js";
 import Registry from "./registry.js";
 import Factory from "./factory.js";
+import TextureLoader from "./texture-loader.js";
 
 Registry.init(THREE);
 Factory.init(Registry);
@@ -22,7 +23,7 @@ const renderer = new Renderer(THREE, config);
 const scene = new THREE.Scene();
 const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
-const model = new Model(THREE, Factory, config);
+const model = new Model(new TextureLoader(THREE), Factory, config);
 
 const associations = new Associations();
 
