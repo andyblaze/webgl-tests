@@ -1,16 +1,16 @@
 {
     "lights": [
         { "sort": "ambient", "color": "#ffffff",
-            "intensity": 2, "id": "ambients0" 
+            "intensity": 0, "id": "ambients0" 
         },
         {
-            "sort": "directional", "color": "#c60000",
-            "intensity": 2, "pos": { "x": 0, "y": 8, "z": 0 },
+            "sort": "directional", "color": "#00e8e8",
+            "intensity": 2, "pos": { "x": 10, "y": 10, "z": 0 },
             "id": "directionals0"
         },
         {
-            "sort": "directional", "color": "#00c600",
-            "intensity": 2, "pos": { "x": -8, "y": 8, "z": 7 },
+            "sort": "directional", "color": "#00ffff",
+            "intensity": 2, "pos": { "x": -10, "y": -10, "z": 0 },
             "id": "directionals1"
         }
     ],
@@ -35,19 +35,11 @@
         },
         {
             "wrapping": true,
-            "wrapClass": "col-2 associative",
+            "wrapClass": "col-1 associative",
             "controls": {
                 "roughnessMap": {
                     "type": "map",
                     "ctrl": "assoc"
-                },
-                "bumpScale": {
-                    "value": 0.2,
-                    "type": "float",
-                    "ctrl": "range",
-                    "min": 0,
-                    "max": 5,
-                    "step": 0.01
                 }
             }
         }
@@ -74,12 +66,12 @@
             "wrapClass": "col-2",
             "controls": {
                 "roughness": {
-                    "value": 0.25,
+                    "value": 0.8,
                     "type": "float",
                     "ctrl": "range"
                 },
                 "metalness": {
-                    "value": 0.03,
+                    "value": 0.8,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -90,7 +82,7 @@
             "wrapClass": "col-2",
             "controls": {
                 "transparent": {
-                    "value": 1,
+                    "value": 0,
                     "type": "bool",
                     "ctrl": "range",
                     "min": 0,
@@ -98,7 +90,7 @@
                     "step": 1
                 },
                 "opacity": {
-                    "value": 0.58,
+                    "value": 1,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -114,7 +106,7 @@
                     "ctrl": "range"
                 },
                 "clearcoatRoughness": {
-                    "value": 0.05,
+                    "value": 0.4,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -125,12 +117,12 @@
             "wrapClass": "col-2",
             "controls": {
                 "emissive": {
-                    "value": "#ff00ff",
+                    "value": "#0080ff",
                     "type": "color",
                     "ctrl": "color"
                 },
                 "emissiveIntensity": {
-                    "value": 0.5,
+                    "value": 0.25,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -141,7 +133,7 @@
             "wrapClass": "col-3",
             "controls": {
                 "ior": {
-                    "value": 1.5,
+                    "value": 1,
                     "type": "float",
                     "ctrl": "range",
                     "min": 1,
@@ -149,12 +141,12 @@
                     "step": 0.01
                 },
                 "iridescence": {
-                    "value": 0.5,
+                    "value": 0,
                     "type": "float",
                     "ctrl": "range"
                 },
                 "iridescenceIOR": {
-                    "value": 1.3,
+                    "value": 0,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -164,7 +156,7 @@
             "wrapping": false,
             "controls": {
                 "reflectivity": {
-                    "value": 0.5,
+                    "value": 0,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -175,12 +167,12 @@
             "wrapClass": "col-2",
             "controls": {
                 "sheenColor": {
-                    "value": "#0000ff",
+                    "value": "#ff66ff",
                     "type": "color",
                     "ctrl": "color"
                 },
                 "sheen": {
-                    "value": 0.2,
+                    "value": 1,
                     "type": "float",
                     "ctrl": "range"
                 }
@@ -190,17 +182,17 @@
             "wrapping": false,
             "controls": {
                 "thickness": {
-                    "value": 0.5,
-                    "type": "float",
-                    "ctrl": "range"
-                },
-                "anisotropy": {
                     "value": 0,
                     "type": "float",
                     "ctrl": "range"
                 },
+                "anisotropy": {
+                    "value": 1,
+                    "type": "float",
+                    "ctrl": "range"
+                },
                 "attenuationColor": {
-                    "value": "#00ff00",
+                    "value": "#00ffff",
                     "type": "color",
                     "ctrl": "color"
                 }

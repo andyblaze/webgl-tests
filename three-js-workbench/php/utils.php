@@ -52,7 +52,7 @@ class Controls {
         $ctrl .=  " data-type=\"{$item->type}\" data-index=\"{$index}\"";
         return $tagOpen . $ctrl . $tagClose;
     }
-    public function associative(string $key, object $item, string $index, bool $hasImage=true) {
+    public function associative(string $key, object $item, string $index, bool $hasImage) {
         $img = $imgData = '';
         if ( true === $hasImage ) {
             $img = "<img id=\"{$key}-img\" class=\"assoc-img\" src=\"\" />";
@@ -106,7 +106,7 @@ class ControlsBuilder {
                 if ( $val->ctrl === "color" )
                     $html .= $this->controls->colorPicker($key, $val, $index);  
                 if ( $val->ctrl === "assoc" )
-                    $html .= $this->controls->associative($key, $val, 'maps');                     
+                    $html .= $this->controls->associative($key, $val, 'maps', true);                     
             }
             $html .= $wrapTagClose;
         }

@@ -28,6 +28,10 @@
       width: 49.5%;
       display: inline-block;
     } 
+    #ui-panel .col-1 label {
+      width: 100%;
+      display: inline-block;
+    } 
     #ui-panel .col-3 label {
       width: 32.7%;
       display: inline-block;
