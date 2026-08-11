@@ -86,9 +86,10 @@ class MaterialScanner {
                 prop.materials.add(materialName);
             }
             this.materialProperties.set(materialName, props);
+            material.dispose();
         }
     }
     log() {
-        console.log(materialProperties);
+        console.log(this.materialProperties);
     }
 }

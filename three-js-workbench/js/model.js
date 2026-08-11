@@ -10,10 +10,10 @@ class TexLoader {
 }
 
 export default class Model extends ThreeObject {
-    constructor(three, cfg) {
+    constructor(three, factory, cfg) {
         super();
         this.loader = new TexLoader(three);
-        this.geometry = new three.BoxGeometry(6, 6, 6);
+        this.geometry = factory.createGeometry(cfg.geometry);//new three.BoxGeometry(6, 6, 6);
         this.normalMap = "";
         this.roughnessMap = "";
         this.material = new three.MeshPhysicalMaterial(cfg.material);
@@ -27,7 +27,7 @@ export default class Model extends ThreeObject {
         
         this.material[prop] = tex;
         this[prop] = val;
-        console.log(prop, this[prop], val, this.material[prop] === tex, tex);
+        //console.log(prop, this[prop], val, this.material[prop] === tex, tex);
         this.material.needsUpdate = true;
     }
     update(material) {

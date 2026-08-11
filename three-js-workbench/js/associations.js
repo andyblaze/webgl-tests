@@ -2,9 +2,8 @@ import { byId } from "./functions.js";
 
 export default class Associations {
     constructor() {
-        this.geometry = [
-            {
-                label: "Sphere"
+        this.geometries = [
+            { label: "Sphere",
             },
             {
                 label: "Box"
@@ -54,7 +53,9 @@ export default class Associations {
         ctrl.max = this.groupLength(ctrl.dataset.assoc) - 1;
         const item = this.get(ctrl.dataset.assoc, Number(ctrl.value));
         byId(ctrl.dataset.lbl).textContent = item.label;
-        byId(ctrl.dataset.img).src = item.img;
-        ctrl.dataset.mapsrc = item.img;
+        if ( ctrl.dataset.img ) {
+            byId(ctrl.dataset.img).src = item.img;
+            ctrl.dataset.mapsrc = item.img;
+        }
     }
 }

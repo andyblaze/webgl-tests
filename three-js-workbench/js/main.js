@@ -9,34 +9,11 @@ import Lighting from "./lighting.js";
 import Accordion from "./accordion.js"; 
 import Associations from "./associations.js";
 import { byQsArray } from "./functions.js";
+import Registry from "./registry.js";
+import Factory from "./factory.js";
 
-class Registry {
-    constructor(three) {
-        this.geometries = {
-            sphere: { ctor: three.SphereGeometry, defaults: [15, 32, 16] },
-            box: { ctor: three.BoxGeometry, defaults: [1, 1, 1] },
-            torus: { ctor: three.TorusGeometry, defaults: [10, 3, 16, 100] },
-            torusknot: { ctor: three.TorusKnotGeometry, defaults: [10, 3, 100, 16] },
-            capsule: { ctor: three.CapsuleGeometry, defaults: [1, 1, 4, 8, 1] },
-            cylinder: { ctor: three.CylinderGeometry, defaults: [5, 5, 20, 32] }
-        }
-        this.materials = {
-            basic: { ctor: three.MeshBasicMaterial },
-            phong: { ctor: three.MeshPhongMaterial },
-            physical: { ctor: three.MeshPhysicalMaterial },
-            standard: { ctor: three.MeshStandardMaterial },
-            lambert: { ctor: three.MeshLambertMaterial }
-        }
-    }
-    createGeometry(type) {
-        const geo = this.geometries[type];
-        return new geo.ctor(...geo.defaults);
-    }
-    createMaterial(type, cfg) {
-        const mat = this.materials[type];
-        return new mat.ctor(cfg);
-    }
-}
+Registry.init(THREE);
+Factory.init(Registry);
 
 const config = new Config("workspace");
 
@@ -45,7 +22,7 @@ const renderer = new Renderer(THREE, config);
 const scene = new THREE.Scene();
 const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
-const model = new Model(THREE, config);
+const model = new Model(THREE, Factory, config);
 
 const associations = new Associations();
 

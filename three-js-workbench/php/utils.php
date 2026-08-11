@@ -52,10 +52,15 @@ class Controls {
         $ctrl .=  " data-type=\"{$item->type}\" data-index=\"{$index}\"";
         return $tagOpen . $ctrl . $tagClose;
     }
-    public function associative(string $key, object $item, string $index) {
-        return "<img id=\"{$key}-img\" class=\"assoc-img\" src=\"\" /><label class=\"assoc\">
+    public function associative(string $key, object $item, string $index, bool $hasImage=true) {
+        $img = $imgData = '';
+        if ( true === $hasImage ) {
+            $img = "<img id=\"{$key}-img\" class=\"assoc-img\" src=\"\" />";
+            $imgData = " data-mapsrc=\"\" data-img=\"{$key}-img\"";
+        }
+        return "{$img}<label class=\"assoc\">
             <span id=\"{$key}-lbl\"></span>
-            <input type=\"range\" min=\"0\" step=\"1\" value=\"0\" class=\"associative\" data-lbl=\"{$key}-lbl\" data-img=\"{$key}-img\" data-assoc=\"{$key}s\" data-property=\"{$key}\" data-type=\"map\" data-index=\"{$index}\" data-mapsrc=\"\" autocomplete=\"off\" />        
+            <input type=\"range\" min=\"0\" step=\"1\" value=\"0\" class=\"associative\" data-lbl=\"{$key}-lbl\" data-assoc=\"{$key}s\" data-property=\"{$key}\" data-type=\"{$item->type}\" data-index=\"{$index}\" autocomplete=\"off\"{$imgData} />        
         </label>";
     }
     public function lightColor(string $name, object $light, string $index, $property='', $prefix='color-') {
