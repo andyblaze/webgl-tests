@@ -11,10 +11,12 @@ export default class Config {
         this.material = {};
         this.lights = {};
         this.maps = {}
+        this.geometries = {};
         this.observers = {};
     }
     fixValue(c) {
         const type = c.dataset.type;
+        if ( type === "geometries" ) return c.dataset.value;
         if ( type === "map" ) return c.dataset.mapsrc;
         if ( type === "color" )   return c.value;
         if ( type === "float" ) return parseFloat(c.value);
@@ -25,7 +27,7 @@ export default class Config {
     addObserver(type, o) {
         this.observers[type] = o; //console.log("obs", this.observers);
     }
-    notify(type) {
+    notify(type) { //if ( type === "geometries" ) return;
         //for ( const [type, o] of Object.entries(this.observers) )
         const o = this.observers[type];
         o.update(this[type]);
@@ -66,13 +68,20 @@ export default class Config {
             item[c.dataset.property] = { "type": c.dataset.type, "value": this.fixValue(c) };
         //console.log(item);
     }
-    update(type, ctrls) {
+    updateGeometry(type, ctrls) {
+        const item = this[type]; 
+        for ( const c of ctrls )
+            item[c.dataset.property] = { "type": c.dataset.type, "value": this.fixValue(c) };
+    }
+    update(type, ctrls) { 
         if ( type === "lights" )
             this.updateLights(type, ctrls);
         if ( type === "material" )
             this.updateMaterial(type, ctrls);
         if ( type === "maps" )
             this.updateMaps(type, ctrls);
+        if ( type === "geometries" )
+            this.updateGeometry(type, ctrls);
         this.notify(type);
     }
 }

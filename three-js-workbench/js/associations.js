@@ -1,17 +1,11 @@
-import { byId } from "./functions.js";
+import { byId, ucFirst } from "./functions.js";
 
 export default class Associations {
-    constructor() {
-        this.geometries = [
-            { label: "Sphere",
-            },
-            {
-                label: "Box"
-            },
-            {
-                label: "Torus Knot"
-            }
-        ];
+    constructor(registry) {
+        this.geometriess = [];
+        for ( const key of Object.keys(registry.geometries) )
+            this.geometriess.push({ label: ucFirst(key), value: key });
+        
         this.material = [
             {
                 label: "Basic"
@@ -45,13 +39,15 @@ export default class Associations {
     groupLength(group) {
         return this[group].length;
     }
-    get(group, index) {
+    get(group, index) { 
         return this[group][index];
     }
     update(ctrl) {
         if ( !ctrl.dataset.assoc ) return;
         ctrl.max = this.groupLength(ctrl.dataset.assoc) - 1;
         const item = this.get(ctrl.dataset.assoc, Number(ctrl.value));
+        if ( ctrl.dataset.value )
+            ctrl.dataset.value = item.value;
         byId(ctrl.dataset.lbl).textContent = item.label;
         if ( ctrl.dataset.img ) {
             byId(ctrl.dataset.img).src = item.img;

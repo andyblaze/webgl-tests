@@ -53,14 +53,17 @@ class Controls {
         return $tagOpen . $ctrl . $tagClose;
     }
     public function associative(string $key, object $item, string $index, bool $hasImage) {
-        $img = $imgData = '';
+        $img = $imgData = $valData = '';
         if ( true === $hasImage ) {
             $img = "<img id=\"{$key}-img\" class=\"assoc-img\" src=\"\" />";
             $imgData = " data-mapsrc=\"\" data-img=\"{$key}-img\"";
         }
+        else
+            $valData = " data-value=\"sphere\"";
+
         return "{$img}<label class=\"assoc\">
             <span id=\"{$key}-lbl\"></span>
-            <input type=\"range\" min=\"0\" step=\"1\" value=\"0\" class=\"associative\" data-lbl=\"{$key}-lbl\" data-assoc=\"{$key}s\" data-property=\"{$key}\" data-type=\"{$item->type}\" data-index=\"{$index}\" autocomplete=\"off\"{$imgData} />        
+            <input type=\"range\" min=\"0\" step=\"1\" value=\"0\" class=\"associative\"{$valData} data-lbl=\"{$key}-lbl\" data-assoc=\"{$key}s\" data-property=\"{$key}\" data-type=\"{$item->type}\" data-index=\"{$index}\" autocomplete=\"off\"{$imgData} />        
         </label>";
     }
     public function lightColor(string $name, object $light, string $index, $property='', $prefix='color-') {
@@ -129,6 +132,23 @@ class ControlsBuilder {
             }
         }
         return $html;
+    }
+    public function buildGeometry(array $ctrls, string $index) {
+        $html = '';
+        foreach ( $ctrls as $ctrlSet ) { 
+            $wrapTagOpen = $wrapTagClose = '';
+            if ( $ctrlSet->wrapping === true ) {
+                $wrapTagOpen = "<div class=\"{$ctrlSet->wrapClass}\">";
+                $wrapTagClose = '</div>';
+            }
+            $html .= $wrapTagOpen;
+            foreach ( $ctrlSet->controls as $key=>$val ) {
+                if ( $val->ctrl === "assoc" )
+                    $html .= $this->controls->associative($key, $val, 'geometries', false);                     
+            }
+            $html .= $wrapTagClose;
+        }
+        return $html;         
     }
 }
 

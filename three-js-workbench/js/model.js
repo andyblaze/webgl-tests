@@ -4,6 +4,8 @@ export default class Model extends ThreeObject {
     constructor(loader, factory, cfg) {
         super();
         this.loader = loader;
+        this.factory = factory;
+        this.geometryType = cfg.geometry;
         this.geometry = factory.createGeometry(cfg.geometry);//new three.BoxGeometry(6, 6, 6);
         this.normalMap = "";
         this.roughnessMap = "";
@@ -20,6 +22,13 @@ export default class Model extends ThreeObject {
         this[prop] = val;
         //console.log(prop, this[prop], val, this.material[prop] === tex, tex);
         this.material.needsUpdate = true;
+    }
+    setGeometry(prop, geo) {
+        if (this.geometryType === geo.value) return;
+        this.geometry.dispose();
+        this.geometry = this.factory.createGeometry(geo.value);
+        this.geometryType = geo.value;
+        this.nativeObj.geometry = this.geometry;
     }
     update(material) {
         for ( const [prop, data] of Object.entries(material) ) {
@@ -41,6 +50,9 @@ export default class Model extends ThreeObject {
 
                 case "map":
                     this.setMap(prop, data.value);
+                    break;
+                case "geometries" :
+                    this.setGeometry(prop, data);
                     break;
             }
         }

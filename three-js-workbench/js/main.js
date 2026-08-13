@@ -25,13 +25,14 @@ const lighting = new Lighting(THREE);
 const camera = new Camera(THREE, 60, config.aspectRatio, 0.1, 100);
 const model = new Model(new TextureLoader(THREE), Factory, config);
 
-const associations = new Associations();
+const associations = new Associations(Registry);
 
 for ( const light of lightsCfg )
     lighting.addLight(scene, light);
 
 config.addObserver("material", model);
 config.addObserver("maps", model);
+config.addObserver("geometries", model);
 config.addObserver("lights", lighting);
 
 const ctrls = byQsArray("#ui-panel input");

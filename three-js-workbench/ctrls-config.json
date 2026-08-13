@@ -44,6 +44,18 @@
             }
         }
     ],
+    "geometries": [
+        {
+            "wrapping": true,
+            "wrapClass": "col-1 associative",
+            "controls": {
+                "geometries": {
+                    "type": "geometries",
+                    "ctrl": "assoc"
+                }
+            }
+        }
+    ],
     "material": [
         {
             "wrapping": true,

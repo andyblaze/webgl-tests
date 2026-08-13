@@ -8,6 +8,7 @@ $ctrlsCfg = json_decode(file_get_contents('ctrls-config.json'));
 $material = $ctrlsBuilder->build($ctrlsCfg->material, 'material');
 $lights = $ctrlsBuilder->buildLights($ctrlsCfg->lights);
 $maps = $ctrlsBuilder->build($ctrlsCfg->maps, 'maps');
+$geometries = $ctrlsBuilder->buildGeometry($ctrlsCfg->geometries, 'geometries');
 
 $lightsCfg = 'const lightsCfg = ' . json_encode($ctrlsCfg->lights) . ';'; 
 
@@ -16,7 +17,8 @@ $data = [
     'lightsCfg' => $lightsCfg,
     'material' => $material,
     'lights' => $lights,
-    'maps' => $maps
+    'maps' => $maps,
+    'geometries' => $geometries
 ];
 
 $html = file_get_contents('php/view.html');
