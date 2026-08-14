@@ -429,7 +429,7 @@ export default class Snowglobe {
             Math.sin(phase + y * 0.025) +
             Math.sin(phase * 1.73 + x * 0.018) * 0.45
           ) *
-          this.config.turbulence *dt;
+          this.config.turbulence * dt;
 
         vy +=
           (
@@ -441,13 +441,11 @@ export default class Snowglobe {
         /*
          * Cursor pushes particles away.
          */
-        if (this.hover > 0.01) {
+        if ( this.hover > 0.01 ) {
           const dx = x - this.mouse.x;
-
           const dy = y - this.mouse.y;
 
           const distSq = dx * dx + dy * dy;
-
           const influenceRadius = 70;
 
           if ( distSq < influenceRadius * influenceRadius ) {
@@ -455,7 +453,6 @@ export default class Snowglobe {
             const force = (1 - dist / influenceRadius) * cursorStrength;
 
             vx += (dx / dist) * force;
-
             vy += (dy / dist) * force;
           }
         }
@@ -483,9 +480,7 @@ export default class Snowglobe {
          * visually sufficient at this scale.
          */
         const nx = x / halfW;
-
         const ny = y / halfH;
-
         const distance = nx * nx + ny * ny;
 
         if ( distance > 1 ) {
