@@ -499,20 +499,16 @@ export default class Snowglobe {
            * outward, then damp it heavily.
            */
           const normalX = x / (halfW * halfW);
-
           const normalY = y / (halfH * halfH);
 
           const length = Math.sqrt(normalX * normalX + normalY * normalY);
 
           const nx2 = normalX / length;
-
           const ny2 = normalY / length;
-
           const outward = vx * nx2 + vy * ny2;
 
           if ( outward > 0 ) {
             vx -= outward * nx2 * 1.7;
-
             vy -= outward * ny2 * 1.7;
           }
 
@@ -529,11 +525,9 @@ export default class Snowglobe {
 
       this.geometry.attributes.position.needsUpdate = true;
 
-      this.particles.material.uniforms.hover.value =
-        this.hover;
+      this.particles.material.uniforms.hover.value = this.hover;
 
-      this.glass.material.uniforms.hover.value =
-        this.hover;
+      this.glass.material.uniforms.hover.value = this.hover;
 
       /*
        * Very slight breathing of the whole glass.
@@ -545,43 +539,26 @@ export default class Snowglobe {
         this.hover *
         0.006;
 
-      this.group.scale.set(
-        scale,
-        scale,
-        1
-      );
+      this.group.scale.set(scale, scale, 1);
 
-      this.renderer.render(
-        this.scene,
-        this.camera
-      );
+      this.renderer.render(this.scene, this.camera);
     }
 
     resize() {
-      this.width =
-        this.element.clientWidth;
+      this.width = this.element.clientWidth;
 
-      this.height =
-        this.element.clientHeight;
+      this.height = this.element.clientHeight;
 
-      this.camera.left =
-        -this.width / 2;
+      this.camera.left = -this.width / 2;
 
-      this.camera.right =
-        this.width / 2;
+      this.camera.right = this.width / 2;
 
-      this.camera.top =
-        this.height / 2;
+      this.camera.top = this.height / 2;
 
-      this.camera.bottom =
-        -this.height / 2;
+      this.camera.bottom = -this.height / 2;
 
       this.camera.updateProjectionMatrix();
 
-      this.renderer.setSize(
-        this.width,
-        this.height,
-        false
-      );
+      this.renderer.setSize(this.width, this.height, false);
     }
   }

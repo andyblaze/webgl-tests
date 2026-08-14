@@ -11,9 +11,6 @@
    * They have velocity, damping, and small stochastic impulses, producing
    * a slow Brownian-ish drift.
    */
-
-
-
   const buttons = [];
 
   /*
