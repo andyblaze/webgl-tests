@@ -378,17 +378,11 @@ export default class Snowglobe {
       this.element.addEventListener(
         "pointermove",
         event => {
-          const rect =
-            this.element.getBoundingClientRect();
+          const rect = this.element.getBoundingClientRect();
 
           this.mouseTarget.set(
-            event.clientX -
-              rect.left -
-              rect.width / 2,
-
-            -(event.clientY -
-              rect.top -
-              rect.height / 2)
+            event.clientX - rect.left - rect.width / 2,
+            -(event.clientY - rect.top - rect.height / 2)
           );
         }
       );
@@ -398,29 +392,20 @@ export default class Snowglobe {
       /*
        * Smooth hover state.
        */
-      this.hover +=
-        (this.hoverTarget - this.hover) *
-        Math.min(dt * 5, 1);
+      this.hover += (this.hoverTarget - this.hover) * Math.min(dt * 5, 1);
 
-      this.mouse.lerp(
-        this.mouseTarget,
-        Math.min(dt * 8, 1)
-      );
+      this.mouse.lerp(this.mouseTarget, Math.min(dt * 8, 1));
 
       /*
        * Cursor influence becomes stronger on hover.
        */
-      const cursorStrength =
-        this.hover * 0.015;
+      const cursorStrength = this.hover * 0.015;
 
-      const halfW =
-        this.width * 0.47;
+      const halfW = this.width * 0.47;
 
-      const halfH =
-        this.height * 0.43;
+      const halfH = this.height * 0.43;
 
-      const count =
-        this.config.density;
+      const count = this.config.density;
 
       for (let i = 0; i < count; i++) {
         const ix = i * 3;
@@ -437,88 +422,48 @@ export default class Snowglobe {
          * Multiple sine waves stop the movement from looking like
          * independent random jitter.
          */
-        const phase =
-          elapsed * (0.35 + this.random[i] * 0.3) +
-          this.random[i] * 30;
+        const phase = elapsed * (0.35 + this.random[i] * 0.3) + this.random[i] * 30;
 
         vx +=
           (
-            Math.sin(
-              phase +
-              y * 0.025
-            ) +
-            Math.sin(
-              phase * 1.73 +
-              x * 0.018
-            ) * 0.45
+            Math.sin(phase + y * 0.025) +
+            Math.sin(phase * 1.73 + x * 0.018) * 0.45
           ) *
-          this.config.turbulence *
-          dt;
+          this.config.turbulence *dt;
 
         vy +=
           (
-            Math.cos(
-              phase * 0.87 +
-              x * 0.02
-            ) +
-            Math.sin(
-              phase * 1.37 +
-              y * 0.021
-            ) * 0.4
+            Math.cos(phase * 0.87 + x * 0.02) +
+            Math.sin(phase * 1.37 + y * 0.021) * 0.4
           ) *
-          this.config.turbulence *
-          dt;
+          this.config.turbulence * dt;
 
         /*
          * Cursor pushes particles away.
          */
         if (this.hover > 0.01) {
-          const dx =
-            x - this.mouse.x;
+          const dx = x - this.mouse.x;
 
-          const dy =
-            y - this.mouse.y;
+          const dy = y - this.mouse.y;
 
-          const distSq =
-            dx * dx +
-            dy * dy;
+          const distSq = dx * dx + dy * dy;
 
           const influenceRadius = 70;
 
-          if (
-            distSq <
-            influenceRadius *
-            influenceRadius
-          ) {
-            const dist =
-              Math.sqrt(
-                Math.max(distSq, 0.001)
-              );
+          if ( distSq < influenceRadius * influenceRadius ) {
+            const dist = Math.sqrt(Math.max(distSq, 0.001));
+            const force = (1 - dist / influenceRadius) * cursorStrength;
 
-            const force =
-              (1 -
-                dist /
-                  influenceRadius) *
-              cursorStrength;
+            vx += (dx / dist) * force;
 
-            vx +=
-              (dx / dist) *
-              force;
-
-            vy +=
-              (dy / dist) *
-              force;
+            vy += (dy / dist) * force;
           }
         }
 
         /*
          * Damping.
          */
-        const damping =
-          Math.pow(
-            0.035,
-            dt
-          );
+        const damping = Math.pow(0.035, dt);
 
         vx *= damping;
         vy *= damping;
@@ -527,17 +472,9 @@ export default class Snowglobe {
          * A tiny amount of velocity gives the particles
          * a sense of inertia.
          */
-        x +=
-          vx *
-          dt *
-          60 *
-          this.config.speed;
+        x += vx * dt * 60 * this.config.speed;
 
-        y +=
-          vy *
-          dt *
-          60 *
-          this.config.speed;
+        y += vy * dt * 60 * this.config.speed;
 
         /*
          * Soft capsule boundary.
@@ -545,20 +482,14 @@ export default class Snowglobe {
          * We use an ellipse approximation here because it is
          * visually sufficient at this scale.
          */
-        const nx =
-          x / halfW;
+        const nx = x / halfW;
 
-        const ny =
-          y / halfH;
+        const ny = y / halfH;
 
-        const distance =
-          nx * nx +
-          ny * ny;
+        const distance = nx * nx + ny * ny;
 
-        if (distance > 1) {
-          const scale =
-            0.985 /
-            Math.sqrt(distance);
+        if ( distance > 1 ) {
+          const scale = 0.985 / Math.sqrt(distance);
 
           x *= scale;
           y *= scale;
@@ -567,38 +498,22 @@ export default class Snowglobe {
            * Reflect only the velocity component pointing
            * outward, then damp it heavily.
            */
-          const normalX =
-            x / (halfW * halfW);
+          const normalX = x / (halfW * halfW);
 
-          const normalY =
-            y / (halfH * halfH);
+          const normalY = y / (halfH * halfH);
 
-          const length =
-            Math.sqrt(
-              normalX * normalX +
-              normalY * normalY
-            );
+          const length = Math.sqrt(normalX * normalX + normalY * normalY);
 
-          const nx2 =
-            normalX / length;
+          const nx2 = normalX / length;
 
-          const ny2 =
-            normalY / length;
+          const ny2 = normalY / length;
 
-          const outward =
-            vx * nx2 +
-            vy * ny2;
+          const outward = vx * nx2 + vy * ny2;
 
-          if (outward > 0) {
-            vx -=
-              outward *
-              nx2 *
-              1.7;
+          if ( outward > 0 ) {
+            vx -= outward * nx2 * 1.7;
 
-            vy -=
-              outward *
-              ny2 *
-              1.7;
+            vy -= outward * ny2 * 1.7;
           }
 
           vx *= 0.45;
