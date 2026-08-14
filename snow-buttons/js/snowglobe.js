@@ -2,6 +2,143 @@ import Background from "./b-ground.js";
 import Rim from "./rim.js";
 import Glass from "./glass.js";
 
+class Particles {
+      constructor(three, button) {
+      const count = button.config.density;
+
+      this.positions = new Float32Array(count * 3);
+      this.velocities = new Float32Array(count * 3);
+      this.sizes = new Float32Array(count);
+      this.random = new Float32Array(count);
+
+      const halfW = button.width * 0.47;
+      const halfH = button.height * 0.43;
+
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.sqrt(Math.random());
+
+        /*
+         * Start particles inside an ellipse. The capsule boundary
+         * collision below keeps them inside the actual rounded shape.
+         */
+        this.positions[i * 3] = Math.cos(angle) * radius * halfW;
+
+        this.positions[i * 3 + 1] = Math.sin(angle) * radius * halfH;
+
+        this.positions[i * 3 + 2] = (Math.random() - 0.5) * 4;
+
+        this.velocities[i * 3] = (Math.random() - 0.5) * 0.15;
+
+        this.velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.15;
+
+        this.velocities[i * 3 + 2] = 0;
+
+        /*
+         * Most particles are tiny, with occasional larger particles.
+         */
+        const sizeRoll = Math.random();
+
+        if (sizeRoll < 0.88) {
+          this.sizes[i] = 0.7 + Math.random() * 1.4;
+        } else {
+          this.sizes[i] = 1.8 + Math.random() * 2.2;
+        }
+
+        this.random[i] = Math.random();
+      }
+
+      this.geometry = new three.BufferGeometry();
+
+      this.geometry.setAttribute(
+        "position",
+        new three.BufferAttribute(
+          this.positions,
+          3
+        )
+      );
+
+      this.geometry.setAttribute(
+        "size",
+        new three.BufferAttribute(
+          this.sizes,
+          1
+        )
+      );
+
+      this.material = new three.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: three.AdditiveBlending,
+
+        uniforms: {
+          color: {
+            value: new three.Color(
+              button.config.particle
+            )
+          },
+
+          pixelRatio: {
+            value: Math.min(
+              window.devicePixelRatio,
+              2
+            )
+          },
+
+          hover: {
+            value: 0
+          }
+        },
+
+        vertexShader: `
+          attribute float size;
+
+          uniform float pixelRatio;
+
+          varying float vDepth;
+
+          void main() {
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+
+            vDepth = position.z;
+
+            gl_PointSize = size * pixelRatio * (1.0 + position.z * 0.08);
+
+            gl_Position = projectionMatrix * mvPosition;
+          }
+        `,
+
+        fragmentShader: `
+          uniform vec3 color;
+
+          varying float vDepth;
+
+          void main() {
+            vec2 uv = gl_PointCoord - vec2(0.5);
+
+            float d = length(uv);
+
+            float alpha = smoothstep(0.5, 0.0, d);
+
+            /*
+             * Soft particle with a slightly brighter centre.
+             */
+            float core = smoothstep(0.22, 0.0, d);
+
+            vec3 finalColor =color * (0.65 + core * 0.8);
+
+            gl_FragColor = vec4(finalColor, alpha * 0.72);
+          }
+        `
+      });
+
+      this.points = new three.Points(
+        this.geometry,
+        this.material
+      );      
+    }
+  }
+
 
 export default class Snowglobe {
     constructor(three, element, configs) {
@@ -15,38 +152,18 @@ export default class Snowglobe {
 
       this.scene = new three.Scene();
 
-      this.camera = new three.OrthographicCamera(
-        -this.width / 2,
-        this.width / 2,
-        this.height / 2,
-        -this.height / 2,
-        -100,
-        100
-      );
+      const halfW = this.width / 2;
+      const halfH = this.height / 2;
 
+      this.camera = new three.OrthographicCamera(-halfW, halfW, halfH, -halfH, -100, 100);
       this.camera.position.z = 10;
 
-      this.renderer = new three.WebGLRenderer({
-        alpha: true,
-        antialias: true
-      });
-
-      this.renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 2)
-      );
-
-      this.renderer.setSize(
-        this.width,
-        this.height,
-        false
-      );
-
+      this.renderer = new three.WebGLRenderer({ alpha: true, antialias: true });
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.setSize(this.width, this.height, false);
       this.renderer.outputColorSpace = three.SRGBColorSpace;
 
-      element.insertBefore(
-        this.renderer.domElement,
-        element.firstChild
-      );
+      element.insertBefore(this.renderer.domElement, element.firstChild);
 
       this.group = new three.Group();
       this.scene.add(this.group);
