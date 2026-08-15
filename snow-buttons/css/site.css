@@ -63,19 +63,19 @@
 
       z-index: 3;
 
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
 
       text-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.5),
-        0 0 18px rgba(255, 255, 255, 0.12);
+        2px 2px 3px rgba(0, 0, 0, 0.75),
+        0 0 18px rgba(255, 255, 255, 0.712);
 
       /*pointer-events: none;*/
     }
     .snowglobe :hover {
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .snowglobe::after {

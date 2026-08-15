@@ -25,26 +25,26 @@ Glass.texRough.wrapS = three.RepeatWrapping;
 Glass.texRough.wrapT = three.RepeatWrapping;
 
 Glass.texNorm.offset.set(
-  Math.random() ,
-  Math.random() 
+  Math.random() * 2,
+  Math.random() * 2
 );
 
 Glass.texRough.offset.set(
-  Math.random(),
-  Math.random()
+  Math.random() * 2,
+  Math.random() * 2
 );
 
     const material = new three.MeshPhysicalMaterial({
       color: globe.config.color,
       transmission: 0.75,
-      roughness: 0.72,
+      roughness: 0.62,
       metalness: 0.52,
       normalMap: Glass.texNorm,
-      normalScale: new three.Vector2(6, 6),
+      normalScale: new three.Vector2(2, 2),
       roughnessMap: Glass.texRough,
 
       transparent: true,
-      opacity:0.9725,
+      opacity:0.925,
 
       clearcoat: 1,
       clearcoatRoughness:0.95,

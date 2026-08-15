@@ -46,7 +46,7 @@ export default class Snowglobe {
 this.scene.add(hemi);
 
 this.light = new three.DirectionalLight(0xffffff, 5);
-this.light.position.set(-100, 100, 200);
+this.light.position.set(-parseInt(Math.random() + 50) * 50, parseInt(Math.random() + 50) * 50, parseInt(Math.random() + 100) * 100);
 
 this.scene.add(this.light);
 
@@ -129,11 +129,11 @@ this.scene.add(rim);
 
       this.light.position.y = Math.cos(elapsed * 0.22) * 50;
     this.glass.material.normalMap.offset.x = elapsed * 0.02;
-    this.glass.material.normalMap.offset.y = elapsed * 0.05;
+    this.glass.material.normalMap.offset.y = elapsed * 0.005;
     //this.glass.material.normalMap.offset.z = elapsed * 0.013;
 
     this.glass.material.roughnessMap.offset.x = elapsed * -0.03;
-    this.glass.material.roughnessMap.offset.y = elapsed * 0.05;
+    this.glass.material.roughnessMap.offset.y = elapsed * 0.005;
     //this.glass.material.roughnessMap.offset.z = elapsed * 0.017;
       //this.glass.update(dt, elapsed);
       //this.particles.update(dt, elapsed, this);
