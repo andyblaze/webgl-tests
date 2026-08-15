@@ -1,6 +1,6 @@
 export const configs = {
     magenta: {
-      color: 0xff00ff, 
+      color: 0xff0080, 
       particle: 0xc7fbff,
       density: 430,
       speed: 0.18,

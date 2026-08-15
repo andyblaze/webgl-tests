@@ -2,6 +2,8 @@
   import { configs } from "./config.js";
   import Snowglobe from "./snowglobe.js";
 
+  console.log(9);
+
   /*
    * Snowglobe buttons
    *
