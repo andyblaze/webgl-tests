@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Three.js Möbius Strip (draggable, view manipulation)</title>
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+				background: #111318;
+				color: #ddd;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+			}
+			#container {
+				width: 100%;
+				height: 100vh;
+				display: block;
+				position: relative;
+				overflow: hidden;
+			}
+			.info {
+				position: absolute;
+				left: 12px;
+				top: 12px;
+				background: rgba(0,0,0,0.4);
+				padding: 8px 12px;
+				border-radius: 6px;
+				font-size: 13px;
+			}
+			.credits {
+				position: absolute;
+				right: 12px;
+				bottom: 12px;
+				background: rgba(0,0,0,0.25);
+				padding: 6px 10px;
+				border-radius: 6px;
+				font-size: 12px;
+				opacity: 0.8;
+			}
+			canvas { display:block }
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div class="info">Left mouse / drag: rotate view · Scroll: zoom · Click and drag model: move model (drag disables view controls)</div>
+			<div class="credits">Three.js Möbius — Drag + View Controls</div>
+		</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.179.1/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.179.1/examples/jsm/"
+  }
+}
+</script>
+
+		<script type="module">
+import * as THREE from 'three';
+
+import { OrbitControls }
+  from 'three/addons/controls/OrbitControls.js';
+
+import { DragControls }
+  from 'three/addons/controls/DragControls.js';
+import { ParametricGeometry }
+  from 'three/addons/geometries/ParametricGeometry.js';
+
+			const container = document.getElementById('container');
+
+			const scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x0f1114);
+
+			const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+			camera.position.set(3.2, 1.8, 3.2);
+
+			const renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			container.appendChild(renderer.domElement);
+
+			// Lights
+			const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+			hemi.position.set(0, 2, 0);
+			scene.add(hemi);
+
+			const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+			dir.position.set(5, 10, 7);
+			dir.castShadow = true;
+			scene.add(dir);
+
+
+			// Möbius parametric function
+			// u: 0..1, v: 0..1  -> map v to -w..w
+			const mobius = function (u, v, target) {
+				const twoPi = Math.PI * 2;
+				const U = u * twoPi; // angle around
+				const V = (v - 0.5) * 2; // -1 .. 1
+				const major = 1.0; // radius
+				const width = 0.35; // half-width scaling
+
+				// Standard Möbius strip param
+				const x = (major + (V * width) * Math.cos(U / 2)) * Math.cos(U);
+				const y = (major + (V * width) * Math.cos(U / 2)) * Math.sin(U);
+				const z = (V * width) * Math.sin(U / 2);
+
+				target.set(x, y, z);
+			};
+
+			const segmentsU = 200;
+			const segmentsV = 40;
+			const geometry = new ParametricGeometry(mobius, segmentsU, segmentsV);
+			geometry.computeVertexNormals();
+
+			// Color by vertex position to get a nice gradient
+			const color = new THREE.Color();
+			const colors = [];
+			const pos = geometry.attributes.position;
+			for (let i = 0; i < pos.count; i++) {
+				const x = pos.getX(i);
+				const y = pos.getY(i);
+				const z = pos.getZ(i);
+				// map to colors
+				color.setHSL(0.28 + (y + 1.4) / 4.5 * 0.25, 0.7, 0.5 - (z + 0.5) / 4);
+				colors.push(color.r, color.g, color.b);
+			}
+			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+      const loader = new THREE.TextureLoader();
+      const normMap = loader.load("./textures/cloud-normal.png");
+      const roughMap = loader.load("./textures/marble.png");
+
+			const material = new THREE.MeshStandardMaterial({
+				vertexColors: true,
+				side: THREE.DoubleSide,
+				roughness: 0.835,
+        roughnessMap: roughMap,
+				metalness: 0.5,
+        normalMap: normMap,
+        normalScale: new THREE.Vector2(2, 2),
+        emissive:0xff0000,
+        emissiveIntensity:0.5
+			});
+
+			const mesh = new THREE.Mesh(geometry, material);
+			mesh.castShadow = true;
+			mesh.receiveShadow = true;
+			scene.add(mesh);
+
+			// Add a thin border/edge to help perceive twist
+			// (edges removed as per request)
+
+			// Orbit controls for view manipulation
+			const controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.dampingFactor = 0.07;
+			controls.screenSpacePanning = false;
+			controls.minDistance = 1.2;
+			controls.maxDistance = 20;
+
+			// Drag controls to drag the mesh
+			const dragControls = new DragControls([mesh], camera, renderer.domElement);
+
+			// Prevent orbit controls while dragging object
+			dragControls.addEventListener('dragstart', function (event) {
+				controls.enabled = false;
+				// improve feedback
+				document.body.style.cursor = 'grabbing';
+			});
+			dragControls.addEventListener('dragend', function (event) {
+				controls.enabled = true;
+				document.body.style.cursor = '';
+			});
+
+			// change pointer when hovering draggable
+			let hovering = false;
+			dragControls.addEventListener('hoveron', function () {
+				hovering = true;
+				document.body.style.cursor = 'pointer';
+			});
+			dragControls.addEventListener('hoveroff', function () {
+				hovering = false;
+				document.body.style.cursor = '';
+			});
+
+			// (axes helper removed as per request)
+
+			// Animation loop
+			const clock = new THREE.Clock();
+			function animate() {
+				requestAnimationFrame(animate);
+				const dt = clock.getDelta();
+        mesh.rotation.x += 0.001;
+        mesh.rotation.y += 0.003;
+        mesh.rotation.z += 0.007;
+				controls.update();
+				renderer.render(scene, camera);
+			}
+			animate();
+
+			// Resize handling
+			window.addEventListener('resize', onWindowResize, false);
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
+
+			// Simple keyboard shortcuts
+			window.addEventListener('keydown', (e) => {
+				if (e.key === 'r') {
+					// reset camera
+					camera.position.set(3.2, 1.8, 3.2);
+					controls.target.set(0, 0, 0);
+					controls.update();
+				}
+			});
+
+			// Make sure model is centered in view
+			geometry.computeBoundingSphere();
+			const bs = geometry.boundingSphere;
+			if (bs) {
+				controls.target.copy(bs.center);
+			}
+		</script>
+	
+</body>
+</html>
+
