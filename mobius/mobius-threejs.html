@@ -131,16 +131,25 @@ import { ParametricGeometry }
       const normMap = loader.load("./textures/cloud-normal.png");
       const roughMap = loader.load("./textures/marble.png");
 
-			const material = new THREE.MeshStandardMaterial({
+      //normMap.wrapS = RepeatWrapping;
+
+			const material = new THREE.MeshPhysicalMaterial({
 				vertexColors: true,
 				side: THREE.DoubleSide,
-				roughness: 0.835,
+
+        //transparent: true,
+        //opacity: 0.5,
+
+				roughness: 0.35,
         roughnessMap: roughMap,
 				metalness: 0.5,
         normalMap: normMap,
-        normalScale: new THREE.Vector2(2, 2),
-        emissive:0xff0000,
-        emissiveIntensity:0.5
+        normalScale: new THREE.Vector2(6, 6),
+        emissive:0xff00ff,
+        emissiveIntensity:0.5,
+        clearcoat: 1,
+        clearcoatRoughness: 0.5,
+        anisotropy: 1
 			});
 
 			const mesh = new THREE.Mesh(geometry, material);
