@@ -2,13 +2,12 @@ import { ParametricGeometry } from 'three/addons/geometries/ParametricGeometry.j
 
 export default class MobiusStrip {
     constructor(three) {
-        const segmentsU = 200;
-        const segmentsV = 40;
-        this.geometry = this.createSurfaceGeometry2(three, segmentsU, segmentsV);
-        /*this.geometry = this.createGeometry(
-            three, 
-            { radius: 1, width: 0.35, thickness: 0.06, segmentsU: 200, segmentsV: 40 }
-        ); //new ParametricGeometry(this.mobius, segmentsU, segmentsV);*/
+        const segU = 256;
+        const segV = 64;
+        const config = {
+            geometry: { radius: 1.25, width: 0.35, thickness: 0.06, segmentsU: segU, segmentsV: segV }
+        };
+        this.geometry = this.createGeometry(three, config.geometry);
         this.geometry.computeVertexNormals();
 
         this.material = this.makeMaterial(three);
@@ -18,18 +17,51 @@ export default class MobiusStrip {
         mesh.receiveShadow = true;
         this.nativeObj = mesh;
     }
-    createSurfaceGeometry(three, segmentsU, segmentsV) {
+    makeMaterial(three, cfg) {
+        const loader = new three.TextureLoader();
+        const normMap = loader.load("./textures/brush-normal.png");
+        const roughMap = loader.load("./textures/marble.png");
+
+        normMap.wrapS = three.RepeatWrapping;
+        normMap.wrapT = three.RepeatWrapping;
+        roughMap.wrapS = three.RepeatWrapping;
+        roughMap.wrapT = three.RepeatWrapping;
+
+        const material = new three.MeshPhysicalMaterial({
+            vertexColors: true,
+            side: three.DoubleSide,
+            color: 0x40FFFF,
+
+            //transparent: true,
+            //opacity: 0.5,
+
+            roughness: 0.735,
+            roughnessMap: roughMap,
+            metalness: 0.5,
+            normalMap: normMap,
+            normalScale: new three.Vector2(2, 2),
+            emissive:0x1EDCDA,
+            emissiveIntensity:0.5,
+            clearcoat: 1,
+            clearcoatRoughness: 0.5,
+            anisotropy: 1
+        });
+        return material;
+    }
+    createGeometry(three, cfg) {
+        const segmentsU = cfg.segmentsU;
+        const segmentsV = cfg.segmentsV;
         const geometry = new three.BufferGeometry();
 
         const positions = [];
         const uvs = [];
         const indices = [];
 
-        const major = 1.25;
-        const width = 0.35;
+        const major = cfg.radius;
+        const width = cfg.width;
 
         // 6 mm if scene units are metres.
-        const thickness = 0.06;
+        const thickness = cfg.thickness;
 
         const halfThickness = thickness * 0.5;
 
@@ -247,35 +279,6 @@ export default class MobiusStrip {
         const z = (V * width) * Math.sin(U / 2);
 
         target.set(x, y, z);
-    }
-    makeMaterial(three) {
-        const loader = new three.TextureLoader();
-        const normMap = loader.load("./textures/cloud-normal.png");
-        const roughMap = loader.load("./textures/marble.png");
-
-        normMap.wrapS = three.RepeatWrapping;
-        normMap.wrapT = three.RepeatWrapping;
-
-        const material = new three.MeshPhysicalMaterial({
-            vertexColors: true,
-            side: three.DoubleSide,
-            color: 0x40FFFF,
-
-            //transparent: true,
-            //opacity: 0.5,
-
-            roughness: 0.735,
-            roughnessMap: roughMap,
-            metalness: 0.5,
-            normalMap: normMap,
-            normalScale: new three.Vector2(6, 6),
-            emissive:0x1EDCDA,
-            emissiveIntensity:0.5,
-            clearcoat: 1,
-            clearcoatRoughness: 0.5,
-            anisotropy: 1
-        });
-        return material;
     }
     update(dt, elapsed) {
         this.nativeObj.rotation.x += 0.001;

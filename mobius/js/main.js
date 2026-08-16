@@ -3,7 +3,7 @@ import MobiusStrip from "./mobius.js";
 import { makeRenderer, makeLights } from './functions.js';
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0f1114);
+scene.background = new THREE.Color(0x031F29);
 
 makeLights(THREE, scene);
 
