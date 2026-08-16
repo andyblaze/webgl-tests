@@ -1,27 +1,9 @@
 import * as THREE from 'three';
 import MobiusStrip from "./mobius.js";
 import { makeRenderer, makeLights } from './functions.js';
+import Config from './config.js';
 
-const config = {
-    geometry: { radius: 1.25, width: 0.35, thickness: 0.06, segmentsU: 256, segmentsV: 64 },
-    material: {
-        vertexColors: true,
-        side: THREE.DoubleSide,
-        color: 0x40FFFF,
-        roughness: 0.75,
-        metalness: 0.5,
-        emissive:0x1EDCDA,
-        emissiveIntensity:0.5,
-        clearcoat: 1,
-        clearcoatRoughness: 0.5,
-        anisotropy: 1
-    },
-    maps: {
-        normalTex: "./textures/brush-normal.png",
-        roughTex: "./textures/marble.png"
-    },
-    normalScale: [2, 2]
-};
+const config = new Config(THREE);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x031F29);
