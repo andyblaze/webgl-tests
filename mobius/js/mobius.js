@@ -1,16 +1,11 @@
 import { ParametricGeometry } from 'three/addons/geometries/ParametricGeometry.js';
 
 export default class MobiusStrip {
-    constructor(three) {
-        const segU = 256;
-        const segV = 64;
-        const config = {
-            geometry: { radius: 1.25, width: 0.35, thickness: 0.06, segmentsU: segU, segmentsV: segV }
-        };
-        this.geometry = this.createGeometry(three, config.geometry);
+    constructor(three, cfg) {
+        this.geometry = this.createGeometry(three, cfg.geometry);
         this.geometry.computeVertexNormals();
 
-        this.material = this.makeMaterial(three);
+        this.material = this.makeMaterial(three, cfg);
 
         const mesh = new three.Mesh(this.geometry, this.material);
         mesh.castShadow = true;
@@ -18,34 +13,22 @@ export default class MobiusStrip {
         this.nativeObj = mesh;
     }
     makeMaterial(three, cfg) {
+        const maps = cfg.maps;
         const loader = new three.TextureLoader();
-        const normMap = loader.load("./textures/brush-normal.png");
-        const roughMap = loader.load("./textures/marble.png");
+        const normMap = loader.load(maps.normalTex);
+        const roughMap = loader.load(maps.roughTex);
 
         normMap.wrapS = three.RepeatWrapping;
         normMap.wrapT = three.RepeatWrapping;
         roughMap.wrapS = three.RepeatWrapping;
         roughMap.wrapT = three.RepeatWrapping;
 
-        const material = new three.MeshPhysicalMaterial({
-            vertexColors: true,
-            side: three.DoubleSide,
-            color: 0x40FFFF,
+        const material = new three.MeshPhysicalMaterial(cfg.material);
+        material.roughnessMap = roughMap;
+        material.metalness = 0.5;
+        material.normalMap = normMap;
+        material.normalScale = new three.Vector2(2, 2);
 
-            //transparent: true,
-            //opacity: 0.5,
-
-            roughness: 0.735,
-            roughnessMap: roughMap,
-            metalness: 0.5,
-            normalMap: normMap,
-            normalScale: new three.Vector2(2, 2),
-            emissive:0x1EDCDA,
-            emissiveIntensity:0.5,
-            clearcoat: 1,
-            clearcoatRoughness: 0.5,
-            anisotropy: 1
-        });
         return material;
     }
     createGeometry(three, cfg) {
