@@ -25,9 +25,8 @@ export default class MobiusStrip {
 
         const material = new three.MeshPhysicalMaterial(cfg.material);
         material.roughnessMap = roughMap;
-        material.metalness = 0.5;
         material.normalMap = normMap;
-        material.normalScale = new three.Vector2(2, 2);
+        material.normalScale = new three.Vector2(cfg.normalScale[0], cfg.normalScale[1]);
 
         return material;
     }

@@ -19,7 +19,8 @@ const config = {
     maps: {
         normalTex: "./textures/brush-normal.png",
         roughTex: "./textures/marble.png"
-    }
+    },
+    normalScale: [2, 2]
 };
 
 const scene = new THREE.Scene();
