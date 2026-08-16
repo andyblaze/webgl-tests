@@ -23,4 +23,4 @@ function animate(timestamp) {
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
-animate(performance.now());
+requestAnimationFrame(animate);
