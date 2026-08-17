@@ -264,6 +264,8 @@ export default class MobiusStrip {
         target.set(x, y, z);
     }
     update(dt, elapsed) {
+        const hue = (elapsed * 0.01) % 1;
+        this.nativeObj.material.emissive.setHSL(hue, 1.0, 0.5);
         this.nativeObj.rotation.x += 0.001 * dt * 60;
         this.nativeObj.rotation.y += 0.003 * dt * 60;
         this.nativeObj.rotation.z += 0.007 * dt * 60;
