@@ -1,4 +1,5 @@
-import { ParametricGeometry } from 'three/addons/geometries/ParametricGeometry.js';
+//import { ParametricGeometry } from 'three/addons/geometries/ParametricGeometry.js';
+// if i ever go back to it
 
 export default class MobiusStrip {
     constructor(three, cfg) {
@@ -263,9 +264,13 @@ export default class MobiusStrip {
         target.set(x, y, z);
     }
     update(dt, elapsed) {
-        this.nativeObj.rotation.x += 0.001;
-        this.nativeObj.rotation.y += 0.003;
-        this.nativeObj.rotation.z += 0.007;
+        this.nativeObj.rotation.x += 0.001 * dt * 60;
+        this.nativeObj.rotation.y += 0.003 * dt * 60;
+        this.nativeObj.rotation.z += 0.007 * dt * 60;
+        this.nativeObj.material.normalMap.offset.x += dt * 0.007;
+        this.nativeObj.material.normalMap.offset.y += dt * 0.0011;
+        this.nativeObj.material.roughnessMap.offset.x += dt * 0.003;
+        this.nativeObj.material.roughnessMap.offset.y += dt * 0.001;
     }
     get native() {
         return this.nativeObj;
