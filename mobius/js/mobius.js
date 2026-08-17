@@ -263,16 +263,25 @@ export default class MobiusStrip {
 
         target.set(x, y, z);
     }
-    update(dt, elapsed) {
+    changeHue(obj, elapsed) {
         const hue = (elapsed * 0.01) % 1;
-        this.nativeObj.material.emissive.setHSL(hue, 1.0, 0.5);
-        this.nativeObj.rotation.x += 0.001 * dt * 60;
-        this.nativeObj.rotation.y += 0.003 * dt * 60;
-        this.nativeObj.rotation.z += 0.007 * dt * 60;
-        this.nativeObj.material.normalMap.offset.x += dt * 0.007;
-        this.nativeObj.material.normalMap.offset.y += dt * 0.0011;
-        this.nativeObj.material.roughnessMap.offset.x += dt * 0.003;
-        this.nativeObj.material.roughnessMap.offset.y += dt * 0.001;
+        obj.material.emissive.setHSL(hue, 1.0, 0.5);        
+    }
+    spin(obj, dt) {
+        obj.rotation.x += 0.001 * dt * 60;
+        obj.rotation.y += 0.003 * dt * 60;
+        obj.rotation.z += 0.007 * dt * 60;
+    }
+    moveMaps(obj, dt) {
+        obj.material.normalMap.offset.x += dt * 0.007;
+        obj.material.normalMap.offset.y += dt * 0.0011;
+        obj.material.roughnessMap.offset.x += dt * 0.003;
+        obj.material.roughnessMap.offset.y += dt * 0.001;
+    }
+    update(dt, elapsed) {
+        this.changeHue(this.nativeObj, elapsed);
+        this.spin(this.nativeObj, dt);
+        this.moveMaps(this.nativeObj, dt);
     }
     get native() {
         return this.nativeObj;
