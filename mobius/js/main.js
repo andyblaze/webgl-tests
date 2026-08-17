@@ -8,7 +8,7 @@ const config = new Config(THREE);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x031F29);
 
-makeLights(THREE, scene);
+makeLights(THREE, scene, config.lights);
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 0, 4.5);

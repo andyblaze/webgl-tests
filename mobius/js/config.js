@@ -20,6 +20,25 @@ export default class Config {
             normalTex: "./textures/brush-normal.png",
             roughTex: "./textures/marble.png"
         },
-        this.normalScale = [2, 2]
+        this.normalScale = [2, 2],
+        this.lights = {
+            hemi: {
+                start: 0xffffff, stop: 0x444444, 
+                strength: 0.6,
+                position: new three.Vector3(0, 2, 0)
+            },
+            red: {
+                color: 0xFF00FF, strength: 3,
+                position: new three.Vector3(2, 3, 8)
+            },
+            green: {
+                color: 0x8080FF, strength: 6,
+                position: new three.Vector3(5, 0, 0)
+            },
+            blue: {
+                color: 0xB2FF43, strength: 3,
+                position: new three.Vector3(-4, -4, -6)
+            }
+        }
     }
 }

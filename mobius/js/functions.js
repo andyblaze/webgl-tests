@@ -2,26 +2,27 @@ function byId(elID) {
     return document.getElementById(elID);
 }
 
-export function makeLights(three, scene) {
-    const hemi = new three.HemisphereLight(0xffffff, 0x444444, 0.58);
-    hemi.position.set(0, 2, 0);
-    scene.add(hemi);
+export function makeLights(three, scene, cfg) {
+    const { hemi, red, green, blue } = {...cfg};
+    const hemi1 = new three.HemisphereLight(hemi.start, hemi.stop, hemi.strength);
+    hemi1.position.copy(hemi.position);
+    scene.add(hemi1);
 
     //reddish
-    const dir1 = new three.DirectionalLight(0xFF00FF, 3);
-    dir1.position.set(2, 3, 8);
+    const dir1 = new three.DirectionalLight(red.color, red.strength);
+    dir1.position.copy(red.position);
     dir1.castShadow = true;
     scene.add(dir1);
 
     // blueish
-    const dir2 = new three.DirectionalLight(0x8080FF, 3);
-    dir2.position.set(-4, 2, -6);
+    const dir2 = new three.DirectionalLight(blue.color, blue.strength);
+    dir2.position.copy(blue.position);
     dir2.castShadow = true;
-    scene.add(dir2);
+    scene.add(dir2);    
 
     // greenish
-    const dir3 = new three.DirectionalLight(0xB2FF43, 2);
-    dir3.position.set(-4, -4, -6);
+    const dir3 = new three.DirectionalLight(green.color, green.strength);
+    dir3.position.copy(green.position);
     dir3.castShadow = true;
     scene.add(dir3);
 }
