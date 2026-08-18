@@ -40,7 +40,7 @@ export default class GearWheel {
         this.buildHub(three);
         this.buildRim(three);
         this.buildSpokes(three);
-        //this.buildTeeth(three);
+        this.buildTeeth(three);
     }
     get native() {
         return this.gear;
@@ -159,12 +159,11 @@ export default class GearWheel {
         );
 
         // ExtrudeGeometry starts along +Z.
-        // Rotate it so that it lies in the XZ plane,
-        // matching your spokes and teeth.
+        // Rotate it so that it lies in the XZ plane, matching your spokes and teeth.
         rim.rotation.x = Math.PI / 2;
 
         // Centre the thickness around Y
-        rim.position.y = -this.gearThickness / 2;
+        rim.position.y = 0.07;
 
         this.addToGroup(rim);
     }
