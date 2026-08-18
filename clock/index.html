@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Gearwheel</title>
+
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #111;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+
+    <!-- Three.js CDN -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js"
+        }
+    }
+    </script>
+</head>
+
+<body>
+
+<script type="module">
+
+import * as THREE from 'three';
+
+
+// ------------------------------------------------------------
+// Build a simple gear from primitive geometries
+// ------------------------------------------------------------
+
+class GearWheel {
+    constructor(three, innerRadius, outerRadius, spokeCount, toothCount) {
+        this.innerRadius = innerRadius;
+        this.outerRadius = outerRadius;
+        this.spokeCount = spokeCount;
+        this.toothCount = toothCount;
+        
+        this.gearThickness = 0.15;
+        this.hubRadius = innerRadius * 0.45;
+        this.hubThickness = this.gearThickness * 1.4;
+        
+        this.gearMaterial = new three.MeshStandardMaterial({
+            color: 0xefeb34,
+            metalness: 0.25,
+            roughness: 0.75,
+            clearcoat: 1,
+            clearcoatRoughness: 0.25,
+            emissive: 0xf0bf4f,
+            emissiveIntensity: 0.01,
+            sheenColor: 0xeaaa15,
+            sheen: 1,
+            anisotropy: 1
+        });
+
+        this.toothMaterial = new three.MeshStandardMaterial({
+            color: 0xefeb34,
+            metalness: 0.25,
+            roughness: 0.75,
+            clearcoat: 1,
+            clearcoatRoughness: 0.25,
+            emissive: 0xf0bf4f,
+            emissiveIntensity: 0.01,
+            sheenColor: 0xeaaa15,
+            sheen: 1,
+            anisotropy: 1
+        });    
+        
+        this.gear = new three.Group(); 
+
+        this.buildHub(three);
+        this.buildRim(three);
+        this.buildSpokes(three);
+        this.buildTeeth(three);
+    }
+    get native() {
+        return this.gear;
+    }
+    addToGroup(item) {
+        this.gear.add(item);
+    }
+    update() {
+        this.gear.rotation.x += 0.002;
+        this.gear.rotation.y += 0.003;
+        this.gear.rotation.z += 0.001;    
+    }
+    buildTeeth(three) {
+        const toothWidth = 0.25;
+        const toothDepth = 0.35;
+
+        for (let i = 0; i < this.toothCount; i++) {
+            const angle = (i / this.toothCount) * Math.PI * 2;
+
+            const toothGeometry = new three.BoxGeometry(
+                toothDepth,
+                this.gearThickness,
+                toothWidth
+            );
+
+            const tooth = new three.Mesh(toothGeometry, this.toothMaterial);
+
+            // Put tooth just outside the rim
+            const toothRadius = this.outerRadius + toothDepth / 2;
+
+            tooth.position.x = Math.cos(angle) * toothRadius;
+            tooth.position.z = Math.sin(angle) * toothRadius;
+
+            // Rotate the tooth so it points radially outward
+            tooth.rotation.y = -angle;
+
+            this.addToGroup(tooth);    
+        }
+    }
+    buildSpokes(three) {
+        const spokeLength = this.outerRadius - this.hubRadius;
+        const spokeWidth = 0.35;
+        const spokeThickness = this.gearThickness / 2;
+
+        for (let i = 0; i < this.spokeCount; i++) {
+
+            const angle = (i / this.spokeCount) * Math.PI * 2;
+
+            const spokeGeometry = new three.BoxGeometry(spokeLength, spokeThickness, spokeWidth);
+
+            const spoke = new three.Mesh(spokeGeometry, this.gearMaterial);
+
+            // Move the spoke halfway between hub and rim
+            const spokeRadius = this.hubRadius + spokeLength / 2;
+
+            spoke.position.x = Math.cos(angle) * spokeRadius;
+            spoke.position.z = Math.sin(angle) * spokeRadius;
+
+            // Point the spoke radially outward
+            spoke.rotation.y = -angle;
+
+            this.addToGroup(spoke);
+        }
+    }
+    buildHub(three) {
+        const hubGeometry = new three.CylinderGeometry(
+            this.hubRadius, this.hubRadius, 
+            this.hubThickness, 32
+        );
+
+        const hub = new three.Mesh(hubGeometry, this.gearMaterial);
+
+        this.addToGroup(hub);    
+    }
+buildRim(three) {
+    const innerRadius = this.innerRadius;
+    const outerRadius = this.outerRadius;
+
+    // Outer circular shape
+    const shape = new three.Shape();
+
+    shape.absarc(
+        0, 0,
+        outerRadius,
+        0,
+        Math.PI * 2,
+        false
+    );
+
+    // Cut out the centre
+    const hole = new three.Path();
+
+    hole.absarc(
+        0, 0,
+        innerRadius * 4.8,
+        0,
+        Math.PI * 2,
+        true
+    );
+
+    shape.holes.push(hole);
+
+    // Extrude the ring into a solid 3D rim
+    const rimGeometry = new three.ExtrudeGeometry(
+        shape,
+        {
+            depth: this.gearThickness,
+            bevelEnabled: false,
+            curveSegments: 48
+        }
+    );
+
+    const rim = new three.Mesh(
+        rimGeometry,
+        this.gearMaterial
+    );
+
+    // ExtrudeGeometry starts along +Z.
+    // Rotate it so the gear lies in the XZ plane,
+    // matching your spokes and teeth.
+    rim.rotation.x = Math.PI / 2;
+
+    // Centre the thickness around Y
+    rim.position.y = -this.gearThickness / 2;
+
+    this.addToGroup(rim);
+}
+}
+
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x111111);
+
+const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
+
+camera.position.set(10, 8, 10);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+);
+
+document.body.appendChild(renderer.domElement);
+
+const ambientLight = new THREE.HemisphereLight(
+    0xffffff,
+    0x333333,
+    2
+);
+
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(
+    0xffffff,
+    3
+);
+
+directionalLight.position.set(5, 10, 5);
+
+scene.add(directionalLight);
+
+const gearObj = new GearWheel(
+    THREE,
+    1,      // inner radius
+    5,      // outer radius
+    5,      // spoke count
+    48      // tooth count
+);
+
+const gear = gearObj.native;
+
+scene.add(gear);
+
+function animate(timestamp) {    
+    gearObj.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+
+// ------------------------------------------------------------
+// Handle window resizing
+// ------------------------------------------------------------
+
+window.addEventListener('resize', () => {
+
+    camera.aspect =
+        window.innerWidth / window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+});
+
+</script>
+
+</body>
+</html>
