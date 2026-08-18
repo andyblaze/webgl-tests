@@ -54,22 +54,16 @@ export default class GearWheel {
         this.gear.rotation.z += 0.001;    
     }
     buildTeeth(three) {
-        const toothWidth = 0.25;
+        const toothWidth = 0.32;
         const toothDepth = 0.35;
 
         for (let i = 0; i < this.toothCount; i++) {
             const angle = (i / this.toothCount) * Math.PI * 2;
 
-            const toothGeometry = new three.BoxGeometry(
-                toothDepth,
-                this.gearThickness,
-                toothWidth
-            );
-
-            const tooth = new three.Mesh(toothGeometry, this.toothMaterial);
+            const tooth = this.buildTooth(three, toothWidth, toothDepth);
 
             // Put tooth just outside the rim
-            const toothRadius = this.outerRadius + toothDepth / 2;
+            const toothRadius = this.outerRadius + toothDepth / 8;
 
             tooth.position.x = Math.cos(angle) * toothRadius;
             tooth.position.z = Math.sin(angle) * toothRadius;
@@ -79,6 +73,15 @@ export default class GearWheel {
 
             this.addToGroup(tooth);    
         }
+    }
+    buildTooth(three, toothWidth, toothDepth) {
+        const toothGeometry = new three.BoxGeometry(
+            toothDepth,
+            this.gearThickness,
+            toothWidth
+        );
+
+        return new three.Mesh(toothGeometry, this.toothMaterial);
     }
     buildSpokes(three) {
         const spokeLength = this.outerRadius - this.hubRadius;
@@ -163,7 +166,7 @@ export default class GearWheel {
         rim.rotation.x = Math.PI / 2;
 
         // Centre the thickness around Y
-        rim.position.y = 0.07;
+        rim.position.y = this.gearThickness / 2;
 
         this.addToGroup(rim);
     }
