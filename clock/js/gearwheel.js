@@ -23,7 +23,7 @@ export default class GearWheel {
         });
 
         this.toothMaterial = new three.MeshStandardMaterial({
-            color: 0xefeb34,
+            color: 0xef99cc,
             metalness: 0.25,
             roughness: 0.75,
             clearcoat: 1,
@@ -72,33 +72,33 @@ export default class GearWheel {
             this.addToGroup(tooth);    
         }
     }
-buildTooth(three, toothWidth, toothDepth) {
+    buildTooth(three, toothWidth, toothDepth) {
 
-    const toothGeometry = new three.CylinderGeometry(
-        toothWidth,      // bottom radius 
-        toothWidth / 3,  // top radius     
-        toothDepth,
-        4
-    );
+        const toothGeometry = new three.CylinderGeometry(
+            toothWidth,      // bottom radius 
+            toothWidth / 3,  // top radius     
+            toothDepth,
+            4
+        );
 
-    toothGeometry.rotateY(Math.PI / 4);
+        toothGeometry.rotateY(Math.PI / 4);
 
-    // Squash the tooth's cross-section to gear thickness
-    toothGeometry.scale(
-        this.gearThickness / (toothWidth * 2) + 0.05,
-        1,        
-        1
-    );
+        // Squash the tooth's cross-section to gear thickness
+        toothGeometry.scale(
+            this.gearThickness / (toothWidth / 0.7),
+            1,        
+            1.5
+        );
 
-    const tooth = new three.Mesh(
-        toothGeometry,
-        this.toothMaterial
-    );
+        const tooth = new three.Mesh(
+            toothGeometry,
+            this.toothMaterial
+        );
 
-    tooth.rotation.z = Math.PI / 2;
+        tooth.rotation.z = Math.PI / 2;
 
-    return tooth;
-}
+        return tooth;
+    }
     buildSpokes(three) {
         const spokeLength = this.outerRadius - this.hubRadius;
         const spokeWidth = 0.35;
