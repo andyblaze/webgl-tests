@@ -25,3 +25,7 @@ export function makeLights(three, scene) {
     dir2.position.set(-10, 0, 0);
     scene.add(dir2);
 }
+
+export function degToRad(degrees) {
+    return degrees * Math.PI / 180;
+}

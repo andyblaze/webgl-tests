@@ -4,6 +4,8 @@ export default class GearWheel {
         this.outerRadius = data.outer;
         this.spokeCount = data.spokes;
         this.toothCount = data.teeth;
+        this.direction = data.direction;
+        this.speed = data.speed;
         
         this.doMaths();
         
@@ -30,16 +32,27 @@ export default class GearWheel {
         this.spokeWidth = 0.35;
         this.spokeThickness = this.gearThickness / 2;
     }
+    setPosition(x, y, z) {
+        this.gear.position.x = x;
+        this.gear.position.y = y;
+        this.gear.position.z = z;
+    }
+    setRotation(x, y, z) {
+        this.gear.rotation.x += x;
+        this.gear.rotation.y += y;
+        this.gear.rotation.z += z;
+    }
     get native() {
         return this.gear;
     }
     addToGroup(item) {
         this.gear.add(item);
     }
-    update() {
-        this.gear.rotation.x += 0.002;
-        this.gear.rotation.y += 0.003;
-        this.gear.rotation.z += 0.001;    
+    update(vel) {
+        //console.log(0.003 * this.direction);
+        //this.gear.rotation.x += 0.002;
+        this.gear.rotation.y += vel;//(this.speed * this.direction);
+        //this.gear.rotation.z += 0.001;    
     }
     buildTeeth(three) {
         for (let i = 0; i < this.toothCount; i++) {
