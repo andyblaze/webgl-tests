@@ -1,39 +1,15 @@
 export default class GearWheel {
-    constructor(three, innerRadius, outerRadius, spokeCount, toothCount) {
-        this.innerRadius = innerRadius;
-        this.outerRadius = outerRadius;
-        this.spokeCount = spokeCount;
-        this.toothCount = toothCount;
+    constructor(three, data, cfg) {
+        this.innerRadius = data.inner;
+        this.outerRadius = data.outer;
+        this.spokeCount = data.spokes;
+        this.toothCount = data.teeth;
         
-        this.gearThickness = 0.15;
-        this.hubRadius = innerRadius * 0.45;
-        this.hubThickness = this.gearThickness * 1.4;
+        this.doMaths();
         
-        this.gearMaterial = new three.MeshStandardMaterial({
-            color: 0xefeb34,
-            metalness: 0.25,
-            roughness: 0.75,
-            clearcoat: 1,
-            clearcoatRoughness: 0.25,
-            emissive: 0xf0bf4f,
-            emissiveIntensity: 0.01,
-            sheenColor: 0xeaaa15,
-            sheen: 1,
-            anisotropy: 1
-        });
+        this.gearMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
 
-        this.toothMaterial = new three.MeshStandardMaterial({
-            color: 0xef99cc,
-            metalness: 0.25,
-            roughness: 0.75,
-            clearcoat: 1,
-            clearcoatRoughness: 0.25,
-            emissive: 0xf0bf4f,
-            emissiveIntensity: 0.01,
-            sheenColor: 0xeaaa15,
-            sheen: 1,
-            anisotropy: 1
-        });    
+        this.toothMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);    
         
         this.gear = new three.Group(); 
 
@@ -41,6 +17,18 @@ export default class GearWheel {
         this.buildRim(three);
         this.buildSpokes(three);
         this.buildTeeth(three);
+
+        this.gear.rotation.x = Math.PI / 2;
+    }
+    doMaths() {
+        this.gearThickness = 0.15;
+        this.hubRadius = this.innerRadius * 0.45;
+        this.hubThickness = this.gearThickness * 1.4;
+        this.toothWidth = 0.32;
+        this.toothDepth = 0.35;
+        this.spokeLength = this.outerRadius - this.hubRadius + 0.1;
+        this.spokeWidth = 0.35;
+        this.spokeThickness = this.gearThickness / 2;
     }
     get native() {
         return this.gear;
@@ -54,15 +42,12 @@ export default class GearWheel {
         this.gear.rotation.z += 0.001;    
     }
     buildTeeth(three) {
-        const toothWidth = 0.32;
-        const toothDepth = 0.35;
-
         for (let i = 0; i < this.toothCount; i++) {
             const angle = (i / this.toothCount) * Math.PI * 2;
 
-            const tooth = this.buildTooth(three, toothWidth, toothDepth);
+            const tooth = this.buildTooth(three, this.toothWidth, this.toothDepth);
             // Put tooth just outside the rim
-            const toothRadius = this.outerRadius + toothDepth / 8;
+            const toothRadius = this.outerRadius + this.toothDepth / 8;
 
             tooth.position.x = Math.cos(angle) * toothRadius;
             tooth.position.z = Math.sin(angle) * toothRadius;
@@ -100,20 +85,16 @@ export default class GearWheel {
         return tooth;
     }
     buildSpokes(three) {
-        const spokeLength = this.outerRadius - this.hubRadius;
-        const spokeWidth = 0.35;
-        const spokeThickness = this.gearThickness / 2;
-
         for (let i = 0; i < this.spokeCount; i++) {
 
             const angle = (i / this.spokeCount) * Math.PI * 2;
 
-            const spokeGeometry = new three.BoxGeometry(spokeLength, spokeThickness, spokeWidth);
+            const spokeGeometry = new three.BoxGeometry(this.spokeLength, this.spokeThickness, this.spokeWidth);
 
             const spoke = new three.Mesh(spokeGeometry, this.gearMaterial);
 
             // Move the spoke halfway between hub and rim
-            const spokeRadius = this.hubRadius + spokeLength / 2;
+            const spokeRadius = this.hubRadius + this.spokeLength / 2 - 0.05;
 
             spoke.position.x = Math.cos(angle) * spokeRadius;
             spoke.position.z = Math.sin(angle) * spokeRadius;
