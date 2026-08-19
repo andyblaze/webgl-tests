@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { makeCamera, makeRenderer, makeLights, degToRad } from "./functions.js";
 import GearWheel from "./gearwheel.js";
 import Config from "./config.js";
+import Clock from "./clock.js";
 
 const config = new Config(THREE);
 
@@ -28,23 +29,6 @@ const gear2 = new GearWheel(
 );
 gear2.setPosition(-5.4, 0, 0);
 gear2.setRotation(0, degToRad(4), 0);
-
-class Clock {
-    constructor(three) {
-        this.objects = [];
-        this.items = new three.Group()
-    }
-    addItem(i) {
-        this.objects.push(i);
-        this.items.add(i.native);
-        //console.log(this.items);
-    }
-    update() {
-        let vel = this.objects[0].speed * this.objects[0].direction;
-        this.objects[0].update(vel);
-        this.objects[1].update(-vel);
-    }
-}
 
 const clock = new Clock(THREE);
 clock.addItem(gear1);
