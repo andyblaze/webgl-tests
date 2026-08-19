@@ -18,11 +18,11 @@ export function makeLights(three, scene) {
     scene.add(amb);
 
     const dir1 = new three.DirectionalLight(0xff8000, 4);
-    dir1.position.set(10, 0, 0);
+    dir1.position.set(10, 5, 5);
     scene.add(dir1);
 
     const dir2 = new three.DirectionalLight(0xffffff, 3);
-    dir2.position.set(-10, 0, 0);
+    dir2.position.set(-10, -5, -5);
     scene.add(dir2);
 }
 

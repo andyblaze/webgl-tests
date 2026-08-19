@@ -21,7 +21,6 @@ const gear1 = new GearWheel(
 );
 gear1.setPosition(5, 0, 0);
 
-
 const gear2 = new GearWheel(
     THREE,
     { inner: 1, outer: 5, spokes: 5, teeth: 48, direction: 0, speed: 0 },
