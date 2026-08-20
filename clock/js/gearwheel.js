@@ -16,8 +16,8 @@ export default class GearWheel {
         this.gear = new three.Group(); 
 
         this.buildHub(three);
-        this.buildRim(three);
-        this.buildSpokes(three);
+        //this.buildRim(three);
+        //this.buildSpokes(three);
         this.buildTeeth(three);
 
         this.gear.rotation.x = Math.PI / 2;
@@ -48,19 +48,26 @@ export default class GearWheel {
     addToGroup(item) {
         this.gear.add(item);
     }
-    update(vel) {
-        //console.log(0.003 * this.direction);
-        //this.gear.rotation.x += 0.002;
-        this.gear.rotation.y += vel;//(this.speed * this.direction);
-        //this.gear.rotation.z += 0.001;    
+    update(velocity) {
+        this.gear.rotation.y += velocity;   
     }
     buildTeeth(three) {
+        const toothRadius = this.outerRadius + this.toothDepth / 8;
+        const circumference = 2 * Math.PI * toothRadius;
+        const pitch = circumference / this.toothCount;
+
+        console.log(this.outerRadius, {
+            toothCount: this.toothCount,
+            toothRadius,
+            circumference,
+            pitch,
+            
+        });
         for (let i = 0; i < this.toothCount; i++) {
             const angle = (i / this.toothCount) * Math.PI * 2;
 
             const tooth = this.buildTooth(three, this.toothWidth, this.toothDepth);
-            // Put tooth just outside the rim
-            const toothRadius = this.outerRadius + this.toothDepth / 8;
+
 
             tooth.position.x = Math.cos(angle) * toothRadius;
             tooth.position.z = Math.sin(angle) * toothRadius;
@@ -71,7 +78,7 @@ export default class GearWheel {
         }
     }
     buildTooth(three, toothWidth, toothDepth) {
-
+        // cylinder hackery to get a nice shaped tooth :) 
         const toothGeometry = new three.CylinderGeometry(
             toothWidth,      // bottom radius 
             toothWidth / 3,  // top radius     
@@ -81,7 +88,7 @@ export default class GearWheel {
 
         toothGeometry.rotateY(Math.PI / 4);
 
-        // Squash the tooth's cross-section to gear thickness
+        // Scale the tooth in x & z so it looks really good and fits the gear thickness
         toothGeometry.scale(
             this.gearThickness / (toothWidth / 0.7),
             1,        
