@@ -26,7 +26,7 @@ export default class GearWheel {
 
         this.buildHub(three);
         this.buildRim(three);
-        this.buildSpokes(three);
+        this.buildSpokes(three); 
         this.buildTeeth(three);
 
         this.gear.rotation.x = Math.PI / 2;
