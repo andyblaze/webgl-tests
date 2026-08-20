@@ -16,26 +16,30 @@ makeLights(THREE, scene);
 
 const gear1 = new GearWheel(
     THREE,
-    { inner: 1, outer: 5, spokes: 5, teeth: 48, direction: 1, speed: 0.003 },
+    { inner: 1, spokes: 5, teeth: 48, direction: 1, speed: 0.08 },
     config
 );
 gear1.setPosition(5, 0, 0);
 
 const gear2 = new GearWheel(
     THREE,
-    { inner: 1, outer: 5, spokes: 5, teeth: 48, direction: 0, speed: 0 },
+    { inner: 1, spokes: 5, teeth: 24, direction: 0, speed: 0 },
     config
 );
-gear2.setPosition(-5.4, 0, 0);
-gear2.setRotation(0, degToRad(4), 0);
+gear2.setPosition(-2.85, 0, 0);
+gear2.setRotation(0, degToRad(8), 0);
 
 const clock = new Clock(THREE);
 clock.addItem(gear1);
 clock.addItem(gear2);
-scene.add(clock.items);
+scene.add(clock.gears);
+
+const timer = new THREE.Clock();
 
 function animate(timestamp) {    
-    clock.update();
+    const dt = timer.getDelta();
+    const elapsed = timer.getElapsedTime();
+    clock.update(dt, elapsed);
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }

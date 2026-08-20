@@ -11,5 +11,15 @@ export default class Config {
             normalScale: new three.Vector2(0.21, 0.21),
             roughnessMap: this.loader.load("./textures/marble.png")
         }
+        this.redBrass = {
+            color: 0xee0011,
+            metalness: 0.56,
+            roughness: 0.28,
+            emissive: 0xca540b,
+            emissiveIntensity: 0.25,
+            normalMap: this.loader.load("./textures/brush-normal.png"),
+            normalScale: new three.Vector2(0.21, 0.21),
+            roughnessMap: this.loader.load("./textures/marble.png")
+        }
     }
 }

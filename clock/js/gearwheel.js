@@ -1,23 +1,32 @@
 export default class GearWheel {
     constructor(three, data, cfg) {
         this.innerRadius = data.inner;
-        this.outerRadius = data.outer;
         this.spokeCount = data.spokes;
         this.toothCount = data.teeth;
+
+        this.toothWidth = 0.32;
+        this.toothDepth = 0.35;
+        this.toothPitch = 0.6602253311059799;
+        this.toothRadius = 0;
+        
         this.direction = data.direction;
         this.speed = data.speed;
+
+        this.velocity = this.speed * this.direction;
+
+        this.outerRadius = 0;
         
         this.doMaths();
         
         this.gearMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
 
-        this.toothMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);    
+        this.toothMaterial = new three.MeshStandardMaterial(cfg.redBrass);    
         
         this.gear = new three.Group(); 
 
         this.buildHub(three);
-        //this.buildRim(three);
-        //this.buildSpokes(three);
+        this.buildRim(three);
+        this.buildSpokes(three);
         this.buildTeeth(three);
 
         this.gear.rotation.x = Math.PI / 2;
@@ -26,8 +35,9 @@ export default class GearWheel {
         this.gearThickness = 0.15;
         this.hubRadius = this.innerRadius * 0.45;
         this.hubThickness = this.gearThickness * 1.4;
-        this.toothWidth = 0.32;
-        this.toothDepth = 0.35;
+
+        this.toothRadius = (this.toothPitch * this.toothCount) / (2 * Math.PI);
+        this.outerRadius = this.toothRadius - this.toothDepth / 8;
         this.spokeLength = this.outerRadius - this.hubRadius + 0.1;
         this.spokeWidth = 0.35;
         this.spokeThickness = this.gearThickness / 2;
@@ -52,25 +62,13 @@ export default class GearWheel {
         this.gear.rotation.y += velocity;   
     }
     buildTeeth(three) {
-        const toothRadius = this.outerRadius + this.toothDepth / 8;
-        const circumference = 2 * Math.PI * toothRadius;
-        const pitch = circumference / this.toothCount;
-
-        console.log(this.outerRadius, {
-            toothCount: this.toothCount,
-            toothRadius,
-            circumference,
-            pitch,
-            
-        });
         for (let i = 0; i < this.toothCount; i++) {
             const angle = (i / this.toothCount) * Math.PI * 2;
 
             const tooth = this.buildTooth(three, this.toothWidth, this.toothDepth);
 
-
-            tooth.position.x = Math.cos(angle) * toothRadius;
-            tooth.position.z = Math.sin(angle) * toothRadius;
+            tooth.position.x = Math.cos(angle) * this.toothRadius;
+            tooth.position.z = Math.sin(angle) * this.toothRadius;
             // Rotate the tooth so it points radially outward
             tooth.rotation.y = -angle;
 
@@ -155,7 +153,7 @@ export default class GearWheel {
 
         hole.absarc(
             0, 0,
-            innerRadius * 4.8,
+            outerRadius * 0.96,
             0,
             Math.PI * 2,
             true
