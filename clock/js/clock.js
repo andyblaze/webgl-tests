@@ -8,15 +8,16 @@ export default class Clock {
         this.gears.add(i.native);
     }
     update(dt, elapsed) {
-        const gear1 = this.objects[0];
-        const gear2 = this.objects[1];
+        let rotationDelta = this.objects[0].velocity * dt;
 
-        const vel = gear1.velocity * dt;
+        for (let i = 0; i < this.objects.length; i++) {
+            const gear = this.objects[i];
+            gear.update(rotationDelta);
 
-        gear1.update(vel);
-
-        const gear2Vel = -vel * (gear1.toothCount / gear2.toothCount);
-
-        gear2.update(gear2Vel);
+            if (i < this.objects.length - 1) {
+                const nextGear = this.objects[i + 1];
+                rotationDelta = -rotationDelta * (gear.toothCount / nextGear.toothCount);
+            }
+        }
     }
 }
