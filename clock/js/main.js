@@ -51,10 +51,21 @@ const gear3 = new GearWheel(
 gear3.setPosition(-5.75, -2.15, 0);
 gear3.setRotation(0, degToRad(5), 0);
 
+const gear4 = new GearWheel(
+    THREE,
+    { inner: 1, spokes: 2, teeth: 12 },
+    config
+);
+gear4.setPosition(-10.7, -0.1, 0);
+gear4.setRotation(0, degToRad(2), 0);
+
+scene.add(gear4.native);
+
 const clock = new Clock(THREE);
 clock.addItem(gear1);
 clock.addItem(gear2);
 clock.addItem(gear3);
+clock.addItem(gear4);
 scene.add(clock.gears);
 
 const timer = new THREE.Clock();
