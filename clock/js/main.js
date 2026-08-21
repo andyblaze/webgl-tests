@@ -3,6 +3,7 @@ import { makeCamera, makeRenderer, makeLights, degToRad } from "./functions.js";
 import GearWheel from "./gearwheel.js";
 import Config from "./config.js";
 import Clock from "./clock.js";
+import GearShaft from "./gear-shaft.js";
 
 const config = new Config(THREE);
 
@@ -14,11 +15,24 @@ const renderer = makeRenderer(THREE);
 
 makeLights(THREE, scene);
 
+const shaft1 = new GearShaft(THREE, config);
+shaft1.setPosition(7, 0, 0);
+scene.add(shaft1.native);
+
+const shaft2 = new GearShaft(THREE, config);
+shaft2.setPosition(-0.6, 2, 0);
+scene.add(shaft2.native);
+
+const shaft3 = new GearShaft(THREE, config);
+shaft3.setPosition(-5.75, -2.15, 0);
+scene.add(shaft3.native);
+
 const gear1 = new GearWheel(
     THREE,
     { inner: 1, spokes: 5, teeth: 48, direction: 1, speed: 0.08 },
     config
 );
+//shaft1.attach(gear1);
 gear1.setPosition(7, 0, 0);
 
 const gear2 = new GearWheel(
