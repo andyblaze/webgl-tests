@@ -23,7 +23,7 @@ gear1.setPosition(7, 0, 0);
 
 const gear2 = new GearWheel(
     THREE,
-    { inner: 1, spokes: 3, teeth: 24, direction: 0, speed: 0 },
+    { inner: 1, spokes: 3, teeth: 24 },
     config
 );
 gear2.setPosition(-0.6, 2, 0);
@@ -31,7 +31,7 @@ gear2.setRotation(0, degToRad(8), 0);
 
 const gear3 = new GearWheel(
     THREE,
-    { inner: 1, spokes: 4, teeth: 36, direction: 0, speed: 0 },
+    { inner: 1, spokes: 4, teeth: 36 },
     config
 );
 gear3.setPosition(-5.75, -2.15, 0);

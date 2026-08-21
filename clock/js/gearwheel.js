@@ -9,8 +9,8 @@ export default class GearWheel {
         this.toothPitch = 0.6602253311059799;
         this.toothRadius = 0;
         
-        this.direction = data.direction;
-        this.speed = data.speed;
+        this.direction = data.direction ?? 0;
+        this.speed = data.speed ?? 0;
 
         this.velocity = this.speed * this.direction;
 
