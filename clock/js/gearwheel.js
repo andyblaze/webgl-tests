@@ -20,7 +20,7 @@ export default class GearWheel {
         
         this.gearMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
 
-        this.toothMaterial = new three.MeshStandardMaterial(cfg.redBrass);    
+        this.toothMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
         
         this.gear = new three.Group(); 
 
