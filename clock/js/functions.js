@@ -1,7 +1,7 @@
 export function makeCamera(three) {
     const cam = new three.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    cam.position.set(0, 0, 25);
-    //cam.position.set(12, 8, 15);
+    //cam.position.set(0, 0, 25);
+    cam.position.set(12, 8, 15);
     cam.lookAt(0, 0, 0);
     return cam;
 }

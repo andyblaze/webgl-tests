@@ -31,6 +31,9 @@ export default class GearWheel {
 
         this.gear.rotation.x = Math.PI / 2;
     }
+    meshesWith(gear) {
+        return this.toothCount / gear.toothCount;
+    }
     doMaths() {
         this.gearThickness = 0.15;
         this.hubRadius = this.innerRadius * 0.45;

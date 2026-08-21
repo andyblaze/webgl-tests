@@ -16,7 +16,7 @@ export default class Clock {
 
             if (i < this.objects.length - 1) {
                 const nextGear = this.objects[i + 1];
-                rotationDelta = -rotationDelta * (gear.toothCount / nextGear.toothCount);
+                rotationDelta = -rotationDelta * gear.meshesWith(nextGear);//(gear.toothCount / nextGear.toothCount);
             }
         }
     }
