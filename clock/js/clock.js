@@ -11,17 +11,15 @@ export default class Clock {
     }
     update(dt, elapsed) {
         const connections = this.gearTrain.connections; // the gear connections
-        let gear = connections[0].driver;
+        let initialDriver = connections[0].driver;
         // update the first gear
-        let visual = this.visuals[0];
-        let rotationDelta = gear.velocity * dt;
-        gear.update(rotationDelta);
+        let rotationDelta = initialDriver.velocity * dt;
+        initialDriver.update(rotationDelta);
 
-        // gears.length is 3, visuals.length is 4
         for ( let i = 0; i < connections.length; i++ ) {
-            visual = this.visuals[i+1];  // visuals 0 was updated above, so add 1                  
+            const driven = connections[i].driven;             
             rotationDelta = -rotationDelta * connections[i].ratio;
-            visual.update(rotationDelta);
+            driven.update(rotationDelta);
         }
     }
 }

@@ -68,12 +68,8 @@ class GearTrain {
         this.connections.push({
             driver: gear1,
             driven: gear2,
-            ratio: gear1.toothCount / gear2.toothCount,
-            velocity: gear1.velocity
+            ratio: gear1.toothCount / gear2.toothCount
         });
-    }
-    get gears() {
-        return this.connections;
     }
     get size() {
         return this.connections.length;
