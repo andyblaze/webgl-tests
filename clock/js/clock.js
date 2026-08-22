@@ -1,23 +1,25 @@
 export default class Clock {
-    constructor(three) {
-        this.objects = [];
-        this.gears = new three.Group()
+    constructor(three, gt) {
+        this.visuals = [];
+        this.gears = new three.Group();
+        this.gearTrain = gt;
     }
     addItem(i) {
-        this.objects.push(i);
+        this.visuals.push(i);
         this.gears.add(i.native);
     }
     update(dt, elapsed) {
-        let rotationDelta = this.objects[0].velocity * dt;
+        const connections = this.gearTrain.connections; // the gear connections
+        // update the first gear
+        let visual = this.visuals[0];
+        let rotationDelta = visual.velocity * dt;
+        visual.update(rotationDelta);
 
-        for (let i = 0; i < this.objects.length; i++) {
-            const gear = this.objects[i];
-            gear.update(rotationDelta);
-
-            if (i < this.objects.length - 1) {
-                const nextGear = this.objects[i + 1];
-                rotationDelta = -rotationDelta * gear.meshesWith(nextGear);//(gear.toothCount / nextGear.toothCount);
-            }
+        // gears.length is 3, visuals.length is 4
+        for ( let i = 0; i < connections.length; i++ ) {
+            visual = this.visuals[i+1];  // visuals 0 was updated above, so add 1                  
+            rotationDelta = -rotationDelta * connections[i].ratio;
+            visual.update(rotationDelta);
         }
     }
 }

@@ -31,7 +31,7 @@ export default class GearWheel {
 
         this.gear.rotation.x = Math.PI / 2;
     }
-    meshesWith(gear) {
+    getRatio(gear) {
         return this.toothCount / gear.toothCount;
     }
     doMaths() {

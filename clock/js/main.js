@@ -59,9 +59,35 @@ const gear4 = new GearWheel(
 gear4.setPosition(-10.7, -0.1, 0);
 gear4.setRotation(0, degToRad(2), 0);
 
-scene.add(gear4.native);
+class GearTrain {
+    constructor() {
+        this.connections = [];
+    }
+    connect(driver, driven) {
+        //const r = driver.toothCount / driven.toothCount;
+        this.connections.push({
+            gear1: driver,
+            gear2: driven,
+            ratio: driver.toothCount / driven.toothCount,
+            velocity: driver.velocity
+        });
+    }
+    get gears() {
+        return this.connections;
+    }
+    get size() {
+        return this.connections.length;
+    }
+}
 
-const clock = new Clock(THREE);
+const gearTrain = new GearTrain();
+gearTrain.connect(gear1, gear2);
+gearTrain.connect(gear2, gear3);
+gearTrain.connect(gear3, gear4);
+
+//scene.add(gear4.native);
+
+const clock = new Clock(THREE, gearTrain);
 clock.addItem(gear1);
 clock.addItem(gear2);
 clock.addItem(gear3);
