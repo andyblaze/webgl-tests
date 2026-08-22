@@ -6,14 +6,16 @@ export default class Clock {
     }
     addItem(i) {
         this.visuals.push(i);
-        this.gears.add(i.native);
+        this.gears.add(i.native); 
+        console.log(Math.random());
     }
     update(dt, elapsed) {
         const connections = this.gearTrain.connections; // the gear connections
+        let gear = connections[0].driver;
         // update the first gear
         let visual = this.visuals[0];
-        let rotationDelta = visual.velocity * dt;
-        visual.update(rotationDelta);
+        let rotationDelta = gear.velocity * dt;
+        gear.update(rotationDelta);
 
         // gears.length is 3, visuals.length is 4
         for ( let i = 0; i < connections.length; i++ ) {

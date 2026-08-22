@@ -10,9 +10,9 @@ export default class GearWheel {
         this.toothRadius = 0;
         
         this.direction = data.direction ?? 0;
-        this.speed = data.speed ?? 0;
+        this.rpm = data.rpm ?? 0;
 
-        this.velocity = this.speed * this.direction;
+        this.velocity = this.rpm * (2 * Math.PI / 60) * this.direction; // convert rpm to radians per second
 
         this.outerRadius = 0;
         

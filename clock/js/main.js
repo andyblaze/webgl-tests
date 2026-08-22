@@ -29,7 +29,7 @@ scene.add(shaft3.native);
 
 const gear1 = new GearWheel(
     THREE,
-    { inner: 1, spokes: 5, teeth: 48, direction: 1, speed: 0.08 },
+    { inner: 1, spokes: 5, teeth: 48, direction: 1, rpm: 1 },
     config
 );
 //shaft1.attach(gear1);
@@ -63,13 +63,13 @@ class GearTrain {
     constructor() {
         this.connections = [];
     }
-    connect(driver, driven) {
+    connect(gear1, gear2) {
         //const r = driver.toothCount / driven.toothCount;
         this.connections.push({
-            gear1: driver,
-            gear2: driven,
-            ratio: driver.toothCount / driven.toothCount,
-            velocity: driver.velocity
+            driver: gear1,
+            driven: gear2,
+            ratio: gear1.toothCount / gear2.toothCount,
+            velocity: gear1.velocity
         });
     }
     get gears() {
