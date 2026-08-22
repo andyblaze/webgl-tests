@@ -27,9 +27,13 @@ const shaft3 = new GearShaft(THREE, config);
 shaft3.setPosition(-5.75, -2.15, 0);
 scene.add(shaft3.native);
 
+const shaft4 = new GearShaft(THREE, config);
+shaft4.setPosition(-10.7, -0.1, 0);
+scene.add(shaft4.native);
+
 const gear1 = new GearWheel(
     THREE,
-    { inner: 1, spokes: 5, teeth: 48, direction: 1, rpm: 1 },
+    { inner: 1, spokes: 5, teeth: 48, direction: -1, rpm: 1 },
     config
 );
 //shaft1.attach(gear1);
