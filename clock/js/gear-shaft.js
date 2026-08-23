@@ -1,8 +1,10 @@
 import { degToRad } from "./functions.js";
+import MoveableGroup from "./moveable-group.js";
 
-export default class GearShaft {
+export default class GearShaft extends MoveableGroup {
     constructor(three, name, cfg) {
-        this.items = new three.Group();
+        super();
+        this.group = new three.Group();
         this.buildShaft(three, name, cfg);
     }
     buildShaft(three, name, cfg) {
@@ -15,26 +17,16 @@ export default class GearShaft {
         this.shaft.rotation.x += degToRad(90);
         const { x, y, z } = {...cfg.shafts[name].position};
         this.setPosition(x, y, z);   
-        this.items.add(this.shaft);     
+        this.group.add(this.shaft);     
     }
     attach(gear) {
         gear.setPosition(0, 0, 0);
-        this.items.add(gear.native);
+        this.group.add(gear.native);
     }
     update(velocity) {
-        this.items.rotation.y += velocity;   
-    }
-    setPosition(x, y, z) {
-        this.items.position.x = x;
-        this.items.position.y = y;
-        this.items.position.z = z;
-    }
-    setRotation(x, y, z) {
-        this.items.rotation.x += x;
-        this.items.rotation.y += y;
-        this.items.rotation.z += z;
+        this.group.rotation.y += velocity;   
     }
     get native() {
-        return this.items;
+        return this.group;
     }
 }
