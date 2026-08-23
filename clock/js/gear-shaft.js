@@ -7,7 +7,7 @@ export default class GearShaft {
     }
     buildShaft(three, cfg) {
         this.geometry = new three.CylinderGeometry(0.25, 0.25, 4);
-        this.material = new three.MeshStandardMaterial(cfg.brushedBrass);
+        this.material = new three.MeshStandardMaterial(cfg.brushedSteel);
         this.shaft = new three.Mesh(
             this.geometry,
             this.material
