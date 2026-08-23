@@ -16,18 +16,16 @@ const renderer = makeRenderer(THREE);
 
 makeLights(THREE, scene);
 
-function makeShaft(three, scene, cfg, pos) {
-    const s = new GearShaft(THREE, cfg);
-    const { x, y, z } = {...pos};
-    s.setPosition(x, y, z);
+function makeShaft(three, scene, name, cfg) {
+    const s = new GearShaft(THREE, name, cfg);
     scene.add(s.native);
     return s;
 }
 
-const shaft1 = makeShaft(THREE, scene, config, { x: 7, y: 0, z: 0 });
-const shaft2 = makeShaft(THREE, scene, config, { x: -0.6, y: 2, z: 0 });
-const shaft3 = makeShaft(THREE, scene, config, { x: -5.75, y: -2.15, z: 0 });
-const shaft4 = makeShaft(THREE, scene, config, { x: -10.7, y: -0.1, z: 0 });
+const shaft1 = makeShaft(THREE, scene, "shaft1", config);
+const shaft2 = makeShaft(THREE, scene, "shaft2", config);
+const shaft3 = makeShaft(THREE, scene, "shaft3", config);
+const shaft4 = makeShaft(THREE, scene, "shaft4", config);
 
 const gear1 = new GearWheel(THREE, "gear1", config);
 const gear2 = new GearWheel(THREE, "gear2", config);

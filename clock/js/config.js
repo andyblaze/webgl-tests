@@ -55,6 +55,20 @@ export default class Config {
                 rotationY: degToRad(2)
             }
         };
+        this.shafts = {
+            shaft1: {
+                position: this.gears.gear1.position
+            },
+            shaft2: {
+                position: this.gears.gear2.position
+            },
+            shaft3: {
+                position: this.gears.gear3.position
+            },
+            shaft4: {
+                position: this.gears.gear4.position
+            }
+        };
     }
     
 }

@@ -1,11 +1,11 @@
 import { degToRad } from "./functions.js";
 
 export default class GearShaft {
-    constructor(three, cfg) {
+    constructor(three, name, cfg) {
         this.items = new three.Group();
-        this.buildShaft(three, cfg);
+        this.buildShaft(three, name, cfg);
     }
-    buildShaft(three, cfg) {
+    buildShaft(three, name, cfg) {
         this.geometry = new three.CylinderGeometry(0.25, 0.25, 4);
         this.material = new three.MeshStandardMaterial(cfg.brushedSteel);
         this.shaft = new three.Mesh(
@@ -13,7 +13,9 @@ export default class GearShaft {
             this.material
         ); 
         this.shaft.rotation.x += degToRad(90);
-        this.items.add(this.shaft);        
+        const { x, y, z } = {...cfg.shafts[name].position};
+        this.setPosition(x, y, z);   
+        this.items.add(this.shaft);     
     }
     attach(gear) {
         gear.setPosition(0, 0, 0);
