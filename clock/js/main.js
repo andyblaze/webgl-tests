@@ -4,6 +4,7 @@ import GearWheel from "./gearwheel.js";
 import Config from "./config.js";
 import Clock from "./clock.js";
 import GearShaft from "./gear-shaft.js";
+import GearTrain from "./geartrain.js";
 
 const config = new Config(THREE);
 
@@ -31,61 +32,16 @@ const shaft4 = new GearShaft(THREE, config);
 shaft4.setPosition(-10.7, -0.1, 0);
 scene.add(shaft4.native);
 
-const gear1 = new GearWheel(
-    THREE,
-    { inner: 1, spokes: 5, teeth: 48, direction: -1, rpm: 1 },
-    config
-);
-//shaft1.attach(gear1);
-gear1.setPosition(7, 0, 0);
-
-const gear2 = new GearWheel(
-    THREE,
-    { inner: 1, spokes: 3, teeth: 24 },
-    config
-);
-gear2.setPosition(-0.6, 2, 0);
-gear2.setRotation(0, degToRad(8), 0);
-
-const gear3 = new GearWheel(
-    THREE,
-    { inner: 1, spokes: 4, teeth: 36 },
-    config
-);
-gear3.setPosition(-5.75, -2.15, 0);
-gear3.setRotation(0, degToRad(5), 0);
-
-const gear4 = new GearWheel(
-    THREE,
-    { inner: 1, spokes: 2, teeth: 12 },
-    config
-);
-gear4.setPosition(-10.7, -0.1, 0);
-gear4.setRotation(0, degToRad(2), 0);
-
-class GearTrain {
-    constructor() {
-        this.connections = [];
-    }
-    connect(gear1, gear2) {
-        //const r = driver.toothCount / driven.toothCount;
-        this.connections.push({
-            driver: gear1,
-            driven: gear2,
-            ratio: gear1.toothCount / gear2.toothCount
-        });
-    }
-    get size() {
-        return this.connections.length;
-    }
-}
+const gear1 = new GearWheel(THREE, "gear1", config);
+const gear2 = new GearWheel(THREE, "gear2", config);
+const gear3 = new GearWheel(THREE, "gear3", config);
+const gear4 = new GearWheel(THREE, "gear4", config);
 
 const gearTrain = new GearTrain();
 gearTrain.connect(gear1, gear2);
 gearTrain.connect(gear2, gear3);
 gearTrain.connect(gear3, gear4);
-
-//scene.add(gear4.native);
+gearTrain.init();
 
 const clock = new Clock(THREE, gearTrain);
 clock.addItem(gear1);

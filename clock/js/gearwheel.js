@@ -1,5 +1,6 @@
 export default class GearWheel {
-    constructor(three, data, cfg) {
+    constructor(three, name, cfg) {
+        const data = cfg.gears[name].data;
         this.innerRadius = data.inner;
         this.spokeCount = data.spokes;
         this.toothCount = data.teeth;
@@ -30,6 +31,10 @@ export default class GearWheel {
         this.buildTeeth(three);
 
         this.gear.rotation.x = Math.PI / 2;
+        this.gear.rotation.y += cfg.gears[name].rotationY;
+        
+        const { x, y, z } = cfg.gears[name].position;
+        this.setPosition(x, y, z);
     }
     getRatio(gear) {
         return this.toothCount / gear.toothCount;
@@ -61,8 +66,8 @@ export default class GearWheel {
     addToGroup(item) {
         this.gear.add(item);
     }
-    update(velocity) {
-        this.gear.rotation.y += velocity;   
+    update(dt) { 
+        this.gear.rotation.y += (this.velocity * this.direction) * dt;   
     }
     buildTeeth(three) {
         for (let i = 0; i < this.toothCount; i++) {
