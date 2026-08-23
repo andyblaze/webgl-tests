@@ -1,13 +1,16 @@
-export default class GearWheel {
+import MoveableGroup from "./moveable-group.js";
+
+export default class GearWheel extends MoveableGroup {
     constructor(three, name, cfg) {
+        super(three);
         const data = cfg.gears[name].data;
         this.innerRadius = data.inner;
         this.spokeCount = data.spokes;
         this.toothCount = data.teeth;
 
-        this.toothWidth = 0.32;
-        this.toothDepth = 0.35;
-        this.toothPitch = 0.6602253311059799;
+        this.toothWidth = cfg.toothWidth;
+        this.toothDepth = cfg.toothDepth;
+        this.toothPitch = cfg.toothPitch;
         this.toothRadius = 0;
         
         this.direction = data.direction ?? 0;
@@ -22,16 +25,14 @@ export default class GearWheel {
         this.gearMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
 
         this.toothMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
-        
-        this.gear = new three.Group(); 
 
         this.buildHub(three);
         this.buildRim(three);
         this.buildSpokes(three); 
         this.buildTeeth(three);
 
-        this.gear.rotation.x = Math.PI / 2;
-        this.gear.rotation.y += cfg.gears[name].rotationY;
+        this.group.rotation.x = Math.PI / 2;
+        this.group.rotation.y += cfg.gears[name].rotationY;
         
         const { x, y, z } = cfg.gears[name].position;
         this.setPosition(x, y, z);
@@ -50,24 +51,11 @@ export default class GearWheel {
         this.spokeWidth = 0.35;
         this.spokeThickness = this.gearThickness / 2;
     }
-    setPosition(x, y, z) {
-        this.gear.position.x = x;
-        this.gear.position.y = y;
-        this.gear.position.z = z;
-    }
-    setRotation(x, y, z) {
-        this.gear.rotation.x += x;
-        this.gear.rotation.y += y;
-        this.gear.rotation.z += z;
-    }
-    get native() {
-        return this.gear;
-    }
     addToGroup(item) {
-        this.gear.add(item);
+        this.group.add(item);
     }
     update(dt) { 
-        this.gear.rotation.y += (this.velocity * this.direction) * dt;   
+        this.group.rotation.y += (this.velocity * this.direction) * dt;   
     }
     buildTeeth(three) {
         for (let i = 0; i < this.toothCount; i++) {

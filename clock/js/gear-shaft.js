@@ -3,8 +3,7 @@ import MoveableGroup from "./moveable-group.js";
 
 export default class GearShaft extends MoveableGroup {
     constructor(three, name, cfg) {
-        super();
-        this.group = new three.Group();
+        super(three);
         this.buildShaft(three, name, cfg);
     }
     buildShaft(three, name, cfg) {
@@ -25,8 +24,5 @@ export default class GearShaft extends MoveableGroup {
     }
     update(velocity) {
         this.group.rotation.y += velocity;   
-    }
-    get native() {
-        return this.group;
     }
 }

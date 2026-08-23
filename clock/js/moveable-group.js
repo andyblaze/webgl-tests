@@ -1,6 +1,6 @@
 export default class MoveableGroup {
-    constructor() {
-
+    constructor(three) {
+        this.group = new three.Group();
     }
     setPosition(x, y, z) {
         this.group.position.x = x;
@@ -12,4 +12,7 @@ export default class MoveableGroup {
         this.group.rotation.y += y;
         this.group.rotation.z += z;
     } 
+    get native() {
+        return this.group;
+    }
 }

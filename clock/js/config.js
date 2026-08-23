@@ -33,6 +33,11 @@ export default class Config {
             normalScale: new three.Vector2(0.21, 0.21),
             roughnessMap: this.loader.load("./textures/marble.png")
         };
+        
+        this.toothWidth = 0.32;
+        this.toothDepth = 0.35;
+        this.toothPitch = 0.6602253311059799;
+
         this.gears = {
             gear1: {
                 data: { inner: 1, spokes: 5, teeth: 48, direction: -1, rpm: 1 },
