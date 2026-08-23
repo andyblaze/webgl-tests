@@ -51,9 +51,6 @@ export default class GearWheel extends MoveableGroup {
         this.spokeWidth = 0.35;
         this.spokeThickness = this.gearThickness / 2;
     }
-    addToGroup(item) {
-        this.group.add(item);
-    }
     update(dt) { 
         this.group.rotation.y += (this.velocity * this.direction) * dt;   
     }

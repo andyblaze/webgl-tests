@@ -12,6 +12,9 @@ export default class MoveableGroup {
         this.group.rotation.y += y;
         this.group.rotation.z += z;
     } 
+    addToGroup(item) {
+        this.group.add(item);
+    }
     get native() {
         return this.group;
     }
