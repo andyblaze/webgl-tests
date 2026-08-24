@@ -1,12 +1,13 @@
 import MoveableGroup from "./moveable-group.js";
 
 export default class GearWheel extends MoveableGroup {
-    constructor(three, name, cfg) {
+    constructor(three, name, cfg, builder) {
         super(three);
         const data = cfg.gears[name].data;
         this.innerRadius = data.inner;
-        this.spokeCount = data.spokes;
         this.toothCount = data.teeth;
+
+        this.spokeCount = data.spokes ?? 0;
 
         this.toothWidth = cfg.toothWidth;
         this.toothDepth = cfg.toothDepth;
@@ -26,9 +27,19 @@ export default class GearWheel extends MoveableGroup {
 
         this.toothMaterial = new three.MeshStandardMaterial(cfg.brushedBrass);
 
-        this.buildHub(three);
-        this.buildRim(three);
-        this.buildSpokes(three); 
+        const gearData = {
+            spokeCount: this.spokeCount,
+            spokeLength: this.spokeLength, 
+            spokeThickness: this.spokeThickness, 
+            spokeWidth: this.spokeWidth,
+            material: this.gearMaterial,
+            hubRadius: this.hubRadius,
+            hubThickness: this.hubThickness,
+            gearThickness: this.gearThickness,
+            innerRadius: this.innerRadius,
+            outerRadius: this.outerRadius
+        };
+        builder.build(three, this, gearData);
         this.buildTeeth(three);
 
         this.group.rotation.x = Math.PI / 2;
@@ -94,88 +105,5 @@ export default class GearWheel extends MoveableGroup {
         tooth.rotation.z = Math.PI / 2;
 
         return tooth;
-    }
-    buildSpokes(three) {
-        for (let i = 0; i < this.spokeCount; i++) {
-
-            const angle = (i / this.spokeCount) * Math.PI * 2;
-
-            const spokeGeometry = new three.BoxGeometry(this.spokeLength, this.spokeThickness, this.spokeWidth);
-
-            const spoke = new three.Mesh(spokeGeometry, this.gearMaterial);
-
-            // Move the spoke halfway between hub and rim
-            const spokeRadius = this.hubRadius + this.spokeLength / 2 - 0.05;
-
-            spoke.position.x = Math.cos(angle) * spokeRadius;
-            spoke.position.z = Math.sin(angle) * spokeRadius;
-
-            // Point the spoke radially outward
-            spoke.rotation.y = -angle;
-
-            this.addToGroup(spoke);
-        }
-    }
-    buildHub(three) {
-        const hubGeometry = new three.CylinderGeometry(
-            this.hubRadius, this.hubRadius, 
-            this.hubThickness, 32
-        );
-
-        const hub = new three.Mesh(hubGeometry, this.gearMaterial);
-
-        this.addToGroup(hub);    
-    }
-    buildRim(three) {
-        const innerRadius = this.innerRadius;
-        const outerRadius = this.outerRadius;
-
-        // Outer circular shape
-        const shape = new three.Shape();
-
-        shape.absarc(
-            0, 0,
-            outerRadius,
-            0,
-            Math.PI * 2,
-            false
-        );
-
-        // Cut out the centre
-        const hole = new three.Path();
-
-        hole.absarc(
-            0, 0,
-            outerRadius * 0.96,
-            0,
-            Math.PI * 2,
-            true
-        );
-
-        shape.holes.push(hole);
-
-        // Extrude the ring into a solid 3D rim
-        const rimGeometry = new three.ExtrudeGeometry(
-            shape,
-            {
-                depth: this.gearThickness,
-                bevelEnabled: false,
-                curveSegments: 48
-            }
-        );
-
-        const rim = new three.Mesh(
-            rimGeometry,
-            this.gearMaterial
-        );
-
-        // ExtrudeGeometry starts along +Z.
-        // Rotate it so that it lies in the XZ plane, matching your spokes and teeth.
-        rim.rotation.x = Math.PI / 2;
-
-        // Centre the thickness around Y
-        rim.position.y = this.gearThickness / 2;
-
-        this.addToGroup(rim);
     }
 }
