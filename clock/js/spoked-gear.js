@@ -10,7 +10,6 @@ export default class SpokedGear {
         this.buildSpokes(three);
         this.buildHub(three);
         this.buildRim(three);
-        return this.parts;
     }
     buildSpokes(three) {
         for (let i = 0; i < this.spokeCount; i++) {

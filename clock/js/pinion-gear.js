@@ -7,10 +7,7 @@ export default class PinionGear {
     }
     build(three, gear, data) {
         this.init(gear, data);
-        //this.buildSpokes(three);
         this.buildHub(three);
-        //this.buildRim(three);
-        return this.parts;
     }
     buildHub(three) {
         const r = this.innerRadius * 1.1;
