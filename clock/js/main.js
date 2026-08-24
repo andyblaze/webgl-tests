@@ -6,6 +6,7 @@ import Clock from "./clock.js";
 import GearShaft from "./gear-shaft.js";
 import GearTrain from "./geartrain.js";
 import SpokedGear from "./spoked-gear.js";
+import PinionGear from "./pinion-gear.js";
 
 const config = new Config(THREE);
 
@@ -31,7 +32,7 @@ const shaft4 = makeShaft(THREE, scene, "shaft4", config);
 const gear1 = new GearWheel(THREE, "gear1", config, new SpokedGear());
 const gear2 = new GearWheel(THREE, "gear2", config, new SpokedGear());
 const gear3 = new GearWheel(THREE, "gear3", config, new SpokedGear());
-const gear4 = new GearWheel(THREE, "gear4", config, new SpokedGear());
+const gear4 = new GearWheel(THREE, "gear4", config, new PinionGear());
 
 const gearTrain = new GearTrain();
 gearTrain.connect(gear1, gear2);

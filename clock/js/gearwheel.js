@@ -39,8 +39,8 @@ export default class GearWheel extends MoveableGroup {
             innerRadius: this.innerRadius,
             outerRadius: this.outerRadius
         };
-        builder.build(three, this, gearData);
         this.buildTeeth(three);
+        builder.build(three, this, gearData);
 
         this.group.rotation.x = Math.PI / 2;
         this.group.rotation.y += cfg.gears[name].rotationY;
