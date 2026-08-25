@@ -17,7 +17,33 @@ scene.background = new THREE.Color(0x111111);
 const camera = makeCamera(THREE);
 const renderer = makeRenderer(THREE);
 
-makeLights(THREE, scene);
+class Lights {
+    constructor(l) {
+        this.lights = l;
+        this.times = [0, 0]
+        this.speeds = [0.03, 0.05];
+    }
+
+    update(dt) {
+        this.times[0] += dt * this.speeds[0];
+        this.times[1] += dt * this.speeds[1];
+
+        for (let i = 0; i < this.lights.length; i++) {
+            const light = this.lights[i];
+
+            // Offset each light around the colour wheel
+            const hue = (this.times[i] + i / this.lights.length) % 1;
+
+            light.color.setHSL(
+                hue,   // hue
+                1.0,   // saturation
+                0.25    // lightness
+            );
+        }
+    }
+}
+
+const lights = new Lights(makeLights(THREE, scene));
 
 function makeShaft(three, scene, name, cfg) {
     const s = new GearShaft(THREE, name, cfg);
@@ -58,6 +84,7 @@ const timer = new THREE.Clock();
 function animate(timestamp) {    
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime();
+    lights.update(dt);
     clock.update(dt, elapsed);
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
