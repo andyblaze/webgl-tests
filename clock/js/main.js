@@ -35,6 +35,11 @@ const gear2 = new GearWheel(THREE, "gear2", config, new SpokedGear());
 const gear3 = new GearWheel(THREE, "gear3", config, new SpokedGear());
 const gear4 = new GearWheel(THREE, "gear4", config, new PinionGear());
 
+shaft1.attach(gear1);
+shaft2.attach(gear2);
+shaft3.attach(gear3);
+shaft4.attach(gear4);
+
 const gearTrain = new GearTrain();
 gearTrain.connect(gear1, gear2);
 gearTrain.connect(gear2, gear3);

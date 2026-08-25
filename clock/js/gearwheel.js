@@ -44,9 +44,6 @@ export default class GearWheel extends MoveableGroup {
 
         this.group.rotation.x = Math.PI / 2;
         this.group.rotation.y += cfg.gears[name].rotationY;
-        
-        const { x, y, z } = cfg.gears[name].position;
-        this.setPosition(x, y, z);
     }
     getRatio(gear) {
         return this.toothCount / gear.toothCount;

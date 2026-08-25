@@ -21,4 +21,15 @@ export default class GearTrain {
             driven.velocity = driver.velocity * this.connections[i].ratio;
         }
     }
+    update(dt, elapsed) {
+        // update first wheel
+        let initialDriver = this.connections[0].driver;
+        initialDriver.update(dt);
+
+        // then the other wheels
+        for ( let i = 0; i < this.connections.length; i++ ) {
+            const driven = this.connections[i].driven;   
+            driven.update(dt);
+        }
+    }
 }

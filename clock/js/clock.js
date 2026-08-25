@@ -10,15 +10,6 @@ export default class Clock {
         /* !!!!!!!!!!!!!!!!!!!!!! */                            console.log(Math.random());
     }
     update(dt, elapsed) {
-        const connections = this.gearTrain.connections; 
-        // update first wheel
-        let initialDriver = connections[0].driver;
-        initialDriver.update(dt);
-
-        // then the other wheels
-        for ( let i = 0; i < connections.length; i++ ) {
-            const driven = connections[i].driven;   
-            driven.update(dt);
-        }
+        this.gearTrain.update(dt, elapsed);
     }
 }

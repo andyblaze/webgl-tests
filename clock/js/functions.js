@@ -30,3 +30,7 @@ export function makeLights(three, scene) {
 export function degToRad(degrees) {
     return degrees * Math.PI / 180;
 }
+
+export function randomFrom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}

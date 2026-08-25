@@ -33,7 +33,7 @@ export default class Config {
             normalScale: new three.Vector2(0.21, 0.21),
             roughnessMap: this.loader.load("./textures/marble.png")
         };
-        
+
         this.toothWidth = 0.32;
         this.toothDepth = 0.35;
         this.toothPitch = 0.6602253311059799;
@@ -41,37 +41,33 @@ export default class Config {
         this.gears = {
             gear1: {
                 data: { inner: 1, spokes: 5, teeth: 48, direction: -1, rpm: 1 },
-                position: new three.Vector3(7, 0, 0),
                 rotationY: degToRad(0)
             },
             gear2: {
                 data: { inner: 1, spokes: 3, teeth: 24 },
-                position: new three.Vector3(-0.6, 2, 0),
                 rotationY: degToRad(7.25)
             },
             gear3: {
                 data: { inner: 1, spokes: 4, teeth: 36 },
-                position: new three.Vector3(-5.75, -2.15, 0),
                 rotationY: degToRad(5)
             },
             gear4: {
                 data: { inner: 1, spokes: 2, teeth: 12 },
-                position: new three.Vector3(-10.7, -0.1, 0),
                 rotationY: degToRad(2)
             }
         };
         this.shafts = {
             shaft1: {
-                position: this.gears.gear1.position
+                position: new three.Vector3(7, 0, 0)
             },
             shaft2: {
-                position: this.gears.gear2.position
+                position: new three.Vector3(-0.6, 2, 0)
             },
             shaft3: {
-                position: this.gears.gear3.position
+                position: new three.Vector3(-5.75, -2.15, 0)
             },
             shaft4: {
-                position: this.gears.gear4.position
+                position: new three.Vector3(-10.7, -0.1, 0)
             }
         };
     }

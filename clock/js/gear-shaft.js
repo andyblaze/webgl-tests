@@ -18,9 +18,12 @@ export default class GearShaft extends MoveableGroup {
         this.setPosition(x, y, z);   
         this.addToGroup(this.shaft);     
     }
-    attach(gear) {
-        gear.setPosition(0, 0, 0);
-        this.group.add(gear.native);
+    attach(gear, d=0) {
+        const x = this.group.position.x;
+        const y = this.group.position.y;
+        const z = this.group.position.z + d;
+        gear.setPosition(x, y, z);
+        //this.group.add(gear.native);
     }
     update(velocity) {
         this.group.rotation.y += velocity;   
