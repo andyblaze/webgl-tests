@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { makeCamera, makeRenderer, makeLights, degToRad } from "./functions.js";
+import { makeCamera, makeRenderer, degToRad } from "./functions.js";
 import GearWheel from "./gearwheel.js";
 import Config from "./config.js";
 import Clock from "./clock.js";
@@ -8,6 +8,7 @@ import GearTrain from "./geartrain.js";
 import SpokedGear from "./spoked-gear.js";
 import PinionGear from "./pinion-gear.js";
 import HoledGear from "./holed-gear.js";
+import Lights from "./lights.js";
 
 const config = new Config(THREE);
 
@@ -17,33 +18,8 @@ scene.background = new THREE.Color(0x111111);
 const camera = makeCamera(THREE);
 const renderer = makeRenderer(THREE);
 
-class Lights {
-    constructor(l) {
-        this.lights = l;
-        this.times = [0, 0]
-        this.speeds = [0.03, 0.05];
-    }
-
-    update(dt) {
-        this.times[0] += dt * this.speeds[0];
-        this.times[1] += dt * this.speeds[1];
-
-        for (let i = 0; i < this.lights.length; i++) {
-            const light = this.lights[i];
-
-            // Offset each light around the colour wheel
-            const hue = (this.times[i] + i / this.lights.length) % 1;
-
-            light.color.setHSL(
-                hue,   // hue
-                1.0,   // saturation
-                0.25    // lightness
-            );
-        }
-    }
-}
-
-const lights = new Lights(makeLights(THREE, scene));
+const lights = new Lights(THREE);
+lights.create(THREE, scene);
 
 function makeShaft(three, scene, name, cfg) {
     const s = new GearShaft(THREE, name, cfg);

@@ -14,21 +14,6 @@ export function makeRenderer(three) {
     return rndr;
 }
 
-export function makeLights(three, scene) {
-    const amb = new three.HemisphereLight(0xffffff, 0x333333, 2);
-    scene.add(amb);
-
-    const dir1 = new three.DirectionalLight(0xff0000, 15);
-    dir1.position.set(10, 5, 5);
-    scene.add(dir1);
-
-    const dir2 = new three.DirectionalLight(0x0000ff, 15);
-    dir2.position.set(-10, -5, -5);
-    scene.add(dir2);
-
-    return [dir1, dir2];
-}
-
 export function degToRad(degrees) {
     return degrees * Math.PI / 180;
 }
