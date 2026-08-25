@@ -1,4 +1,5 @@
 import { randomFrom } from "./functions.js";
+import { ROT90, ROT360 } from "./consts.js";
 
 export default class HoledGear {
     constructor() {
@@ -17,7 +18,7 @@ buildBody(three) {
     // Outer gear body
     shape.absarc(
         0, 0, this.outerRadius,
-        0, Math.PI * 2, false
+        0, ROT360, false
     );
 
     // Pick a hole count
@@ -33,7 +34,7 @@ buildBody(three) {
     const holeRadius = availableRadius * 0.18;
 
     for (let i = 0; i < holeCount; i++) {
-        const angle = (i / holeCount) * Math.PI * 2;
+        const angle = (i / holeCount) * ROT360;
 
         const x = Math.cos(angle) * holeDistance;
         const y = Math.sin(angle) * holeDistance;
@@ -42,7 +43,7 @@ buildBody(three) {
 
         hole.absarc(
             x, y, holeRadius,
-            0, Math.PI * 2, true
+            0, ROT360, true
         );
 
         shape.holes.push(hole);
@@ -60,7 +61,7 @@ buildBody(three) {
     const body = new three.Mesh(geometry, this.material);
     // ExtrudeGeometry starts along +Z.
     // Rotate into the XZ plane.
-    body.rotation.x = Math.PI / 2;
+    body.rotation.x = ROT90;
     // Centre thickness around Y.
     body.position.y = this.gearThickness / 2;
 

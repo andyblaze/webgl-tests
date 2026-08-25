@@ -1,4 +1,5 @@
 import { degToRad } from "./functions.js";
+import { ROT90 } from "./consts.js";
 import MoveableGroup from "./moveable-group.js";
 
 export default class GearShaft extends MoveableGroup {
@@ -13,7 +14,7 @@ export default class GearShaft extends MoveableGroup {
             this.geometry,
             this.material
         ); 
-        this.shaft.rotation.x += degToRad(90);
+        this.shaft.rotation.x += ROT90;
         const { x, y, z } = {...cfg.shafts[name].position};
         this.setPosition(x, y, z);   
         this.addToGroup(this.shaft);     

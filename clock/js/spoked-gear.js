@@ -1,3 +1,5 @@
+import { ROT90, ROT360 } from "./consts.js";
+
 export default class SpokedGear {
     constructor() {
     }
@@ -14,7 +16,7 @@ export default class SpokedGear {
     buildSpokes(three) {
         for (let i = 0; i < this.spokeCount; i++) {
 
-            const angle = (i / this.spokeCount) * Math.PI * 2;
+            const angle = (i / this.spokeCount) * ROT360;
 
             const spokeGeometry = new three.BoxGeometry(this.spokeLength, this.spokeThickness, this.spokeWidth);
 
@@ -51,7 +53,7 @@ export default class SpokedGear {
             0, 0,
             outerRadius,
             0,
-            Math.PI * 2,
+            ROT360,
             false
         );
 
@@ -62,7 +64,7 @@ export default class SpokedGear {
             0, 0,
             outerRadius * 0.96,
             0,
-            Math.PI * 2,
+            ROT360,
             true
         );
 
@@ -85,7 +87,7 @@ export default class SpokedGear {
 
         // ExtrudeGeometry starts along +Z.
         // Rotate it so that it lies in the XZ plane, matching your spokes and teeth.
-        rim.rotation.x = Math.PI / 2;
+        rim.rotation.x = ROT90;
 
         // Centre the thickness around Y
         rim.position.y = this.gearThickness / 2;
