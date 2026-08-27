@@ -32,10 +32,10 @@ const shaft2 = makeShaft(THREE, scene, "shaft2", config);
 const shaft3 = makeShaft(THREE, scene, "shaft3", config);
 const shaft4 = makeShaft(THREE, scene, "shaft4", config);
 
-const gear1 = new GearWheel(THREE, "gear1", config, new HoledGear());
+const gear1 = new GearWheel(THREE, "gear1", config, new PinionGear());
 const gear2 = new GearWheel(THREE, "gear2", config, new SpokedGear());
 const gear3 = new GearWheel(THREE, "gear3", config, new SpokedGear());
-const gear4 = new GearWheel(THREE, "gear4", config, new PinionGear());
+const gear4 = new GearWheel(THREE, "gear4", config, new HoledGear());
 
 shaft1.attach(gear1);
 shaft2.attach(gear2);

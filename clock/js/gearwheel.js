@@ -1,5 +1,6 @@
 import MoveableGroup from "./moveable-group.js";
 import { ROT45, ROT90, ROT360 } from "./consts.js";
+import { randomFrom } from "./functions.js";
 
 export default class GearWheel extends MoveableGroup {
     constructor(three, name, cfg, builder) {
@@ -8,7 +9,7 @@ export default class GearWheel extends MoveableGroup {
         this.innerRadius = data.inner;
         this.toothCount = data.teeth;
 
-        this.spokeCount = data.spokes ?? 0;
+        this.spokeCount = data.spokes ?? randomFrom([2, 3, 4, 5]);
 
         this.toothWidth = cfg.toothWidth;
         this.toothDepth = cfg.toothDepth;

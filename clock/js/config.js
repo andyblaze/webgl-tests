@@ -40,19 +40,19 @@ export default class Config {
 
         this.gears = {
             gear1: {
-                data: { inner: 1, spokes: 5, teeth: 48, direction: -1, rpm: 1 },
+                data: { inner: 1, teeth: 12, direction: -1, rpm: 6 },
                 rotationY: degToRad(0)
             },
             gear2: {
-                data: { inner: 1, spokes: 3, teeth: 24 },
+                data: { inner: 1, teeth: 24 },
                 rotationY: degToRad(7.25)
             },
             gear3: {
-                data: { inner: 1, spokes: 4, teeth: 36 },
+                data: { inner: 1, teeth: 36 },
                 rotationY: degToRad(5)
             },
             gear4: {
-                data: { inner: 1, spokes: 2, teeth: 12 },
+                data: { inner: 1, teeth: 48 },
                 rotationY: degToRad(2)
             }
         };
@@ -61,13 +61,13 @@ export default class Config {
                 position: new three.Vector3(7, 0, 0)
             },
             shaft2: {
-                position: new three.Vector3(-0.6, 2, 0)
+                position: new three.Vector3(3.4, 2, 0)
             },
             shaft3: {
-                position: new three.Vector3(-5.75, -2.15, 0)
+                position: new three.Vector3(-1.75, -2.15, 0)
             },
             shaft4: {
-                position: new three.Vector3(-10.7, -0.1, 0)
+                position: new three.Vector3(-9, 3.45, 0)
             }
         };
     }
