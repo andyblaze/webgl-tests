@@ -9,6 +9,7 @@ import SpokedGear from "./spoked-gear.js";
 import PinionGear from "./pinion-gear.js";
 import HoledGear from "./holed-gear.js";
 import Lights from "./lights.js";
+import RpmReporter from "./rpm-reporter.js";
 
 const config = new Config(THREE);
 
@@ -48,7 +49,7 @@ gearTrain.connect(gear2, gear3);
 gearTrain.connect(gear3, gear4);
 gearTrain.init();
 
-const clock = new Clock(THREE, gearTrain);
+const clock = new Clock(THREE, gearTrain, new RpmReporter(true));
 clock.addItem(gear1);
 clock.addItem(gear2);
 clock.addItem(gear3);
@@ -57,42 +58,11 @@ scene.add(clock.gears);
 
 const timer = new THREE.Clock();
 
-class RpmReporter {
-
-    constructor(reporting=false, interval = 2) {
-        this.lastReportTime = 0;
-        this.reporting = reporting;
-        this.interval = interval;
-    }
-
-    shouldReport(elapsed) {
-        if ( false === this.reporting ) return false;
-        if (elapsed - this.lastReportTime < this.interval) {
-            return false;
-        }
-
-        this.lastReportTime = elapsed;
-        return true;
-    }
-
-    log(name, gear) {
-        console.log(name, gear.rpmReport);
-    }
-}
-
-const rpmReport = new RpmReporter();
-
 function animate(timestamp) {    
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime();
     lights.update(dt);
     clock.update(dt, elapsed);
-    if (rpmReport.shouldReport(elapsed)) {
-        rpmReport.log("gear1:", gear1);
-        rpmReport.log("gear2:", gear2);
-        rpmReport.log("gear3:", gear3);
-        rpmReport.log("gear4:", gear4);
-    }
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
