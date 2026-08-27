@@ -10,6 +10,7 @@ import PinionGear from "./pinion-gear.js";
 import HoledGear from "./holed-gear.js";
 import Lights from "./lights.js";
 import RpmReporter from "./rpm-reporter.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const config = new Config(THREE);
 
@@ -19,6 +20,9 @@ scene.background = new THREE.Color(0x111111);
 const camera = makeCamera(THREE);
 const renderer = makeRenderer(THREE);
 
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
 const lights = new Lights(THREE);
 lights.create(THREE, scene);
 
@@ -26,6 +30,12 @@ function makeShaft(three, scene, name, cfg) {
     const s = new GearShaft(THREE, name, cfg);
     scene.add(s.native);
     return s;
+}
+
+class Bush {
+    constructor(three, name, cfg) {
+
+    }
 }
 
 const shaft1 = makeShaft(THREE, scene, "shaft1", config);
@@ -49,7 +59,7 @@ gearTrain.connect(gear2, gear3);
 gearTrain.connect(gear3, gear4);
 gearTrain.init();
 
-const clock = new Clock(THREE, gearTrain, new RpmReporter(true));
+const clock = new Clock(THREE, gearTrain, new RpmReporter());
 clock.addItem(gear1);
 clock.addItem(gear2);
 clock.addItem(gear3);
@@ -61,6 +71,7 @@ const timer = new THREE.Clock();
 function animate(timestamp) {    
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime();
+    controls.update();
     lights.update(dt);
     clock.update(dt, elapsed);
     renderer.render(scene, camera);
