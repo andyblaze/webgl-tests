@@ -3,7 +3,7 @@ export default class Lights {
         this.lights = [];
         this.times = [0, 0]
         this.speeds = [0.03, 0.05];
-        this.colours = [
+        this.colors = [
             new three.Color(0xff0000), // red
             new three.Color(0xff00ff), // magenta
             new three.Color(0x0000ff), // blue
@@ -35,12 +35,12 @@ export default class Lights {
 
             const position = (this.times[i] + i * 0.5) % 1;
 
-            const scaled = position * this.colours.length;
+            const scaled = position * this.colors.length;
             const index = Math.floor(scaled);
             const t = scaled - index;
 
-            const colour1 = this.colours[index];
-            const colour2 = this.colours[(index + 1) % this.colours.length];
+            const colour1 = this.colors[index];
+            const colour2 = this.colors[(index + 1) % this.colors.length];
 
             light.color.copy(colour1).lerp(colour2, t);
         }

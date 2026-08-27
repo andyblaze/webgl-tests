@@ -50,6 +50,9 @@ export default class GearWheel extends MoveableGroup {
     getRatio(gear) {
         return this.toothCount / gear.toothCount;
     }
+    get rpmReport() {
+        return this.velocity * this.direction * 60 / ROT360;
+    }
     doMaths() {
         this.gearThickness = 0.15;
         this.hubRadius = this.innerRadius * 0.45;

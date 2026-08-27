@@ -57,11 +57,42 @@ scene.add(clock.gears);
 
 const timer = new THREE.Clock();
 
+class RpmReporter {
+
+    constructor(reporting=false, interval = 2) {
+        this.lastReportTime = 0;
+        this.reporting = reporting;
+        this.interval = interval;
+    }
+
+    shouldReport(elapsed) {
+        if ( false === this.reporting ) return false;
+        if (elapsed - this.lastReportTime < this.interval) {
+            return false;
+        }
+
+        this.lastReportTime = elapsed;
+        return true;
+    }
+
+    log(name, gear) {
+        console.log(name, gear.rpmReport);
+    }
+}
+
+const rpmReport = new RpmReporter();
+
 function animate(timestamp) {    
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime();
     lights.update(dt);
     clock.update(dt, elapsed);
+    if (rpmReport.shouldReport(elapsed)) {
+        rpmReport.log("gear1:", gear1);
+        rpmReport.log("gear2:", gear2);
+        rpmReport.log("gear3:", gear3);
+        rpmReport.log("gear4:", gear4);
+    }
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
