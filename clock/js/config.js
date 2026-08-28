@@ -38,6 +38,18 @@ export default class Config {
         this.toothDepth = 0.35;
         this.toothPitch = 0.6602253311059799;
 
+        this.bushes = {
+            bush1: {
+                data: { bushRadius: 3.8, bushThickness: 0.5 }
+            }
+        };
+
+        this.hands = {
+            second: {
+                data: { handLength: 5, handThickness: 0.25, handWidth: 0.25 }
+            }
+        };
+
         this.gears = {
             gear1: {
                 data: { inner: 1, teeth: 12, direction: -1, rpm: 6 },

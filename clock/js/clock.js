@@ -8,7 +8,7 @@ export default class Clock {
     addItem(i) {
         this.visuals.push(i);
         this.gears.add(i.native); 
-        /* !!!!!!!!!!!!!!!!!!!!!! */                            console.log(Math.random());
+        /* !!!!!!!!!!!!!!!!!!!!!! */                            //console.log(Math.random());
     }
     update(dt, elapsed) {
         this.gearTrain.update(dt, elapsed);
