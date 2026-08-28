@@ -24,7 +24,7 @@ export default class Hand extends MoveableGroup {
             geometry,
             new three.MeshStandardMaterial(this.material)
         );
-        hand.position.x = this.handLength / 2;
+        hand.position.x = (this.handLength / 2) * this.counterWeight;
 
         this.addToGroup(hand);
         this.setRotation(ROT90, 0, 0);

@@ -46,7 +46,9 @@ export default class Config {
 
         this.hands = {
             second: {
-                data: { handLength: 5, handThickness: 0.25, handWidth: 0.25 }
+                data: { handLength: 5, handThickness: 0.25, 
+                    handWidth: 0.25, counterWeight: 0.8 
+                }
             }
         };
 
