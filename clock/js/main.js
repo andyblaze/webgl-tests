@@ -29,44 +29,44 @@ const lights = new Lights(THREE);
 lights.create(THREE, scene);
 
 function makeShaft(three, scene, name, cfg) {
-    const s = new GearShaft(THREE, name, cfg);
+    const s = new GearShaft(three, name, cfg);
     scene.add(s.native);
     return s;
 }
 
-const shaft1 = makeShaft(THREE, scene, "shaft1", config);
+const flywheelShaft = makeShaft(THREE, scene, "flywheelShaft", config);
 const shaft2 = makeShaft(THREE, scene, "shaft2", config);
 const shaft3 = makeShaft(THREE, scene, "shaft3", config);
 const shaft4 = makeShaft(THREE, scene, "shaft4", config);
 
-const bush1 = new Bush(THREE, "bush1", config);
-scene.add(bush1.native);
-shaft1.attach(bush1, -1);
+const flywheel = new Bush(THREE, "flywheel", config);
+scene.add(flywheel.native);
+flywheelShaft.attach(flywheel, -1);
 
 const secondHand = new Hand(THREE, "second", config);
 scene.add(secondHand.native);
 shaft3.attach(secondHand, 1);
 
-const gear1 = new GearWheel(THREE, "gear1", config, new PinionGear());
+const flywheelCog = new GearWheel(THREE, "flywheelCog", config, new PinionGear());
 const gear2 = new GearWheel(THREE, "gear2", config, new SpokedGear());
 const gear3 = new GearWheel(THREE, "gear3", config, new SpokedGear());
 const gear4 = new GearWheel(THREE, "gear4", config, new HoledGear());
 
-shaft1.attach(gear1);
+flywheelShaft.attach(flywheelCog);
 shaft2.attach(gear2);
 shaft3.attach(gear3);
 shaft4.attach(gear4);
 
 const gearTrain = new GearTrain();
-gearTrain.connect(gear1, bush1, -1);
-gearTrain.connect(gear1, gear2);
+gearTrain.connect(flywheelCog, flywheel, -1);
+gearTrain.connect(flywheelCog, gear2);
 gearTrain.connect(gear2, gear3);
 gearTrain.connect(gear3, gear4);
 gearTrain.connect(gear3, secondHand, -1);
 gearTrain.init();
 
 const clock = new Clock(THREE, gearTrain, new RpmReporter());
-clock.addItem(gear1);
+clock.addItem(flywheelCog);
 clock.addItem(gear2);
 clock.addItem(gear3);
 clock.addItem(gear4);

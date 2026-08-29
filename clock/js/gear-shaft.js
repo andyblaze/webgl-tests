@@ -8,14 +8,15 @@ export default class GearShaft extends MoveableGroup {
         this.buildShaft(three, name, cfg);
     }
     buildShaft(three, name, cfg) {
-        this.geometry = new three.CylinderGeometry(0.25, 0.25, 8);
+        const data = cfg.shafts[name];
+        this.geometry = new three.CylinderGeometry(data.radius, data.radius, data.length);
         this.material = new three.MeshStandardMaterial(cfg.brushedSteel);
         this.shaft = new three.Mesh(
             this.geometry,
             this.material
         ); 
         this.shaft.rotation.x += ROT90;
-        const { x, y, z } = {...cfg.shafts[name].position};
+        const { x, y, z } = {...data.position};
         this.setPosition(x, y, z);   
         this.addToGroup(this.shaft);     
     }

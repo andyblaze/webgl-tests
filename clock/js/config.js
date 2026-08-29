@@ -39,7 +39,7 @@ export default class Config {
         this.toothPitch = 0.6602253311059799;
 
         this.bushes = {
-            bush1: {
+            flywheel: {
                 data: { bushRadius: 3.8, bushThickness: 0.5 }
             }
         };
@@ -53,7 +53,7 @@ export default class Config {
         };
 
         this.gears = {
-            gear1: {
+            flywheelCog: {
                 data: { inner: 1, teeth: 12, direction: -1, rpm: 6 },
                 rotationY: degToRad(0)
             },
@@ -71,17 +71,25 @@ export default class Config {
             }
         };
         this.shafts = {
-            shaft1: {
-                position: new three.Vector3(7, 0, 0)
+            flywheelShaft: {
+                position: new three.Vector3(7, 0, 0),
+                radius: 0.25, 
+                length: 8
             },
             shaft2: {
-                position: new three.Vector3(3.4, 2, 0)
+                position: new three.Vector3(3.4, 2, 0),
+                radius: 0.25, 
+                length: 8
             },
             shaft3: {
-                position: new three.Vector3(-1.75, -2.15, 0)
+                position: new three.Vector3(-1.75, -2.15, 0),
+                radius: 0.25, 
+                length: 8
             },
             shaft4: {
-                position: new three.Vector3(-9, 3.45, 0)
+                position: new three.Vector3(-9, 3.45, 0),
+                radius: 0.25, 
+                length: 8
             }
         };
     }
