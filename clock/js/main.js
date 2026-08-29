@@ -1,15 +1,12 @@
 import * as THREE from "three";
 import { makeCamera, makeRenderer, degToRad } from "./functions.js";
-import GearWheel from "./gearwheel.js";
 import Config from "./config.js";
+import Factory from "./factory.js";
 import Clock from "./clock.js";
-import GearShaft from "./gear-shaft.js";
 import GearTrain from "./geartrain.js";
 import SpokedGear from "./spoked-gear.js";
 import PinionGear from "./pinion-gear.js";
 import HoledGear from "./holed-gear.js";
-import Bush from "./bush.js";
-import Hand from "./hand.js";
 import Lights from "./lights.js";
 import RpmReporter from "./rpm-reporter.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -27,24 +24,6 @@ controls.enableDamping = true;
 
 const lights = new Lights(THREE);
 lights.create(THREE, scene);
-
-class Factory {
-    constructor(three) {
-        this.three = three;
-    }
-    shaft(name, cfg) {
-        return new GearShaft(this.three, name, cfg);
-    }
-    bush(name, cfg) {
-        return new Bush(this.three, name, cfg);
-    }
-    hand(name, cfg) {
-        return new Hand(this.three, name, cfg);
-    }
-    gear(name, cfg, decorator) {
-        return new GearWheel(this.three, name, cfg, decorator);
-    }
-}
 
 const factory = new Factory(THREE);
 
