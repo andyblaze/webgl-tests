@@ -2,7 +2,7 @@ export default class Lights {
     constructor(three) {
         this.lights = [];
         this.times = [0, 0]
-        this.speeds = [0.03, 0.05];
+        this.speeds = [0.03, 0.03];
         this.colors = [
             new three.Color(0xff0000), // red
             new three.Color(0xff00ff), // magenta
@@ -16,11 +16,11 @@ export default class Lights {
         const amb = new three.HemisphereLight(0xffffff, 0x333333, 2);
         scene.add(amb);
 
-        const dir1 = new three.DirectionalLight(0xff0000, 15);
+        const dir1 = new three.DirectionalLight(0xff0000, 5);
         dir1.position.set(10, 5, 5);
         scene.add(dir1);
 
-        const dir2 = new three.DirectionalLight(0x0000ff, 15);
+        const dir2 = new three.DirectionalLight(0x0000ff, 5);
         dir2.position.set(-10, -5, -5);
         scene.add(dir2);
 

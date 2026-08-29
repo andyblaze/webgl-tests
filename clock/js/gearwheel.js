@@ -54,7 +54,7 @@ export default class GearWheel extends MoveableGroup {
         return this.velocity * this.direction * 60 / ROT360;
     }
     doMaths() {
-        this.gearThickness = 0.15;
+        this.gearThickness = 0.25;
         this.hubRadius = this.innerRadius * 0.45;
         this.hubThickness = this.gearThickness * 1.4;
 
