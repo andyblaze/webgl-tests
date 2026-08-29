@@ -28,29 +28,46 @@ controls.enableDamping = true;
 const lights = new Lights(THREE);
 lights.create(THREE, scene);
 
-function makeShaft(three, scene, name, cfg) {
-    const s = new GearShaft(three, name, cfg);
-    scene.add(s.native);
-    return s;
+class Factory {
+    constructor(three) {
+        this.three = three;
+    }
+    shaft(name, cfg) {
+        return new GearShaft(this.three, name, cfg);
+    }
+    bush(name, cfg) {
+        return new Bush(this.three, name, cfg);
+    }
+    hand(name, cfg) {
+        return new Hand(this.three, name, cfg);
+    }
+    gear(name, cfg, decorator) {
+        return new GearWheel(this.three, name, cfg, decorator);
+    }
 }
 
-const flywheelShaft = makeShaft(THREE, scene, "flywheelShaft", config);
-const shaft2 = makeShaft(THREE, scene, "shaft2", config);
-const shaft3 = makeShaft(THREE, scene, "shaft3", config);
-const shaft4 = makeShaft(THREE, scene, "shaft4", config);
+const factory = new Factory(THREE);
 
-const flywheel = new Bush(THREE, "flywheel", config);
-scene.add(flywheel.native);
+function addToScene(scene, item) {
+    scene.add(item.native);
+    return item;
+}
+
+const flywheelShaft = addToScene(scene, factory.shaft("flywheelShaft", config));
+const shaft2 = addToScene(scene, factory.shaft("shaft2", config));
+const shaft3 = addToScene(scene, factory.shaft("shaft3", config));
+const shaft4 = addToScene(scene, factory.shaft("shaft4", config));
+
+const flywheel = addToScene(scene, factory.bush("flywheel", config));
 flywheelShaft.attach(flywheel, -1);
 
-const secondHand = new Hand(THREE, "second", config);
-scene.add(secondHand.native);
+const secondHand = addToScene(scene, factory.hand("second", config));
 shaft3.attach(secondHand, 1);
 
-const flywheelCog = new GearWheel(THREE, "flywheelCog", config, new PinionGear());
-const gear2 = new GearWheel(THREE, "gear2", config, new SpokedGear());
-const gear3 = new GearWheel(THREE, "gear3", config, new SpokedGear());
-const gear4 = new GearWheel(THREE, "gear4", config, new HoledGear());
+const flywheelCog = factory.gear("flywheelCog", config, new PinionGear());
+const gear2 = factory.gear("gear2", config, new SpokedGear());
+const gear3 = factory.gear("gear3", config, new SpokedGear());
+const gear4 = factory.gear("gear4", config, new HoledGear());
 
 flywheelShaft.attach(flywheelCog);
 shaft2.attach(gear2);
