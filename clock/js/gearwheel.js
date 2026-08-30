@@ -4,7 +4,7 @@ import { randomFrom } from "./functions.js";
 
 export default class GearWheel extends MoveableGroup {
     constructor(three, name, cfg, builder) {
-        super(three);
+        super(three, name);
         const data = cfg.gears[name].data;
         this.innerRadius = data.inner;
         this.toothCount = data.teeth;

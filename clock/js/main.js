@@ -34,38 +34,38 @@ function addToScene(scene, item) {
 
 const flywheelShaft = addToScene(scene, factory.shaft("flywheelShaft", config));
 const shaft2 = addToScene(scene, factory.shaft("shaft2", config));
-const shaft3 = addToScene(scene, factory.shaft("shaft3", config));
-const shaft4 = addToScene(scene, factory.shaft("shaft4", config));
+//const shaft3 = addToScene(scene, factory.shaft("shaft3", config));
+//const shaft4 = addToScene(scene, factory.shaft("shaft4", config));
 
 const flywheel = addToScene(scene, factory.bush("flywheel", config));
 flywheelShaft.attach(flywheel, -1);
 
-const secondHand = addToScene(scene, factory.hand("second", config));
-shaft3.attach(secondHand, 1);
+//const secondHand = addToScene(scene, factory.hand("second", config));
+//shaft3.attach(secondHand, 1);
 
 const flywheelCog = factory.gear("flywheelCog", config, new PinionGear());
 const gear2 = factory.gear("gear2", config, new SpokedGear());
-const gear3 = factory.gear("gear3", config, new SpokedGear());
-const gear4 = factory.gear("gear4", config, new HoledGear());
+//const gear3 = factory.gear("gear3", config, new SpokedGear());
+//const gear4 = factory.gear("gear4", config, new HoledGear());
 
 flywheelShaft.attach(flywheelCog);
 shaft2.attach(gear2);
-shaft3.attach(gear3);
-shaft4.attach(gear4);
+//shaft3.attach(gear3);
+//shaft4.attach(gear4);
 
 const gearTrain = new GearTrain();
 gearTrain.connect(flywheelCog, flywheel, -1);
 gearTrain.connect(flywheelCog, gear2);
-gearTrain.connect(gear2, gear3);
-gearTrain.connect(gear3, gear4);
-gearTrain.connect(gear3, secondHand, -1);
+//gearTrain.connect(gear2, gear3);
+//gearTrain.connect(gear3, gear4);
+//gearTrain.connect(gear3, secondHand, -1);
 gearTrain.init();
 
-const clock = new Clock(THREE, gearTrain, new RpmReporter());
+const clock = new Clock(THREE, gearTrain, new RpmReporter(true));
 clock.addItem(flywheelCog);
 clock.addItem(gear2);
-clock.addItem(gear3);
-clock.addItem(gear4);
+//clock.addItem(gear3);
+//clock.addItem(gear4);
 scene.add(clock.gears);
 
 const timer = new THREE.Clock();
