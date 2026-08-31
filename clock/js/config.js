@@ -61,21 +61,29 @@ export default class Config {
                 data: { inner: 1, teeth: 30 },
                 rotationY: degToRad(0)
             },
-            minReductionGear1: {
+            minTrainGear1: {
                 data: { inner: 1, teeth: 36 },
                 rotationY: degToRad(3.8)
             },
-            minReductionGear2: {
+            minTrainGear2: {
                 data: { inner: 1, teeth: 12 },
                 rotationY: degToRad(0)
             },
-            minReductionGear3: {
+            minTrainGear3: {
                 data: { inner: 1, teeth: 30 },
                 rotationY: degToRad(18)
             },
-            minReductionGear4: {
+            minTrainGear4: {
                 data: { inner: 1, teeth: 12 },
                 rotationY: degToRad(2)
+            },
+            minTrainGear5: {
+                data: { inner: 1, teeth: 24 },
+                rotationY: degToRad(9)
+            },
+            minTrainGear6: {
+                data: { inner: 1, teeth: 12 },
+                rotationY: degToRad(0)
             }
         };
         this.shafts = {
@@ -84,18 +92,18 @@ export default class Config {
                 radius: 0.25, 
                 length: 8
             },
-            minReductionShaft1: {
+            minTrainShaft1: {
                 position: new three.Vector3(-5.45, 0, 0),
                 radius: 0.25, 
                 length: 8
             },
-            minReductionShaft2: {
+            minTrainShaft2: {
                 position: new three.Vector3(-10.15, 0.7, 1.15),
                 radius: 0.25, 
                 length: 8
             },
-            shaft4: {
-                position: new three.Vector3(-9, 3.45, 0),
+            minTrainShaft3: {
+                position: new three.Vector3(-10, -3.35, 0),
                 radius: 0.25, 
                 length: 8
             }
