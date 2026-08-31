@@ -2,12 +2,13 @@ export default class GearTrain {
     constructor() {
         this.connections = [];
     }
-    connect(gear1, gear2, ratioOverride=0) {
+    connect(drvr, drvn, ratioOverride=0) {
         this.connections.push({
-            driver: gear1,
-            driven: gear2,
-            ratio: ratioOverride === 0 ? gear1.toothCount / gear2.toothCount : ratioOverride
+            driver: drvr,
+            driven: drvn,
+            ratio: ratioOverride === 0 ? drvr.toothCount / drvn.toothCount : ratioOverride
         });
+        return this;
     }
     get size() {
         return this.connections.length;

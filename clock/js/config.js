@@ -54,7 +54,11 @@ export default class Config {
 
         this.gears = {
             flywheelCog: {
-                data: { inner: 1, teeth: 12, direction: -1, rpm: 0.5 },
+                data: { inner: 1, teeth: 12, direction: -1, rpm: 1 },
+                rotationY: degToRad(0)
+            },
+            flywheelGear: {
+                data: { inner: 1, teeth: 30 },
                 rotationY: degToRad(0)
             },
             gear2: {
@@ -62,8 +66,8 @@ export default class Config {
                 rotationY: degToRad(3.8)
             },
             gear3: {
-                data: { inner: 1, teeth: 36 },
-                rotationY: degToRad(5)
+                data: { inner: 1, teeth: 15 },
+                rotationY: degToRad(18)
             },
             gear4: {
                 data: { inner: 1, teeth: 48 },
@@ -82,7 +86,7 @@ export default class Config {
                 length: 8
             },
             shaft3: {
-                position: new three.Vector3(-1.75, -2.15, 0),
+                position: new three.Vector3(8.75, 4.7, 1.15),
                 radius: 0.25, 
                 length: 8
             },
