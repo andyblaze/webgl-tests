@@ -61,32 +61,36 @@ export default class Config {
                 data: { inner: 1, teeth: 30 },
                 rotationY: degToRad(0)
             },
-            gear2: {
+            minReductionGear1: {
                 data: { inner: 1, teeth: 36 },
                 rotationY: degToRad(3.8)
             },
-            gear3: {
-                data: { inner: 1, teeth: 15 },
+            minReductionGear2: {
+                data: { inner: 1, teeth: 12 },
+                rotationY: degToRad(0)
+            },
+            minReductionGear3: {
+                data: { inner: 1, teeth: 30 },
                 rotationY: degToRad(18)
             },
-            gear4: {
-                data: { inner: 1, teeth: 48 },
+            minReductionGear4: {
+                data: { inner: 1, teeth: 12 },
                 rotationY: degToRad(2)
             }
         };
         this.shafts = {
             flywheelShaft: {
-                position: new three.Vector3(7, 0, 0),
+                position: new three.Vector3(0, 0, 0),
                 radius: 0.25, 
                 length: 8
             },
-            shaft2: {
-                position: new three.Vector3(1.55, 0, 0),
+            minReductionShaft1: {
+                position: new three.Vector3(-5.45, 0, 0),
                 radius: 0.25, 
                 length: 8
             },
-            shaft3: {
-                position: new three.Vector3(8.75, 4.7, 1.15),
+            minReductionShaft2: {
+                position: new three.Vector3(-10.15, 0.7, 1.15),
                 radius: 0.25, 
                 length: 8
             },

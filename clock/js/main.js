@@ -33,8 +33,8 @@ function addToScene(scene, item) {
 }
 
 const flywheelShaft = addToScene(scene, factory.shaft("flywheelShaft", config));
-const shaft2 = addToScene(scene, factory.shaft("shaft2", config));
-const shaft3 = addToScene(scene, factory.shaft("shaft3", config));
+const minReductionShaft1 = addToScene(scene, factory.shaft("minReductionShaft1", config));
+const minReductionShaft2 = addToScene(scene, factory.shaft("minReductionShaft2", config));
 //const shaft4 = addToScene(scene, factory.shaft("shaft4", config));
 
 const flywheel = addToScene(scene, factory.bush("flywheel", config));
@@ -45,28 +45,35 @@ flywheelShaft.attach(flywheel, -1.25);
 
 const flywheelCog = factory.gear("flywheelCog", config, new PinionGear());
 const flywheelGear = factory.gear("flywheelGear", config, new HoledGear());
-const gear2 = factory.gear("gear2", config, new SpokedGear());
-const gear3 = factory.gear("gear3", config, new SpokedGear());
-//const gear4 = factory.gear("gear4", config, new HoledGear());
+const minReductionGear1 = factory.gear("minReductionGear1", config, new SpokedGear());
+const minReductionGear2 = factory.gear("minReductionGear2", config, new PinionGear());
+const minReductionGear3 = factory.gear("minReductionGear3", config, new SpokedGear());
+const minReductionGear4 = factory.gear("minReductionGear4", config, new PinionGear());
 
 flywheelShaft.attach(flywheelCog);
 flywheelShaft.attach(flywheelGear, 1.15);
-shaft2.attach(gear2);
-shaft3.attach(gear3);
-//shaft4.attach(gear4);
+minReductionShaft1.attach(minReductionGear1);
+minReductionShaft1.attach(minReductionGear2, 2.5);
+minReductionShaft2.attach(minReductionGear3, 1.5);
+minReductionShaft2.attach(minReductionGear4, 2.5);
+
 
 const gearTrain = new GearTrain();
 //  .connect is (driver wheel, driven wheel, ratio override)
 gearTrain.connect(flywheelCog, flywheel, -1);
 gearTrain.connect(flywheel, flywheelGear, -1);
-gearTrain.connect(flywheelCog, gear2).connect(flywheelGear, gear3);
+gearTrain.connect(flywheelCog, minReductionGear1);
+gearTrain.connect(minReductionGear1, minReductionGear2, -1);
+gearTrain.connect(minReductionGear2, minReductionGear3);
+gearTrain.connect(minReductionGear3, minReductionGear4, -1);
 //gearTrain.connect(gear3, gear4);
 //gearTrain.connect(gear3, secondHand, -1);
 gearTrain.init();
 
 const clock = new Clock(THREE, gearTrain, new RpmReporter());
 clock.addItem(flywheelCog).addItem(flywheelGear);
-clock.addItem(gear2).addItem(gear3);
+clock.addItem(minReductionGear1).addItem(minReductionGear2);
+clock.addItem(minReductionGear3).addItem(minReductionGear4);
 //clock.addItem(gear4);
 scene.add(clock.visuals);
 
