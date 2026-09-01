@@ -46,11 +46,11 @@ flywheelShaft.attach(flywheel, -1.25);
 const flywheelCog = factory.gear("flywheelCog", config, new PinionGear());
 const flywheelGear = factory.gear("flywheelGear", config, new HoledGear());
 const minTrainGear1 = factory.gear("minTrainGear1", config, new SpokedGear());
-const minTrainGear2 = factory.gear("minTrainGear2", config, new PinionGear());
-const minTrainGear3 = factory.gear("minTrainGear3", config, new SpokedGear());
-const minTrainGear4 = factory.gear("minTrainGear4", config, new PinionGear());
+const minTrainGear2 = factory.gear("minTrainGear2", config, new SpokedGear());
+const minTrainGear3 = factory.gear("minTrainGear3", config, new HoledGear());
+const minTrainGear4 = factory.gear("minTrainGear4", config, new SpokedGear());
 const minTrainGear5 = factory.gear("minTrainGear5", config, new HoledGear());
-const minTrainGear6 = factory.gear("minTrainGear6", config, new PinionGear());
+const minTrainGear6 = factory.gear("minTrainGear6", config, new SpokedGear());
 //const minTrainGear7 = factory.gear("minTrainGear7", config, new HoledGear());
 
 flywheelShaft.attach(flywheelCog);
