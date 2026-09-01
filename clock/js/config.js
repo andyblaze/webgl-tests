@@ -46,7 +46,7 @@ export default class Config {
 
         this.hands = {
             second: {
-                data: { handLength: 5, handThickness: 0.25, 
+                data: { handLength: 12, handThickness: 0.25, 
                     handWidth: 0.25, counterWeight: 0.8 
                 }
             }
@@ -54,7 +54,7 @@ export default class Config {
 
         this.gears = {
             flywheelCog: {
-                data: { inner: 1, teeth: 12, direction: -1, rpm: 1 },
+                data: { inner: 1, teeth: 12, direction: -1, rpm: 6 },
                 rotationY: degToRad(0)
             },
             flywheelGear: {
@@ -70,7 +70,7 @@ export default class Config {
                 rotationY: degToRad(0)
             },
             minTrainGear3: {
-                data: { inner: 1, teeth: 30 },
+                data: { inner: 1, teeth: 24 },
                 rotationY: degToRad(18)
             },
             minTrainGear4: {
@@ -82,6 +82,14 @@ export default class Config {
                 rotationY: degToRad(9)
             },
             minTrainGear6: {
+                data: { inner: 1, teeth: 12 },
+                rotationY: degToRad(0)
+            },
+            minTrainGear7: {
+                data: { inner: 1, teeth: 24 },
+                rotationY: degToRad(9)
+            },
+            minTrainGear8: {
                 data: { inner: 1, teeth: 12 },
                 rotationY: degToRad(0)
             }
@@ -104,6 +112,11 @@ export default class Config {
             },
             minTrainShaft3: {
                 position: new three.Vector3(-10, -3.35, 0),
+                radius: 0.25, 
+                length: 8
+            },
+            minTrainShaft4: {
+                position: new three.Vector3(-6.5, -5.35, 0),
                 radius: 0.25, 
                 length: 8
             }

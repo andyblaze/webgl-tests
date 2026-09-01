@@ -36,12 +36,10 @@ const flywheelShaft = addToScene(scene, factory.shaft("flywheelShaft", config));
 const minTrainShaft1 = addToScene(scene, factory.shaft("minTrainShaft1", config));
 const minTrainShaft2 = addToScene(scene, factory.shaft("minTrainShaft2", config));
 const minTrainShaft3 = addToScene(scene, factory.shaft("minTrainShaft3", config));
+const minTrainShaft4 = addToScene(scene, factory.shaft("minTrainShaft4", config));
 
 const flywheel = addToScene(scene, factory.bush("flywheel", config));
 flywheelShaft.attach(flywheel, -1.25);
-
-//const secondHand = addToScene(scene, factory.hand("second", config));
-//shaft3.attach(secondHand, 1);
 
 const flywheelCog = factory.gear("flywheelCog", config, new PinionGear());
 const flywheelGear = factory.gear("flywheelGear", config, new HoledGear());
@@ -51,16 +49,22 @@ const minTrainGear3 = factory.gear("minTrainGear3", config, new HoledGear());
 const minTrainGear4 = factory.gear("minTrainGear4", config, new SpokedGear());
 const minTrainGear5 = factory.gear("minTrainGear5", config, new HoledGear());
 const minTrainGear6 = factory.gear("minTrainGear6", config, new SpokedGear());
-//const minTrainGear7 = factory.gear("minTrainGear7", config, new HoledGear());
+const minTrainGear7 = factory.gear("minTrainGear7", config, new SpokedGear());
+const minTrainGear8 = factory.gear("minTrainGear8", config, new SpokedGear());
 
 flywheelShaft.attach(flywheelCog);
 flywheelShaft.attach(flywheelGear, 1.15);
 minTrainShaft1.attach(minTrainGear1);
-minTrainShaft1.attach(minTrainGear2, 2.5);
-minTrainShaft2.attach(minTrainGear3, 1.5);
-minTrainShaft2.attach(minTrainGear4, 2.5);
-minTrainShaft3.attach(minTrainGear5, 3.5);
-minTrainShaft3.attach(minTrainGear6, 4.5);
+minTrainShaft1.attach(minTrainGear2, 1.5);
+minTrainShaft2.attach(minTrainGear3, 0.35);
+minTrainShaft2.attach(minTrainGear4, 1.35);
+minTrainShaft3.attach(minTrainGear5, 2.5);
+minTrainShaft3.attach(minTrainGear6, 3.5);
+minTrainShaft4.attach(minTrainGear7, 3.5);
+minTrainShaft4.attach(minTrainGear8, 1.5);
+
+const secondHand = addToScene(scene, factory.hand("second", config));
+minTrainShaft2.attach(secondHand, 1);
 
 
 const gearTrain = new GearTrain();
@@ -73,7 +77,9 @@ gearTrain.connect(minTrainGear2, minTrainGear3);
 gearTrain.connect(minTrainGear3, minTrainGear4, -1);
 gearTrain.connect(minTrainGear4, minTrainGear5);
 gearTrain.connect(minTrainGear5, minTrainGear6, -1);
-//gearTrain.connect(gear3, secondHand, -1);
+gearTrain.connect(minTrainGear6, minTrainGear7);
+gearTrain.connect(minTrainGear7, minTrainGear8, -1);
+gearTrain.connect(minTrainGear3, secondHand, -1);
 gearTrain.init();
 
 const clock = new Clock(THREE, gearTrain, new RpmReporter());
@@ -81,6 +87,7 @@ clock.addItem(flywheelCog).addItem(flywheelGear);
 clock.addItem(minTrainGear1).addItem(minTrainGear2);
 clock.addItem(minTrainGear3).addItem(minTrainGear4);
 clock.addItem(minTrainGear5).addItem(minTrainGear6);
+clock.addItem(minTrainGear7).addItem(minTrainGear8);
 
 scene.add(clock.visuals);
 
