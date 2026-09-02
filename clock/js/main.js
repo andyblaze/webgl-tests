@@ -44,6 +44,12 @@ const minTrainShaft3 = addToScene(scene, factory.shaft("minTrainShaft3", config)
 const minTrainShaft4 = addToScene(scene, factory.shaft("minTrainShaft4", config));
 const minTrainShaft5 = addToScene(scene, factory.shaft("minTrainShaft5", config));
 
+const now = new Date();
+
+const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+
+const rotation = seconds / 60 * Math.PI * 2;
+
 const flywheel = addToScene(scene, factory.bush("flywheel", config));
 flywheelShaft.attach(flywheel, -1.25);
 
@@ -58,6 +64,8 @@ const minTrainGear6 = factory.gear("minTrainGear6", config, new SpokedGear());
 const minTrainGear7 = factory.gear("minTrainGear7", config, new SpokedGear());
 const minTrainGear8 = factory.gear("minTrainGear8", config, new SpokedGear());
 const minTrainGear9 = factory.gear("minTrainGear9", config, new SpokedGear());
+
+flywheelCog.setRotation(0, rotation, 0);
 
 flywheelShaft.attach(flywheelCog);
 flywheelShaft.attach(flywheelGear, 1.15);
@@ -74,7 +82,6 @@ minTrainShaft5.attach(minTrainGear9, 1.5);
 const minuteHand = addToScene(scene, factory.hand("minute", config));
 minTrainShaft5.attach(minuteHand, 1);
 
-const now = new Date();
 minuteHand.setRotation(0, minuteAngle(now), 0);
 
 

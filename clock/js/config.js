@@ -63,7 +63,7 @@ export default class Config {
             },
             minTrainGear1: {
                 data: { inner: 1, teeth: 36 },
-                rotationY: degToRad(3.8)
+                rotationY: degToRad(0)
             },
             minTrainGear2: {
                 data: { inner: 1, teeth: 12 },
@@ -71,15 +71,15 @@ export default class Config {
             },
             minTrainGear3: {
                 data: { inner: 1, teeth: 24 },
-                rotationY: degToRad(18)
+                rotationY: degToRad(0)
             },
             minTrainGear4: {
                 data: { inner: 1, teeth: 12 },
-                rotationY: degToRad(2)
+                rotationY: degToRad(0)
             },
             minTrainGear5: {
                 data: { inner: 1, teeth: 24 },
-                rotationY: degToRad(9)
+                rotationY: degToRad(0)
             },
             minTrainGear6: {
                 data: { inner: 1, teeth: 12 },
@@ -87,7 +87,7 @@ export default class Config {
             },
             minTrainGear7: {
                 data: { inner: 1, teeth: 24 },
-                rotationY: degToRad(9)
+                rotationY: degToRad(0)
             },
             minTrainGear8: {
                 data: { inner: 1, teeth: 12 },
