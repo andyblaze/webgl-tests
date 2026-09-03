@@ -25,13 +25,13 @@ class Config {
                 segments: 40, length: 5,
                 width: 0.06, angle: 0,
                 speed:  ROT6, direction: -1,
-                position: (this.now.getSeconds() / 60) * ROT90
+                initialAngle: (this.now.getSeconds() / 60) * ROT90
             },
             minuteHand: {
                 segments: 40, length: 5,
                 width: 0.06, angle: 0,
                 speed:  ROT6 / 60, direction: -1,
-                position: (
+                initialAngle: (
                     ROT90 - ( this.now.getMinutes() + this.now.getSeconds() / 60 ) * ROT6
                 )
             },
@@ -39,7 +39,7 @@ class Config {
                 segments: 40, length: 3,
                 width: 0.06, angle: 0,
                 speed: ROT30 / 3600, direction: -1,
-                position: (
+                initialAngle: (
                     ROT90 -
                     (
                         (this.now.getHours() % 12) +
@@ -59,7 +59,7 @@ class Hand {
         // Hand geometry & setup
         Object.assign(this, {...cfg.hands[name]});
 
-        this.angle = this.position;
+        this.angle = this.initialAngle;
 
         this.positions = new Float32Array((this.segments + 1) * 2 * 3);
         this.indices = [];
