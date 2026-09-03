@@ -67,7 +67,7 @@ class Hand {
         this.positions = new Float32Array((this.segments + 1) * 2 * 3);
         this.indices = [];
 
-        for (let i = 0; i < this.segments; i++) {
+        for ( let i = 0; i < this.segments; i++ ) {
             const a = i * 2;
             const b = a + 2;
 
@@ -103,7 +103,46 @@ class Hand {
         pos[index + 4] = y + halfWidth;
         pos[index + 5] = 0;   
     }
-    update(dt) {
+update(dt) {
+    this.angle += dt * this.speed * this.direction;
+    this.native.rotation.z = this.angle;
+
+    const flexibleStart = 0.5;
+    const maxBend = 0.8; // radians; ~46 degrees at the tip
+
+    let x = 0;
+    let y = 0;
+
+    for (let i = 0; i <= this.segments; i++) {
+        const t = i / this.segments;
+
+        // Work out the bend of this segment.
+        let bend = 0;
+
+        if (t > flexibleStart) {
+            const flexT =
+                (t - flexibleStart) / (1 - flexibleStart);
+
+            // Smoothly increase bend towards the tip.
+            bend = Math.sin(flexT * Math.PI / 2) * maxBend;
+        }
+
+        // Position the segment.
+        if (i > 0) {
+            const segmentLength = this.length / this.segments;
+
+            x += Math.cos(bend) * segmentLength;
+            y += Math.sin(bend) * segmentLength;
+        }
+
+        const index = i * 2 * 3;
+
+        this.updateGeometry(index, x, y);
+    }
+
+    this.geometry.attributes.position.needsUpdate = true;
+}
+    update0(dt) {
         this.angle += dt * this.speed * this.direction;
         this.native.rotation.z = this.angle;
         
@@ -111,7 +150,7 @@ class Hand {
             const t = i / this.segments;
 
             // Curve increases dramatically with distance from pivot.
-            const curve = 2.2 * t * t;
+            const curve = 1.2 * t * t;
 
             const x = t * this.length;
             const y = curve;          
