@@ -11,6 +11,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.appendChild(renderer.domElement);
 
+const ROT360 = 2 * Math.PI;
+const ROT180 = Math.PI; 
+const ROT90 = Math.PI / 2;
+const ROT30 = Math.PI / 6;
+const ROT6 = Math.PI / 30;
+
 class Config {
     constructor() {
         this.now = new Date();
@@ -18,30 +24,28 @@ class Config {
             secondHand: {
                 segments: 40, length: 5,
                 width: 0.06, angle: 0,
-                speed:  Math.PI / 30, direction: -1,
-                position: (this.now.getSeconds() / 60) * Math.PI / 2
+                speed:  ROT6, direction: -1,
+                position: (this.now.getSeconds() / 60) * ROT90
             },
             minuteHand: {
                 segments: 40, length: 5,
                 width: 0.06, angle: 0,
-                speed:  Math.PI / 30 / 60, direction: -1,
+                speed:  ROT6 / 60, direction: -1,
                 position: (
-                    Math.PI / 2 +
-                    (this.now.getMinutes() + this.now.getSeconds() / 60)
-                    * Math.PI / 30
+                    ROT90 - ( this.now.getMinutes() + this.now.getSeconds() / 60 ) * ROT6
                 )
             },
             hourHand: {
                 segments: 40, length: 3,
                 width: 0.06, angle: 0,
-                speed: Math.PI / 6 / 60 / 60, direction: -1,
+                speed: ROT30 / 3600, direction: -1,
                 position: (
-                    Math.PI / 2 +
+                    ROT90 -
                     (
                         (this.now.getHours() % 12) +
                         this.now.getMinutes() / 60 +
                         this.now.getSeconds() / 3600
-                    ) * Math.PI / 6
+                    ) * ROT30
                 )
             }
         }
@@ -55,7 +59,7 @@ class Hand {
         // Hand geometry & setup
         Object.assign(this, {...cfg.hands[name]});
 
-        this.angle = this.position - Math.PI / 2;
+        this.angle = this.position;
 
         this.positions = new Float32Array((this.segments + 1) * 2 * 3);
         this.indices = [];
@@ -83,6 +87,7 @@ class Hand {
         });
 
         this.threeObj = new three.Mesh(this.geometry, this.material);
+        this.threeObj.rotation.z = this.angle;
     }
     get native() {
         return this.threeObj;
