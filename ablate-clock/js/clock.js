@@ -11,7 +11,7 @@ class Phaser {
         this.duration = d;
         this.running = true;
     }
-    stop(phase) { console.log(phase);
+    stop(phase) { //console.log(phase);
         if ( phase < 1.001 ) {
             //console.log("stop");
             this.elapsed = 0;
