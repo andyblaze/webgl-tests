@@ -26,7 +26,7 @@ const timer = new THREE.Clock();
 function animate() {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); // might need later
-    clock.update(dt);
+    clock.update(dt, elapsed);
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }

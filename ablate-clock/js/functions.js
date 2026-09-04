@@ -13,19 +13,7 @@ export function makeRenderer(three, cfg) {
     return rndr; 
 }
 
-export function phaser(elapsed) {
-    return Math.sin(elapsed * 0.15 * Math.PI) * 0.6;
-    /*const phase = (elapsed * 0.15) % 2;
-
-    let speed = 0;
-
-    if (phase < 1) {
-        const t = phase;
-        speed = (t * t * (3 - 2 * t) * 2 - 1) * 0.6;
-    } else {
-        const t = phase - 1;
-        speed = ((1 - t * t * (3 - 2 * t)) * 2 - 1) * 0.6;
-    }
-
-    return speed;*/
+export function phaser(elapsed, maxSpeed, duration) {
+    const phase = elapsed * 2 * Math.PI / duration;
+    return 1 + (maxSpeed - 1) * (1 - Math.cos(phase)) / 2;
 }
