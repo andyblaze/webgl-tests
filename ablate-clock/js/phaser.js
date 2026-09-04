@@ -3,7 +3,7 @@ export default class Phaser {
         this.stop(1);
     }
     start(sm, d) {
-        if ( true === this.running ) return;
+        if ( this.isRunning ) return;
         //console.log(sm, d);
         this.speedMultiplier = sm;
         this.duration = d;
@@ -19,11 +19,21 @@ export default class Phaser {
         }
         return 1;
     }
+    get isRunning() {
+        return (true === this.running);
+    }
+    get isStopped() {
+        return (false === this.running);
+    }
+    get isFinished() {
+        return (this.elapsed >= this.duration);
+    }
     update(dt) {
         this.elapsed += dt;
-        if ( true === this.running ) {
+        if ( this.isRunning ) {
             const p = this.phase(this.elapsed, this.speedMultiplier, this.duration);
-            if ( this.elapsed >= this.duration ) return this.stop(p);
+            if ( this.isFinished ) 
+                return this.stop(p);
             return p;
         }
         return 1;
