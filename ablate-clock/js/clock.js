@@ -12,7 +12,7 @@ class Phaser {
         this.running = true;
     }
     stop(phase) { //console.log(phase);
-        if ( phase < 1.001 ) {
+        if ( Math.abs(phase) <= 1.01 ) {
             //console.log("stop");
             this.elapsed = 0;
             this.running = false;
@@ -28,8 +28,7 @@ class Phaser {
             if ( this.elapsed >= this.duration ) return this.stop(p);
             return p;
         }
-        else
-            return 1;
+        return 1;
     }
     phase(elapsed, maxSpeed, duration) {
         const phase = elapsed * 2 * Math.PI / duration;
@@ -47,7 +46,7 @@ export default class Clock {
     update(dt, elapsed) {
         this.elapsed += dt;
         if ( mt_rand(0, 100) < 1 )
-            this.phaser.start(mt_rand(-20, 20), mt_rand(5, 10));
+            this.phaser.start(mt_rand(10, 20), mt_rand(8, 16));
         this.speedMultiplier = this.phaser.update(dt, this.elapsed);//phaser(this.elapsed, -20, 30);
         for ( const [name, hand] of Object.entries(this.hands) )
             hand.update(dt, this.speedMultiplier);
