@@ -29,3 +29,11 @@ export function mt_randf(min, max) {
 export function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
+
+export function randomFrom(arr) {
+    return arr[mt_rand(0, arr.length - 1)];
+}
+
+export function randomSpeed() {
+    return randomFrom([-20, -15, -10, -5, 5, 10, 15, 20]);
+}

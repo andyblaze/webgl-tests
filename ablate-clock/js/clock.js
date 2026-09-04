@@ -1,4 +1,4 @@
-import { phaser, mt_rand } from "./functions.js";
+import { phaser, mt_rand, randomSpeed } from "./functions.js";
 
 class Phaser {
     constructor() {
@@ -21,10 +21,10 @@ class Phaser {
         }
         return 1;
     }
-    update(dt, elapsed) {
+    update(dt) {
         this.elapsed += dt;
-        if ( this.running ) {
-            const p = this.phase(elapsed, this.speedMultiplier, this.duration);
+        if ( true === this.running ) {
+            const p = this.phase(this.elapsed, this.speedMultiplier, this.duration);
             if ( this.elapsed >= this.duration ) return this.stop(p);
             return p;
         }
@@ -45,9 +45,11 @@ export default class Clock {
     }
     update(dt, elapsed) {
         this.elapsed += dt;
-        if ( mt_rand(0, 100) < 1 )
-            this.phaser.start(mt_rand(10, 20), mt_rand(8, 16));
-        this.speedMultiplier = this.phaser.update(dt, this.elapsed);//phaser(this.elapsed, -20, 30);
+        if ( mt_rand(0, 300) < 1 )
+            this.phaser.start(randomSpeed(), mt_rand(8, 16));
+
+        this.speedMultiplier = this.phaser.update(dt);
+
         for ( const [name, hand] of Object.entries(this.hands) )
             hand.update(dt, this.speedMultiplier);
         
