@@ -34,11 +34,16 @@ function animate() {
 requestAnimationFrame(animate);
 
 window.addEventListener("resize", () => {
-    const aspect = window.innerWidth / window.innerHeight;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const aspect = w / h;
     camera.left = -10 * aspect;
     camera.right = 10 * aspect;
     camera.top = 7.5;
     camera.bottom = -7.5;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(w, h);
+    config.aspect = aspect;
+    config.innerW = w;
+    config.innerH = h;
 });
