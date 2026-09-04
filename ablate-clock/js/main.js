@@ -2,6 +2,7 @@ import Config from "./config.js";
 import Hand from "./hand.js";
 import Clock from "./clock.js";
 import { makeCamera, makeRenderer } from "./functions.js";
+import Phaser from "./phaser.js";
 
 import * as THREE from "three";
 
@@ -18,7 +19,7 @@ scene.add(minuteHand.native);
 const hourHand = new Hand(THREE, "hourHand", config);
 scene.add(hourHand.native);
 
-const clock = new Clock();
+const clock = new Clock(new Phaser());
 clock.add(secondHand).add(minuteHand).add(hourHand);
 
 const timer = new THREE.Clock();
