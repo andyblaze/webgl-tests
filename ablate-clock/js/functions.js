@@ -17,3 +17,15 @@ export function phaser(elapsed, maxSpeed, duration) {
     const phase = elapsed * 2 * Math.PI / duration;
     return 1 + (maxSpeed - 1) * (1 - Math.cos(phase)) / 2;
 }
+
+export function mt_rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function mt_randf(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+export function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}

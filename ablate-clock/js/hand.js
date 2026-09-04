@@ -1,3 +1,5 @@
+import { clamp } from "./functions.js";
+
 export default class Hand {
     constructor(three, name, cfg) {
         this.name = name;
@@ -49,12 +51,12 @@ export default class Hand {
         pos[index + 4] = y + halfWidth;
         pos[index + 5] = 0;   
     }
-    update(dt, speed) {
-        this.angle += dt * this.speed * this.direction * speed;
+    update(dt, speedMultiplier) {
+        this.angle += dt * this.speed * this.direction * speedMultiplier;
         this.threeObj.rotation.z = this.angle;
 
         const flexibleStart = 0.125;
-        const maxBend = this.speed * -this.direction;
+        const maxBend = (this.speed * -this.direction) * clamp(speedMultiplier, speedMultiplier / 4, speedMultiplier / 2);
         let x = 0;
         let y = 0;
 
