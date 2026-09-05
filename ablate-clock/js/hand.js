@@ -28,7 +28,7 @@ export default class Hand {
         );
         this.geometry.setIndex(this.indices);
 
-        this.material = new three.MeshBasicMaterial({
+        this.material = new three.MeshStandardMaterial({
             color: 0x00ffff,
             side: three.DoubleSide
         });
