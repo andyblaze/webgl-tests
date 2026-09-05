@@ -17,10 +17,11 @@ export default class ClockFace {
         });
 
         this.threeObj = new three.Mesh(this.geometry, this.material);
+        this.threeObj.receiveShadow = true;
 
         // Flatten it along Z
         this.threeObj.scale.set(1, 1, 0.25);
-        this.threeObj.position.z = -1.6;
+        this.threeObj.position.z = -2;
     }
     get native() {
         return this.threeObj;

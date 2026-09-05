@@ -7,6 +7,7 @@ export function makeCamera(three, cfg) {
 
 export function makeRenderer(three, cfg) {
     const rndr = new three.WebGLRenderer({ antialias: true });
+    rndr.shadowMap.enabled = true;
     rndr.setSize(cfg.innerW, cfg.innerH);
     rndr.setPixelRatio(Math.min(cfg.dpr, 2));
     document.body.appendChild(rndr.domElement);   

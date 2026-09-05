@@ -24,6 +24,9 @@ export default class Lights {
         dir2.position.set(-10, -5, 5);
         scene.add(dir2);
 
+        //dir1.castShadow = true;
+        dir2.castShadow = true;
+
         this.lights = [dir1, dir2];
     }
     update(dt) {

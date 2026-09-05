@@ -38,6 +38,7 @@ export default class Hand {
         });
 
         this.threeObj = new three.Mesh(this.geometry, this.material);
+        this.threeObj.castShadow = true;
         this.threeObj.rotation.z = this.angle;
     }
     get native() {
