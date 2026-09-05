@@ -8,6 +8,8 @@ export default class Hand {
 
         this.angle = this.initialAngle;
 
+        this.depth = 4;
+
         this.positions = new Float32Array((this.segments + 1) * 2 * 3);
         this.indices = [];
 
@@ -31,9 +33,9 @@ export default class Hand {
         this.material = new three.MeshPhysicalMaterial({
             color: 0x00ffff,
             emissive: 0x00ffff,
-            emissiveIntensity: 0.96,
-            metalness: 0.5,
-            roughness: 0.2,
+            emissiveIntensity: 1,
+            metalness: 0,
+            roughness: 0.3,
             side: three.DoubleSide
         });
 

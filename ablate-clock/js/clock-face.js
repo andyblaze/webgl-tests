@@ -4,6 +4,8 @@ export default class ClockFace {
 
         const loader = new three.TextureLoader();
         const texture = loader.load("./textures/marble-normal.png");
+        texture.wrapS = three.RepeatWrapping;
+        texture.wrapT = three.RepeatWrapping;
 
         this.material = new three.MeshPhysicalMaterial({
             color: 0xff0000,
