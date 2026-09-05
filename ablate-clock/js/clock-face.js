@@ -24,6 +24,7 @@ export default class ClockFace {
         return this.threeObj;
     }
     update(dt, elapsed) {
-
+        this.material.normalMap.offset.x = elapsed * 0.002;
+        this.material.normalMap.offset.y = elapsed * 0.005;
     }
 }

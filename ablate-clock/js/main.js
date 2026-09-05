@@ -4,6 +4,7 @@ import Clock from "./clock.js";
 import ClockFace from "./clock-face.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Phaser from "./phaser.js";
+import Lights from "./lights.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import * as THREE from "three";
@@ -14,9 +15,8 @@ const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 
-const light = new THREE.DirectionalLight(0xffffff, 2);
-light.position.set(5, 5, 10);
-scene.add(light);
+const lights = new Lights(THREE);
+lights.create(THREE, scene);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -42,6 +42,7 @@ function animate() {
     const elapsed = timer.getElapsedTime(); // might need later
     clock.update(dt, elapsed);
     controls.update();
+    lights.update(dt);
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }

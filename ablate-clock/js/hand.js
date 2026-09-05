@@ -31,7 +31,7 @@ export default class Hand {
         this.material = new three.MeshPhysicalMaterial({
             color: 0x00ffff,
             emissive: 0x00ffff,
-            emissiveIntensity: 0.6,
+            emissiveIntensity: 0.96,
             metalness: 0.5,
             roughness: 0.2,
             side: three.DoubleSide
