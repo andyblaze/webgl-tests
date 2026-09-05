@@ -10,7 +10,7 @@ export default class Clock {
     update(dt, elapsed) {
         this.elapsed += dt;
         if ( mt_rand(0, 300) < 1 && this.phaser.isStopped )
-            this.phaser.start(randomSpeed(), mt_rand(28, 46));
+            this.phaser.start(randomSpeed(), mt_rand(12, 24));
 
         this.speedMultiplier = this.phaser.update(dt);
 

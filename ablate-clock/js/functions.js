@@ -35,5 +35,5 @@ export function randomFrom(arr) {
 }
 
 export function randomSpeed() {
-    return randomFrom([-20, -15, -10, -5, 5, 10, 15, 20]);
+    return randomFrom([-24, -20, -16, -12, 12, 16, 20, 24]);
 }

@@ -56,7 +56,8 @@ export default class Hand {
         this.threeObj.rotation.z = this.angle;
 
         const flexibleStart = 0.125;
-        const maxBend = (this.speed * -this.direction) * clamp(speedMultiplier, speedMultiplier / 4, speedMultiplier / 2);
+        const clampedBend = clamp(speedMultiplier, speedMultiplier * this.bendMin, speedMultiplier * this.bendMax);
+        const maxBend = (this.speed * -this.direction) * clampedBend;
         let x = 0;
         let y = 0;
 

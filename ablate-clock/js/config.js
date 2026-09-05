@@ -12,12 +12,14 @@ export default class Config {
                 segments: 40, length: 5,
                 width: 0.06, angle: 0,
                 speed:  ROT6, direction: -1,
+                bendMin: 0.5, bendMax: 0.25,
                 initialAngle: (this.now.getSeconds() / 60) * ROT90
             },
             minuteHand: {
                 segments: 40, length: 5,
                 width: 0.06, angle: 0,
                 speed:  ROT6 / 60, direction: -1,
+                bendMin: 4, bendMax: 8,
                 initialAngle: (
                     ROT90 - ( this.now.getMinutes() + this.now.getSeconds() / 60 ) * ROT6
                 )
@@ -26,6 +28,7 @@ export default class Config {
                 segments: 40, length: 3,
                 width: 0.06, angle: 0,
                 speed: ROT30 / 3600, direction: -1,
+                bendMin: 40, bendMax: 80,
                 initialAngle: (
                     ROT90 -
                     (
