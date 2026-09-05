@@ -28,8 +28,12 @@ export default class Hand {
         );
         this.geometry.setIndex(this.indices);
 
-        this.material = new three.MeshStandardMaterial({
+        this.material = new three.MeshPhysicalMaterial({
             color: 0x00ffff,
+            emissive: 0x00ffff,
+            emissiveIntensity: 0.6,
+            metalness: 0.5,
+            roughness: 0.2,
             side: three.DoubleSide
         });
 

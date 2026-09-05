@@ -2,10 +2,16 @@ export default class ClockFace {
     constructor(three) {
         this.geometry = new three.SphereGeometry(5.8, 64, 32);
 
-        this.material = new three.MeshStandardMaterial({
-            color: 0xffffff,
+        const loader = new three.TextureLoader();
+        const texture = loader.load("./textures/marble-normal.png");
+
+        this.material = new three.MeshPhysicalMaterial({
+            color: 0xff0000,
             roughness: 0.3,
-            metalness: 0.13
+            metalness: 0.13,
+            emissive: 0xff0000,
+            emissiveIntensity: 0.4,
+            normalMap: texture,
         });
 
         this.threeObj = new three.Mesh(this.geometry, this.material);

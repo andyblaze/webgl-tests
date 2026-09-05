@@ -22,7 +22,6 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const clockFace = new ClockFace(THREE);
-
 scene.add(clockFace.native);
 
 const secondHand = new Hand(THREE, "secondHand", config);
