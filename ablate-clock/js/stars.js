@@ -3,7 +3,7 @@ export default class StarsDecor {
         this.STAR_COUNT = numStars;
         this.positions = [];
         this.colours = [];
-        this.radius = 450;
+        this.radius = 99;
 
         for ( let i =0 ; i < this.STAR_COUNT; i++ ) {
 

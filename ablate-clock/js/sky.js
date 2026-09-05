@@ -34,7 +34,12 @@ export default class SkyDome {
         this.group.add(new three.Mesh(geometry, material));
     }
     update() {
-        this.stars.rotation.z += 0.0001;     
+        this.stars.rotation.y += 0.0001;     
+    }
+    setPosition(x, y, z) {
+        this.group.position.x = x;
+        this.group.position.y = y;
+        this.group.position.z = z;
     }
     copyPosition(p) {
         this.group.position.copy(p);

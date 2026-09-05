@@ -19,6 +19,7 @@ const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 
 const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
+//sky.setPosition(0, 0, 0);
 sky.addToScene(scene);
 
 const lights = new Lights(THREE);
@@ -49,7 +50,7 @@ function animate() {
     clock.update(dt, elapsed);
     controls.update();
     lights.update(dt);
-    sky.copyPosition(camera.position);
+    //sky.copyPosition(camera.position);
     sky.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
