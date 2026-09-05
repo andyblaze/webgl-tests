@@ -5,15 +5,21 @@ import ClockFace from "./clock-face.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Phaser from "./phaser.js";
 import Lights from "./lights.js";
+import SkyDome from "./sky.js";
+import StarsDecor from "./stars.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import * as THREE from "three";
 
 const config = new Config(window);
 
+
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
+
+const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
+sky.addToScene(scene);
 
 const lights = new Lights(THREE);
 lights.create(THREE, scene);
@@ -39,10 +45,12 @@ const timer = new THREE.Clock();
 
 function animate() {
     const dt = timer.getDelta();
-    const elapsed = timer.getElapsedTime(); // might need later
+    const elapsed = timer.getElapsedTime(); 
     clock.update(dt, elapsed);
     controls.update();
     lights.update(dt);
+    sky.copyPosition(camera.position);
+    sky.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
