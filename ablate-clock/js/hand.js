@@ -8,8 +8,6 @@ export default class Hand {
 
         this.angle = this.initialAngle;
 
-        this.depth = 4;
-
         this.positions = new Float32Array((this.segments + 1) * 2 * 3);
         this.indices = [];
 
