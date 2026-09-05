@@ -3,6 +3,7 @@ import { mt_rand, randomSpeed } from "./functions.js";
 export default class Clock {
     constructor(phaser) {
         this.hands = {};
+        this.face = null;
         this.elapsed = 0;
         this.speedMultiplier = 1;
         this.phaser = phaser;
@@ -16,7 +17,12 @@ export default class Clock {
 
         for ( const [name, hand] of Object.entries(this.hands) )
             hand.update(dt, this.speedMultiplier);
+
+        this.face.update(dt, elapsed);
         
+    }
+    addFace(f) {
+        this.face = f;
     }
     add(h) {
         this.hands[h.name] = h;

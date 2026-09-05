@@ -23,7 +23,7 @@ export default class ClockFace {
     get native() {
         return this.threeObj;
     }
-    update(dt) {
+    update(dt, elapsed) {
 
     }
 }

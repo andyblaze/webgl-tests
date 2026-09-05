@@ -33,6 +33,7 @@ scene.add(hourHand.native);
 
 const clock = new Clock(new Phaser());
 clock.add(secondHand).add(minuteHand).add(hourHand);
+clock.addFace(clockFace);
 
 const timer = new THREE.Clock();
 
