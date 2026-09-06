@@ -1,4 +1,4 @@
-import { mt_randf } from "./functions.js";
+import { mt_randf, clamp } from "./functions.js";
 
 export default class Ablation {
     constructor(three, maxParticles=160) {
@@ -51,9 +51,11 @@ export default class Ablation {
             this.positions[index + 2] = 0;
 
             this.life[i] = mt_randf(20, 30);
+            
 
             break;
         }
+        this.material.opacity = 0.5;
 
         this.threeObj.geometry.attributes.position.needsUpdate = true;
     }
@@ -66,6 +68,9 @@ export default class Ablation {
             this.positions[i + 1] += this.velocities[i + 1] * dt;
 
             this.life[i] -= dt;
+            
         }
+        this.material.opacity -= dt;
+        this.material.opacity = clamp(this.material.opacity, 0, 0.5);
     }
 }
