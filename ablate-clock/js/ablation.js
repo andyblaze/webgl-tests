@@ -1,7 +1,7 @@
 import { mt_randf } from "./functions.js";
 
 export default class Ablation {
-    constructor(three, maxParticles=180) {
+    constructor(three, maxParticles=160) {
         this.maxParticles = maxParticles;
 
         this.positions = new Float32Array(maxParticles * 3);
