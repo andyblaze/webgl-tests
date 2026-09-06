@@ -86,13 +86,16 @@ export default class Hand {
             }
             const index = i * 2 * 3;
             this.updateGeometry(index, x, y);
+            const angularVelocity = -this.speed * this.direction * speedMultiplier;
+            this.tip.x = x;
+            this.tip.y = y;
+            this.threeObj.localToWorld(this.tip);
 
+            this.ablation.emit(this.tip.x, this.tip.y, angularVelocity); 
+            this.ablation.update(dt);            
         }
-        this.tip.x = x;
-        this.tip.y = y;
-this.threeObj.localToWorld(this.tip);
+        
 
-this.ablation.emit(this.tip.x, this.tip.y);
         this.geometry.attributes.position.needsUpdate = true;
     }
     addAblation(a, scene) {

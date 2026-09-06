@@ -1,7 +1,7 @@
 import { mt_randf } from "./functions.js";
 
 export default class Ablation {
-    constructor(three, maxParticles=5) {
+    constructor(three, maxParticles=180) {
         this.maxParticles = maxParticles;
 
         this.positions = new Float32Array(maxParticles * 3);
@@ -16,9 +16,11 @@ export default class Ablation {
         );
 
         this.material = new three.PointsMaterial({
-            color: 0x00ffff,
-            size: 3,
-            sizeAttenuation: false
+            color: 0x000000,
+            size: 2,
+            sizeAttenuation: false,
+            transparent: true,
+            opacity: 0.5
         });
 
         this.threeObj = new three.Points(geometry, this.material);
@@ -28,24 +30,27 @@ export default class Ablation {
         return this.threeObj;
     }
 
-    emit(x, y) {
+    emit(x, y, angularVelocity) {
         for ( let i = 0; i < this.maxParticles; i++ ) {
             if ( this.life[i] > 0 ) continue;
 
             const index = i * 3;
 
             const angle = mt_randf(1, 360);
-            const speed = mt_randf(0.1, 0.2);
+            const speed = mt_randf(0.01, 0.02);
 
-            this.velocities[index + 0] = Math.cos(angle) * speed;
-            this.velocities[index + 1] = Math.sin(angle) * speed;
+            const vx = -y * angularVelocity;
+            const vy =  x * angularVelocity;
+
+            this.velocities[index + 0] = vx * speed;
+            this.velocities[index + 1] = vy * speed;
             this.velocities[index + 2] = 0;
 
             this.positions[index + 0] = x;
             this.positions[index + 1] = y;
             this.positions[index + 2] = 0;
 
-            this.life[i] = mt_randf(2, 3);
+            this.life[i] = mt_randf(20, 30);
 
             break;
         }
