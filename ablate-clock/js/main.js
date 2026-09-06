@@ -1,5 +1,6 @@
 import Config from "./config.js";
 import Hand from "./hand.js";
+import Ablation from "./ablation.js";
 import Clock from "./clock.js";
 import ClockFace from "./clock-face.js";
 import { makeCamera, makeRenderer } from "./functions.js";
@@ -13,13 +14,11 @@ import * as THREE from "three";
 
 const config = new Config(window);
 
-
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 
 const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
-//sky.setPosition(0, 0, 0);
 sky.addToScene(scene);
 
 const lights = new Lights(THREE);
@@ -32,10 +31,13 @@ const clockFace = new ClockFace(THREE);
 scene.add(clockFace.native);
 
 const secondHand = new Hand(THREE, "secondHand", config);
+secondHand.addAblation(new Ablation(THREE), scene);
 scene.add(secondHand.native);
 const minuteHand = new Hand(THREE, "minuteHand", config);
+minuteHand.addAblation(new Ablation(THREE), scene);
 scene.add(minuteHand.native);
 const hourHand = new Hand(THREE, "hourHand", config);
+hourHand.addAblation(new Ablation(THREE), scene);
 scene.add(hourHand.native);
 
 const clock = new Clock(new Phaser());
@@ -50,7 +52,6 @@ function animate() {
     clock.update(dt, elapsed);
     controls.update();
     lights.update(dt);
-    //sky.copyPosition(camera.position);
     sky.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

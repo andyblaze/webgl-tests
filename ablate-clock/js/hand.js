@@ -2,6 +2,8 @@ import { clamp } from "./functions.js";
 
 export default class Hand {
     constructor(three, name, cfg) {
+        this.ablation = null;
+        this.tip = new three.Vector3(0, 0, 0);
         this.name = name;
         // Hand geometry & setup
         Object.assign(this, {...cfg.hands[name]});
@@ -84,7 +86,18 @@ export default class Hand {
             }
             const index = i * 2 * 3;
             this.updateGeometry(index, x, y);
+
         }
+        this.tip.x = x;
+        this.tip.y = y;
+this.threeObj.localToWorld(this.tip);
+
+this.ablation.emit(this.tip.x, this.tip.y);
         this.geometry.attributes.position.needsUpdate = true;
+    }
+    addAblation(a, scene) {
+        this.ablation = a;
+        //this.threeObj.add(this.ablation.native);
+        scene.add(a.native)
     }
 }
