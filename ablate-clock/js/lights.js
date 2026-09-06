@@ -1,8 +1,8 @@
 export default class Lights {
     constructor(three) {
         this.lights = [];
-        this.times = [0, 0]
-        this.speeds = [0.03, 0.01];
+        this.times = [0, 0, 0, 0]
+        this.speeds = [0.05, 0.03, 0.07, 0.11];
         this.colors = [
             new three.Color(0xff0000), // red
             new three.Color(0xff00ff), // magenta
@@ -16,6 +16,10 @@ export default class Lights {
         const amb = new three.HemisphereLight(0xffffff, 0x333333, 2);
         scene.add(amb);
 
+        const dir0 = new three.DirectionalLight(0xff0000, 5);
+        dir0.position.set(10, -5, 5);
+        scene.add(dir0);
+
         const dir1 = new three.DirectionalLight(0xff0000, 5);
         dir1.position.set(10, 5, 5);
         scene.add(dir1);
@@ -24,10 +28,14 @@ export default class Lights {
         dir2.position.set(-10, -5, 5);
         scene.add(dir2);
 
+        const dir3 = new three.DirectionalLight(0x00ff00, 5);
+        dir3.position.set(-10, 5, 5);
+        scene.add(dir3);
+
         //dir1.castShadow = true;
         dir2.castShadow = true;
 
-        this.lights = [dir1, dir2];
+        this.lights = [dir0, dir1, dir2, dir3];
     }
     update(dt) {
         this.times[0] += dt * this.speeds[0];

@@ -8,11 +8,15 @@ export default class ClockFace {
         texture.wrapT = three.RepeatWrapping;
 
         this.material = new three.MeshPhysicalMaterial({
-            color: 0xff0000,
-            roughness: 0.3,
-            metalness: 0.13,
-            emissive: 0xff0000,
+            color: 0x0dc4fc,
+            transparent:true,
+            opacity:0.95,
+            roughness: 0.03,
+            metalness: 0.5,
+            emissive: 0x0dc4fc,
             emissiveIntensity: 0.4,
+            clearcoat:0.75,
+            clearcoatRoughness: 0.5,
             normalMap: texture,
         });
 

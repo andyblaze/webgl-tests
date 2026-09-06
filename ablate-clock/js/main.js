@@ -30,6 +30,21 @@ controls.enableDamping = true;
 const clockFace = new ClockFace(THREE);
 scene.add(clockFace.native);
 
+const one = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 0.25, 0.25),
+    new THREE.MeshPhysicalMaterial({
+        color: 0x0899C6,
+        transparent: true,
+        opacity: 0.5
+    })
+);
+one.rotation.x = Math.PI * 0.25; 
+one.rotation.z = Math.PI * 0.25;
+one.position.y = 3.5;
+one.position.x = 1.5;
+one.position.z = -0.5;
+scene.add(one);
+
 const secondHand = new Hand(THREE, "secondHand", config);
 secondHand.addAblation(new Ablation(THREE), scene);
 scene.add(secondHand.native);
