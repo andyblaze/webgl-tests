@@ -1,7 +1,8 @@
 import { ROT90, ROT30, ROT6 } from "./consts.js";
+import { deg2rad } from "./functions.js";
 
 export default class Config {
-    constructor(wnd) {
+    constructor(three, wnd) {
         this.innerW = wnd.innerWidth;
         this.innerH = wnd.innerHeight;
         this.aspect = wnd.innerWidth / wnd.innerHeight;
@@ -39,5 +40,31 @@ export default class Config {
                 )
             }
         }
+        this.markers = {
+            twelve: { 
+                rotation: new three.Euler(0, deg2rad(90), deg2rad(90)),
+                position: new three.Vector3(0, 0, -1)
+            },
+            three: { 
+                rotation: new three.Euler(0, 0, 0),
+                position: new three.Vector3(0, 0, -1)
+            },
+            two: { 
+                rotation: new three.Euler(0, deg2rad(0), deg2rad(30)),
+                position: new three.Vector3(0, 0, -1)
+            },
+            one: { 
+                rotation: new three.Euler(0, deg2rad(0), deg2rad(60)),
+                position: new three.Vector3(0, 0, -1)
+            },
+            eleven: { 
+                rotation: new three.Euler(0, deg2rad(0), deg2rad(120)),
+                position: new three.Vector3(0, 0, -1)
+            },
+            ten: { 
+                rotation: new three.Euler(0, deg2rad(0), deg2rad(150)),
+                position: new three.Vector3(0, 0, -1)
+            }
+        };
     }
 }
