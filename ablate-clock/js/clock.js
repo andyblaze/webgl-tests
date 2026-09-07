@@ -19,11 +19,11 @@ export default class Clock {
         for ( const [name, hand] of Object.entries(this.hands) )
             hand.update(dt, this.speedMultiplier);
         
-        const speed = 1;
-        const value = (Math.sin(this.elapsed * speed) + 1) * 0.5;
+        const speed = 0.03 * this.speedMultiplier;
+        const value = (1 - Math.cos(this.elapsed * speed)) * 0.5;
         for ( const m of this.markers ) {
             m.material.emissiveIntensity = value;
-            //m.material.opacity = value;
+            m.material.opacity = value * 0.5;
         }
 
         this.face.update(dt, elapsed);
@@ -39,9 +39,9 @@ export default class Clock {
                 new three.MeshPhysicalMaterial({
                     color: 0x0dc4fc,
                     transparent: true,
-                    opacity: 0.5,
+                    opacity: 0,
                     emissive:0x00ff00, //0dc4fc,
-                    emissiveIntensity:0.75
+                    emissiveIntensity:0
                 })
             );
             mrkr.rotation.copy(m.rotation); 
