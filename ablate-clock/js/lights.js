@@ -1,7 +1,7 @@
 export default class Lights {
     constructor(three) {
         this.lights = [];
-        this.times = [0, 0, 0, 0]
+        this.times = [0, 1, 2, 3]
         this.speeds = [0.05, 0.03, 0.07, 0.11];
         this.colors = [
             new three.Color(0xff0000), // red
@@ -20,7 +20,7 @@ export default class Lights {
         dir0.position.set(10, -5, 5);
         scene.add(dir0);
 
-        const dir1 = new three.DirectionalLight(0xff0000, 5);
+        const dir1 = new three.DirectionalLight(0xffff00, 5);
         dir1.position.set(10, 5, 5);
         scene.add(dir1);
 

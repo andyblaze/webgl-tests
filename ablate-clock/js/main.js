@@ -3,7 +3,7 @@ import Hand from "./hand.js";
 import Ablation from "./ablation.js";
 import Clock from "./clock.js";
 import ClockFace from "./clock-face.js";
-import { makeCamera, makeRenderer } from "./functions.js";
+import { makeCamera, makeRenderer, deg2rad } from "./functions.js";
 import Phaser from "./phaser.js";
 import Lights from "./lights.js";
 import SkyDome from "./sky.js";
@@ -30,21 +30,51 @@ controls.enableDamping = true;
 const clockFace = new ClockFace(THREE);
 scene.add(clockFace.native);
 
-const one = new THREE.Mesh(
-    new THREE.BoxGeometry(1.5, 0.25, 0.25),
-    new THREE.MeshPhysicalMaterial({
-        color: 0x0899C6,
-        transparent: true,
-        opacity: 0.5
-    })
-);
-one.rotation.x = Math.PI * 0.25; 
-one.rotation.z = Math.PI * 0.25;
-one.position.y = 3.5;
-one.position.x = 1.5;
-one.position.z = -0.5;
-scene.add(one);
+const markers = {
+    twelve: { 
+        rotation: new THREE.Euler(0, deg2rad(90), deg2rad(90)),
+        position: new THREE.Vector3(0, 0, -1)
+    },
+    three: { 
+        rotation: new THREE.Euler(0, 0, 0),
+        position: new THREE.Vector3(0, 0, -1)
+    },
+    two: { 
+        rotation: new THREE.Euler(0, deg2rad(0), deg2rad(30)),
+        position: new THREE.Vector3(0, 0, -1)
+    },
+    one: { 
+        rotation: new THREE.Euler(0, deg2rad(0), deg2rad(60)),
+        position: new THREE.Vector3(0, 0, -1)
+    },
+    eleven: { 
+        rotation: new THREE.Euler(0, deg2rad(0), deg2rad(120)),
+        position: new THREE.Vector3(0, 0, -1)
+    },
+    ten: { 
+        rotation: new THREE.Euler(0, deg2rad(0), deg2rad(150)),
+        position: new THREE.Vector3(0, 0, -1)
+    }
+};
 
+const mrkrs = [];
+
+for ( const [id, m] of Object.entries(markers) ) {
+    const mrkr = new THREE.Mesh(
+        new THREE.BoxGeometry(9.5, 0.1, 0.1),
+        new THREE.MeshPhysicalMaterial({
+            color: 0x0dc4fc,
+            transparent: true,
+            opacity: 0.25,
+            emissive:0xff0000, //0dc4fc,
+            emissiveIntensity:0.75
+        })
+    );
+    mrkr.rotation.copy(m.rotation); 
+    mrkr.position.copy(m.position);
+    scene.add(mrkr);    
+}
+//scene.add(mrkrs);
 const secondHand = new Hand(THREE, "secondHand", config);
 secondHand.addAblation(new Ablation(THREE), scene);
 scene.add(secondHand.native);

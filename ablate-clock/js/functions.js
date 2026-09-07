@@ -14,6 +14,10 @@ export function makeRenderer(three, cfg) {
     return rndr; 
 }
 
+export function deg2rad(degrees) {
+    return degrees * Math.PI / 180;
+}
+
 export function phaser(elapsed, maxSpeed, duration) {
     const phase = elapsed * 2 * Math.PI / duration;
     return 1 + (maxSpeed - 1) * (1 - Math.cos(phase)) / 2;
