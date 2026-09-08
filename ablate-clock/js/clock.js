@@ -1,4 +1,34 @@
-import { mt_rand, mt_randf, randomSpeed } from "./functions.js";
+import { mt_rand, randomSpeed } from "./functions.js";
+
+class Marker {
+    constructor(three, scene, cfg) {
+        this.threeObj = new three.Mesh(
+            new three.BoxGeometry(9.5, 0.1, 0.1),
+            new three.MeshPhysicalMaterial({
+                color: 0x0dc4fc,
+                transparent: true,
+                opacity: 0,
+                emissive:0x00ff00, //0dc4fc,
+                emissiveIntensity:0
+            })
+        );
+        this.speed = 0.03;
+    }
+    get native() {
+        return this.threeObj;
+    }
+    update(dt, elapsed) {
+        const value = (1 - Math.cos(elapsed * this.speed)) * 0.5;
+        this.threeObj.material.emissiveIntensity = value * 0.75;
+        this.threeObj.material.opacity = value * 0.5;
+    }
+    setRotation(r) {
+        this.threeObj.rotation.copy(r);
+    }
+    setPosition(p) {
+        this.threeObj.position.copy(p);
+    }
+}
 
 export default class Clock {
     constructor(phaser) {
@@ -19,12 +49,8 @@ export default class Clock {
         for ( const [name, hand] of Object.entries(this.hands) )
             hand.update(dt, this.speedMultiplier);
         
-        const speed = 0.03 * this.speedMultiplier;
-        const value = (1 - Math.cos(this.elapsed * speed)) * 0.5;
-        for ( const m of this.markers ) {
-            m.material.emissiveIntensity = value;
-            m.material.opacity = value * 0.5;
-        }
+        for ( const marker of this.markers ) 
+            marker.update(dt, this.elapsed);
 
         this.face.update(dt, elapsed);
         
@@ -34,20 +60,11 @@ export default class Clock {
     }
     addMarkers(three, scene, cfg) {
         for ( const [id, m] of Object.entries(cfg.markers) ) {
-            const mrkr = new three.Mesh(
-                new three.BoxGeometry(9.5, 0.1, 0.1),
-                new three.MeshPhysicalMaterial({
-                    color: 0x0dc4fc,
-                    transparent: true,
-                    opacity: 0,
-                    emissive:0x00ff00, //0dc4fc,
-                    emissiveIntensity:0
-                })
-            );
-            mrkr.rotation.copy(m.rotation); 
-            mrkr.position.copy(m.position);
+            const mrkr = new Marker(three, scene, cfg);
+            mrkr.setRotation(m.rotation); 
+            mrkr.setPosition(m.position);
             this.markers.push(mrkr);
-            scene.add(mrkr);    
+            scene.add(mrkr.native);    
         }        
     }
     add(h) {
