@@ -1,7 +1,8 @@
 import { mt_randf, clamp } from "./functions.js";
 
 export default class Ablation {
-    constructor(three, maxParticles=160) {
+    constructor(three, color, maxParticles=160) {
+        this.color = color;//0x00ffff;
         this.maxParticles = maxParticles;
 
         this.positions = new Float32Array(maxParticles * 3);
@@ -16,8 +17,8 @@ export default class Ablation {
         );
 
         this.material = new three.PointsMaterial({
-            color: 0x000000,
-            size: 2,
+            color: this.color,
+            size: 3,
             sizeAttenuation: false,
             transparent: true,
             opacity: 0.5
@@ -25,11 +26,12 @@ export default class Ablation {
 
         this.threeObj = new three.Points(geometry, this.material);
     }
-
+    setColor(c) {
+        this.material.color = c; console.log(parseInt(this.material.color, 16));
+    }
     get native() {
         return this.threeObj;
     }
-
     emit(x, y, angularVelocity) {
         for ( let i = 0; i < this.maxParticles; i++ ) {
             if ( this.life[i] > 0 ) continue;
@@ -53,7 +55,7 @@ export default class Ablation {
             this.life[i] = mt_randf(20, 30);
             
 
-            break;
+            //break;
         }
         this.material.opacity = 0.5;
 

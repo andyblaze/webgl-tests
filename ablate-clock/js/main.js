@@ -31,13 +31,13 @@ const clockFace = new ClockFace(THREE);
 scene.add(clockFace.native);
 
 const secondHand = new Hand(THREE, "secondHand", config);
-secondHand.addAblation(new Ablation(THREE), scene);
+secondHand.addAblation(new Ablation(THREE, secondHand.color), scene);
 scene.add(secondHand.native);
 const minuteHand = new Hand(THREE, "minuteHand", config);
-minuteHand.addAblation(new Ablation(THREE), scene);
+minuteHand.addAblation(new Ablation(THREE, minuteHand.color), scene);
 scene.add(minuteHand.native);
 const hourHand = new Hand(THREE, "hourHand", config);
-hourHand.addAblation(new Ablation(THREE), scene);
+hourHand.addAblation(new Ablation(THREE, hourHand.color), scene);
 scene.add(hourHand.native);
 
 const clock = new Clock(new Phaser());

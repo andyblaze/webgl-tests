@@ -11,25 +11,28 @@ export default class Config {
         this.hands = {
             secondHand: {
                 segments: 40, length: 5,
-                width: 0.06, angle: 0,
+                width: 0.06, angle: 0, color: 0xFF013D,
                 speed:  ROT6, direction: -1,
                 bendMin: 0.5, bendMax: 0.25,
+                flexibleStart: 0.125, height: 0.125,
                 initialAngle: (this.now.getSeconds() / 60) * ROT90
             },
             minuteHand: {
                 segments: 40, length: 5,
-                width: 0.06, angle: 0,
+                width: 0.06, angle: 0, color: 0xA801FF,
                 speed:  ROT6 / 60, direction: -1,
                 bendMin: 4, bendMax: 8,
+                flexibleStart: 0.125, height: 0.125,
                 initialAngle: (
                     ROT90 - ( this.now.getMinutes() + this.now.getSeconds() / 60 ) * ROT6
                 )
             },
             hourHand: {
                 segments: 40, length: 3,
-                width: 0.06, angle: 0,
+                width: 0.06, angle: 0, color: 0x3101FF,
                 speed: ROT30 / 3600, direction: -1,
                 bendMin: 40, bendMax: 80,
+                flexibleStart: 0.125, height: 0.125,
                 initialAngle: (
                     ROT90 -
                     (
