@@ -17,23 +17,23 @@ export default class Lights {
         scene.add(amb);
 
         const dir0 = new three.DirectionalLight(0xff0000, 5);
-        dir0.position.set(5, -5, 5);
+        dir0.position.set(8, -5, 5);
         scene.add(dir0);
 
         const dir1 = new three.DirectionalLight(0xffff00, 5);
-        dir1.position.set(5, 5, 5);
+        dir1.position.set(8, 5, 5);
         scene.add(dir1);
 
         const dir2 = new three.DirectionalLight(0x0000ff, 5);
-        dir2.position.set(-5, -5, 5);
+        dir2.position.set(-8, -5, 5);
         scene.add(dir2);
 
         const dir3 = new three.DirectionalLight(0x00ff00, 5);
-        dir3.position.set(-5, 5, 5);
+        dir3.position.set(-8, 5, 5);
         scene.add(dir3);
 
-        //dir1.castShadow = true;
-        dir2.castShadow = true;
+        dir1.castShadow = true;
+        //dir2.castShadow = true;
 
         this.lights = [dir0, dir1, dir2, dir3];
     }
