@@ -1,7 +1,7 @@
 import { mt_rand, randomSpeed } from "./functions.js";
 
 class Marker {
-    constructor(three, scene, cfg) {
+    constructor(three) {
         this.threeObj = new three.Mesh(
             new three.BoxGeometry(9.5, 0.1, 0.1),
             new three.MeshPhysicalMaterial({
@@ -60,7 +60,7 @@ export default class Clock {
     }
     addMarkers(three, scene, cfg) {
         for ( const [id, m] of Object.entries(cfg.markers) ) {
-            const mrkr = new Marker(three, scene, cfg);
+            const mrkr = new Marker(three);
             mrkr.setRotation(m.rotation); 
             mrkr.setPosition(m.position);
             this.markers.push(mrkr);
