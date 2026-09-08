@@ -27,7 +27,8 @@ export default class Ablation {
         this.threeObj = new three.Points(geometry, this.material);
     }
     setColor(c) {
-        this.material.color = c; console.log(parseInt(this.material.color, 16));
+        this.material.color = c; 
+                                        console.log(parseInt(this.material.color, 16));
     }
     get native() {
         return this.threeObj;
@@ -53,12 +54,8 @@ export default class Ablation {
             this.positions[index + 2] = 0;
 
             this.life[i] = mt_randf(20, 30);
-            
-
-            //break;
         }
         this.material.opacity = 0.5;
-
         this.threeObj.geometry.attributes.position.needsUpdate = true;
     }
 

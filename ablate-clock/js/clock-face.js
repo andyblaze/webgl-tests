@@ -9,13 +9,13 @@ export default class ClockFace {
 
         this.material = new three.MeshPhysicalMaterial({
             color: 0x0dc4fc,
-            transparent:true,
-            opacity:0.95,
-            roughness: 0.03,
+            //transparent:true,
+            //opacity:0.5,
+            roughness: 0.5,
             metalness: 0.5,
             emissive: 0x0dc4fc,
-            emissiveIntensity: 0.4,
-            clearcoat:0.75,
+            emissiveIntensity: 0.25,
+            clearcoat: 0.75,
             clearcoatRoughness: 0.5,
             normalMap: texture,
         });
