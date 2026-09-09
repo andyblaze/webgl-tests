@@ -15,7 +15,7 @@ export default class ClockFace {
             metalness: 0.5,
             emissive: 0x0dc4fc,
             emissiveIntensity: 0.25,
-            sheen: 0.5,
+            sheen: 0.25,
             sheenColor : 0x0000ff,
             clearcoat: 0.75,
             clearcoatRoughness: 0.5,
