@@ -1,13 +1,23 @@
 export function makeCamera(three, cfg) {
-    const fov = 60;
     const cam = new three.PerspectiveCamera(
-        fov,
+        60,
         cfg.aspect,
         0.1,
-        100
+        2000
     );
-    cam.position.set(0, 0, 10);
-    cam.lookAt(0, 0, 0);
+
+    cam.position.set(
+        cfg.halfW,
+        cfg.halfH,
+        2000
+    );
+
+    cam.lookAt(
+        cfg.halfW,
+        cfg.halfH,
+        0
+    );
+
     return cam;
 }
 

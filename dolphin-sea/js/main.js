@@ -6,6 +6,7 @@ import { makeCamera, makeRenderer } from "./functions.js";
 const config = new Config(THREE, window);
 
 const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
@@ -22,16 +23,22 @@ class Voronoi {
                 }
             },
             vertexShader: `
-                void main() {
-                    gl_Position = projectionMatrix *
-                                modelViewMatrix *
-                                vec4(position, 1.0);
-            }`,
+varying vec2 vUv;
+
+void main() {
+    vUv = uv;
+
+    gl_Position = projectionMatrix *
+                  modelViewMatrix *
+                  vec4(position, 1.0);
+}`,
             fragmentShader: `
                 uniform float uTime;
+                uniform vec2 uResolution;
+                varying vec2 vUv;
 
-                void main() {
-                    vec2 uv = gl_FragCoord.xy / vec2(1920.0, 1080.0);
+                void main() {                 
+                    vec2 uv = gl_FragCoord.xy / uResolution;
 
                     // Voronoi cell coordinates
                     vec2 grid = uv * 12.0;
@@ -69,6 +76,8 @@ class Voronoi {
                     // Cell interior
                     float light = 1.0 - smoothstep(0.0, 0.7, minDist);
                     float edge = smoothstep(0.08, 0.0, minDist);
+                        // Fade as the plane moves away from camera
+    float farFade = 1.0 - smoothstep(0.65, 1.0, vUv.y);
 
                     gl_FragColor = vec4(
                         0.2,
@@ -77,19 +86,20 @@ class Voronoi {
                         edge * 0.5
                     );
 
-                    gl_FragColor = vec4(
-                        1.0,
-                        0.2,
-                        1.0,
-                        light * 0.15
-                    );
+                    float alpha = light * 0.15 * farFade;
+
+gl_FragColor = vec4(
+    1.0,
+    0.2,
+    1.0,
+    alpha
+);
                 }`
         });
-        // Move geometry up so its top edge is at y = 0
-        //this.geometry.translate(0, 0, 0);
         this.threeObj = new three.Mesh(this.geometry, this.material);
-        //this.threeObj.position.set(cfg.halfW, cfg.halfH, 0);
-        //this.threeObj.rotation.x = -Math.PI * 0.25;
+        this.threeObj.position.set(cfg.halfW, cfg.innerH, 500);
+        //this.threeObj.scale.set(0, 0.2, 0);
+        this.threeObj.rotation.x = Math.PI * 0.45;
     }
     get native() {
         return this.threeObj;
