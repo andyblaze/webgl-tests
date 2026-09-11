@@ -1,10 +1,10 @@
 export function makeCamera(three, cfg) {
-    const viewHeight = 10;
-    const viewWidth = viewHeight * cfg.aspect;
-    const cam = new three.OrthographicCamera(
-        0, cfg.innerW,
-        cfg.innerH, 0,
-        0.1, 100
+    const fov = 60;
+    const cam = new three.PerspectiveCamera(
+        fov,
+        cfg.aspect,
+        0.1,
+        100
     );
     cam.position.set(0, 0, 10);
     cam.lookAt(0, 0, 0);

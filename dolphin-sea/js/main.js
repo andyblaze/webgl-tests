@@ -26,8 +26,7 @@ class Voronoi {
                     gl_Position = projectionMatrix *
                                 modelViewMatrix *
                                 vec4(position, 1.0);
-                }
-            `,
+            }`,
             fragmentShader: `
                 uniform float uTime;
 
@@ -79,16 +78,18 @@ class Voronoi {
                     );
 
                     gl_FragColor = vec4(
-                        0.2,
                         1.0,
+                        0.2,
                         1.0,
                         light * 0.15
                     );
-                }
-            `
+                }`
         });
+        // Move geometry up so its top edge is at y = 0
+        //this.geometry.translate(0, 0, 0);
         this.threeObj = new three.Mesh(this.geometry, this.material);
-        this.threeObj.position.set(cfg.halfW, cfg.halfH, 0);
+        //this.threeObj.position.set(cfg.halfW, cfg.halfH, 0);
+        //this.threeObj.rotation.x = -Math.PI * 0.25;
     }
     get native() {
         return this.threeObj;
