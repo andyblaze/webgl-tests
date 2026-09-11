@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sea and Dolphins</title>
+<style type="text/css">
+body {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    color: #ffffff;
+}
+#scene-wrap, #scene-img {
+    width: 100vw;
+    height: 100vh;
+}
+#scene-wrap {
+    position: relative;
+}
+#scene-img, canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+canvas {
+    background-color: transparent;
+}
+#scene-img {
+    background-image:url("scene-1920.jpg");
+    background-size: cover;
+}
+
+</style>
+</head>
+<body>
+<div id="scene-wrap">
+    <div id="scene-img"></div>
+</div>
+<script type="importmap">
+{
+    "imports": {
+        "three": "./js/three.module.js",
+        "three/addons/": "./js/examples/jsm/"
+    }
+}
+</script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
