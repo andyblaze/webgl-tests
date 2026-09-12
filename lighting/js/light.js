@@ -1,8 +1,10 @@
 import ThreeObj from "./three-obj.js";
 
 class Registry {
-    constructor(three) {
-        this.data = {
+    static data = {};
+    static init(three) {
+        if ( Registry.data ) return;
+        Registry.data = {
             ambient: {
                 ctor: three.AmbientLight,
                 args: cfg => [cfg.color, cfg.intensity]
@@ -16,10 +18,11 @@ class Registry {
                     cfg.decay
                 ]
             }
-        }
+
+        };
     }
-    getType(t) {
-        return this.data[t];
+    static get(t) {
+        return Registry.data[t];
     }
 }
 
@@ -32,8 +35,8 @@ class Factory  {
 export default class Light extends ThreeObj {
     constructor(three, type, cfg) {
         super();
-        const registry = new Registry(three);
-        const ctor = registry.getType(type);
+        Registry.init(three);
+        const ctor = Registry.get(type);
 
         if (!ctor) {
             throw new Error(`Unknown light type: ${type}`);
