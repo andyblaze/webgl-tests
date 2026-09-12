@@ -16,6 +16,7 @@ const factory = new LightFactory(new LightRegistry(THREE));
 const light1 = new Light(factory, "point", { color: 0x00ff00, intensity: 20 });
 light1.setPosition(5, 5, 5);
 light1.addTo(scene);
+
 const light2 = new Light(factory, "point", { color: 0xff0000, intensity: 20 });
 light2.setPosition(-5, -5, 5);
 light2.addTo(scene);
