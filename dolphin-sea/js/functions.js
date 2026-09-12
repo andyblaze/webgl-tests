@@ -26,6 +26,7 @@ export function makeRenderer(three, cfg) {
     rndr.setClearColor(0x000000, 0);
     rndr.setSize(cfg.innerW, cfg.innerH);
     rndr.setPixelRatio(Math.min(cfg.dpr, 2));
+    rndr.shadowMap.enabled = true;
     document.getElementById("scene-wrap").appendChild(rndr.domElement);   
     return rndr; 
 }

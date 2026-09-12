@@ -40,7 +40,7 @@ export default class Voronoi {
 
                             vec2 neighbour = vec2(float(x), float(y));
                             vec2 seed = cell + neighbour;
-                            
+
                             vec2 point = vec2(
                                 fract(sin(dot(seed, vec2(127.1, 311.7))) * 43758.5453),
                                 fract(sin(dot(seed, vec2(269.5, 183.3))) * 43758.5453)
