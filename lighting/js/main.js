@@ -3,6 +3,7 @@ import * as THREE from "three";
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Box from "./box.js";
+import { LightFactory, LightRegistry } from "./light-factory.js";
 import Light from "./light.js";
 
 const config = new Config(THREE, window);
@@ -10,11 +11,16 @@ const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 
-const light = new Light(THREE, "point", { color: 0xffffff, intensity: 20 });
-light.setPosition(5, 5, 5);
-light.addTo(scene);
+const factory = new LightFactory(new LightRegistry(THREE));
 
-const box = new Box(THREE);
+const light1 = new Light(factory, "point", { color: 0x00ff00, intensity: 20 });
+light1.setPosition(5, 5, 5);
+light1.addTo(scene);
+const light2 = new Light(factory, "point", { color: 0xff0000, intensity: 20 });
+light2.setPosition(-5, -5, 5);
+light2.addTo(scene);
+
+const box = new Box(THREE, { size: 3, color: 0xffffff });
 box.addTo(scene);
 
 const timer = new THREE.Clock();

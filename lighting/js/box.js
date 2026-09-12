@@ -1,10 +1,10 @@
 import ThreeObj from "./three-obj.js";
 
 export default class Box extends ThreeObj {
-    constructor(three) {
+    constructor(three, cfg) {
         super();
-        this.geometry = new three.BoxGeometry(3, 3, 3);
-        this.material = new three.MeshPhysicalMaterial({ color: 0x00ff00 });
+        this.geometry = new three.BoxGeometry(cfg.size, cfg.size, cfg.size);
+        this.material = new three.MeshPhysicalMaterial({ color: cfg.color });
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     update(dt, elapsed) {
