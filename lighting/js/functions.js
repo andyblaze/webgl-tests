@@ -4,8 +4,8 @@ export function byId(id) {
 
 export function makeCamera(three, cfg) {
     const cam = cfg.camera;
-    const camera = new three.PerspectiveCamera(cam.fov, cfg.aspect, cam.near, cam.far);
-    camera.position.set(cam.pos);
+    const camera = new three.PerspectiveCamera(cam.fov, cam.aspect, cam.near, cam.far);
+    camera.position.copy(cam.pos);
     camera.lookAt(cam.target);
     return camera;
 }

@@ -1,4 +1,4 @@
-class ThreeObj {
+export default class ThreeObj {
     constructor() {
         this.threeObj = null;
     }
@@ -18,7 +18,12 @@ class ThreeObj {
         this.threeObj.rotation.y = y;
         this.threeObj.rotation.z = z;
     }
-    addToScene(scene) {
+    rotate(x, y, z) {
+        this.threeObj.rotation.x += x;
+        this.threeObj.rotation.y += y;
+        this.threeObj.rotation.z += z;        
+    }
+    addTo(scene) {
         scene.add(this.threeObj);
     }
     setShadows(cst=false, rcv=false) {

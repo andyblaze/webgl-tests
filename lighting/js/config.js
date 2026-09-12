@@ -9,6 +9,7 @@ export default class Config {
         this.canvasParent = "scene-wrap";
         this.camera = {
             fov: 60,
+            aspect: this.aspect,
             near: 0.1,
             far: 100,
             pos: new three.Vector3(0, 0, 10),
