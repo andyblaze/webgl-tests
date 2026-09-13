@@ -18,15 +18,16 @@ const factory = new LightFactory(new LightRegistry(THREE));
 
 const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
 light1.setPosition(0, 18, 0).setShadows(true);
-light1.setShadowMapSize(1024).setOrbit(3, 0.25).addTo(scene);
+light1.setShadowMapSize(1024).setDimming(0.2, 0.3);
+light1.setOrbit(3, 0.25).addTo(scene);
 
-const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 40 });
-light2.setPosition(-5, 10, 5);
-light2.setOrbit(5, 0.7).addTo(scene);
+const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 80 });
+light2.setPosition(-10, 5, 5).setOrbit(5, 0.7);
+light2.setDimming(0.2, 0.2).addTo(scene);
 
-const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 40 });
-light3.setPosition(5, -5, -5);
-light3.setOrbit(4, 0.5).addTo(scene);
+const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 80 });
+light3.setPosition(5, -5, -5).setOrbit(4, 0.5);
+light3.setDimming(0.2, 0.5).addTo(scene);
 
 const torusknot = new TorusKnot(
     THREE, 
