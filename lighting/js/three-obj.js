@@ -1,12 +1,21 @@
 export default class ThreeObj {
     constructor() {
         this.threeObj = null;
+        this.orbiting = false;
+        this.orbitCenter = null;
+        this.orbitRadius = null;
+        this.orbitSpeed = 0;
+        this.orbitAngle = 0;
     }
     get native() {
         return this.threeObj;
     }
     update(dt, elapsed) {
-
+        this.updateOrbit(dt, elapsed);
+    }
+    updateOrbit(dt, elapsed) {
+        if ( true === this.orbiting )
+            this.orbit(dt);
     }
     setPosition(x, y, z) {
         this.threeObj.position.x = x;
@@ -34,5 +43,19 @@ export default class ThreeObj {
         this.threeObj.castShadow = cst;
         this.threeObj.receiveShadow = rcv;
         return this;
+    }
+    setOrbit(radius, speed) {
+        this.orbitCenter = this.threeObj.position.clone();
+        this.orbitRadius = radius;
+        this.orbitSpeed = speed;
+        this.orbitAngle = 0;
+        this.orbiting = true;
+        return this;
+    }
+    orbit(dt) {
+        this.orbitAngle += this.orbitSpeed * dt;
+        const ox = this.orbitCenter.x + Math.cos(this.orbitAngle) * this.orbitRadius;
+        const oy = this.orbitCenter.y + Math.sin(this.orbitAngle) * this.orbitRadius;
+        this.setPosition(ox, 0, 0);
     }
 }

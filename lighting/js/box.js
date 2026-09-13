@@ -8,6 +8,7 @@ export default class Box extends ThreeObj {
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     update(dt, elapsed) {
+        super.update(dt, elapsed);
         const { x, y, z } = {x: dt / 3, y: dt / 5, z: dt / 7 };
         this.rotate(x, y, z);
     }
