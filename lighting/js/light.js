@@ -14,5 +14,14 @@ export default class Light extends ThreeObj {
     }
     update(dt, elapsed) {
         super.update(dt, elapsed);
+        this.dimming(dt, elapsed);
+    }
+    dimming(dt, elapsed) {
+        if ( 0 === this.dimmerAmount ) return;
+    }
+    setDimming(amount, speed) {
+        this.dimmerAmount = amount;
+        this.dimmerSpeed = speed;
+        return this;
     }
 }
