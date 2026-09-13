@@ -18,15 +18,15 @@ const factory = new LightFactory(new LightRegistry(THREE));
 
 const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
 light1.setPosition(0, 18, 0).setShadows(true);
-light1.setShadowMapSize(1024).setOrbit(3, 0.125).addTo(scene);
+light1.setShadowMapSize(1024).setOrbit(3, 0.25).addTo(scene);
 
-const light2 = new Light(factory, "point", { color: 0xffff00, intensity: 40 });
-light2.setPosition(-5, 10, 0);
-light2.setOrbit(5, 0.0125).addTo(scene);
+const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 40 });
+light2.setPosition(-5, 10, 5);
+light2.setOrbit(5, 0.7).addTo(scene);
 
-const light3 = new Light(factory, "point", { color: 0x00ffff, intensity: 40 });
-light3.setPosition(5, 10, 0);
-light3.setOrbit(4, 0.0225).addTo(scene);
+const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 40 });
+light3.setPosition(5, -5, -5);
+light3.setOrbit(4, 0.5).addTo(scene);
 
 const torusknot = new TorusKnot(
     THREE, 
@@ -38,7 +38,7 @@ torusknot.addTo(scene);
 
 const box = new Box(THREE, 2, { color: 0xffffff });
 box.setShadows(false, false).setPosition(0, 0, 0);
-box.setOrbit(8, 0.25).addTo(scene);
+box.setOrbit(4, 0.25).addTo(scene);
 
 const plane = new Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
 plane.setShadows(false, true);
