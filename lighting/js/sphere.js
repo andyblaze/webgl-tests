@@ -1,14 +1,14 @@
 import ThreeObj from "./three-obj.js";
 
-export default class Box extends ThreeObj {
-    constructor(three, size, cfg) {
+export default class Sphere extends ThreeObj {
+    constructor(three, radius, cfg) {
         super();
-        this.geometry = new three.BoxGeometry(size, size, size);
+        this.geometry = new three.SphereGeometry(radius, 32, 32);
         this.material = new three.MeshPhysicalMaterial(cfg);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     update(dt, elapsed) {
-        const { x, y, z } = {x: dt / 3, y: dt / 5, z: dt / 7 };
+        const { x, y, z } = {x: dt / 13, y: dt / 15, z: dt / 17 };
         this.rotate(x, y, z);
     }
 }

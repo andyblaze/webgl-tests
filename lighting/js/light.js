@@ -5,4 +5,8 @@ export default class Light extends ThreeObj {
         super();
         this.threeObj = factory.create(type, cfg);
     }
+    setShadowMapSize(sz) {
+        this.threeObj.shadow.mapSize.set(sz, sz);
+        return this;
+    }
 }

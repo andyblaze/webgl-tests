@@ -3,6 +3,8 @@ import * as THREE from "three";
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Box from "./box.js";
+import TorusKnot from "./torusknot.js";
+import Floor from "./floor.js";
 import { LightFactory, LightRegistry } from "./light-factory.js";
 import Light from "./light.js";
 
@@ -13,22 +15,32 @@ const renderer = makeRenderer(THREE, config);
 
 const factory = new LightFactory(new LightRegistry(THREE));
 
-const light1 = new Light(factory, "point", { color: 0x00ff00, intensity: 20 });
-light1.setPosition(5, 5, 5);
-light1.addTo(scene);
+const light = new Light(factory, "point", { color: 0xffffff, intensity: 20 });
+light.setPosition(0, 18, 0).setShadows(true);
+light.setShadowMapSize(1024).addTo(scene);
 
-const light2 = new Light(factory, "point", { color: 0xff0000, intensity: 20 });
-light2.setPosition(-5, -5, 5);
-light2.addTo(scene);
+const torusknot = new TorusKnot(
+    THREE, 
+    1, 0.125,
+    { color: 0xff0000, transparent: true, opacity: 0 }
+);
+torusknot.setShadows(true, true).setPosition(0, 8, 0);
+torusknot.addTo(scene);
 
-const box = new Box(THREE, { size: 3, color: 0xffffff });
+const box = new Box(THREE, 2, { color: 0xffffff });
+box.setShadows(false, false).setPosition(0, 0, 0);
 box.addTo(scene);
+
+const plane = new Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
+plane.setShadows(false, true);
+plane.addTo(scene);
 
 const timer = new THREE.Clock();
 
 function animate() {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); 
+    torusknot.update(dt, elapsed);
     box.update(dt, elapsed);
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
