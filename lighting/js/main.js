@@ -16,7 +16,7 @@ const renderer = makeRenderer(THREE, config);
 const lighting = new Lighting(THREE);
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
-    setPosition(0, 5, 0).
+    setPosition(0, 9, 0).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([
