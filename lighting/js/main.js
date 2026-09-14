@@ -8,31 +8,7 @@ import Floor from "./floor.js";
 import { LightFactory, LightRegistry } from "./light-factory.js";
 import Light from "./light.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
-class Orbiter {
-    constructor(radius, speed) {
-        this.active = false;
-        this.orbitCenter = null;
-        this.orbitRadius = radius;
-        this.orbitSpeed = speed;
-        this.orbitAngle = 0;
-    }
-    start(parent) {
-        this.orbitCenter = parent.position.clone();
-        this.active = true;
-        return this;
-    }
-    stop() {
-        this.active = false;
-    }
-    run(parent, dt) {
-        if ( false === this.active ) return;
-        this.orbitAngle += this.orbitSpeed * dt;
-        const ox = this.orbitCenter.x + Math.cos(this.orbitAngle) * this.orbitRadius;
-        const oy = this.orbitCenter.y + Math.sin(this.orbitAngle) * this.orbitRadius;
-        parent.setPosition(ox, 0, 0);
-    }
-}
+import { LightDimmer, Orbiter } from "./effects.js";
 
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
@@ -43,16 +19,16 @@ const factory = new LightFactory(new LightRegistry(THREE));
 
 const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
 light1.setPosition(0, 18, 0).setShadows(true);
-light1.setShadowMapSize(1024).setDimming(0.2, 0.3);
+light1.setShadowMapSize(1024).addEffects([new LightDimmer(0.2, 0.3)]);
 light1.addTo(scene);
 
 const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 80 });
 light2.setPosition(-10, 5, 5);
-light2.setDimming(0.2, 0.2).addTo(scene);
+light2.addEffects([new LightDimmer(0.2, 0.2)]).addTo(scene);
 
 const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 80 });
 light3.setPosition(5, -5, -5);
-light3.setDimming(0.2, 0.5).addTo(scene);
+light3.addEffects([new LightDimmer(0.2, 0.5)]).addTo(scene);
 
 const torusknot = new TorusKnot(
     THREE, 

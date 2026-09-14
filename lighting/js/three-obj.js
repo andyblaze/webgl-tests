@@ -6,14 +6,15 @@ export default class ThreeObj {
     addEffects(e) {
         this.effects = e;
         for ( const e of this.effects )
-            e.start(this.threeObj);
+            e.start(this);
+        return this;
     }
     get native() {
         return this.threeObj;
     }
     update(dt, elapsed) {
         for ( const e of this.effects )
-            e.run(this, dt);
+            e.update(this, dt);
     }
     setPosition(x, y, z) {
         this.threeObj.position.x = x;
