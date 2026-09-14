@@ -13,8 +13,10 @@ export default class ThreeObj {
         return this.threeObj;
     }
     update(dt, elapsed) {
-        for ( const e of this.effects )
+        for ( const e of this.effects ) {
+            //console.log(this.effects.length);
             e.update(this, dt);
+        }
     }
     setPosition(x, y, z) {
         this.threeObj.position.x = x;

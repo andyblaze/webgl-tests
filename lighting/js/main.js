@@ -8,7 +8,7 @@ import Floor from "./floor.js";
 import { LightFactory, LightRegistry } from "./light-factory.js";
 import Light from "./light.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { LightDimmer, Orbiter } from "./effects.js";
+import { LightDimmer, Orbiter, ColorCycler } from "./effects.js";
 
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
@@ -21,7 +21,7 @@ class Lighting {
         this.lights = [];
         this.index = -1;
     }
-    add(scene, type, cfg) {
+    add(type, cfg) {
         this.lights.push(new Light(this.factory, type, cfg));
         this.index++;
         scene.add(this.lights[this.index].native);
@@ -29,19 +29,27 @@ class Lighting {
     }
 }
 
-const lighting = new Lighting(new LightFactory(new LightRegistry(THREE)));
+const factory = new LightFactory(new LightRegistry(THREE));
+//const lighting = new Lighting(new LightFactory(new LightRegistry(THREE)));
 
-const light1 = lighting.add(scene, "point", { color: 0xff0000, intensity: 80 });
-light1.setPosition(0, 18, 0).setShadows(true);
-light1.setShadowMapSize(1024).addEffects([new LightDimmer(0.2, 0.3)]);
+const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
+light1.
+    setPosition(0, 5, 0).
+    setShadows(true).
+    setShadowMapSize(1024).
+    addEffects([
+        new LightDimmer(0.2, 0.1),
+        new ColorCycler(THREE, 0.01)
+    ]).
+    addTo(scene);
 
-const light2 = lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 });
+const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 80 });
 light2.setPosition(-10, 5, 5);
 light2.addEffects([new LightDimmer(0.2, 0.2)]).addTo(scene);
 
-const light3 = lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 });
+const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 80 });
 light3.setPosition(5, -5, -5);
-light3.addEffects([new LightDimmer(0.2, 0.5)]).addTo(scene);
+light3.addEffects([new LightDimmer(0.5, 0.5)]).addTo(scene);
 
 const torusknot = new TorusKnot(
     THREE, 
@@ -68,6 +76,9 @@ const timer = new THREE.Clock();
 function animate() {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); 
+    light1.update(dt, elapsed);
+    light2.update(dt, elapsed);
+    light3.update(dt, elapsed);
     torusknot.update(dt, elapsed);
     box.update(dt, elapsed);
     controls.update();
