@@ -2,11 +2,10 @@ import * as THREE from "three";
 
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
+import Lighting from "./lighting.js";
 import Box from "./box.js";
 import TorusKnot from "./torusknot.js";
 import Floor from "./floor.js";
-import { LightFactory, LightRegistry } from "./light-factory.js";
-import Light from "./light.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler } from "./effects.js";
 
@@ -14,42 +13,24 @@ const config = new Config(THREE, window);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
+const lighting = new Lighting(THREE);
 
-class Lighting {
-    constructor(fctry) {
-        this.factory = fctry;
-        this.lights = [];
-        this.index = -1;
-    }
-    add(type, cfg) {
-        this.lights.push(new Light(this.factory, type, cfg));
-        this.index++;
-        scene.add(this.lights[this.index].native);
-        return this.lights[this.index];
-    }
-}
-
-const factory = new LightFactory(new LightRegistry(THREE));
-//const lighting = new Lighting(new LightFactory(new LightRegistry(THREE)));
-
-const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
-light1.
+lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
     setPosition(0, 5, 0).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([
         new LightDimmer(0.2, 0.1),
         new ColorCycler(THREE, 0.01)
-    ]).
-    addTo(scene);
+    ]);
 
-const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 80 });
-light2.setPosition(-10, 5, 5);
-light2.addEffects([new LightDimmer(0.2, 0.2)]).addTo(scene);
+lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
+    setPosition(-10, 5, 5).
+    addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
 
-const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 80 });
-light3.setPosition(5, -5, -5);
-light3.addEffects([new LightDimmer(0.5, 0.5)]).addTo(scene);
+lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
+    setPosition(10, -5, -5).
+    addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.07)]);
 
 const torusknot = new TorusKnot(
     THREE, 
@@ -76,9 +57,7 @@ const timer = new THREE.Clock();
 function animate() {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); 
-    light1.update(dt, elapsed);
-    light2.update(dt, elapsed);
-    light3.update(dt, elapsed);
+    lighting.update(dt, elapsed);
     torusknot.update(dt, elapsed);
     box.update(dt, elapsed);
     controls.update();
