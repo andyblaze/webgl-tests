@@ -9,6 +9,31 @@ import { LightFactory, LightRegistry } from "./light-factory.js";
 import Light from "./light.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+class Orbiter {
+    constructor(radius, speed) {
+        this.active = false;
+        this.orbitCenter = null;
+        this.orbitRadius = radius;
+        this.orbitSpeed = speed;
+        this.orbitAngle = 0;
+    }
+    start(parent) {
+        this.orbitCenter = parent.position.clone();
+        this.active = true;
+        return this;
+    }
+    stop() {
+        this.active = false;
+    }
+    run(parent, dt) {
+        if ( false === this.active ) return;
+        this.orbitAngle += this.orbitSpeed * dt;
+        const ox = this.orbitCenter.x + Math.cos(this.orbitAngle) * this.orbitRadius;
+        const oy = this.orbitCenter.y + Math.sin(this.orbitAngle) * this.orbitRadius;
+        parent.setPosition(ox, 0, 0);
+    }
+}
+
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
@@ -19,14 +44,14 @@ const factory = new LightFactory(new LightRegistry(THREE));
 const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
 light1.setPosition(0, 18, 0).setShadows(true);
 light1.setShadowMapSize(1024).setDimming(0.2, 0.3);
-light1.setOrbit(3, 0.25).addTo(scene);
+light1.addTo(scene);
 
 const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 80 });
-light2.setPosition(-10, 5, 5).setOrbit(5, 0.7);
+light2.setPosition(-10, 5, 5);
 light2.setDimming(0.2, 0.2).addTo(scene);
 
 const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 80 });
-light3.setPosition(5, -5, -5).setOrbit(4, 0.5);
+light3.setPosition(5, -5, -5);
 light3.setDimming(0.2, 0.5).addTo(scene);
 
 const torusknot = new TorusKnot(
@@ -38,8 +63,9 @@ torusknot.setShadows(true, true).setPosition(0, 8, 0);
 torusknot.addTo(scene);
 
 const box = new Box(THREE, 2, { color: 0xffffff });
+box.addEffects([new Orbiter(4, 0.25)]);
 box.setShadows(false, false).setPosition(0, 0, 0);
-box.setOrbit(4, 0.25).addTo(scene);
+box.addTo(scene);
 
 const plane = new Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
 plane.setShadows(false, true);
