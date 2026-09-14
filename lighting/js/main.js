@@ -15,18 +15,31 @@ const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 
-const factory = new LightFactory(new LightRegistry(THREE));
+class Lighting {
+    constructor(fctry) {
+        this.factory = fctry;
+        this.lights = [];
+        this.index = -1;
+    }
+    add(scene, type, cfg) {
+        this.lights.push(new Light(this.factory, type, cfg));
+        this.index++;
+        scene.add(this.lights[this.index].native);
+        return this.lights[this.index];
+    }
+}
 
-const light1 = new Light(factory, "point", { color: 0xff0000, intensity: 80 });
+const lighting = new Lighting(new LightFactory(new LightRegistry(THREE)));
+
+const light1 = lighting.add(scene, "point", { color: 0xff0000, intensity: 80 });
 light1.setPosition(0, 18, 0).setShadows(true);
 light1.setShadowMapSize(1024).addEffects([new LightDimmer(0.2, 0.3)]);
-light1.addTo(scene);
 
-const light2 = new Light(factory, "point", { color: 0x00ff00, intensity: 80 });
+const light2 = lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 });
 light2.setPosition(-10, 5, 5);
 light2.addEffects([new LightDimmer(0.2, 0.2)]).addTo(scene);
 
-const light3 = new Light(factory, "point", { color: 0x0000ff, intensity: 80 });
+const light3 = lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 });
 light3.setPosition(5, -5, -5);
 light3.addEffects([new LightDimmer(0.2, 0.5)]).addTo(scene);
 
