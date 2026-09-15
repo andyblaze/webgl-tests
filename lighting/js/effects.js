@@ -15,11 +15,12 @@ class EffectBase {
     }
 }
 export class Orbiter extends EffectBase {
-    constructor(radius, speed) {
+    constructor(radius, speed, plane="z") {
         super();
         this.orbitCenter = null;
         this.orbitRadius = radius;
         this.orbitSpeed = speed;
+        this.orbitPlane = plane;
         this.orbitAngle = 0;
     }
     start(parent) {
@@ -28,10 +29,34 @@ export class Orbiter extends EffectBase {
     }
     update(parent, dt) {
         if ( this.inactive() ) return;
+
         this.orbitAngle += this.orbitSpeed * dt;
-        const ox = this.orbitCenter.x + Math.cos(this.orbitAngle) * this.orbitRadius;
-        const oy = this.orbitCenter.y + Math.sin(this.orbitAngle) * this.orbitRadius;
-        parent.setPosition(ox, 0, 0);
+
+        const offset1 = Math.cos(this.orbitAngle) * this.orbitRadius;
+        const offset2 = Math.sin(this.orbitAngle) * this.orbitRadius;
+
+        let x = this.orbitCenter.x;
+        let y = this.orbitCenter.y;
+        let z = this.orbitCenter.z;
+
+        switch (this.orbitPlane) {
+            case "x":
+                y += offset1;
+                z += offset2;
+                break;
+
+            case "y":
+                x += offset1;
+                z += offset2;
+                break;
+
+            case "z":
+                x += offset1;
+                y += offset2;
+                break;
+        }
+
+        parent.setPosition(x, y, z);
     }
 }
 

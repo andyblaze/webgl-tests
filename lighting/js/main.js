@@ -16,7 +16,7 @@ const renderer = makeRenderer(THREE, config);
 const lighting = new Lighting(THREE);
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
-    setPosition(0, 9, 0).
+    setPosition(0, 9, 2).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([
@@ -32,22 +32,13 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
     setPosition(10, -5, -5).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.07)]);
 
-const torusknot = new TorusKnot(
-    THREE, 
-    1, 0.125,
-    { color: 0xff0000, transparent: true, opacity: 0 }
-);
-torusknot.setShadows(true, true).setPosition(0, 8, 0);
-torusknot.addTo(scene);
-
-const box = new Box(THREE, 2, { color: 0xffffff });
-box.addEffects([new Orbiter(4, 0.25)]);
-box.setShadows(false, false).setPosition(0, 0, 0);
+const box = new Box(THREE, 1.5, { color: 0xffffff });
+box.addEffects([new Orbiter(3, 0.25, "y")]);
+box.setShadows(true, true).setPosition(0, 0, 3);
 box.addTo(scene);
 
-const plane = new Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
-plane.setShadows(false, true);
-plane.addTo(scene);
+const floor = new Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
+floor.setShadows(false, true).addTo(scene);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -58,7 +49,6 @@ function animate() {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); 
     lighting.update(dt, elapsed);
-    torusknot.update(dt, elapsed);
     box.update(dt, elapsed);
     controls.update();
     renderer.render(scene, camera);
