@@ -3,8 +3,7 @@ import * as THREE from "three";
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting.js";
-import Box from "./box.js";
-import TorusKnot from "./torusknot.js";
+import Cylinder from "./cylinder.js";
 import Floor from "./floor.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler } from "./effects.js";
@@ -32,7 +31,7 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
     setPosition(10, -5, -5).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.07)]);
 
-const box = new Box(THREE, 1.5, { color: 0xffffff });
+const box = new Cylinder(THREE, 0.5, 1, 1.5, { color: 0xffffff });
 box.addEffects([new Orbiter(3, 0.25, "z")]);
 box.setShadows(true, true).setPosition(0, 0, 3);
 box.addTo(scene);
