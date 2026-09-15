@@ -50,7 +50,7 @@ export class ColorCycler extends EffectBase {
         ];
     }
     start(parent) {
-        parent.native.color.copy(this.colors[0]);
+        this.time = Math.random();
         return this.init();
     }
     update(parent, dt) {
