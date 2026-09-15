@@ -44,8 +44,8 @@ export class Orbiter extends EffectBase {
         const offset1 = Math.cos(this.orbitAngle) * this.orbitRadius;
         const offset2 = Math.sin(this.orbitAngle) * this.orbitRadius;
 
-        this.orbit[this.axes[1]] = offset1;
-        this.orbit[this.axes[2]] = offset2;
+        this.orbit[this.axes[1]] = this.orbitCenter[this.axes[1]] + offset1;
+        this.orbit[this.axes[2]] = this.orbitCenter[this.axes[2]] + offset2;
 
         parent.setPosition(this.orbit.x, this.orbit.y, this.orbit.z);
     }
