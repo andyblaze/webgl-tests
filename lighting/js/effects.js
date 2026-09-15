@@ -21,10 +21,19 @@ export class Orbiter extends EffectBase {
         this.orbitRadius = radius;
         this.orbitSpeed = speed;
         this.orbitPlane = plane;
+
+        this.axes = ["x", "y", "z"];
+        if ( this.orbitPlane === "y" )
+            [this.axes[0], this.axes[1]] = [this.axes[1], this.axes[0]];
+
+        if ( this.orbitPlane === "z" )
+            [this.axes[0], this.axes[2]] = [this.axes[2], this.axes[0]];
+
         this.orbitAngle = 0;
     }
     start(parent) {
         this.orbitCenter = parent.native.position.clone();
+        this.orbit = { x: this.orbitCenter.x, y: this.orbitCenter.y, z: this.orbitCenter.z };
         return this.init();
     }
     update(parent, dt) {
@@ -35,28 +44,10 @@ export class Orbiter extends EffectBase {
         const offset1 = Math.cos(this.orbitAngle) * this.orbitRadius;
         const offset2 = Math.sin(this.orbitAngle) * this.orbitRadius;
 
-        let x = this.orbitCenter.x;
-        let y = this.orbitCenter.y;
-        let z = this.orbitCenter.z;
+        this.orbit[this.axes[1]] = offset1;
+        this.orbit[this.axes[2]] = offset2;
 
-        switch (this.orbitPlane) {
-            case "x":
-                y += offset1;
-                z += offset2;
-                break;
-
-            case "y":
-                x += offset1;
-                z += offset2;
-                break;
-
-            case "z":
-                x += offset1;
-                y += offset2;
-                break;
-        }
-
-        parent.setPosition(x, y, z);
+        parent.setPosition(this.orbit.x, this.orbit.y, this.orbit.z);
     }
 }
 
