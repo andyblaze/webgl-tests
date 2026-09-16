@@ -1,4 +1,4 @@
-import ThreeObj from "./three-obj.js";
+import ThreeObj from "../three/three-obj.js";
 
 export default class Tetrahedron extends ThreeObj {
     constructor(three, radius, cfg, detail=0) {

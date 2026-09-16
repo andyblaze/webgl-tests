@@ -1,9 +1,9 @@
-import ThreeObj from "./three-obj.js";
+import ThreeObj from "../three/three-obj.js";
 
-export default class Capsule extends ThreeObj {
-    constructor(three, radius, height, cfg) {
+export default class Box extends ThreeObj {
+    constructor(three, size, cfg) {
         super();
-        this.geometry = new three.CapsuleGeometry(radius, height, 32, 32, 1);
+        this.geometry = new three.BoxGeometry(size, size, size);
         this.material = new three.MeshPhysicalMaterial(cfg);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }

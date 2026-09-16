@@ -4,6 +4,9 @@ import Mesh from "./mesh.js";
 import GravityWell from "./gravity-well.js";
 import DeltaReport from "./delta-report.js";
 
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
+
 function makeCamera(three, cfg, pos, look) {
     const camera = new three.PerspectiveCamera(
         cfg.fov,
@@ -25,11 +28,14 @@ function makeRenderer(three) {
 }
 
 function makePlane(three, camera, meshSize, img) {
+    /*
+    unused in new implementation
     const distance = camera.position.z;
     const height = 2 * distance * Math.tan((camera.fov * Math.PI / 180) / 2);
     const width = height * camera.aspect;
     
     const texture = new three.TextureLoader().load(img);
+    */
 
     texture.minFilter = three.LinearMipmapLinearFilter;
     texture.magFilter = three.LinearFilter;
@@ -42,11 +48,9 @@ function makePlane(three, camera, meshSize, img) {
             meshSize    // height segments
         ),
         new three.MeshBasicMaterial({
-            map: texture
+            //map: texture
         })
     );
-    // Make it horizontal
-    //plane.rotation.x = -Math.PI / 2;
     return plane;
 }
 
@@ -57,8 +61,14 @@ function makeWells(nWells) {
     return wells; 
 }
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
+const plane = makePlane(THREE, camera, 120, "oce.jpg?g="+Math.random());
+scene.add(plane);
+
+const wells = makeWells(28);
+const field = new Field(wells);
+
+const positions = plane.geometry.attributes.position;
+const mesh = new Mesh(positions);
 
 const camera = makeCamera(
     THREE, 
@@ -69,14 +79,6 @@ const camera = makeCamera(
 const renderer = makeRenderer(THREE);
 document.body.appendChild(renderer.domElement);
 
-const plane = makePlane(THREE, camera, 120, "oce.jpg?g="+Math.random());
-scene.add(plane);
-
-const wells = makeWells(28);
-const field = new Field(wells);
-
-const positions = plane.geometry.attributes.position;
-const mesh = new Mesh(positions);
 
 function animate(timestamp) {
     field.update(timestamp);

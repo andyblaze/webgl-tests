@@ -1,4 +1,4 @@
-import ThreeObj from "./three-obj.js";
+import ThreeObj from "../three/three-obj.js";
 
 export default class Floor extends ThreeObj {
     constructor(three, size, cfg) {

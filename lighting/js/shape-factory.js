@@ -6,7 +6,12 @@ export class ShapeRegistry {
         this.three = three;
         this.data = {
             cube: {
-                ctor: Box
+                ctor: Box,
+                geoDefault : {
+                    width: 1, height: 1, depth: 1, 
+                    widthSegments: 1, heightSegments: 1, depthSegments: 1
+                },
+                matDefault: { color: 0xffffff }
             },
             torus: {
                 ctor: Torus
@@ -24,6 +29,6 @@ export class ShapeFactory  {
     }
     create(type, cfg, geoCfg={}, matCfg={}) {
         const def = this.registry.get(type);
-        return new def.ctor(this.registry.three, 1, cfg);
+        return new def.ctor(this.registry.three, 1, 0.25, cfg);
     }
 }

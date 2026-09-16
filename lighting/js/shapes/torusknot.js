@@ -1,4 +1,4 @@
-import ThreeObj from "./three-obj.js";
+import ThreeObj from "../three/three-obj.js";
 
 export default class TorusKnot extends ThreeObj {
     constructor(three, radius, tube, cfg) {

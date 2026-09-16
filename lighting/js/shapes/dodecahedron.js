@@ -1,9 +1,9 @@
-import ThreeObj from "./three-obj.js";
+import ThreeObj from "../three/three-obj.js";
 
-export default class Octahedron extends ThreeObj {
+export default class Dodecahedron extends ThreeObj {
     constructor(three, radius, cfg, detail=0) {
         super();
-        this.geometry = new three.OctahedronGeometry(radius, detail);
+        this.geometry = new three.DodecahedronGeometry(radius, detail);
         this.material = new three.MeshPhysicalMaterial(cfg);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
