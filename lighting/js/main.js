@@ -3,6 +3,7 @@ import * as THREE from "three";
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting.js";
+import { ShapeRegistry, ShapeFactory } from "./shape-factory.js";
 import Torus from "./torus.js";
 import Floor from "./floor.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -13,6 +14,7 @@ const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 const lighting = new Lighting(THREE);
+const shapeFactory = new ShapeFactory(new ShapeRegistry(THREE));
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
     setPosition(0, 9, 2).
@@ -35,6 +37,9 @@ const box = new Torus(THREE, 1, 0.25, { color: 0xffffff });
 box.addEffects([new Orbiter(3, 0.25, "z")]);
 box.setShadows(true, true).setPosition(0, 0, 3);
 box.addTo(scene);
+
+const cube = shapeFactory.create("cube", { color: 0xffffff });
+cube.setPosition(3, 0, 0).addTo(scene);
 
 const floor = new Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
 floor.setShadows(false, true).addTo(scene);
