@@ -23,13 +23,16 @@ lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([
-        new LightDimmer(0.2, 0.1),
+        //new LightDimmer(0.2, 0.1),
         new ColorCycler(THREE, 0.01)
     ]);
 
 lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
     setPosition(-10, 5, 5).
-    addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
+    addEffects([
+        //new LightDimmer(0.2, 0.2), 
+        new ColorCycler(THREE, 0.04)
+    ]);
 
 lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
     setPosition(10, -5, -5).
@@ -43,7 +46,8 @@ box.addEffects([new Orbiter(3, 0.25, "z")]);
 box.setShadows(true, true).setPosition(0, 0, 3);
 box.addTo(scene);
 
-const floor = new DeformingPlane(THREE, 24, 128, { color: 0xffffff, side: THREE.DoubleSide }); //Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
+const floor = new DeformingPlane(THREE, 24, 128, { color: 0xffffff, side: THREE.DoubleSide }); 
+//Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
 //floor.setRotation(0, Math.PI / 0.5, 0, 0).setPosition(0, -5, -1.5).
 floor.setShadows(false, true).addTo(scene);
 
@@ -54,7 +58,7 @@ function makeWells(nWells) {
     return wells; 
 }
 
-const wells = makeWells(28);
+const wells = makeWells(16);
 const field = new Field(wells);
 
 const positions = floor.geometry.attributes.position;
@@ -65,12 +69,12 @@ controls.enableDamping = true;
 
 const timer = new THREE.Clock();
 
-function animate() {
+function animate(timestamp) {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); 
     lighting.update(dt, elapsed);
-    field.update(elapsed);
-    mesh.update(elapsed, field);
+    field.update(timestamp);
+    mesh.update(timestamp, field);
     box.update(dt, elapsed);
     controls.update();
     renderer.render(scene, camera);

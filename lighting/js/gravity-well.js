@@ -7,9 +7,9 @@ export default class GravityWell {
         this.x = mt_rand(5, 20);
         this.y = mt_rand(5, 20);
         this.z = 0;
-        this.strength = Math.random() < 0.5 ? mt_rand(25, 28) : -mt_rand(25, 28);
+        this.strength = Math.random() < 0.5 ? mt_rand(15, 18) : -mt_rand(15, 18);
         this.spread = mt_rand(30, 60);
-        this.orbitSpeed = mt_rand(600, 900);
+        this.orbitSpeed = mt_rand(3000, 4500);
         this.orbitRadius = mt_rand(25, 60);  
         this.phase = Math.random() * Math.PI * 2;
     }
