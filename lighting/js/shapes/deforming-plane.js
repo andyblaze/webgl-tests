@@ -9,7 +9,7 @@ export default class DeformingPlane extends ThreeObj {
 
         this.threeObj = new three.Mesh(this.geometry, this.material);
         this.threeObj.rotation.x = Math.PI / 2;
-        this.setPosition(0, -5, 0);
+        this.setPosition(0, -5, -10.5);
 
         this.positions = this.geometry.attributes.position;
     }

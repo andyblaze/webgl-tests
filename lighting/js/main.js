@@ -51,18 +51,25 @@ const floor = new DeformingPlane(THREE, 24, 128, { color: 0xffffff, side: THREE.
 //floor.setRotation(0, Math.PI / 0.5, 0, 0).setPosition(0, -5, -1.5).
 floor.setShadows(false, true).addTo(scene);
 
-function makeWells(nWells) {
-    const wells = [];
-    for ( let i = 0; i < nWells; i++ )
-        wells.push(new GravityWell());   
-    return wells; 
+class Deformation {
+    constructor(plane) {
+        const positions = plane.geometry.attributes.position;
+        this.mesh = new Mesh(positions);
+        this.wells = this.makeWells(16);
+        this.field = new Field(this.wells);
+    }
+    update(t) {
+        this.field.update(t);
+        this.mesh.update(t, this.field);
+    }
+    makeWells(nWells) {
+        const wells = [];
+        for ( let i = 0; i < nWells; i++ )
+            wells.push(new GravityWell());   
+        return wells; 
+    }
 }
-
-const wells = makeWells(16);
-const field = new Field(wells);
-
-const positions = floor.geometry.attributes.position;
-const mesh = new Mesh(positions);
+const deformation = new Deformation(floor);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -73,8 +80,7 @@ function animate(timestamp) {
     const dt = timer.getDelta();
     const elapsed = timer.getElapsedTime(); 
     lighting.update(dt, elapsed);
-    field.update(timestamp);
-    mesh.update(timestamp, field);
+    deformation.update(timestamp);
     box.update(dt, elapsed);
     controls.update();
     renderer.render(scene, camera);
