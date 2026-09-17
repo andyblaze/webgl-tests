@@ -2,13 +2,11 @@ import * as THREE from "three";
 
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
-import Lighting from "./lighting/lighting.js"
-import Torus from "./shapes/torus.js";
-//import Floor from "./shapes/floor.js";
-import GravityWell from "./gravity-well.js";
-import Mesh from "./mesh.js";
-import Field from "./field.js";
+import Lighting from "./lighting/lighting.js";
+import Materials from "./materials.js";
+import Sphere from "./shapes/sphere.js";
 import DeformingPlane from "./shapes/deforming-plane.js";
+import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler } from "./effects/effects.js";
 
@@ -17,58 +15,39 @@ const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 const lighting = new Lighting(THREE);
+const materials = new Materials(THREE);
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
     setPosition(0, 9, 2).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([
-        //new LightDimmer(0.2, 0.1),
+        new LightDimmer(0.2, 0.1),
         new ColorCycler(THREE, 0.01)
     ]);
 
 lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
-    setPosition(-10, 5, 5).
+    setPosition(-10, -3, -5).
     addEffects([
-        //new LightDimmer(0.2, 0.2), 
+        new LightDimmer(0.2, 0.2), 
         new ColorCycler(THREE, 0.04)
     ]);
 
 lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
-    setPosition(10, -5, -5).
+    setPosition(10, -3, -5).
     addEffects([
-        //new LightDimmer(0.5, 0.5), 
+        new LightDimmer(0.5, 0.5), 
         new ColorCycler(THREE, 0.07)
     ]);
 
-const box = new Torus(THREE, 1, 0.25, { color: 0xffffff });
-box.addEffects([new Orbiter(3, 0.25, "z")]);
+const box = new Sphere(THREE, 2, materials.get("iceWorld"));
+box.addEffects([new Orbiter(1, 0.25, "z")]);
 box.setShadows(true, true).setPosition(0, 0, 3);
 box.addTo(scene);
 
-const floor = new DeformingPlane(THREE, 24, 128, { color: 0xffffff, side: THREE.DoubleSide }); 
-//Floor(THREE, 24, { color: 0xffffff, side: THREE.DoubleSide });
-//floor.setRotation(0, Math.PI / 0.5, 0, 0).setPosition(0, -5, -1.5).
+const floor = new DeformingPlane(THREE, 24, 128, materials.get("floor")); 
 floor.setShadows(false, true).addTo(scene);
 
-class Deformation {
-    constructor(plane) {
-        const positions = plane.geometry.attributes.position;
-        this.mesh = new Mesh(positions);
-        this.wells = this.makeWells(16);
-        this.field = new Field(this.wells);
-    }
-    update(t) {
-        this.field.update(t);
-        this.mesh.update(t, this.field);
-    }
-    makeWells(nWells) {
-        const wells = [];
-        for ( let i = 0; i < nWells; i++ )
-            wells.push(new GravityWell());   
-        return wells; 
-    }
-}
 const deformation = new Deformation(floor);
 
 const controls = new OrbitControls(camera, renderer.domElement);
