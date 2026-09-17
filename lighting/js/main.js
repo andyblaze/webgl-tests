@@ -42,7 +42,7 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
 
 const box = new Box(THREE, 2, materials.get("iceWorld"));
 box.addEffects([new Orbiter(1.5, 0.25, "y")]);
-box.setShadows(true, true).setPosition(0, 0, 3);
+box.setShadows(true, true).setScale(1, 1, 2).setPosition(0, 0, 3);
 box.addTo(scene);
 
 const floor = new DeformingPlane(THREE, 24, 128, materials.get("floor")); 

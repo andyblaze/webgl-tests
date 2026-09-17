@@ -20,15 +20,15 @@ export default class ThreeObj {
         this.doUpdate(dt, elapsed);
     }
     setPosition(x, y, z) {
-        this.threeObj.position.x = x;
-        this.threeObj.position.y = y;
-        this.threeObj.position.z = z;
+        this.threeObj.position.set(x, y, z);
         return this;
     }
+    setScale(x, y, z ) {
+        this.threeObj.scale.set(x, y, z); 
+        return this;      
+    }
     setRotation(x, y, z) {
-        this.threeObj.rotation.x = x;
-        this.threeObj.rotation.y = y;
-        this.threeObj.rotation.z = z;
+        this.threeObj.rotation.set(x, y, z);
         return this;
     }
     rotate(x, y, z) {
