@@ -3,7 +3,7 @@ import ThreeObj from "../three/three-obj.js";
 export default class Sphere extends ThreeObj {
     constructor(three, radius, cfg) {
         super();
-        this.geometry = new three.SphereGeometry(radius, 32, 32);
+        this.geometry = new three.SphereGeometry(radius, 48, 48);
         this.material = new three.MeshPhysicalMaterial(cfg);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }

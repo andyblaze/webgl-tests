@@ -1,7 +1,7 @@
-import GravityWell from "../gravity-well.js";
-import Mesh from "../mesh.js";
-import Field from "../field.js";
-import Noise from "../noise.js";
+import GravityWell from "./gravity-well.js";
+import Mesh from "./mesh.js";
+import Field from "./field.js";
+import Noise from "./noise.js";
 
 export default class Deformation {
     constructor(plane) {

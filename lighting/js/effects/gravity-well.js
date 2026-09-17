@@ -1,4 +1,4 @@
-import { mt_randf, mt_rand } from "./functions.js";
+import { mt_randf, mt_rand } from "../functions.js";
 
 export default class GravityWell {
     constructor(n) {

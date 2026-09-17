@@ -4,7 +4,7 @@ import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting/lighting.js";
 import Materials from "./materials.js";
-import Sphere from "./shapes/sphere.js";
+import Box from "./shapes/box.js"
 import DeformingPlane from "./shapes/deforming-plane.js";
 import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -18,7 +18,7 @@ const lighting = new Lighting(THREE);
 const materials = new Materials(THREE);
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
-    setPosition(0, 9, 2).
+    setPosition(0, 5, 0).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([
@@ -40,8 +40,8 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
         new ColorCycler(THREE, 0.07)
     ]);
 
-const box = new Sphere(THREE, 2, materials.get("iceWorld"));
-box.addEffects([new Orbiter(1, 0.25, "z")]);
+const box = new Box(THREE, 2, materials.get("iceWorld"));
+box.addEffects([new Orbiter(1.5, 0.25, "y")]);
 box.setShadows(true, true).setPosition(0, 0, 3);
 box.addTo(scene);
 
