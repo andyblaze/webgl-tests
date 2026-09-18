@@ -14,8 +14,4 @@ export default class Bowl extends ThreeObj {
         this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
-    doUpdate(dt, elapsed) {
-        const { x, y, z } = {x: dt / 13, y: dt / 15, z: dt / 17 };
-        this.rotate(x, y, z);
-    }
 }

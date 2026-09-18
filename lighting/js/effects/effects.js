@@ -14,6 +14,22 @@ class EffectBase {
         return this;        
     }
 }
+
+export class Rotater extends EffectBase {
+    constructor(speedX=13, speedY=15, speedZ=17) {
+        super();
+        this.speedX = speedX;
+        this.speedY = speedY;
+        this.speedZ = speedZ;
+    }
+    start() {
+        return this.init();
+    }
+    update(parent, dt) {
+        const { x, y, z } = {x: dt / this.speedX, y: dt / this.speedY, z: dt / this.speedZ };
+        parent.rotate(x, y, z);
+    }
+}
 export class Orbiter extends EffectBase {
     constructor(radius, speed, plane="z") {
         super();

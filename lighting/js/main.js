@@ -7,7 +7,7 @@ import Materials from "./materials.js";
 import DeformingPlane from "./shapes/deforming-plane.js";
 import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { LightDimmer, Orbiter, ColorCycler } from "./effects/effects.js";
+import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
 
 const config = new Config(THREE, window);
@@ -41,9 +41,16 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
         new ColorCycler(THREE, 0.07)
     ]);
 
-const shape = factory.create("bowl", {}, materials.get("iceWorld"));
-shape.addEffects([new Orbiter(1.5, 0.25, "y")]);
-shape.setShadows(true, true).setScale(1, 1, 1).setPosition(0, 0, 3);
+lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
+    setPosition(0, 0, 8).
+    addEffects([
+        new LightDimmer(0.5, 0.5), 
+        new ColorCycler(THREE, 0.07)
+    ]);
+
+const shape = factory.create("sphere", {}, materials.get("iceWorld"));
+shape.addEffects([new Orbiter(1.5, 0.25, "y"), new Rotater()]);
+shape.setShadows(true, true).setScale(2, 1, 1).setPosition(0, 0, 3);
 shape.addTo(scene);
 
 const floor = new DeformingPlane(THREE, 24, 128, materials.get("floor")); 

@@ -102,6 +102,14 @@ class ShapeRegistry {
                 },
                 defaultMat: { color: 0xffffff }
             },
+            spinningTop: {
+                ctor: Capsule,
+                defaultGeo: {
+                    radius: 1, height: 0.1, capSegments: 1,
+                    radialSegments: 32, heightSegments: 1
+                },
+                defaultMat: { color: 0xffffff }
+            },
             tetrahedron: {
                 ctor: Tetrahedron,
                 defaultGeo: {

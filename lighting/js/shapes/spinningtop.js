@@ -1,6 +1,6 @@
 import ThreeObj from "../three/three-obj.js";
 
-export default class Capsule extends ThreeObj {
+export default class SpinningTop extends ThreeObj {
     constructor(three, geo, mat) {
         super();
         const { radius, height, capSegments, radialSegments, heightSegments } = geo;
