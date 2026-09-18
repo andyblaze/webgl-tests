@@ -1,10 +1,11 @@
 import ThreeObj from "../three/three-obj.js";
 
 export default class Cone extends ThreeObj {
-    constructor(three, radius, height, cfg, openEnd=false) {
+    constructor(three, geo, mat) {
         super();
-        this.geometry = new three.ConeGeometry(radius, height, 32, 32, openEnd);
-        this.material = new three.MeshPhysicalMaterial(cfg);
+        const { radius, height, radialSegments, heightSegments, openEnded } = geo;
+        this.geometry = new three.ConeGeometry(radius, height, radialSegments, heightSegments, openEnded);
+        this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     doUpdate(dt, elapsed) {

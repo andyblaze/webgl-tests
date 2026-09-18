@@ -1,10 +1,11 @@
 import ThreeObj from "../three/three-obj.js";
 
 export default class Capsule extends ThreeObj {
-    constructor(three, radius, height, cfg) {
+    constructor(three, geo, mat) {
         super();
-        this.geometry = new three.CapsuleGeometry(radius, height, 32, 32, 1);
-        this.material = new three.MeshPhysicalMaterial(cfg);
+        const { radius, height, capSegments, radialSegments, heightSegments } = geo;
+        this.geometry = new three.CapsuleGeometry(radius, height, capSegments, radialSegments, heightSegments);
+        this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     doUpdate(dt, elapsed) {

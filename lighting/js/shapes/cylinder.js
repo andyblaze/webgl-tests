@@ -1,10 +1,11 @@
 import ThreeObj from "../three/three-obj.js";
 
 export default class Cylinder extends ThreeObj {
-    constructor(three, topRadius, baseRadius, height, cfg, openEnd=false) {
+    constructor(three, geo, mat) {
         super();
-        this.geometry = new three.CylinderGeometry(topRadius, baseRadius, height, 32, 32, openEnd);
-        this.material = new three.MeshPhysicalMaterial(cfg);
+        const { radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded } = geo;
+        this.geometry = new three.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded);
+        this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     doUpdate(dt, elapsed) {

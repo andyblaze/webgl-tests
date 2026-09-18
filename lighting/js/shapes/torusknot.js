@@ -1,10 +1,11 @@
 import ThreeObj from "../three/three-obj.js";
 
 export default class TorusKnot extends ThreeObj {
-    constructor(three, radius, tube, cfg) {
+    constructor(three, geo, mat) {
         super();
-        this.geometry = new three.TorusKnotGeometry(radius, tube, 100, 16);
-        this.material = new three.MeshPhysicalMaterial(cfg);
+        const { radius, tube, radialSegments, tubularSegments } = geo;
+        this.geometry = new three.TorusKnotGeometry(radius, tube, radialSegments, tubularSegments);
+        this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     doUpdate(dt, elapsed) {

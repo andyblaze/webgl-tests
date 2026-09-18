@@ -4,11 +4,11 @@ import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting/lighting.js";
 import Materials from "./materials.js";
-import Box from "./shapes/box.js"
 import DeformingPlane from "./shapes/deforming-plane.js";
 import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler } from "./effects/effects.js";
+import { ShapeFactory } from "./shape-factory.js";
 
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
@@ -16,6 +16,7 @@ const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 const lighting = new Lighting(THREE);
 const materials = new Materials(THREE);
+const factory = new ShapeFactory(THREE);
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
     setPosition(0, 5, 0).
@@ -40,10 +41,10 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
         new ColorCycler(THREE, 0.07)
     ]);
 
-const box = new Box(THREE, 2, materials.get("iceWorld"));
-box.addEffects([new Orbiter(1.5, 0.25, "y")]);
-box.setShadows(true, true).setScale(1, 1, 2).setPosition(0, 0, 3);
-box.addTo(scene);
+const shape = factory.create("bowl", {}, materials.get("iceWorld"));
+shape.addEffects([new Orbiter(1.5, 0.25, "y")]);
+shape.setShadows(true, true).setScale(1, 1, 1).setPosition(0, 0, 3);
+shape.addTo(scene);
 
 const floor = new DeformingPlane(THREE, 24, 128, materials.get("floor")); 
 floor.setShadows(false, true).addTo(scene);
@@ -60,7 +61,7 @@ function animate(timestamp) {
     const elapsed = timer.getElapsedTime(); 
     lighting.update(dt, elapsed);
     deformation.update(timestamp);
-    box.update(dt, elapsed);
+    shape.update(dt, elapsed);
     controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

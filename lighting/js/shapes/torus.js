@@ -1,10 +1,11 @@
 import ThreeObj from "../three/three-obj.js";
 
 export default class Torus extends ThreeObj {
-    constructor(three, radius, tube, cfg) {
+    constructor(three, geo, mat) {
         super();
-        this.geometry = new three.TorusGeometry(radius, tube, 16, 100);
-        this.material = new three.MeshPhysicalMaterial(cfg);
+        const { radius, tube, radialSegments, tubularSegments } = geo;
+        this.geometry = new three.TorusGeometry(radius, tube, radialSegments, tubularSegments);
+        this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
     doUpdate(dt, elapsed) {
