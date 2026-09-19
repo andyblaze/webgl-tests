@@ -11,6 +11,7 @@ import Tetrahedron from "./shapes/tetrahedron.js";
 import Torus from "./shapes/torus.js";
 import TorusKnot from "./shapes/torusknot.js";
 import Bowl from "./shapes/bowl.js";
+import * as C from "./constants.js";
 
 class ShapeRegistry {
     constructor(three) {
@@ -20,8 +21,8 @@ class ShapeRegistry {
                 defaultGeo: {
                     radius: 1, 
                     widthSegments: 48, heightSegments: 48,
-                    phiStart: 0, phiLength: Math.PI * 2,
-                    thetaStart: 0, thetaLength: Math.PI / 2
+                    phiStart: 0, phiLength: C.DEG360,
+                    thetaStart: 0, thetaLength: C.DEG90
                 },
                 defaultMat: { color: 0xffffff, side: three.DoubleSide }
             },
@@ -94,6 +95,14 @@ class ShapeRegistry {
                 },
                 defaultMat: { color: 0xffffff, side: three.DoubleSide }
             },
+            hidefPlane: {
+                ctor: Plane,
+                defaultGeo: {
+                    width: 24, height: 24,
+                    widthSegments: 128, heightSegments: 128
+                },
+                defaultMat: { color: 0xffffff, side: three.DoubleSide }
+            },
             sphere: {
                 ctor: Sphere,
                 defaultGeo: {
@@ -153,6 +162,11 @@ export class ShapeFactory  {
     }
     create(type, cfgGeo={}, cfgMat={}) {
         const def = this.registry.get(type);
+        // If only one config object was supplied, treat it as material config.
+        if ( arguments.length === 2 ) {
+            cfgMat = cfgGeo;
+            cfgGeo = {};
+        }
         const geo = this.combine(def.defaultGeo, cfgGeo);
         const mat = this.combine(def.defaultMat, cfgMat);
         return new def.ctor(this.three, geo, mat);

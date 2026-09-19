@@ -1,0 +1,12 @@
+export const DEG15   = Math.PI / 12;
+export const DEG30   = Math.PI / 6;
+export const DEG45   = Math.PI / 4;
+export const DEG60   = Math.PI / 3;
+export const DEG90   = Math.PI / 2;
+export const DEG120  = Math.PI * 2 / 3;
+export const DEG135  = Math.PI * 3 / 4;
+export const DEG180  = Math.PI;
+export const DEG225  = Math.PI * 5 / 4;
+export const DEG270  = Math.PI * 3 / 2;
+export const DEG315  = Math.PI * 7 / 4;
+export const DEG360  = Math.PI * 2;

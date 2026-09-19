@@ -4,11 +4,11 @@ import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting/lighting.js";
 import Materials from "./materials.js";
-import DeformingPlane from "./shapes/deforming-plane.js";
 import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
+import * as C from "./constants.js";
 
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
@@ -48,27 +48,59 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
         new ColorCycler(THREE, 0.07)
     ]);
 
-const shape = factory.create("sphere", {}, materials.get("iceWorld"));
-shape.addEffects([new Orbiter(1.5, 0.25, "y"), new Rotater()]);
-shape.setShadows(true, true).setScale(2, 1, 1).setPosition(0, 0, 3);
-shape.addTo(scene);
+class World {
+    constructor(scene) {
+        this.scene = scene;
+        this.items = [];
+    }
+    add(item) {
+        if ( item.addTo && typeof item.addTo === "function" )
+            item.addTo(this.scene);
+        this.items.push(item);
+        return this;
+    }
+    update(time) {
+        for ( const item of this.items )
+            item.update(time);
+    }
+}
 
-const floor = new DeformingPlane(THREE, 24, 128, materials.get("floor")); 
-floor.setShadows(false, true).addTo(scene);
+const world = new World(scene);
+
+const egg = factory.create("sphere", materials.get("iceWorld"));
+egg.addEffects([new Orbiter(3, 0.23, "y"), new Rotater()]);
+egg.setShadows(true, true).setScale(1.25, 1, 1).setPosition(0, 0, 3);
+
+const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));
+torus.addEffects([new Orbiter(3, 0.29, "z"), new Rotater()]);
+torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(0, 0, 3);
+
+const pot = factory.create("flowerpot", materials.get("greenWorld"));
+pot.addEffects([new Orbiter(3, 0.31, "x"), new Rotater()]);
+pot.setShadows(true, true).setScale(0.5, 1, 1).setPosition(-3, 0, 0);
+
+const floor = factory.create("hidefPlane", materials.get("floor")); 
+floor.setShadows(false, true).setRotation(C.DEG90, 0, 0).
+setPosition(0, -5, -10.5);
 
 const deformation = new Deformation(floor);
+
+world.add(lighting).add(egg).add(torus).add(pot).add(floor).add(deformation);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const timer = new THREE.Clock();
+const time = { dt: 0,  elapsed: 0, timestamp: 0 };
 
 function animate(timestamp) {
-    const dt = timer.getDelta();
-    const elapsed = timer.getElapsedTime(); 
-    lighting.update(dt, elapsed);
-    deformation.update(timestamp);
-    shape.update(dt, elapsed);
+    time.dt = timer.getDelta();
+    time.elapsed = timer.getElapsedTime();
+    time.timestamp = timestamp;
+    world.update(time);
+    //lighting.update(time);
+    //deformation.update(time);
+    //shape.update(time);
     controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

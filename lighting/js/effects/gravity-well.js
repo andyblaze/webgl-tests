@@ -1,4 +1,5 @@
 import { mt_randf, mt_rand } from "../functions.js";
+import * as C from "../constants.js"
 
 export default class GravityWell {
     constructor(n) {
@@ -10,7 +11,7 @@ export default class GravityWell {
         this.spread = mt_rand(10, 18);
         this.orbitSpeed = mt_rand(4000, 6500);
         this.orbitRadius = mt_rand(15, 20);  
-        this.phase = Math.random() * Math.PI * 2;
+        this.phase = Math.random() * C.DEG360;
         this.noiseOffset = Math.random() * 10000;
     }
     influence(ox, oy, oz) {

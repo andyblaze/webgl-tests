@@ -11,9 +11,9 @@ export default class Deformation {
         this.wells = this.makeWells(16);
         this.field = new Field(this.wells);
     }
-    update(t) {
-        this.field.update(t);
-        this.mesh.update(t, this.field);
+    update(time) {
+        this.field.update(time.timestamp);
+        this.mesh.update(time.timestamp, this.field);
     }
     makeWells(nWells) {
         const wells = [];

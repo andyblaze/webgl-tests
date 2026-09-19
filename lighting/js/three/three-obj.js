@@ -12,12 +12,12 @@ export default class ThreeObj {
     get native() {
         return this.threeObj;
     }
-    doUpdate(dt, elapsed) {}
-    update(dt, elapsed) {
+    doUpdate(time) {}
+    update(time) {
         for ( const e of this.effects ) {
-            e.update(this, dt);
+            e.update(this, time.dt);
         }
-        this.doUpdate(dt, elapsed);
+        this.doUpdate(time);
     }
     setPosition(x, y, z) {
         this.threeObj.position.set(x, y, z);

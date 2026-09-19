@@ -1,19 +1,5 @@
-class EffectBase {
-    constructor() {
-        this.active = false;
-    }
-    stop() {
-        this.active = false;
-        return this;
-    }
-    inactive() {
-        return (false === this.active);
-    }
-    init() {
-        this.active = true;
-        return this;        
-    }
-}
+import * as C from "../constants.js";
+import EffectBase from "./effect-base.js";
 
 export class Rotater extends EffectBase {
     constructor(speedX=13, speedY=15, speedZ=17) {
@@ -26,8 +12,7 @@ export class Rotater extends EffectBase {
         return this.init();
     }
     update(parent, dt) {
-        const { x, y, z } = {x: dt / this.speedX, y: dt / this.speedY, z: dt / this.speedZ };
-        parent.rotate(x, y, z);
+        parent.rotate(dt / this.speedX, dt / this.speedY, dt / this.speedZ);
     }
 }
 export class Orbiter extends EffectBase {
@@ -108,7 +93,7 @@ export class LightDimmer extends EffectBase {
         this.baseIntensity = 0;
         this.dimmerAmount = amount;
         this.dimmerSpeed = speed;
-        this.dimmerTime = Math.PI / 2;
+        this.dimmerTime = C.DEG90;
     }
     start(parent) {
         this.baseIntensity = parent.baseIntensity;
@@ -117,7 +102,7 @@ export class LightDimmer extends EffectBase {
     update(parent, dt) {
         if ( this.inactive() ) return;
         this.dimmerTime += dt * this.dimmerSpeed;
-        const wave = (Math.sin(this.dimmerTime * Math.PI * 2) + 1) / 2;
+        const wave = (Math.sin(this.dimmerTime * C.DEG360) + 1) / 2;
         const minIntensity = this.baseIntensity * this.dimmerAmount;
         parent.native.intensity = minIntensity + (this.baseIntensity - minIntensity) * wave;
     }
