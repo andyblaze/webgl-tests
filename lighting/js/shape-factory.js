@@ -120,6 +120,15 @@ class ShapeRegistry {
                 },
                 defaultMat: { color: 0xffffff }
             },
+            hidefSphere: {
+                ctor: Sphere,
+                defaultGeo: {
+                    radius: 1,
+                    widthSegments: 64,
+                    heightSegments: 64
+                },
+                defaultMat: { color: 0xffffff }
+            },
             spinningTop: {
                 ctor: Capsule,
                 defaultGeo: {
