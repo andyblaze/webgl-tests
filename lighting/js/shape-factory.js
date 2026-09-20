@@ -12,6 +12,7 @@ import Torus from "./shapes/torus.js";
 import TorusKnot from "./shapes/torusknot.js";
 import Bowl from "./shapes/bowl.js";
 import FlyingSaucer from "./shapes/alien-ship.js";
+import SpikyCube from "./shapes/spiky-cube.js";
 import * as C from "./constants.js";
 
 class ShapeRegistry {
@@ -129,6 +130,17 @@ class ShapeRegistry {
                 },
                 defaultMat: { color: 0xffffff }
             },
+            spikyCube: {
+                ctor: SpikyCube,
+                defaultGeo: {
+                    size: 0.5,
+                    spikeRadius: 0.08,
+                    spikeLength: 2
+                },
+                defaultMat: {
+                    color: 0xffffff
+                }
+            },            
             spinningTop: {
                 ctor: Capsule,
                 defaultGeo: {
