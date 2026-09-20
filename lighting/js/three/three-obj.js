@@ -15,7 +15,7 @@ export default class ThreeObj {
     doUpdate(time) {}
     update(time) {
         for ( const e of this.effects ) {
-            e.update(this, time.dt);
+            e.update(this, time);
         }
         this.doUpdate(time);
     }

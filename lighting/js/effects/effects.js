@@ -11,7 +11,8 @@ export class Rotater extends EffectBase {
     start() {
         return this.init();
     }
-    update(parent, dt) {
+    update(parent, time) {
+        const dt = time.dt;
         parent.rotate(dt / this.speedX, dt / this.speedY, dt / this.speedZ);
     }
 }
@@ -37,10 +38,10 @@ export class Orbiter extends EffectBase {
         this.orbit = { x: this.orbitCenter.x, y: this.orbitCenter.y, z: this.orbitCenter.z };
         return this.init();
     }
-    update(parent, dt) {
+    update(parent, time) {
         if ( this.inactive() ) return;
 
-        this.orbitAngle += this.orbitSpeed * dt;
+        this.orbitAngle += this.orbitSpeed * time.dt;
 
         const offset1 = Math.cos(this.orbitAngle) * this.orbitRadius;
         const offset2 = Math.sin(this.orbitAngle) * this.orbitRadius;
@@ -70,9 +71,9 @@ export class ColorCycler extends EffectBase {
         this.time = Math.random();
         return this.init();
     }
-    update(parent, dt) {
+    update(parent, time) {
         if ( this.inactive() ) return;
-        this.time += dt * this.speed;
+        this.time += time.dt * this.speed;
 
         const position = this.time % 1;
 
@@ -99,9 +100,9 @@ export class LightDimmer extends EffectBase {
         this.baseIntensity = parent.baseIntensity;
         return this.init();
     }
-    update(parent, dt) {
+    update(parent, time) {
         if ( this.inactive() ) return;
-        this.dimmerTime += dt * this.dimmerSpeed;
+        this.dimmerTime += time.dt * this.dimmerSpeed;
         const wave = (Math.sin(this.dimmerTime * C.DEG360) + 1) / 2;
         const minIntensity = this.baseIntensity * this.dimmerAmount;
         parent.native.intensity = minIntensity + (this.baseIntensity - minIntensity) * wave;

@@ -2,16 +2,22 @@ import GravityWell from "./gravity-well.js";
 import Mesh from "./mesh.js";
 import Field from "./field.js";
 import Noise from "./noise.js";
+import EffectBase from "./effect-base.js";
 
-export default class Deformation {
-    constructor(plane) {
-        const positions = plane.geometry.attributes.position;
+export default class Deformation extends EffectBase {
+    constructor() {
+        super();
         this.noise = new Noise();
-        this.mesh = new Mesh(positions);
+        this.mesh = null;
         this.wells = this.makeWells(16);
         this.field = new Field(this.wells);
     }
-    update(time) {
+    start(parent) {
+        const positions = parent.geometry.attributes.position;
+        this.mesh = new Mesh(positions);
+        return this.init();
+    }
+    update(parent, time) {
         this.field.update(time.timestamp);
         this.mesh.update(time.timestamp, this.field);
     }

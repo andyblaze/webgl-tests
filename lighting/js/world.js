@@ -3,10 +3,17 @@ export default class World {
         this.scene = scene;
         this.items = [];
     }
-    add(item) {
-        if ( item.addTo && typeof item.addTo === "function" )
-            item.addTo(this.scene);
-        this.items.push(item);
+    add(items) {
+        if (Array.isArray(items)) {
+            items.forEach(item => this.add(item));
+        } else {
+            items.addTo(this.scene);
+            this.items.push(items);
+        }
+        return this;
+    }
+    addLighting(lights) {
+        this.items.push(lights);
         return this;
     }
     update(time) {

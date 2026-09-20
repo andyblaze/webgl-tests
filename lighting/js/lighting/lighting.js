@@ -13,8 +13,8 @@ export default class Lighting {
         scene.add(this.lights[this.index].native);
         return this.lights[this.index];
     }
-    update(dt, elapsed) {
+    update(time) {
         for ( const l of this.lights )
-            l.update(dt, elapsed);
+            l.doUpdate(time);
     }
 }
