@@ -8,9 +8,9 @@ import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
-import * as C from "./constants.js";
 import { deg2rad } from "./functions.js";
 import World from "./world.js";
+import ThreeGroup from "./three/three-group.js";
 
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
@@ -58,7 +58,12 @@ const floor = factory.create("hidefPlane", materials.get("floor"));
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
 setPosition(0, -6, -8.5).addEffects([new Deformation()]);
 
-world.addLighting(lighting).add([egg, torus, pot, floor]);
+const grp = new ThreeGroup(THREE);
+grp.setPosition(0, 0, 3);
+grp.add(factory.create("box", materials.get("iceWorld"))).add(factory.create("cone", materials.get("fireWorld")));
+grp.addEffects([new Rotater()]);
+
+world.addLighting(lighting).add([egg, torus, pot, floor, grp]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
