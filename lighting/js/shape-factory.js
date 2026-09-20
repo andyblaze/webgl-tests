@@ -11,6 +11,7 @@ import Tetrahedron from "./shapes/tetrahedron.js";
 import Torus from "./shapes/torus.js";
 import TorusKnot from "./shapes/torusknot.js";
 import Bowl from "./shapes/bowl.js";
+import FlyingSaucer from "./shapes/alien-ship.js";
 import * as C from "./constants.js";
 
 class ShapeRegistry {
@@ -70,6 +71,14 @@ class ShapeRegistry {
                 defaultGeo: {
                     radiusTop: 1, radiusBottom: 0.5, height: 1, 
                     radialSegments: 32, heightSegments: 32, openEnded: false
+                },
+                defaultMat: { color: 0xffffff }
+            },
+            flyingSaucer: {
+                ctor: FlyingSaucer,
+                defaultGeo: {
+                    radius: 1, 
+                    widthSegments: 48, heightSegments: 48
                 },
                 defaultMat: { color: 0xffffff }
             },

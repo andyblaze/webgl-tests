@@ -58,12 +58,10 @@ const floor = factory.create("hidefPlane", materials.get("floor"));
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
 setPosition(0, -6, -8.5).addEffects([new Deformation()]);
 
-const grp = new ThreeGroup(THREE);
-grp.setPosition(0, 0, 3);
-grp.add(factory.create("box", materials.get("iceWorld"))).add(factory.create("cone", materials.get("fireWorld")));
-grp.addEffects([new Rotater()]);
+const ship = factory.create("flyingSaucer", materials.get("fireWorld"));
+ship.addEffects([new Rotater()]);
 
-world.addLighting(lighting).add([egg, torus, pot, floor, grp]);
+world.addLighting(lighting).add([egg, torus, pot, floor, ship]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
