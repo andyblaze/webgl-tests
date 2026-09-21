@@ -43,11 +43,11 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
     setPosition(10, 3, -5).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);
 
-const egg = factory.create("sphere", materials.get("fireWorld"));
+const egg = factory.create("sphere", materials.get("brushedBrass"));
 egg.setShadows(true, true).setScale(1.25, 1, 1).setPosition(0, 0, 0).dimple();
 egg.addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
 
-const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("greenWorld"));
+const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));
 torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(0, 0, 3);
 torus.addEffects([new Orbiter(3, 0.29, "z"), new Rotater()]);
 

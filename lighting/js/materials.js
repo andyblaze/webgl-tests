@@ -40,6 +40,16 @@ export default class Materials {
                 anisotropy: 1,
                 //normalMap: this.loader.load("textures/pave-normal.png"),
                 map: this.loader.load("textures/pave.png")
+            },
+            brushedBrass: {
+                color: 0xd2c628,
+                roughness: 0.7, metalness: 0.3,
+                clearcoat: 0.75, clearcoatRoughness: 0.25,
+                emissive: 0xe0b347, emissiveIntensity: 0.5,
+                sheenColor: 0xc5e21d, sheen: 0.2,
+                anisotropy: 0,
+                normalMap: this.loader.load("textures/marble-normal.png"),
+                map: this.loader.load("textures/brush.png")
             }
         };
     }
