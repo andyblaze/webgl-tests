@@ -22,29 +22,29 @@ const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
 lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
-    setPosition(0, 5, 0).
+    setPosition(0, 8, 0).
     setShadows(true).
     setShadowMapSize(1024).
     addEffects([new LightDimmer(0.2, 0.1), new ColorCycler(THREE, 0.01)]);
 
 lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
-    setPosition(-10, -3, -5).
+    setPosition(-6, -2, 2).
     addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
 
 lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
-    setPosition(10, -3, -5).
+    setPosition(6, -2, 2).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.07)]);
 
-lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
-    setPosition(-10, 3, -5).
+lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
+    setPosition(-4, 0, 8).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.11)]);
 
-lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
-    setPosition(10, 3, -5).
+lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
+    setPosition(4, 0, 8).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);
 
-const egg = factory.create("sphere", materials.get("brushedBrass"));
-egg.setShadows(true, true).setScale(1.25, 1, 1).setPosition(0, 0, 0).dimple();
+const egg = factory.create("sphere", materials.get("pinkMetal"));
+egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
 egg.addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
 
 const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));

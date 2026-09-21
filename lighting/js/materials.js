@@ -8,8 +8,8 @@ export default class Materials {
                 emissive:0xff0000, emissiveIntensity: 0.1,
                 clearcoat: 1, clearcoatRoughness: 0.5,
                 anisotropy: 0.25,
-                normalMap: this.loader.load("textures/brush-normal.png"),
-                map: this.loader.load("bw.jpg")
+                normalMap: "textures/brush-normal.png",
+                map: "textures/tiles.jpg"
             },
             iceWorld: {
                 color: 0x00ffff,
@@ -19,7 +19,7 @@ export default class Materials {
                 sheenColor: 0xf471c7, sheen: 1,
                 anisotropy: 1,
                 //normalMap: this.loader.load("textures/pave-normal.png"),
-                map: this.loader.load("textures/pave.png")
+                map: "textures/pave.png"
             },
             fireWorld: {
                 color: 0xff0000,
@@ -29,7 +29,7 @@ export default class Materials {
                 sheenColor: 0xf41137, sheen: 1,
                 anisotropy: 1,
                 //normalMap: this.loader.load("textures/pave-normal.png"),
-                map: this.loader.load("textures/pave.png")
+                map: "textures/pave.png"
             },
             greenWorld: {
                 color: 0x00ff00,
@@ -38,8 +38,8 @@ export default class Materials {
                 emissive: 0x009900, emissiveIntensity: 0.5,
                 sheenColor: 0x11f437, sheen: 1,
                 anisotropy: 1,
-                //normalMap: this.loader.load("textures/pave-normal.png"),
-                map: this.loader.load("textures/pave.png")
+                //normalMap: "textures/pave-normal.png",
+                map: "textures/pave.png"
             },
             brushedBrass: {
                 color: 0xd2c628,
@@ -48,12 +48,30 @@ export default class Materials {
                 emissive: 0xe0b347, emissiveIntensity: 0.5,
                 sheenColor: 0xc5e21d, sheen: 0.2,
                 anisotropy: 0,
-                normalMap: this.loader.load("textures/marble-normal.png"),
-                map: this.loader.load("textures/brush.png")
+                normalMap: "textures/marble-normal.png",
+                map: "textures/brush.png"
+            },
+            pinkMetal: {
+                color: 0xff0080,
+                //transparent: true, opacity: 0.6,
+                roughness: 0.3, metalness: 0.7,
+                clearcoat: 1, clearcoatRoughness: 0.4,
+                emissive: 0x9516e9, emissiveIntensity: 0.25,
+                sheenColor: 0xff66ff, sheen: 0.68,
+                anisotropy: 0,
+                attenuationColor: 0xf80762,
+                //normalMap: "textures/circles-normal.png",
+                //normalScale: 1,
+                map: "textures/ripple.png"
             }
         };
     }
     get(name) {
-        return this.data[name];
+        const mat = this.data[name];
+        if ( mat.map )
+            mat.map = this.loader.load(mat.map);
+        if ( mat.normalMap )
+            mat.normalMap = this.loader.load(mat.normalMap);
+        return mat;
     }
 }
