@@ -26,18 +26,18 @@ const world = new World(scene);
     setShadowMapSize(1024).
     addEffects([new LightDimmer(0.2, 0.1), new ColorCycler(THREE, 0.01)]);*/
 
-lighting.add(scene, "spot", { color: 0xffff00, intensity: 40, angle: deg2rad(35), distance: 5 }).
+lighting.add(scene, "spot", { color: 0xff0000, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(0, 9, 5).setTarget(0, 0, 0).
     setShadows(true).setShadowMapSize(1024).
-addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
+addEffects([new ColorCycler(THREE, 0.04)]);
 
-lighting.add(scene, "spot", { color: 0xffff00, intensity: 40, angle: deg2rad(35), distance: 5 }).
-    setPosition(9, 5, 5).setTarget(0, 0, 0).
-addEffects([new LightDimmer(0.4, 0.11), new ColorCycler(THREE, 0.07)]);
+lighting.add(scene, "spot", { color: 0x00ff00, intensity: 80, angle: deg2rad(35), distance: 15 }).
+    setPosition(5, 5, 5).setTarget(0, 0, 0).
+addEffects([new ColorCycler(THREE, 0.07)]);
 
-lighting.add(scene, "spot", { color: 0xffff00, intensity: 40, angle: deg2rad(35), distance: 5 }).
-    setPosition(-9, 5, 5).setTarget(0, 0, 0).
-addEffects([new LightDimmer(0.3, 0.7), new ColorCycler(THREE, 0.11)]);
+lighting.add(scene, "spot", { color: 0x0000ff, intensity: 80, angle: deg2rad(35), distance: 15 }).
+    setPosition(-5, 5, 5).setTarget(0, 0, 0).
+addEffects([new ColorCycler(THREE, 0.011)]);
 
 /*lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
     setPosition(-6, -2, 2).
@@ -55,7 +55,7 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
     setPosition(4, 0, 8).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);*/
 
-const egg = factory.create("sphere", materials.get("pinkMetal"));
+const egg = factory.create("sphere", materials.get("brushedMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
 egg.addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
 

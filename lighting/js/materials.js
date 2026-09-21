@@ -54,7 +54,6 @@ export default class Materials {
             },
             pinkMetal: {
                 color: 0xff0080,
-                //transparent: true, opacity: 0.6,
                 roughness: 0.5, metalness: 0.5,
                 clearcoat: 1, clearcoatRoughness: 0.5,
                 emissive: 0x9516e9, emissiveIntensity: 0.25,
@@ -64,10 +63,22 @@ export default class Materials {
                 //normalMap: "textures/pebbles-normal.png",
                 //normalScale: 1,
                 map: "textures/pebbles.png"
+            },
+            brushedMetal: {
+                color: 0xbcbcbc,
+                roughness: 0.5, metalness: 0.4,
+                clearcoat: 1, clearcoatRoughness: 0.5,
+                emissive: 0xc0c0c0, emissiveIntensity: 0.25,
+                sheenColor: 0xc0c0c0, sheen: 1,
+                anisotropy: 1,
+                attenuationColor: 0xf80762,
+                normalMap: "textures/brush-normal.png",
+                normalScale: new three.Vector2(2, 2)//[1, 1],
+                //map: "textures/brush.png"
             }
         };
     }
-    prepareTexture(texture, repeat = 4) {
+    prepareTexture(texture, repeat = 8) {
         texture.wrapS = this.three.RepeatWrapping;
         texture.wrapT = this.three.RepeatWrapping;
         texture.repeat.set(repeat, repeat);
