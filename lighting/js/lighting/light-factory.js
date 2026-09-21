@@ -13,8 +13,14 @@ export class LightRegistry {
                     cfg.distance,
                     cfg.decay
                 ]
+            },
+            spot: {
+                ctor: three.SpotLight,
+                args: cfg => [
+                    cfg.color,
+                    cfg.intensity
+                ]
             }
-
         };
     }
     get(type) {

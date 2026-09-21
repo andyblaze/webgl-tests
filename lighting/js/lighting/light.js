@@ -10,4 +10,9 @@ export default class Light extends ThreeObj {
         this.threeObj.shadow.mapSize.set(sz, sz);
         return this;
     }
+    setTarget(x, y, z) {
+        if ( this.threeObj.isSpotLight )
+            this.threeObj.target.position.set(x, y, z);
+        return this;
+    }
 }

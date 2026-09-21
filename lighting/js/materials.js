@@ -1,6 +1,7 @@
 export default class Materials {
     constructor(three) {
         this.loader = new three.TextureLoader();
+        this.three = three;
         this.data = {
             floor: { 
                 color: 0xffffff, side: three.DoubleSide,
@@ -54,24 +55,31 @@ export default class Materials {
             pinkMetal: {
                 color: 0xff0080,
                 //transparent: true, opacity: 0.6,
-                roughness: 0.3, metalness: 0.7,
-                clearcoat: 1, clearcoatRoughness: 0.4,
+                roughness: 0.5, metalness: 0.5,
+                clearcoat: 1, clearcoatRoughness: 0.5,
                 emissive: 0x9516e9, emissiveIntensity: 0.25,
                 sheenColor: 0xff66ff, sheen: 0.68,
                 anisotropy: 0,
                 attenuationColor: 0xf80762,
-                //normalMap: "textures/circles-normal.png",
+                //normalMap: "textures/pebbles-normal.png",
                 //normalScale: 1,
-                map: "textures/ripple.png"
+                map: "textures/pebbles.png"
             }
         };
+    }
+    prepareTexture(texture, repeat = 4) {
+        texture.wrapS = this.three.RepeatWrapping;
+        texture.wrapT = this.three.RepeatWrapping;
+        texture.repeat.set(repeat, repeat);
+
+        return texture;
     }
     get(name) {
         const mat = this.data[name];
         if ( mat.map )
-            mat.map = this.loader.load(mat.map);
+            mat.map = this.prepareTexture(this.loader.load(mat.map));
         if ( mat.normalMap )
-            mat.normalMap = this.loader.load(mat.normalMap);
+            mat.normalMap = this.prepareTexture(this.loader.load(mat.normalMap));
         return mat;
     }
 }

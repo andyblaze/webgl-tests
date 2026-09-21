@@ -10,7 +10,6 @@ import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js
 import { ShapeFactory } from "./shape-factory.js";
 import { deg2rad } from "./functions.js";
 import World from "./world.js";
-import ThreeGroup from "./three/three-group.js";
 
 const config = new Config(THREE, window);
 const scene = new THREE.Scene();
@@ -21,13 +20,26 @@ const materials = new Materials(THREE);
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
+/*lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
     setPosition(0, 8, 0).
     setShadows(true).
     setShadowMapSize(1024).
-    addEffects([new LightDimmer(0.2, 0.1), new ColorCycler(THREE, 0.01)]);
+    addEffects([new LightDimmer(0.2, 0.1), new ColorCycler(THREE, 0.01)]);*/
 
-lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
+lighting.add(scene, "spot", { color: 0xffff00, intensity: 40, angle: deg2rad(35), distance: 5 }).
+    setPosition(0, 9, 5).setTarget(0, 0, 0).
+    setShadows(true).setShadowMapSize(1024).
+addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
+
+lighting.add(scene, "spot", { color: 0xffff00, intensity: 40, angle: deg2rad(35), distance: 5 }).
+    setPosition(9, 5, 5).setTarget(0, 0, 0).
+addEffects([new LightDimmer(0.4, 0.11), new ColorCycler(THREE, 0.07)]);
+
+lighting.add(scene, "spot", { color: 0xffff00, intensity: 40, angle: deg2rad(35), distance: 5 }).
+    setPosition(-9, 5, 5).setTarget(0, 0, 0).
+addEffects([new LightDimmer(0.3, 0.7), new ColorCycler(THREE, 0.11)]);
+
+/*lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
     setPosition(-6, -2, 2).
     addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
 
@@ -41,15 +53,15 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
 
 lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
     setPosition(4, 0, 8).
-    addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);
+    addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);*/
 
 const egg = factory.create("sphere", materials.get("pinkMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
 egg.addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
 
 const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));
-torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(0, 0, 3);
-torus.addEffects([new Orbiter(3, 0.29, "z"), new Rotater()]);
+torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(3, 0, 3);
+torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater()]);
 
 /*const pot = factory.create("flowerpot", materials.get("greenWorld"));
 pot.setShadows(true, true).setScale(0.5, 1, 1).setPosition(0, 0, 0);
