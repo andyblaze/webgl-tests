@@ -95,7 +95,6 @@ class HelixCurve extends THREE.Curve {
 }
 
 class HelixSegment {
-
     constructor(three, geo, mat) {
         this.numRungs = 6;
         this.threeObj = new three.Group();
@@ -118,10 +117,33 @@ class HelixSegment {
         this.addRungs(three, this.numRungs);
     }
     makeRung(three, length) {
-        return new three.Mesh(
-            new three.CylinderGeometry(0.04, 0.04, length, 8),
+        const grp = new three.Group();
+        const s1 = new three.Mesh(
+            new three.SphereGeometry(0.07),
             this.material
-        );        
+        );
+        s1.position.y = length - (length / 2);
+        grp.add(s1);
+        const s2 = new three.Mesh(
+            new three.SphereGeometry(0.07),
+            this.material
+        );
+        s2.position.y = 0 - (length / 2);
+        grp.add(s2);
+        const msh1 = new three.Mesh(
+            new three.CylinderGeometry(0.04, 0.04, length / 2, 8),
+            this.material
+        );  
+        msh1.position.y = length / 4;   
+        grp.add(msh1);
+        /*this.material.color = 0xff0000;
+        const msh2 = new three.Mesh(
+            new three.CylinderGeometry(0.04, 0.04, length / 2, 8),
+            this.material
+        ); 
+        msh2.position.y = length / 2;
+        grp.add(msh2);*/  
+        return grp;     
     }
     addRungs(three, n) {
         const spacing = 0.18;
@@ -179,12 +201,8 @@ class Dna {
 
 const geo = { width: 1.5, pitch: 3, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
 const mat = materials.get("brushedBrass");
-const dna = new Dna(THREE, 3, geo, mat);
 
-//dna.addSegments(3, geo, mat);
-//dna.center();
-//dna.native.position.y = -5.2;
-//dna.native.rotation.z = deg2rad(45);
+const dna = new Dna(THREE, 3, geo, mat);
 scene.add(dna.native);
 
 world.addLighting(lighting);//.add([tube]);
