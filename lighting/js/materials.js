@@ -15,12 +15,12 @@ export default class Materials {
             iceWorld: {
                 color: 0x00ffff,
                 roughness: 0.5, metalness: 0.5,
-                clearcoat: 0.75, clearcoatRoughness: 0.5,
+                //clearcoat: 0.75, clearcoatRoughness: 0.5,
                 emissive: 0x0080ff, emissiveIntensity: 0.25,
-                sheenColor: 0xf471c7, sheen: 1,
-                anisotropy: 1,
+                sheenColor: 0xf471c7, sheen: 1//,
+                //anisotropy: 1//,
                 //normalMap: this.loader.load("textures/pave-normal.png"),
-                map: "textures/pave.png"
+                //map: "textures/pave.png"
             },
             fireWorld: {
                 color: 0xff0000,

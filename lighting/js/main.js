@@ -55,27 +55,89 @@ lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
     setPosition(4, 0, 8).
     addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);*/
 
-const egg = factory.create("sphere", materials.get("brushedMetal"));
+/*const egg = factory.create("sphere", materials.get("brushedMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
 egg.addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
 
 const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));
 torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(3, 0, 3);
-torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater()]);
+torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater()]);*/
 
 /*const pot = factory.create("flowerpot", materials.get("greenWorld"));
 pot.setShadows(true, true).setScale(0.5, 1, 1).setPosition(0, 0, 0);
 pot.addEffects([new Orbiter(4, 0.31, "x"), new Rotater()]);*/
 
-const floor = factory.create("hidefPlane", materials.get("floor")); 
+/*const floor = factory.create("hidefPlane", materials.get("floor")); 
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
 setPosition(0, -6, -8.5).addEffects([new Deformation()]);
 
 const spikes = factory.create("spikyCube", materials.get("iceWorld"));
 spikes.setShadows(true, true).setPosition(0, -2, 0);
-spikes.addEffects([new Orbiter(4, 0.31, "y"), new Rotater(3, 4, 5)]);
+spikes.addEffects([new Orbiter(4, 0.31, "y"), new Rotater(3, 4, 5)]);*/
 
-world.addLighting(lighting).add([egg, torus, floor, spikes]);
+class HelixCurve extends THREE.Curve {
+
+    constructor(width, pitch, phase=0) {
+        super();
+
+        this.radius = width / 2;
+        this.pitch = pitch;
+        this.phase = phase;
+    }
+
+    getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+        const angle = 2 * Math.PI * t + this.phase;
+
+        const x = this.radius * Math.cos(angle);
+        const y = this.pitch * t;
+        const z = this.radius * Math.sin(angle);
+
+        return optionalTarget.set(x, y, z);
+    }
+}
+
+class HelixSegment {
+    constructor(three, geo, mat, phase=0) {
+        const { width, pitch, tubeRadius, tubularSegments, radialSegments } = geo;
+        this.geometry = new three.TubeGeometry(new HelixCurve( width, pitch, phase), tubularSegments, tubeRadius, radialSegments);
+        this.material = new three.MeshPhysicalMaterial(mat);
+        this.threeObj = new three.Mesh(this.geometry, this.material);
+    }
+    get native() {
+        return this.threeObj;
+    }
+}
+
+class Dna {
+    constructor(three) {
+        this.three = three;
+        this.threeObj = new three.Group();
+    }
+    addSegments(n, geo, mat) {
+        for ( let i = 0; i < n; i++ ) {
+            const a = new HelixSegment(this.three, geo, mat, 0);
+            const b = new HelixSegment(this.three, geo, mat, Math.PI);
+
+            a.native.position.y = geo.pitch * i;
+            b.native.position.y = geo.pitch * i;
+
+            this.threeObj.add(a.native);
+            this.threeObj.add(b.native);
+        }
+    }
+    get native() {
+        return this.threeObj;
+    }
+}
+
+const dna = new Dna(THREE);
+const geo = { width: 1.5, pitch: 1.5, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
+const mat = materials.get("iceWorld");
+dna.addSegments(3, geo, mat);
+scene.add(dna.native);
+
+world.addLighting(lighting);//.add([tube]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
