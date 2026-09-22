@@ -132,17 +132,17 @@ class HelixSegment {
         grp.add(s2);
         const msh1 = new three.Mesh(
             new three.CylinderGeometry(0.04, 0.04, length / 2, 8),
-            this.material
+            new three.MeshPhysicalMaterial({ color: 0xff0000 })
         );  
         msh1.position.y = length / 4;   
         grp.add(msh1);
-        /*this.material.color = 0xff0000;
+
         const msh2 = new three.Mesh(
             new three.CylinderGeometry(0.04, 0.04, length / 2, 8),
-            this.material
+            new three.MeshPhysicalMaterial({ color: 0x0000ff })
         ); 
-        msh2.position.y = length / 2;
-        grp.add(msh2);*/  
+        msh2.position.y = 0 - length / 4;
+        grp.add(msh2);
         return grp;     
     }
     addRungs(three, n) {
