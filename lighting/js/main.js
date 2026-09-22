@@ -8,7 +8,7 @@ import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
-import { deg2rad } from "./functions.js";
+import { deg2rad, randomFrom } from "./functions.js";
 import World from "./world.js";
 
 const config = new Config(THREE, window);
@@ -116,45 +116,48 @@ class HelixSegment {
 
         this.addRungs(three, this.numRungs);
     }
+    makeConnector(three, pos) {
+        const c = new three.Mesh(
+            new three.SphereGeometry(0.07),
+            this.material
+        );
+        c.position.y = pos;
+        return c;
+    }
+    halfRung(three, length, pos) {
+        const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
+        const r = new three.Mesh(
+            new three.CylinderGeometry(0.04, 0.04, length, 8),
+            new three.MeshPhysicalMaterial({ color: randomFrom(colors) })
+        );  
+        r.position.y = pos;  
+        return r;
+    }
     makeRung(three, length) {
         const grp = new three.Group();
-        const s1 = new three.Mesh(
-            new three.SphereGeometry(0.07),
-            this.material
-        );
-        s1.position.y = length - (length / 2);
-        grp.add(s1);
-        const s2 = new three.Mesh(
-            new three.SphereGeometry(0.07),
-            this.material
-        );
-        s2.position.y = 0 - (length / 2);
-        grp.add(s2);
-        const msh1 = new three.Mesh(
-            new three.CylinderGeometry(0.04, 0.04, length / 2, 8),
-            new three.MeshPhysicalMaterial({ color: 0xff0000 })
-        );  
-        msh1.position.y = length / 4;   
-        grp.add(msh1);
 
-        const msh2 = new three.Mesh(
-            new three.CylinderGeometry(0.04, 0.04, length / 2, 8),
-            new three.MeshPhysicalMaterial({ color: 0x0000ff })
-        ); 
-        msh2.position.y = 0 - length / 4;
-        grp.add(msh2);
+        const c1 = this.makeConnector(three, length - (length / 2));
+        grp.add(c1);
+        const c2 = this.makeConnector(three, -(length / 2));
+        grp.add(c2);
+
+        const m1 = this.halfRung(three, length / 2, length / 4);
+        grp.add(m1);
+        const m2 = this.halfRung(three, length / 2, -(length / 4));
+        grp.add(m2);
+
         return grp;     
     }
     addRungs(three, n) {
         const spacing = 0.18;
         const offset = 0.05;
         const unitVec = new three.Vector3(0, 1, 0);
-        const nullVec = new three.Vector3();
+        const dirVec = new three.Vector3();
         for ( let i = 0; i < n; i++ ) {
             const a = this.curveA.getPoint(i * spacing + offset);
             const b = this.curveB.getPoint(i * spacing + offset);
 
-            const direction = nullVec.subVectors(b, a);
+            const direction = dirVec.subVectors(b, a);
             const length = direction.length();
 
             const rung = this.makeRung(three, length);
