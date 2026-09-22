@@ -49,8 +49,8 @@ export default class Materials {
                 emissive: 0xe0b347, emissiveIntensity: 0.5,
                 sheenColor: 0xc5e21d, sheen: 0.2,
                 anisotropy: 0,
-                normalMap: "textures/marble-normal.png",
-                map: "textures/brush.png"
+                //normalMap: "textures/marble-normal.png",
+                //map: "textures/brush.png"
             },
             pinkMetal: {
                 color: 0xff0080,

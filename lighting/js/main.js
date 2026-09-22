@@ -79,14 +79,11 @@ class HelixCurve extends THREE.Curve {
 
     constructor(width, pitch, phase=0) {
         super();
-
         this.radius = width / 2;
         this.pitch = pitch;
         this.phase = phase;
     }
-
-    getPoint(t, optionalTarget = new THREE.Vector3()) {
-
+    getPoint(t, optionalTarget=new THREE.Vector3()) {
         const angle = 2 * Math.PI * t + this.phase;
 
         const x = this.radius * Math.cos(angle);
@@ -100,82 +97,62 @@ class HelixCurve extends THREE.Curve {
 class HelixSegment {
 
     constructor(three, geo, mat) {
-
-        const {
-            width,
-            pitch,
-            tubeRadius,
-            tubularSegments,
-            radialSegments
-        } = geo;
+        this.numRungs = 6;
+        this.threeObj = new three.Group();
+        const {width, pitch, tubeRadius, tubularSegments, radialSegments } = geo;
 
         this.curveA = new HelixCurve(width, pitch, 0);
         this.curveB = new HelixCurve(width, pitch, Math.PI);
 
-        this.geometryA = new three.TubeGeometry(
-            this.curveA,
-            tubularSegments,
-            tubeRadius,
-            radialSegments
-        );
-
-        this.geometryB = new three.TubeGeometry(
-            this.curveB,
-            tubularSegments,
-            tubeRadius,
-            radialSegments
-        );
+        this.geometryA = new three.TubeGeometry(this.curveA, tubularSegments, tubeRadius, radialSegments);
+        this.geometryB = new three.TubeGeometry(this.curveB, tubularSegments, tubeRadius, radialSegments);
 
         this.material = new three.MeshPhysicalMaterial(mat);
 
         this.meshA = new three.Mesh(this.geometryA, this.material);
-        this.meshB = new three.Mesh(this.geometryB, this.material);
-
-        this.threeObj = new three.Group();
+        this.meshB = new three.Mesh(this.geometryB, this.material);        
 
         this.threeObj.add(this.meshA);
         this.threeObj.add(this.meshB);
 
-
-        // First rung - bottom of segment
-
-        const a = this.curveA.getPoint(0);
-        const b = this.curveB.getPoint(0);
-
-        const direction = new three.Vector3().subVectors(b, a);
-        const length = direction.length();
-
-        const rungGeometry = new three.CylinderGeometry(
-            0.04,
-            0.04,
-            length,
-            8
-        );
-
-        const rung = new three.Mesh(
-            rungGeometry,
-            this.material
-        );
-
-        rung.position.copy(a).add(b).multiplyScalar(0.5);
-
-        rung.quaternion.setFromUnitVectors(
-            new three.Vector3(0, 1, 0),
-            direction.normalize()
-        );
-
-        this.threeObj.add(rung);
+        this.addRungs(three, this.numRungs);
     }
+    makeRung(three, length) {
+        return new three.Mesh(
+            new three.CylinderGeometry(0.04, 0.04, length, 8),
+            this.material
+        );        
+    }
+    addRungs(three, n) {
+        const spacing = 0.18;
+        const offset = 0.05;
+        const unitVec = new three.Vector3(0, 1, 0);
+        const nullVec = new three.Vector3();
+        for ( let i = 0; i < n; i++ ) {
+            const a = this.curveA.getPoint(i * spacing + offset);
+            const b = this.curveB.getPoint(i * spacing + offset);
 
+            const direction = nullVec.subVectors(b, a);
+            const length = direction.length();
+
+            const rung = this.makeRung(three, length);
+            rung.position.copy(a).add(b).multiplyScalar(0.5);
+            rung.quaternion.setFromUnitVectors(unitVec, direction.normalize());
+
+            this.threeObj.add(rung);
+        }
+    }
     get native() {
         return this.threeObj;
     }
 }
 
 class Dna {
-    constructor(three) {
+    constructor(three, numSegments, geo, mat) {
         this.three = three;
         this.threeObj = new three.Group();
+        this.addSegments(numSegments, geo, mat);
+        this.center();
     }
     addSegments(n, geo, mat) {
         for ( let i = 0; i < n; i++ ) {
@@ -200,11 +177,12 @@ class Dna {
     }
 }
 
-const dna = new Dna(THREE);
 const geo = { width: 1.5, pitch: 3, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
-const mat = materials.get("iceWorld");
-dna.addSegments(3, geo, mat);
-dna.center();
+const mat = materials.get("brushedBrass");
+const dna = new Dna(THREE, 3, geo, mat);
+
+//dna.addSegments(3, geo, mat);
+//dna.center();
 //dna.native.position.y = -5.2;
 //dna.native.rotation.z = deg2rad(45);
 scene.add(dna.native);
