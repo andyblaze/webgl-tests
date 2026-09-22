@@ -98,12 +98,75 @@ class HelixCurve extends THREE.Curve {
 }
 
 class HelixSegment {
-    constructor(three, geo, mat, phase=0) {
-        const { width, pitch, tubeRadius, tubularSegments, radialSegments } = geo;
-        this.geometry = new three.TubeGeometry(new HelixCurve( width, pitch, phase), tubularSegments, tubeRadius, radialSegments);
+
+    constructor(three, geo, mat) {
+
+        const {
+            width,
+            pitch,
+            tubeRadius,
+            tubularSegments,
+            radialSegments
+        } = geo;
+
+        this.curveA = new HelixCurve(width, pitch, 0);
+        this.curveB = new HelixCurve(width, pitch, Math.PI);
+
+        this.geometryA = new three.TubeGeometry(
+            this.curveA,
+            tubularSegments,
+            tubeRadius,
+            radialSegments
+        );
+
+        this.geometryB = new three.TubeGeometry(
+            this.curveB,
+            tubularSegments,
+            tubeRadius,
+            radialSegments
+        );
+
         this.material = new three.MeshPhysicalMaterial(mat);
-        this.threeObj = new three.Mesh(this.geometry, this.material);
+
+        this.meshA = new three.Mesh(this.geometryA, this.material);
+        this.meshB = new three.Mesh(this.geometryB, this.material);
+
+        this.threeObj = new three.Group();
+
+        this.threeObj.add(this.meshA);
+        this.threeObj.add(this.meshB);
+
+
+        // First rung - bottom of segment
+
+        const a = this.curveA.getPoint(0);
+        const b = this.curveB.getPoint(0);
+
+        const direction = new three.Vector3().subVectors(b, a);
+        const length = direction.length();
+
+        const rungGeometry = new three.CylinderGeometry(
+            0.04,
+            0.04,
+            length,
+            8
+        );
+
+        const rung = new three.Mesh(
+            rungGeometry,
+            this.material
+        );
+
+        rung.position.copy(a).add(b).multiplyScalar(0.5);
+
+        rung.quaternion.setFromUnitVectors(
+            new three.Vector3(0, 1, 0),
+            direction.normalize()
+        );
+
+        this.threeObj.add(rung);
     }
+
     get native() {
         return this.threeObj;
     }
@@ -138,12 +201,12 @@ class Dna {
 }
 
 const dna = new Dna(THREE);
-const geo = { width: 1.5, pitch: 1.5, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
+const geo = { width: 1.5, pitch: 3, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
 const mat = materials.get("iceWorld");
-dna.addSegments(7, geo, mat);
+dna.addSegments(3, geo, mat);
 dna.center();
 //dna.native.position.y = -5.2;
-dna.native.rotation.z = deg2rad(45);
+//dna.native.rotation.z = deg2rad(45);
 scene.add(dna.native);
 
 world.addLighting(lighting);//.add([tube]);
