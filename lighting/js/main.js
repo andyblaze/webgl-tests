@@ -126,6 +126,12 @@ class Dna {
             this.threeObj.add(b.native);
         }
     }
+    center() {
+        const box = new this.three.Box3().setFromObject(this.threeObj);
+        const size = new this.three.Vector3();
+        box.getSize(size);
+        this.threeObj.position.y = -size.y / 2;
+    }
     get native() {
         return this.threeObj;
     }
@@ -134,7 +140,10 @@ class Dna {
 const dna = new Dna(THREE);
 const geo = { width: 1.5, pitch: 1.5, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
 const mat = materials.get("iceWorld");
-dna.addSegments(3, geo, mat);
+dna.addSegments(7, geo, mat);
+dna.center();
+//dna.native.position.y = -5.2;
+dna.native.rotation.z = deg2rad(45);
 scene.add(dna.native);
 
 world.addLighting(lighting);//.add([tube]);
