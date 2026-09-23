@@ -8,7 +8,7 @@ import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
-import { deg2rad, randomFrom } from "./functions.js";
+import { deg2rad, randomFrom, mt_rand } from "./functions.js";
 import World from "./world.js";
 
 const config = new Config(THREE, window);
@@ -124,11 +124,10 @@ class HelixSegment {
         c.position.y = pos;
         return c;
     }
-    halfRung(three, length, pos) {
-        const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
+    halfRung(three, length, pos, c) {
         const r = new three.Mesh(
-            new three.CylinderGeometry(0.04, 0.04, length, 8),
-            new three.MeshPhysicalMaterial({ color: randomFrom(colors) })
+            new three.CylinderGeometry(0.05, 0.05, length, 8),
+            new three.MeshPhysicalMaterial({ color: c, emissive: c, emissiveIntensity: 0.2 })
         );  
         r.position.y = pos;  
         return r;
@@ -141,9 +140,16 @@ class HelixSegment {
         const c2 = this.makeConnector(three, -(length / 2));
         grp.add(c2);
 
-        const m1 = this.halfRung(three, length / 2, length / 4);
+        const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
+        const idx1 = mt_rand(0, 4);
+        let idx2 = mt_rand(0, 4);
+        while ( idx1 == idx2 ) {
+            idx2 = mt_rand(0, 4);
+        }
+
+        const m1 = this.halfRung(three, length / 2, length / 4, colors[idx1]);
         grp.add(m1);
-        const m2 = this.halfRung(three, length / 2, -(length / 4));
+        const m2 = this.halfRung(three, length / 2, -(length / 4), colors[idx2]);
         grp.add(m2);
 
         return grp;     
@@ -176,13 +182,13 @@ class Dna {
     constructor(three, numSegments, geo, mat) {
         this.three = three;
         this.threeObj = new three.Group();
-        this.addSegments(numSegments, geo, mat);
-        this.center();
+        this.addSegments(three, numSegments, geo, mat);
+        this.center(three);
     }
-    addSegments(n, geo, mat) {
+    addSegments(three, n, geo, mat) {
         for ( let i = 0; i < n; i++ ) {
-            const a = new HelixSegment(this.three, geo, mat, 0);
-            const b = new HelixSegment(this.three, geo, mat, Math.PI);
+            const a = new HelixSegment(three, geo, mat, 0);
+            const b = new HelixSegment(three, geo, mat, Math.PI);
 
             a.native.position.y = geo.pitch * i;
             b.native.position.y = geo.pitch * i;
@@ -191,9 +197,9 @@ class Dna {
             this.threeObj.add(b.native);
         }
     }
-    center() {
-        const box = new this.three.Box3().setFromObject(this.threeObj);
-        const size = new this.three.Vector3();
+    center(three) {
+        const box = new three.Box3().setFromObject(this.threeObj);
+        const size = new three.Vector3();
         box.getSize(size);
         this.threeObj.position.y = -size.y / 2;
     }
