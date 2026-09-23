@@ -71,7 +71,7 @@ export class ColorCycler extends EffectBase {
         this.time = Math.random();
         return this.init();
     }
-    update(parent, time) {
+    update(parent, time) { console.log(time);
         if ( this.inactive() ) return;
         this.time += time.dt * this.speed;
 

@@ -15,12 +15,13 @@ export default class Materials {
             iceWorld: {
                 color: 0x00ffff,
                 roughness: 0.5, metalness: 0.5,
-                //clearcoat: 0.75, clearcoatRoughness: 0.5,
+                clearcoat: 0.75, clearcoatRoughness: 0.5,
                 emissive: 0x0080ff, emissiveIntensity: 0.25,
-                sheenColor: 0xf471c7, sheen: 1//,
-                //anisotropy: 1//,
-                //normalMap: this.loader.load("textures/pave-normal.png"),
-                //map: "textures/pave.png"
+                sheenColor: 0xf471c7, sheen: 1,//,
+                anisotropy: 1,
+                normalMap: "textures/cloud-normal.png",
+                normalScale: new three.Vector2(2, 2),
+                map: "textures/pave.png"
             },
             fireWorld: {
                 color: 0xff0000,
@@ -29,7 +30,8 @@ export default class Materials {
                 emissive: 0x990000, emissiveIntensity: 0.5,
                 sheenColor: 0xf41137, sheen: 1,
                 anisotropy: 1,
-                //normalMap: this.loader.load("textures/pave-normal.png"),
+                normalMap: "textures/cloud-normal.png",
+                normalScale: new three.Vector2(2, 2),
                 map: "textures/pave.png"
             },
             greenWorld: {
@@ -60,8 +62,8 @@ export default class Materials {
                 sheenColor: 0xff66ff, sheen: 0.68,
                 anisotropy: 0,
                 attenuationColor: 0xf80762,
-                //normalMap: "textures/pebbles-normal.png",
-                //normalScale: 1,
+                normalMap: "textures/pebbles-normal.png",
+                normalScale: new three.Vector2(2, 2),
                 map: "textures/pebbles.png"
             },
             brushedMetal: {

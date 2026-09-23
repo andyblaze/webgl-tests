@@ -20,14 +20,12 @@ const materials = new Materials(THREE);
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-/*lighting.add(scene, "point", { color: 0xff0000, intensity: 80 }).
-    setPosition(0, 8, 0).
-    setShadows(true).
-    setShadowMapSize(1024).
-    addEffects([new LightDimmer(0.2, 0.1), new ColorCycler(THREE, 0.01)]);*/
-
+lighting.add(scene, "point", { color: 0xff00ff, intensity: 180 }).
+    setPosition(0, 9, 0).
+addEffects([new LightDimmer(0.2, 20), new ColorCycler(THREE, 0.0001)]);
+/*
 lighting.add(scene, "spot", { color: 0xff0000, intensity: 80, angle: deg2rad(35), distance: 15 }).
-    setPosition(0, 9, 5).setTarget(0, 0, 0).
+    setPosition(0, 9, 5).setTarget(-3, 0, 0).
     setShadows(true).setShadowMapSize(1024).
 addEffects([new ColorCycler(THREE, 0.04)]);
 
@@ -37,23 +35,7 @@ addEffects([new ColorCycler(THREE, 0.07)]);
 
 lighting.add(scene, "spot", { color: 0x0000ff, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(-5, 5, 5).setTarget(0, 0, 0).
-addEffects([new ColorCycler(THREE, 0.011)]);
-
-/*lighting.add(scene, "point", { color: 0x00ff00, intensity: 80 }).
-    setPosition(-6, -2, 2).
-    addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.04)]);
-
-lighting.add(scene, "point", { color: 0x0000ff, intensity: 80 }).
-    setPosition(6, -2, 2).
-    addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.07)]);
-
-lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
-    setPosition(-4, 0, 8).
-    addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.11)]);
-
-lighting.add(scene, "point", { color: 0x0000ff, intensity: 120 }).
-    setPosition(4, 0, 8).
-    addEffects([new LightDimmer(0.5, 0.5), new ColorCycler(THREE, 0.13)]);*/
+addEffects([new ColorCycler(THREE, 0.011)]);*/
 
 const egg = factory.create("sphere", materials.get("brushedMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
@@ -63,9 +45,9 @@ const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.ge
 torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(3, 0, 3);
 torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater()]);
 
-const pot = factory.create("flowerpot", materials.get("greenWorld"));
-pot.setShadows(true, true).setScale(0.5, 1, 1).setPosition(0, 0, 0);
-pot.addEffects([new Orbiter(4, 0.31, "x"), new Rotater()]);
+const hedron = factory.create("dodecahedron", materials.get("pinkMetal"));
+hedron.setShadows(true, true).setPosition(-3, 0, 0);
+hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater()]);
 
 const floor = factory.create("hidefPlane", materials.get("floor")); 
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
@@ -75,13 +57,7 @@ const spikes = factory.create("spikyCube", materials.get("iceWorld"));
 spikes.setShadows(true, true).setPosition(0, -2, 0);
 spikes.addEffects([new Orbiter(4, 0.31, "y"), new Rotater(3, 4, 5)]);
 
-/*const geo = { width: 1.5, pitch: 3, tubeRadius: 0.05, tubularSegments: 48, radialSegments: 8 };
-const mat = materials.get("brushedBrass");
-
-const dna = new Dna(THREE, 3, geo, mat);
-dna.addTo(scene);*/
-
-world.addLighting(lighting).add([egg, torus, floor, spikes]);
+world.addLighting(lighting).add([egg, torus, hedron, floor, spikes]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
