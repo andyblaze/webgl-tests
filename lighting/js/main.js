@@ -127,7 +127,8 @@ class HelixSegment {
     halfRung(three, length, pos, c) {
         const r = new three.Mesh(
             new three.CylinderGeometry(0.05, 0.05, length, 8),
-            new three.MeshPhysicalMaterial({ color: c, emissive: c, emissiveIntensity: 0.2 })
+            new three.MeshPhysicalMaterial({ color: c, emissive: c, emissiveIntensity: 0.5, roughness: 0.7, metalness: 0.3,
+                clearcoat: 0.75, clearcoatRoughness: 0.25, sheenColor: c, sheen: 0.2 })
         );  
         r.position.y = pos;  
         return r;
@@ -140,7 +141,7 @@ class HelixSegment {
         const c2 = this.makeConnector(three, -(length / 2));
         grp.add(c2);
 
-        const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
+        const colors = [0xff0000, 0x00ff00, 0x0000ff, 0x00ffff];
         const idx1 = mt_rand(0, 4);
         let idx2 = mt_rand(0, 4);
         while ( idx1 == idx2 ) {
@@ -203,6 +204,9 @@ class Dna {
         box.getSize(size);
         this.threeObj.position.y = -size.y / 2;
     }
+    update(dt) {
+        this.threeObj.rotation.y += 0.009;
+    }
     get native() {
         return this.threeObj;
     }
@@ -227,6 +231,7 @@ function animate(timestamp) {
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
     world.update(time);
+    dna.update(time.dt);
     controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
