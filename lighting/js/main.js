@@ -20,9 +20,9 @@ const materials = new Materials(THREE);
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-lighting.add(scene, "point", { color: 0xff00ff, intensity: 180 }).
+lighting.add(scene, "point", { color: 0xff00ff, intensity: 80 }).
     setPosition(0, 9, 0).
-addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 0.1)]);
+addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 1)]);
 /*
 lighting.add(scene, "spot", { color: 0xff0000, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(0, 9, 5).setTarget(-3, 0, 0).
