@@ -9,7 +9,6 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
 import { deg2rad, randomFrom, mt_rand } from "./functions.js";
-import Dna from "./dna.js";
 import World from "./world.js";
 
 const config = new Config(THREE, window);

@@ -24,9 +24,8 @@ class HelixCurve extends THREE.Curve {
 class HelixSegment extends ThreeGroup {
     constructor(three, geo, mat) {
         super(three);
-        this.numRungs = 6;
-        //this.threeObj = new three.Group();
-        const {width, pitch, tubeRadius, tubularSegments, radialSegments } = geo;
+        this.numRungs = 6; // only used when creating a dna strand
+        const { width, pitch, tubeRadius, tubularSegments, radialSegments } = geo;
 
         this.curveA = new HelixCurve(width, pitch, 0);
         this.curveB = new HelixCurve(width, pitch, Math.PI);
