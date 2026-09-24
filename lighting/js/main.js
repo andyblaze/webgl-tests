@@ -6,9 +6,10 @@ import Lighting from "./lighting/lighting.js";
 import Materials from "./materials.js";
 import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
-import { deg2rad, randomFrom, mt_rand } from "./functions.js";
+import { deg2rad } from "./functions.js";
 import World from "./world.js";
 
 const config = new Config(THREE, window);
@@ -20,11 +21,11 @@ const materials = new Materials(THREE);
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-lighting.add(scene, "point", { color: 0xff00ff, intensity: 80 }).
-    setPosition(0, 9, 0).
-addEffects([new LightDimmer(0.2, 0.2), new ColorCycler(THREE, 1)]);
-/*
-lighting.add(scene, "spot", { color: 0xff0000, intensity: 80, angle: deg2rad(35), distance: 15 }).
+lighting.add(scene, "point", { color: 0x00ffff, intensity: 60 }).
+    setPosition(-5, -3, 0).
+addEffects([new LightDimmer(0.9, 0.02), new ColorCycler(THREE, 0.01)]);
+
+lighting.add(scene, "spot", { color: 0x0000ff, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(0, 9, 5).setTarget(-3, 0, 0).
     setShadows(true).setShadowMapSize(1024).
 addEffects([new ColorCycler(THREE, 0.04)]);
@@ -35,7 +36,7 @@ addEffects([new ColorCycler(THREE, 0.07)]);
 
 lighting.add(scene, "spot", { color: 0x0000ff, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(-5, 5, 5).setTarget(0, 0, 0).
-addEffects([new ColorCycler(THREE, 0.011)]);*/
+addEffects([new ColorCycler(THREE, 0.011)]);
 
 const egg = factory.create("sphere", materials.get("brushedMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
@@ -57,10 +58,29 @@ const spikes = factory.create("spikyCube", materials.get("iceWorld"));
 spikes.setShadows(true, true).setPosition(0, -2, 0);
 spikes.addEffects([new Orbiter(4, 0.31, "y"), new Rotater(3, 4, 5)]);
 
+const mirror = factory.create(
+    "mirror", 
+    { width: 5, height: 5, texW: config.innerW * config.dpr, texH: config.innerH * config.dpr },
+    { color: 0xffffff }
+);
+mirror.setPosition(-5, 0, 0).setRotation(0, deg2rad(45), 0);
+scene.add(mirror.native);
+
 world.addLighting(lighting).add([egg, torus, hedron, floor, spikes]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+
+/*const geometry = new THREE.PlaneGeometry( 5, 5 );
+const reflector = new Reflector( geometry, {
+	clipBias: 0.003,
+	textureWidth: config.innerW * config.dpr,
+	textureHeight: config.innerH * config.dpr,
+	color: 0xffffff
+} );
+reflector.position.x = -5;
+reflector.rotation.y = Math.PI / 3;
+scene.add( reflector );*/
 
 const timer = new THREE.Clock();
 const time = { dt: 0,  elapsed: 0, timestamp: 0 };

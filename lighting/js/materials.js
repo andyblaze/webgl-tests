@@ -8,8 +8,9 @@ export default class Materials {
                 metalness:0.15, roughness: 0.85,
                 emissive:0xff0000, emissiveIntensity: 0.1,
                 clearcoat: 1, clearcoatRoughness: 0.5,
-                anisotropy: 0.25,
+                anisotropy: 1,
                 normalMap: "textures/brush-normal.png",
+                normalScale: new three.Vector2(2, 2),
                 map: "textures/tiles.jpg"
             },
             iceWorld: {

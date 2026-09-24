@@ -13,6 +13,7 @@ import TorusKnot from "./shapes/torusknot.js";
 import Bowl from "./shapes/bowl.js";
 import FlyingSaucer from "./shapes/alien-ship.js";
 import SpikyCube from "./shapes/spiky-cube.js";
+import Mirror from "./shapes/mirror.js";
 import * as C from "./constants.js";
 
 class ShapeRegistry {
@@ -87,6 +88,15 @@ class ShapeRegistry {
                 ctor: Icosahedron,
                 defaultGeo: {
                     radius: 1, detail: 0
+                },
+                defaultMat: { color: 0xffffff }
+            },
+            mirror: {
+                ctor: Mirror,
+                defaultGeo: {
+                    width: 5, height: 5,
+                    texW: window.innerWidth * window.devicePixelRatio,
+                    texH: window.innerHeight * window.devicePixelRatio
                 },
                 defaultMat: { color: 0xffffff }
             },

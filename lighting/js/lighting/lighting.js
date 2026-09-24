@@ -15,6 +15,6 @@ export default class Lighting {
     }
     update(time) {
         for ( const l of this.lights )
-            l.doUpdate(time);
+            l.update(time);
     }
 }

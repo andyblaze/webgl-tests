@@ -67,11 +67,11 @@ export class ColorCycler extends EffectBase {
             new three.Color(0xffff00), // yellow
         ];
     }
-    start(parent) {
+    start(parent) { 
         this.time = Math.random();
-        return this.init();
+        return this.init(); 
     }
-    update(parent, time) { //console.log(time);
+    update(parent, time) { //console.log(Math.random()); // this never triggers
         if ( this.inactive() ) return;
         this.time += time.dt * this.speed;
 
