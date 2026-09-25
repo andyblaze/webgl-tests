@@ -9,7 +9,7 @@ export default class Sphere extends ThreeObj {
         this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
     }
-    dimple(depth = 0.95) {
+    dimple(depth=0.95) {
         const positions = this.geometry.attributes.position;
         //const radius = this.radius;
         const dimpleRadius = this.radius * 1.1;

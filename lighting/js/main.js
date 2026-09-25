@@ -60,27 +60,15 @@ spikes.addEffects([new Orbiter(4, 0.31, "y"), new Rotater(3, 4, 5)]);
 
 const mirror = factory.create(
     "mirror", 
-    { width: 5, height: 5, texW: config.innerW * config.dpr, texH: config.innerH * config.dpr },
+    { width: 5, height: 5, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
 );
-mirror.setPosition(-5, 0, 0).setRotation(0, deg2rad(45), 0);
-scene.add(mirror.native);
+mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([egg, torus, hedron, floor, spikes]);
+world.addLighting(lighting).add([egg, torus, hedron, floor, spikes, mirror]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-
-/*const geometry = new THREE.PlaneGeometry( 5, 5 );
-const reflector = new Reflector( geometry, {
-	clipBias: 0.003,
-	textureWidth: config.innerW * config.dpr,
-	textureHeight: config.innerH * config.dpr,
-	color: 0xffffff
-} );
-reflector.position.x = -5;
-reflector.rotation.y = Math.PI / 3;
-scene.add( reflector );*/
 
 const timer = new THREE.Clock();
 const time = { dt: 0,  elapsed: 0, timestamp: 0 };
