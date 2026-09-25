@@ -72,21 +72,37 @@ world.addLighting(lighting).add([egg, torus, hedron, floor, box]);//, mirror]);
 // ------------------------------------------------------------
 
 class Curve {
+
     constructor(three) {
+
+        this.three = three;
+
         this.curve = new three.CatmullRomCurve3([
             new three.Vector3(0, 0, 0),
             new three.Vector3(1, 1, 0),
             new three.Vector3(2, 2, 0),
             new three.Vector3(3, 3, 1),
         ]);
-        this.curveGeometry = new three.BufferGeometry().setFromPoints(
-            this.curve.getPoints(50)
-        );
+
+        this.curveGeometry =
+            new three.BufferGeometry().setFromPoints(
+                this.curve.getPoints(50)
+            );
+
         this.curveLine = new three.Line(
             this.curveGeometry,
             new three.LineBasicMaterial()
         );
     }
+
+    getPointAt(t, target) {
+        return this.curve.getPointAt(t, target);
+    }
+
+    getTangentAt(t, target) {
+        return this.curve.getTangentAt(t, target);
+    }
+
     get native() {
         return this.curveLine;
     }
@@ -134,7 +150,7 @@ function bendConeAlongCurve(geometry, curve, height) {
     // so that it follows the curve.
     const quaternion = new THREE.Quaternion();
 
-    for (let i = 0; i < position.count; i++) {
+    for ( let i = 0; i < position.count; i++ ) {
 
         // Original position on the straight cone
         const x = position.getX(i);
