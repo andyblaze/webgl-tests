@@ -71,58 +71,57 @@ world.addLighting(lighting).add([egg, torus, hedron, floor, box]);//, mirror]);
 // A simple curve
 // ------------------------------------------------------------
 
-const curve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(1, 1, 0),
-    new THREE.Vector3(2, 2, 0),
-    new THREE.Vector3(3, 3, 1),
-]);
-
-
-// ------------------------------------------------------------
-// Draw the curve so we can see it
-// ------------------------------------------------------------
-
-const curveGeometry = new THREE.BufferGeometry().setFromPoints(
-    curve.getPoints(50)
-);
-
-const curveLine = new THREE.Line(
-    curveGeometry,
-    new THREE.LineBasicMaterial()
-);
-
-scene.add(curveLine);
-
-
-// ------------------------------------------------------------
-// Cone
-// ------------------------------------------------------------
-
-const coneGeometry = new THREE.ConeGeometry(
-    0.5,   // radius
-    3,     // height
-    16,    // radial segments
-    32     // height segments
-);
-
-
-// ------------------------------------------------------------
-// Move the cone so its base is at Y = 0
-// ------------------------------------------------------------
-
-const position = coneGeometry.attributes.position;
-
-for (let i = 0; i < position.count; i++) {
-    position.setY(i, position.getY(i) + 1.5);
+class Curve {
+    constructor(three) {
+        this.curve = new three.CatmullRomCurve3([
+            new three.Vector3(0, 0, 0),
+            new three.Vector3(1, 1, 0),
+            new three.Vector3(2, 2, 0),
+            new three.Vector3(3, 3, 1),
+        ]);
+        this.curveGeometry = new three.BufferGeometry().setFromPoints(
+            this.curve.getPoints(50)
+        );
+        this.curveLine = new three.Line(
+            this.curveGeometry,
+            new three.LineBasicMaterial()
+        );
+    }
+    get native() {
+        return this.curveLine;
+    }
 }
+const curve = new Curve(THREE);
+scene.add(curve.native);
 
-position.needsUpdate = true;
 
+class Cone {
+    constructor(three) {
+        this.geometry = new three.ConeGeometry(
+            0.5,   // radius
+            3,     // height
+            16,    // radial segments
+            32     // height segments
+        );
+        this.material = new three.MeshNormalMaterial();
 
-// ------------------------------------------------------------
-// Bend cone along curve
-// ------------------------------------------------------------
+        const position = this.geometry.attributes.position;
+
+        for ( let i = 0; i < position.count; i++ ) {
+            position.setY(i, position.getY(i) + 1.5);
+        }
+
+        position.needsUpdate = true;        
+
+        this.cone = new three.Mesh(
+            this.geometry,
+            this.material
+        );
+    }
+    get native() {
+        return this.cone;
+    }
+}
 
 function bendConeAlongCurve(geometry, curve, height) {
 
@@ -177,21 +176,11 @@ function bendConeAlongCurve(geometry, curve, height) {
 }
 
 
-bendConeAlongCurve(coneGeometry, curve, 3);
+const cone = new Cone(THREE);
 
+bendConeAlongCurve(cone.geometry, curve.curve, 3);
 
-// ------------------------------------------------------------
-// Mesh
-// ------------------------------------------------------------
-
-const coneMaterial = new THREE.MeshNormalMaterial();
-
-const cone = new THREE.Mesh(
-    coneGeometry,
-    coneMaterial
-);
-
-scene.add(cone);
+scene.add(cone.native);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
