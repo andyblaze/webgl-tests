@@ -54,9 +54,9 @@ const floor = factory.create("hidefPlane", materials.get("floor"));
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
 setPosition(0, -6, -8.5).addEffects([new Deformation()]);
 
-const spikes = factory.create("spikyCube", materials.get("iceWorld"));
-spikes.setShadows(true, true).setPosition(0, -2, 0);
-spikes.addEffects([new Orbiter(4, 0.31, "y"), new Rotater(3, 4, 5)]);
+const box = factory.create("flexiBox", materials.get("brushedBrass"));
+box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
+box.addEffects([new Rotater()]);
 
 const mirror = factory.create(
     "mirror", 
@@ -65,7 +65,7 @@ const mirror = factory.create(
 );
 mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([egg, torus, hedron, floor, spikes, mirror]);
+world.addLighting(lighting).add([egg, torus, hedron, floor, box, mirror]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;

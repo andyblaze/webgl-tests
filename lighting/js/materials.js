@@ -51,7 +51,7 @@ export default class Materials {
                 clearcoat: 0.75, clearcoatRoughness: 0.25,
                 emissive: 0xe0b347, emissiveIntensity: 0.5,
                 sheenColor: 0xc5e21d, sheen: 0.2,
-                anisotropy: 0,
+                anisotropy: 0//,
                 //normalMap: "textures/marble-normal.png",
                 //map: "textures/brush.png"
             },

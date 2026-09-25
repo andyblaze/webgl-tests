@@ -1,4 +1,5 @@
 import Box from "./shapes/box.js";
+import FlexiBox from "./shapes/flexi-box.js";
 import Sphere from "./shapes/sphere.js";
 import Capsule from "./shapes/capsule.js";
 import Cone from "./shapes/cone.js";
@@ -34,6 +35,14 @@ class ShapeRegistry {
                 defaultGeo: {
                     width: 1, height: 1, depth: 1, 
                     widthSegments: 1, heightSegments: 1, depthSegments: 1
+                },
+                defaultMat: { color: 0xffffff }
+            },
+            flexiBox: {
+                ctor: FlexiBox,
+                defaultGeo: {
+                    width: 1, height: 1, depth: 1, 
+                    widthSegments: 64, heightSegments: 64, depthSegments: 64
                 },
                 defaultMat: { color: 0xffffff }
             },
