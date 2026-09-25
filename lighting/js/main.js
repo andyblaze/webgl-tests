@@ -58,14 +58,140 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-const mirror = factory.create(
+/*const mirror = factory.create(
     "mirror", 
     { width: 5, height: 5, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
 );
-mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
+mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);*/
 
-world.addLighting(lighting).add([egg, torus, hedron, floor, box, mirror]);
+world.addLighting(lighting).add([egg, torus, hedron, floor, box]);//, mirror]);
+
+// ------------------------------------------------------------
+// A simple curve
+// ------------------------------------------------------------
+
+const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(1, 1, 0),
+    new THREE.Vector3(2, 2, 0),
+    new THREE.Vector3(3, 3, 1),
+]);
+
+
+// ------------------------------------------------------------
+// Draw the curve so we can see it
+// ------------------------------------------------------------
+
+const curveGeometry = new THREE.BufferGeometry().setFromPoints(
+    curve.getPoints(50)
+);
+
+const curveLine = new THREE.Line(
+    curveGeometry,
+    new THREE.LineBasicMaterial()
+);
+
+scene.add(curveLine);
+
+
+// ------------------------------------------------------------
+// Cone
+// ------------------------------------------------------------
+
+const coneGeometry = new THREE.ConeGeometry(
+    0.5,   // radius
+    3,     // height
+    16,    // radial segments
+    32     // height segments
+);
+
+
+// ------------------------------------------------------------
+// Move the cone so its base is at Y = 0
+// ------------------------------------------------------------
+
+const position = coneGeometry.attributes.position;
+
+for (let i = 0; i < position.count; i++) {
+    position.setY(i, position.getY(i) + 1.5);
+}
+
+position.needsUpdate = true;
+
+
+// ------------------------------------------------------------
+// Bend cone along curve
+// ------------------------------------------------------------
+
+function bendConeAlongCurve(geometry, curve, height) {
+
+    const position = geometry.attributes.position;
+
+    const point = new THREE.Vector3();
+    const tangent = new THREE.Vector3();
+
+    // We'll use this to rotate the cone's original Y axis
+    // so that it follows the curve.
+    const quaternion = new THREE.Quaternion();
+
+    for (let i = 0; i < position.count; i++) {
+
+        // Original position on the straight cone
+        const x = position.getX(i);
+        const y = position.getY(i);
+        const z = position.getZ(i);
+
+        // How far along the cone?
+        const t = y / height;
+
+        // Where are we on the curve?
+        curve.getPointAt(t, point);
+
+        // Which direction is the curve travelling here?
+        curve.getTangentAt(t, tangent);
+
+        // Rotate the cone's Y axis so it points
+        // along the curve.
+        quaternion.setFromUnitVectors(
+            new THREE.Vector3(0, 1, 0),
+            tangent
+        );
+
+        // Take the vertex's distance from the cone centre
+        // and rotate that around the curve.
+        const offset = new THREE.Vector3(x, 0, z);
+
+        offset.applyQuaternion(quaternion);
+
+        // Put the vertex around the curve.
+        position.setXYZ(
+            i,
+            point.x + offset.x,
+            point.y + offset.y,
+            point.z + offset.z
+        );
+    }
+
+    position.needsUpdate = true;
+}
+
+
+bendConeAlongCurve(coneGeometry, curve, 3);
+
+
+// ------------------------------------------------------------
+// Mesh
+// ------------------------------------------------------------
+
+const coneMaterial = new THREE.MeshNormalMaterial();
+
+const cone = new THREE.Mesh(
+    coneGeometry,
+    coneMaterial
+);
+
+scene.add(cone);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
