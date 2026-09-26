@@ -92,10 +92,13 @@ class Curve {
 
 class Cone {
     constructor(three, geo) {
+        this.three = three;
         const { radius, height, radialSegments, heightSegments } = geo;
         this.geometry = new three.ConeGeometry(radius, height, radialSegments, heightSegments);
         this.material = new three.MeshNormalMaterial();
+        this.radius = radius;
         this.height = height;
+        this.radialSegments = radialSegments;
         this.preppedForDeformation = false;
 
         this.cone = new three.Mesh(
@@ -104,10 +107,24 @@ class Cone {
         );
     }
     prepForDeformation() {
+        if ( true === this.preppedForDeformation ) return;
+
+        this.geometry.dispose();
+
+        this.geometry = new this.three.ConeGeometry(
+            this.radius,
+            this.height,
+            this.radialSegments,
+            32
+        );
+
+        this.cone.geometry = this.geometry;
+
         const position = this.geometry.attributes.position;
+        const halfHeight = this.height / 2;
 
         for ( let i = 0; i < position.count; i++ ) {
-            position.setY(i, position.getY(i) + 1.5);
+            position.setY(i, position.getY(i) + halfHeight);
         }
 
         position.needsUpdate = true;    
@@ -181,8 +198,9 @@ class Bender {
     }
 }
 
-const cone = new Cone(THREE, { radius: 0.5, height: 3, radialSegments: 32, heightSegments: 16 });
+const cone = new Cone(THREE, { radius: 0.5, height: 3, radialSegments: 16, heightSegments: 8 });
 cone.deformWith(new Bender(THREE, new Curve(THREE)));
+cone.native.scale.set(0.5, 0.5, 0.5);
 
 scene.add(cone.native);
 
