@@ -72,9 +72,7 @@ world.addLighting(lighting).add([egg, torus, hedron, floor, box]);//, mirror]);
 // ------------------------------------------------------------
 
 class Curve {
-
     constructor(three) {
-
         this.three = three;
 
         this.curve = new three.CatmullRomCurve3([
@@ -83,118 +81,108 @@ class Curve {
             new three.Vector3(2, 2, 0),
             new three.Vector3(3, 3, 1),
         ]);
-
-        this.curveGeometry =
-            new three.BufferGeometry().setFromPoints(
-                this.curve.getPoints(50)
-            );
-
-        this.curveLine = new three.Line(
-            this.curveGeometry,
-            new three.LineBasicMaterial()
-        );
     }
-
     getPointAt(t, target) {
         return this.curve.getPointAt(t, target);
     }
-
     getTangentAt(t, target) {
         return this.curve.getTangentAt(t, target);
     }
-
-    get native() {
-        return this.curveLine;
-    }
 }
-const curve = new Curve(THREE);
-scene.add(curve.native);
-
 
 class Cone {
-    constructor(three) {
-        this.geometry = new three.ConeGeometry(
-            0.5,   // radius
-            3,     // height
-            16,    // radial segments
-            32     // height segments
-        );
+    constructor(three, geo) {
+        const { radius, height, radialSegments, heightSegments } = geo;
+        this.geometry = new three.ConeGeometry(radius, height, radialSegments, heightSegments);
         this.material = new three.MeshNormalMaterial();
-
-        const position = this.geometry.attributes.position;
-
-        for ( let i = 0; i < position.count; i++ ) {
-            position.setY(i, position.getY(i) + 1.5);
-        }
-
-        position.needsUpdate = true;        
+        this.height = height;
+        this.preppedForDeformation = false;
 
         this.cone = new three.Mesh(
             this.geometry,
             this.material
         );
     }
+    prepForDeformation() {
+        const position = this.geometry.attributes.position;
+
+        for ( let i = 0; i < position.count; i++ ) {
+            position.setY(i, position.getY(i) + 1.5);
+        }
+
+        position.needsUpdate = true;    
+        this.preppedForDeformation = true;    
+    }
+    deformWith(deformer) {
+        if ( false === this.preppedForDeformation )
+            this.prepForDeformation();
+        deformer.applyTo(this);
+    }
     get native() {
         return this.cone;
     }
 }
 
-function bendConeAlongCurve(geometry, curve, height) {
-
-    const position = geometry.attributes.position;
-
-    const point = new THREE.Vector3();
-    const tangent = new THREE.Vector3();
-
-    // We'll use this to rotate the cone's original Y axis
-    // so that it follows the curve.
-    const quaternion = new THREE.Quaternion();
-
-    for ( let i = 0; i < position.count; i++ ) {
-
-        // Original position on the straight cone
-        const x = position.getX(i);
-        const y = position.getY(i);
-        const z = position.getZ(i);
-
-        // How far along the cone?
-        const t = y / height;
-
-        // Where are we on the curve?
-        curve.getPointAt(t, point);
-
-        // Which direction is the curve travelling here?
-        curve.getTangentAt(t, tangent);
-
-        // Rotate the cone's Y axis so it points
-        // along the curve.
-        quaternion.setFromUnitVectors(
-            new THREE.Vector3(0, 1, 0),
-            tangent
-        );
-
-        // Take the vertex's distance from the cone centre
-        // and rotate that around the curve.
-        const offset = new THREE.Vector3(x, 0, z);
-
-        offset.applyQuaternion(quaternion);
-
-        // Put the vertex around the curve.
-        position.setXYZ(
-            i,
-            point.x + offset.x,
-            point.y + offset.y,
-            point.z + offset.z
-        );
+class Bender {
+    constructor(three, curve) {
+        this.three = three;
+        this.curve = curve;
     }
+    applyTo(shape) {
+        const geometry = shape.geometry;
+        const height = shape.height;
+        const position = geometry.attributes.position;
 
-    position.needsUpdate = true;
+        const point = new this.three.Vector3();
+        const tangent = new this.three.Vector3();
+
+        // We'll use this to rotate the cone's original Y axis
+        // so that it follows the curve.
+        const quaternion = new this.three.Quaternion();
+        const axis = new this.three.Vector3(0, 1, 0);
+        const offset = new this.three.Vector3();
+
+        for ( let i = 0; i < position.count; i++ ) {
+
+            // Original position on the straight cone
+            const x = position.getX(i);
+            const y = position.getY(i);
+            const z = position.getZ(i);
+
+            // How far along the cone?
+            const t = y / height;
+
+            // Where are we on the curve?
+            this.curve.getPointAt(t, point);
+
+            // Which direction is the curve travelling here?
+            this.curve.getTangentAt(t, tangent);
+
+            // Rotate the cone's Y axis so it points
+            // along the curve.
+            quaternion.setFromUnitVectors(axis, tangent);
+
+            // Take the vertex's distance from the cone centre
+            // and rotate that around the curve.
+            offset.set(x, 0, z);
+
+            offset.applyQuaternion(quaternion);
+
+            // Put the vertex around the curve.
+            position.setXYZ(
+                i,
+                point.x + offset.x,
+                point.y + offset.y,
+                point.z + offset.z
+            );
+        }
+
+        position.needsUpdate = true;        
+    }
 }
 
-
-const cone = new Cone(THREE);
-
-bendConeAlongCurve(cone.geometry, curve.curve, 3);
+const cone = new Cone(THREE, { radius: 0.5, height: 3, radialSegments: 32, heightSegments: 16 });
+cone.deformWith(new Bender(THREE, new Curve(THREE)));
 
 scene.add(cone.native);
 
