@@ -42,7 +42,7 @@ addEffects([new ColorCycler(THREE, 0.011)]);
 
 const egg = factory.create("sphere", materials.get("brushedMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
-egg.addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
+egg.setScale(0.5, 1, 0.5).addEffects([new Orbiter(2, 0.23, "y"), new Rotater()]);
 
 const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));
 torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(3, 0, 3);
@@ -60,9 +60,9 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-const cone = factory.create("cone", materials.get("brushedBrass"));
+const cone = factory.create("cone", { radius: 0.25}, materials.get("pinkMetal"));
 cone.bendWith(new Bend(THREE, CurveRegistry.get("helix", THREE)));
-cone.setPosition(10, 3, -1).setScale(0.25, 1, 0.25).addEffects([new Rotater()]);
+cone.setPosition(0, 2, 0).setScale(0.25, 1, 0.25).addEffects([new Orbiter(4, 0.23, "y"), new Rotater()]);
 
 const mirror = factory.create(
     "mirror", 

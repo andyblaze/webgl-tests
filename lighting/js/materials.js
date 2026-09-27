@@ -42,7 +42,8 @@ export default class Materials {
                 emissive: 0x009900, emissiveIntensity: 0.5,
                 sheenColor: 0x11f437, sheen: 1,
                 anisotropy: 1,
-                //normalMap: "textures/pave-normal.png",
+                normalMap: "textures/pave-normal.png",
+                normalScale: new three.Vector2(2, 2),
                 map: "textures/pave.png"
             },
             brushedBrass: {
@@ -51,9 +52,10 @@ export default class Materials {
                 clearcoat: 0.75, clearcoatRoughness: 0.25,
                 emissive: 0xe0b347, emissiveIntensity: 0.5,
                 sheenColor: 0xc5e21d, sheen: 0.2,
-                anisotropy: 0//,
-                //normalMap: "textures/marble-normal.png",
-                //map: "textures/brush.png"
+                anisotropy: 0,
+                normalMap: "textures/marble-normal.png",
+                normalScale: new three.Vector2(2, 2),
+                map: "textures/brush.png"
             },
             pinkMetal: {
                 color: 0xff0080,
@@ -76,8 +78,8 @@ export default class Materials {
                 anisotropy: 1,
                 attenuationColor: 0xf80762,
                 normalMap: "textures/brush-normal.png",
-                normalScale: new three.Vector2(2, 2)//[1, 1],
-                //map: "textures/brush.png"
+                normalScale: new three.Vector2(2, 2),
+                map: "textures/brush.png"
             }
         };
     }
@@ -89,7 +91,7 @@ export default class Materials {
         return texture;
     }
     get(name) {
-        const mat = this.data[name];
+        const mat = {...this.data[name]};
         if ( mat.map )
             mat.map = this.prepareTexture(this.loader.load(mat.map));
         if ( mat.normalMap )
