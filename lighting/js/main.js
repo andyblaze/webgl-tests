@@ -58,14 +58,12 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-/*const mirror = factory.create(
+const mirror = factory.create(
     "mirror", 
     { width: 5, height: 5, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
 );
-mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);*/
-
-world.addLighting(lighting).add([egg, torus, hedron, floor, box]);//, mirror]);
+mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
 
 // ------------------------------------------------------------
 // A simple curve
@@ -95,10 +93,11 @@ class Cone {
         this.three = three;
         const { radius, height, radialSegments, heightSegments } = geo;
         this.geometry = new three.ConeGeometry(radius, height, radialSegments, heightSegments);
-        this.material = new three.MeshNormalMaterial();
+        this.material = new three.MeshPhysicalMaterial({ color: 0xffffff });
         this.radius = radius;
         this.height = height;
         this.radialSegments = radialSegments;
+        this.bendSegments = heightSegments;
         this.preppedForDeformation = false;
 
         this.cone = new three.Mesh(
@@ -106,19 +105,17 @@ class Cone {
             this.material
         );
     }
-    prepForDeformation() {
+    prepForBend(minSegments) {
         if ( true === this.preppedForDeformation ) return;
 
-        this.geometry.dispose();
+        if ( this.bendSegments < minSegments ) {
 
-        this.geometry = new this.three.ConeGeometry(
-            this.radius,
-            this.height,
-            this.radialSegments,
-            32
-        );
+            this.geometry.dispose();
 
-        this.cone.geometry = this.geometry;
+            this.geometry = new this.three.ConeGeometry(this.radius, this.height, this.radialSegments, minSegments);
+
+            this.cone.geometry = this.geometry;
+        }
 
         const position = this.geometry.attributes.position;
         const halfHeight = this.height / 2;
@@ -130,20 +127,26 @@ class Cone {
         position.needsUpdate = true;    
         this.preppedForDeformation = true;    
     }
-    deformWith(deformer) {
+    bendWith(bend) {
         if ( false === this.preppedForDeformation )
-            this.prepForDeformation();
-        deformer.applyTo(this);
+            this.prepForBend(bend.minSegments);
+        bend.applyTo(this);
+        const center = new this.three.Vector3();
+
+        this.geometry.computeBoundingBox();
+        this.geometry.boundingBox.getCenter(center);
+        this.geometry.translate(-center.x, -center.y, -center.z);
     }
     get native() {
         return this.cone;
     }
 }
 
-class Bender {
+class Bend {
     constructor(three, curve) {
         this.three = three;
         this.curve = curve;
+        this.minSegments = 32;
     }
     applyTo(shape) {
         const geometry = shape.geometry;
@@ -197,12 +200,12 @@ class Bender {
         position.needsUpdate = true;        
     }
 }
+//new Cone(THREE, { radius: 0.5, height: 3, radialSegments: 16, heightSegments: 8 });
+const cone = factory.create("cone", materials.get("brushedBrass"));
+cone.bendWith(new Bend(THREE, new Curve(THREE)));
+cone.setScale(0.5, 0.5, 0.5).addEffects([new Rotater()]);
 
-const cone = new Cone(THREE, { radius: 0.5, height: 3, radialSegments: 16, heightSegments: 8 });
-cone.deformWith(new Bender(THREE, new Curve(THREE)));
-cone.native.scale.set(0.5, 0.5, 0.5);
-
-scene.add(cone.native);
+world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, mirror]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -215,7 +218,9 @@ function animate(timestamp) {
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
     world.update(time);
-    //dna.update(time.dt);
+    cone.native.rotation.x += time.dt * 0.3;
+    cone.native.rotation.y += time.dt * 0.1;
+    cone.native.rotation.z += time.dt * 0.5;
     controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

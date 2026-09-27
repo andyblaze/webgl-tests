@@ -1,13 +1,47 @@
 export default class ThreeObj {
-    constructor() {
+    constructor(three) {
+        this.three = three;
         this.threeObj = null;
         this.effects = [];
+        this.preppedForDeformation = false;
     }
     addEffects(e) {
         this.effects = e;
         for ( const e of this.effects )
             e.start(this);
         return this;
+    }
+    prepForBend(minSegments) {
+        if ( true === this.preppedForDeformation ) return;
+
+        if ( this.bendSegments < minSegments ) {
+
+            this.geometry.dispose();
+
+            this.geometry = new this.three.ConeGeometry(this.radius, this.height, this.radialSegments, minSegments);
+
+            this.cone.geometry = this.geometry;
+        }
+
+        const position = this.geometry.attributes.position;
+        const halfHeight = this.height / 2;
+
+        for ( let i = 0; i < position.count; i++ ) {
+            position.setY(i, position.getY(i) + halfHeight);
+        }
+
+        position.needsUpdate = true;    
+        this.preppedForDeformation = true;    
+    }
+    bendWith(bend) {
+        if ( false === this.preppedForDeformation )
+            this.prepForBend(bend.minSegments);
+        bend.applyTo(this);
+        const center = new this.three.Vector3();
+
+        this.geometry.computeBoundingBox();
+        this.geometry.boundingBox.getCenter(center);
+        this.geometry.translate(-center.x, -center.y, -center.z);
     }
     get native() {
         return this.threeObj;
