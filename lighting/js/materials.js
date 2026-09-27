@@ -2,6 +2,7 @@ export default class Materials {
     constructor(three) {
         this.loader = new three.TextureLoader();
         this.three = three;
+        this.loadedTextures = {};
         this.data = {
             floor: { 
                 color: 0xffffff, side: three.DoubleSide,
@@ -83,6 +84,12 @@ export default class Materials {
             }
         };
     }
+    loadTexture(path) {
+        if ( !this.loadedTextures[path] ) {
+            this.loadedTextures[path] = this.prepareTexture(this.loader.load(path));
+        }
+        return this.loadedTextures[path];
+    }
     prepareTexture(texture, repeat = 8) {
         texture.wrapS = this.three.RepeatWrapping;
         texture.wrapT = this.three.RepeatWrapping;
@@ -93,9 +100,9 @@ export default class Materials {
     get(name) {
         const mat = {...this.data[name]};
         if ( mat.map )
-            mat.map = this.prepareTexture(this.loader.load(mat.map));
+            mat.map = this.loadTexture(mat.map);
         if ( mat.normalMap )
-            mat.normalMap = this.prepareTexture(this.loader.load(mat.normalMap));
+            mat.normalMap = this.loadTexture(mat.normalMap);
         return mat;
     }
 }
