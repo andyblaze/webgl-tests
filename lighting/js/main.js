@@ -3,6 +3,7 @@ import * as THREE from "three";
 import Config from "./config.js";
 import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting/lighting.js";
+import MaterialsData from "./materials-data.js";
 import Materials from "./materials.js";
 import Deformation from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -19,7 +20,7 @@ const scene = new THREE.Scene();
 const camera = makeCamera(THREE, config);
 const renderer = makeRenderer(THREE, config);
 const lighting = new Lighting(THREE);
-const materials = new Materials(THREE);
+const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
