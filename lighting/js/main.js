@@ -68,18 +68,8 @@ mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
 // ------------------------------------------------------------
 // A simple curve
 // ------------------------------------------------------------
-
 class Curve {
-    constructor(three) {
-        this.three = three;
-
-        this.curve = new three.CatmullRomCurve3([
-            new three.Vector3(0, 0, 0),
-            new three.Vector3(1, 1, 0),
-            new three.Vector3(2, 2, 0),
-            new three.Vector3(3, 3, 1),
-        ]);
-    }
+    constructor() {}
     getPointAt(t, target) {
         return this.curve.getPointAt(t, target);
     }
@@ -87,6 +77,157 @@ class Curve {
         return this.curve.getTangentAt(t, target);
     }
 }
+
+class CowHorn extends Curve {
+    constructor(three) {
+        super();
+        this.curve = new three.CatmullRomCurve3([
+            new three.Vector3(0, 0, 0),
+            new three.Vector3(1, 1, 0),
+            new three.Vector3(2, 2, 0),
+            new three.Vector3(3, 3, 1),
+        ]);
+    }    
+}
+class Snake extends Curve {
+
+    constructor(three) {
+
+        super();
+
+        this.curve = new three.CatmullRomCurve3([
+            new three.Vector3(0, 0, 0),
+            new three.Vector3(1.5, 0.75, 0),
+            new three.Vector3(-1.5, 1.5, 0),
+            new three.Vector3(1.5, 2.25, 0),
+            new three.Vector3(0, 3, 0),
+        ]);
+
+    }
+
+}
+class Bezier extends Curve {
+    constructor(three) {
+        super();
+        this.curve = new three.CubicBezierCurve3(
+            new three.Vector3(0, 0, 0),
+            new three.Vector3(2, 0.5, 0),
+            new three.Vector3(-2, 2.5, 0),
+            new three.Vector3(0, 3, 0)
+        );
+    }
+}
+class Bend45 extends Curve {
+
+    constructor(three, height = 3) {
+
+        super();
+
+        this.three = three;
+        this.height = height;
+
+        const theta = Math.PI / 4;
+        const radius = height / theta;
+
+        this.curve = new three.CurvePath();
+
+        // We'll implement getPointAt/getTangentAt ourselves.
+        this.theta = theta;
+        this.radius = radius;
+    }
+
+    getPointAt(t, target) {
+
+        const angle = this.theta * t;
+        const r = this.radius;
+
+        target.set(
+            r * (1 - Math.cos(angle)),
+            r * Math.sin(angle),
+            0
+        );
+
+        return target;
+    }
+
+    getTangentAt(t, target) {
+
+        const angle = this.theta * t;
+
+        target.set(
+            Math.sin(angle),
+            Math.cos(angle),
+            0
+        );
+
+        return target.normalize();
+    }
+
+}
+class Spiral extends Curve {
+
+    constructor(three, height = 3) {
+        super();
+
+        this.three = three;
+        this.height = height;
+
+        this.turns = 1.5;
+        this.radius = 1.0;
+    }
+
+    getPointAt(t, target) {
+
+        const angle = Math.PI * 2 * this.turns * t;
+
+        target.set(
+            this.radius * Math.cos(angle),
+            this.height * t,
+            this.radius * Math.sin(angle)
+        );
+
+        return target;
+    }
+
+    getTangentAt(t, target) {
+
+        const angle = Math.PI * 2 * this.turns * t;
+        const scale = Math.PI * 2 * this.turns;
+
+        target.set(
+            -this.radius * scale * Math.sin(angle),
+            this.height,
+            this.radius * scale * Math.cos(angle)
+        );
+
+        return target.normalize();
+    }
+}
+class CurveRegistry {
+    static data = {
+        cowHorn: {
+            ctor: CowHorn
+        },
+        snake: {
+            ctor: Snake
+        },
+        bezier: {
+            ctor: Bezier
+        },
+        bend45: {
+            ctor: Bend45
+        },
+        helix: {
+            ctor: Spiral
+        }
+    }
+    static get(idx, three) {
+        const def = CurveRegistry.data[idx];
+        return new def.ctor(three);
+    }
+}
+
+
 
 class Cone {
     constructor(three, geo) {
@@ -146,7 +287,7 @@ class Bend {
     constructor(three, curve) {
         this.three = three;
         this.curve = curve;
-        this.minSegments = 32;
+        this.minSegments = 64;
     }
     applyTo(shape) {
         const geometry = shape.geometry;
@@ -200,10 +341,10 @@ class Bend {
         position.needsUpdate = true;        
     }
 }
-//new Cone(THREE, { radius: 0.5, height: 3, radialSegments: 16, heightSegments: 8 });
+
 const cone = factory.create("cone", materials.get("brushedBrass"));
-cone.bendWith(new Bend(THREE, new Curve(THREE)));
-cone.setScale(0.5, 0.5, 0.5).addEffects([new Rotater()]);
+cone.bendWith(new Bend(THREE, CurveRegistry.get("helix", THREE)));
+cone.setScale(0.25, 2, 0.25).addEffects([new Rotater()]);
 
 world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, mirror]);
 
@@ -218,9 +359,6 @@ function animate(timestamp) {
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
     world.update(time);
-    cone.native.rotation.x += time.dt * 0.3;
-    cone.native.rotation.y += time.dt * 0.1;
-    cone.native.rotation.z += time.dt * 0.5;
     controls.update();
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

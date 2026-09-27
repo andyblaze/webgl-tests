@@ -20,7 +20,7 @@ export default class ThreeObj {
 
             this.geometry = new this.three.ConeGeometry(this.radius, this.height, this.radialSegments, minSegments);
 
-            this.cone.geometry = this.geometry;
+            this.threeObj.geometry = this.geometry;
         }
 
         const position = this.geometry.attributes.position;
