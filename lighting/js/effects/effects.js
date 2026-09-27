@@ -1,4 +1,5 @@
 import * as C from "../constants.js";
+import { mt_rand, deg2rad } from "../functions.js";
 import EffectBase from "./effect-base.js";
 
 export class Rotater extends EffectBase {
@@ -31,7 +32,7 @@ export class Orbiter extends EffectBase {
         if ( this.orbitPlane === "z" )
             [this.axes[0], this.axes[2]] = [this.axes[2], this.axes[0]];
 
-        this.orbitAngle = 0;
+        this.orbitAngle = deg2rad(mt_rand(0, 359));
     }
     start(parent) {
         this.orbitCenter = parent.native.position.clone();
