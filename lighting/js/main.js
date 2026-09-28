@@ -72,9 +72,7 @@ const mirror = factory.create(
 );
 mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([
-    egg, torus, hedron, floor, box, 
-    cone, mirror]);
+world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, mirror]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
