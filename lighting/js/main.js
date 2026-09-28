@@ -49,7 +49,7 @@ const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.ge
 torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(3, 0, 3);
 torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater()]);
 
-const hedron = factory.create("dodecahedron", materials.get("pinkMetal"));
+const hedron = factory.create("dodecahedron", materials.get("iceWorld"));
 hedron.setShadows(true, true).setPosition(-3, 0, 0);
 hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater()]);
 
