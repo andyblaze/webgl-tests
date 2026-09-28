@@ -47,11 +47,11 @@ egg.setScale(0.5, 1, 0.5).addEffects([new Orbiter(2, 0.23, "y"), new Rotater()])
 
 const torus = factory.create("torus", { radius: 0.75, tube: 0.25 }, materials.get("fireWorld"));
 torus.setShadows(true, true).setScale(1, 1.25, 1).setPosition(3, 0, 3);
-torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater(), new Squasher()]);
+torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater(), new Squasher(0.17, 0.9)]);
 
 const hedron = factory.create("dodecahedron", materials.get("iceWorld"));
 hedron.setShadows(true, true).setPosition(-3, 0, 0);
-hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater(), new Squasher()]);
+hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater(), new Squasher(0.13, 1.1)]);
 
 const floor = factory.create("hidefPlane", materials.get("floor")); 
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
@@ -63,7 +63,7 @@ box.addEffects([new Rotater()]);
 
 const cone = factory.create("capsule", materials.get("pinkMetal"));
 cone.bendWith(new Bend(THREE, CurveRegistry.get("helix", THREE)));
-cone.setPosition(0, 0, -3).setScale(0.25, 0.25, 0.25).addEffects([new Orbiter(1, 0.23, "y"), new Rotater(), new Squasher(0.1, 1.5)]);
+cone.setPosition(0, 0, -3).setScale(0.25, 0.25, 0.25).addEffects([new Orbiter(1, 0.23, "y"), new Rotater(), new Squasher(0.19, 1.1)]);
 
 const mirror = factory.create(
     "mirror", 
