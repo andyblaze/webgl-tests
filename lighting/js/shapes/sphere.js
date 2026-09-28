@@ -2,12 +2,17 @@ import ThreeObj from "../three/three-obj.js";
 
 export default class Sphere extends ThreeObj {
     constructor(three, geo, mat) {
-        super();
+        super(three);
         const { radius, widthSegments, heightSegments } = geo;
         this.radius = radius;
         this.geometry = new three.SphereGeometry(radius, widthSegments, heightSegments);
         this.material = new three.MeshPhysicalMaterial(mat);
         this.threeObj = new three.Mesh(this.geometry, this.material);
+        this.radius = radius;
+        this.height = radius;
+        this.bendSegments = heightSegments;
+        this.rebuildParams = [radius, 64, 128];
+        this.geometryType = three.SphereGeometry;        
     }
     dimple(depth=0.95) {
         const positions = this.geometry.attributes.position;

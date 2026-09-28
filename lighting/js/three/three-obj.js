@@ -18,7 +18,7 @@ export default class ThreeObj {
 
             this.geometry.dispose();
 
-            this.geometry = new this.geometryType(this.radius, this.height, this.radialSegments, minSegments);
+            this.geometry = new this.geometryType(...this.rebuildParams);
 
             this.threeObj.geometry = this.geometry;
         }

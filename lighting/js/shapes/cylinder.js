@@ -9,8 +9,8 @@ export default class Cylinder extends ThreeObj {
         this.threeObj = new three.Mesh(this.geometry, this.material);
         this.radius = radiusBottom;
         this.height = height;
-        this.radialSegments = radialSegments;
-        this.bendSegments = heightSegments;    
+        this.bendSegments = heightSegments;  
+        this.rebuildParams = [radiusTop, radiusBottom, height, 32, 64, openEnded];  
         this.geometryType = three.CylinderGeometry;    
     }
 }

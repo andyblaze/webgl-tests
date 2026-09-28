@@ -9,8 +9,8 @@ export default class Cone extends ThreeObj {
         this.threeObj = new three.Mesh(this.geometry, this.material);
         this.radius = radius;
         this.height = height;
-        this.radialSegments = radialSegments;
         this.bendSegments = heightSegments;
+        this.rebuildParams = [radius, height, 8, 64, openEnded];
         this.geometryType = three.ConeGeometry;
     }
 }
