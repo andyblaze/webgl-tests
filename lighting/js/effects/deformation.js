@@ -4,7 +4,7 @@ import Field from "./field.js";
 import Noise from "./noise.js";
 import EffectBase from "./effect-base.js";
 
-export default class Deformation extends EffectBase {
+export default class Rippling extends EffectBase {
     constructor() {
         super();
         this.noise = new Noise();

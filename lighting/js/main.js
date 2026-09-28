@@ -5,7 +5,7 @@ import { makeCamera, makeRenderer } from "./functions.js";
 import Lighting from "./lighting/lighting.js";
 import MaterialsData from "./materials-data.js";
 import Materials from "./materials.js";
-import Deformation from "./effects/deformation.js";
+import Rippling from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 import { LightDimmer, Orbiter, ColorCycler, Rotater } from "./effects/effects.js";
@@ -55,7 +55,7 @@ hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater()]);
 
 const floor = factory.create("hidefPlane", materials.get("floor")); 
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
-setPosition(0, -6, -8.5).addEffects([new Deformation()]);
+setPosition(0, -6, -8.5).addEffects([new Rippling()]);
 
 const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
