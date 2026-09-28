@@ -61,9 +61,9 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-const cone = factory.create("cylinder", { radiusTop: 0.1, radiusBottom: 0.25, height: 4, heightSegments: 64 }, materials.get("pinkMetal"));
+const cone = factory.create("cone", { heightSegments: 64 }, materials.get("pinkMetal"));
 cone.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
-cone.setPosition(0, 2, 0).setScale(1, 1, 1).addEffects([new Orbiter(4, 0.23, "y"), new Rotater()]);
+cone.setPosition(0, 0, 0).setScale(0.5, 2, 0.5).addEffects([new Orbiter(1, 0.23, "y"), new Rotater()]);
 
 const mirror = factory.create(
     "mirror", 
@@ -72,7 +72,9 @@ const mirror = factory.create(
 );
 mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, mirror]);
+world.addLighting(lighting).add([
+    egg, torus, hedron, floor, box, 
+    cone, mirror]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
