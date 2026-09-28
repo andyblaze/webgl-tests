@@ -61,8 +61,8 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-const cone = factory.create("sphere", materials.get("pinkMetal"));
-cone.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+const cone = factory.create("capsule", materials.get("pinkMetal"));
+cone.bendWith(new Bend(THREE, CurveRegistry.get("helix", THREE)));
 cone.setPosition(0, 0, 0).setScale(0.5, 0.5, 0.5).addEffects([new Orbiter(1, 0.23, "y"), new Rotater()]);
 
 const mirror = factory.create(
