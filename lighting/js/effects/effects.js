@@ -2,6 +2,24 @@ import * as C from "../constants.js";
 import { mt_rand, deg2rad } from "../functions.js";
 import EffectBase from "./effect-base.js";
 
+export class Squasher extends EffectBase {
+    constructor(amount=0.25, speed=2) {
+        super();
+        this.amount = amount;
+        this.speed = speed;
+        this.time = Math.random();
+    }
+    start() {
+        return this.init();
+    }
+    update(parent, time) {
+        if (this.inactive()) return;
+        this.time += time.dt;
+        const s = 1 + Math.sin(this.time * this.speed) * this.amount;
+        parent.setScale(s, 1 / s, s);
+    }
+}
+
 export class Rotater extends EffectBase {
     constructor(speedX=13, speedY=15, speedZ=17) {
         super();
