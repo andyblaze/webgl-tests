@@ -11,5 +11,6 @@ export default class Cone extends ThreeObj {
         this.height = height;
         this.radialSegments = radialSegments;
         this.bendSegments = heightSegments;
+        this.geometryType = three.ConeGeometry;
     }
 }
