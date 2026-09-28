@@ -10,7 +10,7 @@ export default class Capsule extends ThreeObj {
         this.radius = radius;
         this.height = height;
         this.bendSegments = heightSegments;  
-        this.rebuildParams = [radius, height, 64, 64, 128];  
+        this.rebuildParams = [radius, height, 64, 16, 64];  
         this.geometryType = three.CapsuleGeometry
     }
 }
