@@ -40,9 +40,9 @@ export default class MaterialsData {
                 emissive: 0x009900, emissiveIntensity: 0.5,
                 sheenColor: 0x11f437, sheen: 1,
                 anisotropy: 1,
-                normalMap: "textures/pave-normal.png",
+                normalMap: "textures/cloud-normal.png",
                 normalScale: new three.Vector2(2, 2),
-                map: "textures/pave.png"
+                map: "textures/cloud.png"
             },
             brushedBrass: {
                 color: 0xd2c628,

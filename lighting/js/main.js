@@ -65,7 +65,7 @@ const cone = factory.create("sphere", materials.get("pinkMetal"));
 cone.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
 cone.setPosition(0, 0, -3).setScale(0.25, 0.25, 0.25).addEffects([new Orbiter(1, 0.23, "y"), new Rotater(), new Squasher(0.19, 1.1)]);
 
-const wedge = factory.create("wedge", materials.get("iceWorld"));
+const wedge = factory.create("wedge", materials.get("greenWorld"));
 wedge.setPosition(6, 0, -3).setScale(2, 2, 1).addEffects([new Rotater()]);
 
 const mirror = factory.create(
