@@ -15,6 +15,7 @@ import Bowl from "./shapes/bowl.js";
 import FlyingSaucer from "./shapes/alien-ship.js";
 import SpikyCube from "./shapes/spiky-cube.js";
 import Mirror from "./shapes/mirror.js";
+import Wedge from "./shapes/wedge.js";
 import * as C from "./constants.js";
 
 class ShapeRegistry {
@@ -188,6 +189,13 @@ class ShapeRegistry {
                 defaultGeo: {
                     radius: 1, tube: 0.25, 
                     radialSegments: 128, tubularSegments: 24
+                },
+                defaultMat: { color: 0xffffff }
+            },
+            wedge: {
+                ctor: Wedge,
+                defaultGeo: {
+                    length: 2
                 },
                 defaultMat: { color: 0xffffff }
             }

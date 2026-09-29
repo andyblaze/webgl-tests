@@ -65,6 +65,9 @@ const cone = factory.create("sphere", materials.get("pinkMetal"));
 cone.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
 cone.setPosition(0, 0, -3).setScale(0.25, 0.25, 0.25).addEffects([new Orbiter(1, 0.23, "y"), new Rotater(), new Squasher(0.19, 1.1)]);
 
+const wedge = factory.create("wedge", materials.get("iceWorld"));
+wedge.setPosition(6, 0, -3).setScale(2, 2, 1).addEffects([new Rotater()]);
+
 const mirror = factory.create(
     "mirror", 
     { width: 8, height: 6, texW: config.dprW, texH: config.dprH },
@@ -72,7 +75,7 @@ const mirror = factory.create(
 );
 mirror.setPosition(-5.8, 0.25, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, mirror]);
+world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, wedge, mirror]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
