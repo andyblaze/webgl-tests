@@ -61,9 +61,15 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-const cone = factory.create("sphere", materials.get("pinkMetal"));
-cone.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
-cone.setPosition(0, 0, -3).setScale(0.25, 0.25, 0.25).addEffects([new Orbiter(1, 0.23, "y"), new Rotater(), new Squasher(0.19, 1.1)]);
+const cone0 = factory.create("sphere", materials.get("pinkMetal"));
+cone0.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+cone0.setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.7, 0.21)]);
+const cone1 = factory.create("sphere", materials.get("pinkMetal"));
+cone1.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+cone1.setRotation(deg2rad(90), 0, 0).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.6, 0.23)]);
+const cone2 = factory.create("sphere", materials.get("pinkMetal"));
+cone2.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+cone2.setRotation(0, 0, deg2rad(90)).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.65, 0.25)]);
 
 const wedge = factory.create("wedge", materials.get("greenWorld"));
 wedge.setPosition(6, 0, -3).setScale(2, 2, 1).addEffects([new Rotater()]);
@@ -75,7 +81,14 @@ const mirror = factory.create(
 );
 mirror.setPosition(-5.8, 0.25, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, wedge, mirror]);
+world.addLighting(lighting).add([
+    //egg, torus, hedron, 
+    floor, 
+    //box, 
+    cone0, cone1, cone2,
+    //wedge, 
+    mirror
+]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
