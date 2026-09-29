@@ -67,10 +67,10 @@ cone.setPosition(0, 0, -3).setScale(0.25, 0.25, 0.25).addEffects([new Orbiter(1,
 
 const mirror = factory.create(
     "mirror", 
-    { width: 5, height: 5, texW: config.dprW, texH: config.dprH },
+    { width: 8, height: 6, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
 );
-mirror.setPosition(-8, 0, 0).setRotation(0, deg2rad(55), 0);
+mirror.setPosition(-5.8, 0.25, 0).setRotation(0, deg2rad(55), 0);
 
 world.addLighting(lighting).add([egg, torus, hedron, floor, box, cone, mirror]);
 

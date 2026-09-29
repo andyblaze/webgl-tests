@@ -3,20 +3,66 @@ import { mt_rand, deg2rad } from "../functions.js";
 import EffectBase from "./effect-base.js";
 
 export class Squasher extends EffectBase {
-    constructor(amount=0.25, speed=2) {
+
+    constructor(amount = 0.25, speed = 2) {
         super();
         this.amount = amount;
         this.speed = speed;
-        this.time = Math.random();
+
+        this.axis = 0;
+        this.phase = Math.random() * C.DEG360;
+        // Portion of the cycle used to blend into the next axis.
+        this.overlap = 0.333;
     }
     start() {
         return this.init();
     }
-    update(parent, time) {
+    update(parent, time) {        
         if (this.inactive()) return;
-        this.time += time.dt;
-        const s = 1 + Math.sin(this.time * this.speed) * this.amount;
-        parent.setScale(s, 1 / s, s);
+
+        this.phase += time.dt * this.speed;
+
+        // Complete squash/recovery cycle
+        if (this.phase >= C.DEG360) {
+
+            this.phase -= C.DEG360;
+            this.axis = (this.axis + 1) % 3;
+
+        }
+
+        const s = 1 + Math.sin(this.phase) * this.amount;
+        const r = 1 / s;
+
+        // Scale for the current squash axis.
+        const current = [s, s, s];
+        current[this.axis] = r;
+
+        // Start blending into the next axis near the end of recovery.
+        const overlapStart = C.DEG360 * (1 - this.overlap);
+
+        if ( this.phase > overlapStart ) {
+
+            const nextAxis = (this.axis + 1) % 3;
+
+            // 0 → 1 across the overlap.
+            let t = (this.phase - overlapStart) / (C.DEG360 * this.overlap);
+
+            // Smooth ease in/out.
+            t = t * t * (3 - 2 * t);
+
+            // Scale for the next squash axis.
+            const next = [s, s, s];
+            next[nextAxis] = r;
+
+            // Blend in log-space so scale product remains 1.
+            const scale = current.map((value, i) =>
+                Math.exp(Math.log(value) * (1 - t) + Math.log(next[i]) * t)
+            );
+            parent.setScale(...scale);
+
+        } else {
+            parent.setScale(...current);
+        }
     }
 }
 
