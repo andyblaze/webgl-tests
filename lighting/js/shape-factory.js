@@ -15,6 +15,7 @@ import Bowl from "./shapes/bowl.js";
 import FlyingSaucer from "./shapes/alien-ship.js";
 import SpikyCube from "./shapes/spiky-cube.js";
 import Mirror from "./shapes/mirror.js";
+import Text from "./shapes/text.js";
 import Wedge from "./shapes/wedge.js";
 import * as C from "./constants.js";
 
@@ -173,6 +174,13 @@ class ShapeRegistry {
                 ctor: Tetrahedron,
                 defaultGeo: {
                     radius: 1, detail: 0
+                },
+                defaultMat: { color: 0xffffff }
+            },
+            text: {
+                ctor: Text,
+                defaultGeo: {
+                    size: 1, depth: 1, curveSegments: 12
                 },
                 defaultMat: { color: 0xffffff }
             },

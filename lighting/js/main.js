@@ -24,6 +24,9 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
+const txt = factory.create("text", materials.get("brushedMetal"));
+txt.addTo(scene);
+
 lighting.add(scene, "point", { color: 0x00ffff, intensity: 60 }).
     setPosition(-5, -3, 0).
 addEffects([new LightDimmer(0.9, 0.02), new ColorCycler(THREE, 0.01)]);
