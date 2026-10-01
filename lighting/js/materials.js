@@ -11,7 +11,7 @@ export default class Materials {
         }
         return this.loadedTextures[path];
     }
-    prepareTexture(texture, repeat = 8) {
+    prepareTexture(texture, repeat = 1) {
         texture.wrapS = this.three.RepeatWrapping;
         texture.wrapT = this.three.RepeatWrapping;
         texture.repeat.set(repeat, repeat);
