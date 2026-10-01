@@ -180,7 +180,8 @@ class ShapeRegistry {
             text: {
                 ctor: Text,
                 defaultGeo: {
-                    size: 1, depth: 1, curveSegments: 12
+                    size: 1, depth: 0.25, curveSegments: 12,
+                    bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05
                 },
                 defaultMat: { color: 0xffffff }
             },

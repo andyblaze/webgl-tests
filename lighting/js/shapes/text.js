@@ -7,7 +7,8 @@ export default class Text extends ThreeGroup {
         super(three);
         this.three = three;
         this.geo = geo;
-        this.mat = mat;
+        //this.mat = mat;
+        this.material = new this.three.MeshPhysicalMaterial(mat);
         this.text = "Test";
         this.fontPath = "./js/examples/fonts/";
         this.fontFile = "helvetiker_regular.typeface.json";
@@ -16,29 +17,34 @@ export default class Text extends ThreeGroup {
         this.loadFont();
     }
     loadFont() {
+        this.clear();
         const loader = new FontLoader();
         loader.load(
             this.font,
             (font) => {
                 this.geo["font"] = font;
                 this.geometry = new TextGeometry(this.text, this.geo);
-                this.material = new this.three.MeshPhysicalMaterial(this.mat);
+                
                 const mesh = new this.three.Mesh(this.geometry, this.material);
                 this.threeObj.add(mesh);
             }
         );
     }
+    clear() {
+        // Remove existing text geometry 
+        const old = this.threeObj.children[0];
+        if ( old )
+            old.geometry.dispose();
+        this.threeObj.clear(); 
+    }
     setFont(file) {
         this.fontFile = file; 
-        this.font = this.fontPath + this.fontFile;
-        // Remove existing text geometry 
-        this.threeObj.clear(); 
+        this.font = this.fontPath + this.fontFile; 
         this.loadFont(); 
         return this; 
     } 
     setText(text) { 
-        this.text = text; 
-        this.threeObj.clear(); 
+        this.text = text;
         this.loadFont(); 
         return this; 
     }
