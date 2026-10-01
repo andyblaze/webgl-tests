@@ -64,15 +64,15 @@ const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
-const cone0 = factory.create("sphere", materials.get("pinkMetal"));
-cone0.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
-cone0.setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.7, 0.21)]);
-const cone1 = factory.create("sphere", materials.get("pinkMetal"));
-cone1.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
-cone1.setRotation(deg2rad(90), 0, 0).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.6, 0.23)]);
-const cone2 = factory.create("sphere", materials.get("pinkMetal"));
-cone2.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
-cone2.setRotation(0, 0, deg2rad(90)).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.65, 0.25)]);
+const arm0 = factory.create("sphere", materials.get("pinkMetal"));
+arm0.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+arm0.setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.7, 0.21)]);
+const arm1 = factory.create("sphere", materials.get("pinkMetal"));
+arm1.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+arm1.setRotation(deg2rad(90), 0, 0).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.6, 0.23)]);
+const arm2 = factory.create("sphere", materials.get("pinkMetal"));
+arm2.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+arm2.setRotation(0, 0, deg2rad(90)).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.65, 0.25)]);
 
 const wedge = factory.create("wedge", materials.get("greenWorld"));
 wedge.setPosition(6, 0, -3).setScale(2, 2, 1).addEffects([new Rotater()]);
@@ -88,7 +88,7 @@ world.addLighting(lighting).add([txt,
     //egg, torus, hedron, 
     floor, 
     //box, 
-    cone0, cone1, cone2,
+    arm0, arm1, arm2,
     //wedge, 
     mirror
 ]);
