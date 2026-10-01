@@ -24,7 +24,7 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-const txt = factory.create("text", materials.get("iceWorld"));
+const txt = factory.create("text", materials.get("greenWorld"));
 txt.setText("Hello").setPosition(5, 0, 0).addEffects([new Rotater()]);
 
 lighting.add(scene, "point", { color: 0x00ffff, intensity: 60 }).
