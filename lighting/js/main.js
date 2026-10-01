@@ -25,7 +25,7 @@ const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
 const txt = factory.create("text", materials.get("brushedMetal"));
-txt.addTo(scene);
+txt.setText("Hello");
 
 lighting.add(scene, "point", { color: 0x00ffff, intensity: 60 }).
     setPosition(-5, -3, 0).
@@ -84,7 +84,7 @@ const mirror = factory.create(
 );
 mirror.setPosition(-5.8, 0.25, 0).setRotation(0, deg2rad(55), 0);
 
-world.addLighting(lighting).add([
+world.addLighting(lighting).add([txt,
     //egg, torus, hedron, 
     floor, 
     //box, 
