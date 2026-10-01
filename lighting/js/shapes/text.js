@@ -6,8 +6,7 @@ export default class Text extends ThreeGroup {
     constructor(three, geo, mat) {
         super(three);
         this.three = three;
-        this.geo = geo;
-        //this.mat = mat;
+        this.geo = {...geo};
         this.material = new this.three.MeshPhysicalMaterial(mat);
         this.text = "Test";
         this.fontPath = "./js/examples/fonts/";
@@ -23,8 +22,7 @@ export default class Text extends ThreeGroup {
             this.font,
             (font) => {
                 this.geo["font"] = font;
-                this.geometry = new TextGeometry(this.text, this.geo);
-                
+                this.geometry = new TextGeometry(this.text, this.geo);                
                 const mesh = new this.three.Mesh(this.geometry, this.material);
                 this.threeObj.add(mesh);
             }
