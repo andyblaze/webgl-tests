@@ -87,7 +87,7 @@ export default class MaterialsData {
             },
             pinkMetal: {
                 color: 0xff0080,
-                roughness: 0.5, metalness: 0.5,
+                roughness: 1, metalness: 0.5,
                 clearcoat: 1, clearcoatRoughness: 0.5,
                 emissive: 0x9516e9, emissiveIntensity: 0.25,
                 sheenColor: 0xff66ff, sheen: 0.68,
