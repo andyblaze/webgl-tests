@@ -87,9 +87,10 @@ export default class MaterialsData {
             },
             pinkMetal: {
                 color: 0xff0080,
-                roughness: 1, metalness: 0.5,
+                roughness: 0.5, metalness: 0.25,
+                transparent: true, opacity: 0.75,
                 clearcoat: 1, clearcoatRoughness: 0.5,
-                emissive: 0x9516e9, emissiveIntensity: 0.25,
+                emissive: 0x9516e9, emissiveIntensity: 0.75,
                 sheenColor: 0xff66ff, sheen: 0.68,
                 anisotropy: 0,
                 attenuationColor: 0xf80762,
@@ -98,7 +99,7 @@ export default class MaterialsData {
                     normalScale: new three.Vector2(2, 2),
                     repeat: 2
                 },
-                map: {
+                alphaMap: {
                     tex: "textures/pebbles.png",
                     repeat: 1
                 }
