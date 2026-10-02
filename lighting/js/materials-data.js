@@ -9,10 +9,13 @@ export default class MaterialsData {
                 anisotropy: 1,
                 normalMap: {
                     tex: "textures/brush-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 4
                 },
-                map: "textures/tiles.jpg"
+                map: {
+                    tex: "textures/tiles.jpg",
+                    repeat: 1
+                }
             },
             iceWorld: {
                 color: 0x00ffff,
@@ -23,10 +26,13 @@ export default class MaterialsData {
                 anisotropy: 1,
                 normalMap: {
                     tex: "textures/cloud-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 2
                 },
-                map: "textures/pave.png"
+                map: {
+                    tex: "textures/pave.png",
+                    repeat: 1
+                }
             },
             fireWorld: {
                 color: 0xff0000,
@@ -37,10 +43,13 @@ export default class MaterialsData {
                 anisotropy: 1,
                 normalMap: {
                     tex: "textures/cloud-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 2
                 },
-                map: "textures/pave.png"
+                map: {
+                    tex: "textures/pave.png",
+                    repeat: 1
+                }
             },
             greenWorld: {
                 color: 0x00ff00,
@@ -51,10 +60,13 @@ export default class MaterialsData {
                 anisotropy: 1,
                 normalMap: {
                     tex: "textures/spots-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 1
                 },
-                map: "textures/spots.png"
+                map: {
+                    tex: "textures/spots.png",
+                    repeat: 1
+                }
             },
             brushedBrass: {
                 color: 0xd2c628,
@@ -65,10 +77,13 @@ export default class MaterialsData {
                 anisotropy: 0,
                 normalMap: {
                     tex: "textures/marble-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 2
                 },
-                map: "textures/brush.png"
+                map: {
+                    tex: "textures/brush.png",
+                    repeat: 1
+                }
             },
             pinkMetal: {
                 color: 0xff0080,
@@ -80,10 +95,13 @@ export default class MaterialsData {
                 attenuationColor: 0xf80762,
                 normalMap: {
                     tex: "textures/pebbles-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 2
                 },
-                map: "textures/pebbles.png"
+                map: {
+                    tex: "textures/pebbles.png",
+                    repeat: 1
+                }
             },
             brushedMetal: {
                 color: 0xbcbcbc,
@@ -95,10 +113,13 @@ export default class MaterialsData {
                 attenuationColor: 0xf80762,
                 normalMap: {
                     tex: "textures/brush-normal.png",
-                    scale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 2
                 },
-                map: "textures/brush.png"
+                map: {
+                    tex: "textures/brush.png",
+                    repeat: 1
+                }
             }
         };
     }

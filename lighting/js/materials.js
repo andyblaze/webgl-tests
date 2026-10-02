@@ -5,27 +5,35 @@ export default class Materials {
         this.loadedTextures = {};
         this.data = dataClass.data;
     }
-    loadTexture(path, repeat=1) {
-        if ( !this.loadedTextures[path] ) {
-            this.loadedTextures[path] = this.prepareTexture(this.loader.load(path), repeat);
+    loadTexture(map) {
+        if ( !this.loadedTextures[map.tex] ) {
+            this.loadedTextures[map.tex] = this.prepareTexture(this.loader.load(map.tex), map.repeat);
         }
-        return this.loadedTextures[path];
+        return this.loadedTextures[map.tex];
     }
-    prepareTexture(texture, repeat=1) {
+    prepareTexture(texture, repeat) {
         texture.wrapS = this.three.RepeatWrapping;
         texture.wrapT = this.three.RepeatWrapping;
         texture.repeat.set(repeat, repeat);
-
         return texture;
     }
+    prepMap(matKey, map) {
+        const result = {};
+        result[matKey] = this.loadTexture(map);
+        for ( const [key, val] of Object.entries(map) ) {
+            if ( key === "repeat" || key === "tex" )
+                continue;
+            result[key] = val;
+        }
+        return result;
+    }
     get(name) {
-        const mat = {...this.data[name]};
-        if ( mat.map )
-            mat.map = this.loadTexture(mat.map);
-        if ( mat.normalMap ) {
-            mat.normalScale = mat.normalMap.scale;
-            // this is last because normalMap becomes a texture
-            mat.normalMap = this.loadTexture(mat.normalMap.tex, mat.normalMap.repeat);
+        let mat = {...this.data[name]};
+        for ( const [key, val] of Object.entries(mat) ) {
+            if (val?.tex) { // a map of some sort
+                const data = this.prepMap(key, val);
+                mat = {...mat, ...data};
+            }
         }
         return mat;
     }
