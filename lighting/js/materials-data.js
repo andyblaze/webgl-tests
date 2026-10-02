@@ -7,8 +7,11 @@ export default class MaterialsData {
                 emissive:0xff0000, emissiveIntensity: 0.1,
                 clearcoat: 1, clearcoatRoughness: 0.5,
                 anisotropy: 1,
-                normalMap: "textures/brush-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/brush-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 4
+                },
                 map: "textures/tiles.jpg"
             },
             iceWorld: {
@@ -18,8 +21,11 @@ export default class MaterialsData {
                 emissive: 0x0080ff, emissiveIntensity: 0.25,
                 sheenColor: 0xf471c7, sheen: 1,//,
                 anisotropy: 1,
-                normalMap: "textures/cloud-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/cloud-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 2
+                },
                 map: "textures/pave.png"
             },
             fireWorld: {
@@ -29,8 +35,11 @@ export default class MaterialsData {
                 emissive: 0x990000, emissiveIntensity: 0.5,
                 sheenColor: 0xf41137, sheen: 1,
                 anisotropy: 1,
-                normalMap: "textures/cloud-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/cloud-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 2
+                },
                 map: "textures/pave.png"
             },
             greenWorld: {
@@ -40,8 +49,11 @@ export default class MaterialsData {
                 emissive: 0x009900, emissiveIntensity: 0.5,
                 sheenColor: 0x11f437, sheen: 1,
                 anisotropy: 1,
-                normalMap: "textures/spots-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/spots-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 1
+                },
                 map: "textures/spots.png"
             },
             brushedBrass: {
@@ -51,8 +63,11 @@ export default class MaterialsData {
                 emissive: 0xe0b347, emissiveIntensity: 0.5,
                 sheenColor: 0xc5e21d, sheen: 0.2,
                 anisotropy: 0,
-                normalMap: "textures/marble-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/marble-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 2
+                },
                 map: "textures/brush.png"
             },
             pinkMetal: {
@@ -63,8 +78,11 @@ export default class MaterialsData {
                 sheenColor: 0xff66ff, sheen: 0.68,
                 anisotropy: 0,
                 attenuationColor: 0xf80762,
-                normalMap: "textures/pebbles-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/pebbles-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 2
+                },
                 map: "textures/pebbles.png"
             },
             brushedMetal: {
@@ -75,8 +93,11 @@ export default class MaterialsData {
                 sheenColor: 0xc0c0c0, sheen: 1,
                 anisotropy: 1,
                 attenuationColor: 0xf80762,
-                normalMap: "textures/brush-normal.png",
-                normalScale: new three.Vector2(2, 2),
+                normalMap: {
+                    tex: "textures/brush-normal.png",
+                    scale: new three.Vector2(2, 2),
+                    repeat: 2
+                },
                 map: "textures/brush.png"
             }
         };
