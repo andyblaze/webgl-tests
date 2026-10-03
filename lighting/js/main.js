@@ -11,7 +11,6 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { LightDimmer, Orbiter, ColorCycler, Rotater, Squasher } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
 import Bend from "./curves/bend.js";
-import CurveRegistry from "./curves/curve-registry.js";
 import { deg2rad } from "./functions.js";
 import World from "./world.js";
 
@@ -65,13 +64,13 @@ box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);
 
 const arm0 = factory.create("sphere", materials.get("pinkMetal"));
-arm0.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+arm0.bendWith(new Bend(THREE, "bend45"));
 arm0.setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.7, 0.21)]);
 const arm1 = factory.create("sphere", materials.get("pinkMetal"));
-arm1.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+arm1.bendWith(new Bend(THREE, "bend45"));
 arm1.setRotation(deg2rad(90), 0, 0).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.6, 0.23)]);
 const arm2 = factory.create("sphere", materials.get("pinkMetal"));
-arm2.bendWith(new Bend(THREE, CurveRegistry.get("bend45", THREE)));
+arm2.bendWith(new Bend(THREE, "bend45"));
 arm2.setRotation(0, 0, deg2rad(90)).setPosition(0, 0, -1).addEffects([new Rotater(), new Squasher(0.65, 0.25)]);
 
 const wedge = factory.create("wedge", materials.get("greenWorld"));
