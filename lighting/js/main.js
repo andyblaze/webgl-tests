@@ -67,11 +67,15 @@ floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
 setPosition(0, -6, -8.5).addEffects([new Rippling()]);
 
 const sphere0 = factory.create("box", materials.get("greenWorld"));
-sphere0.bendWith(new Bend(THREE, "bendBy", { angle: 180, size:4 }));
-sphere0.setScale(0.95, 0.95, 0.95).setPosition(0, 0, -1).addEffects([new Rotater()]);
+    sphere0.bendWith(new Bend(THREE, "bendBy", { angle: 260, size:4 }));
+    sphere0.setShadows(true, true).setScale(0.95, 0.95, 0.95).
+    setPosition(0, 0, -1).
+addEffects([new Rotater()]);
+
 const sphere1 = factory.create("box", materials.get("pinkMetal"));
-sphere1.bendWith(new Bend(THREE, "bendBy", { angle: 180, size:4 }));
-sphere1.setScale(1, 1, 1).setPosition(0, 0, -1).addEffects([new Rotater()]);
+    sphere1.bendWith(new Bend(THREE, "bendBy", { angle: 260, size:4 }));
+    sphere1.setScale(1, 1, 1).setPosition(0, 0, -1).
+addEffects([new Rotater()]);
 
 const mirror = factory.create(
     "mirror", 
