@@ -46,7 +46,7 @@ export default class ThreeObj {
     get native() {
         return this.threeObj;
     }
-    doUpdate(time) {}
+    doUpdate(time) {} // custom update after effects are applied, if needed.
     update(time) {
         for ( const e of this.effects ) {
             e.update(this, time);

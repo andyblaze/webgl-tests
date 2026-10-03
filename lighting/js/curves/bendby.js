@@ -1,18 +1,18 @@
 import Curve from "./curve.js";
+import { deg2rad } from "../functions.js";
 
-export default class Bend45 extends Curve {
-    constructor(three, height = 3) {
+export default class BendBy extends Curve {
+    constructor(three, params) {
         super();
 
         this.three = three;
-        this.height = height;
+        this.height = params.size;
 
-        const theta = Math.PI / 4;
-        const radius = height / theta;
+        const theta = deg2rad(params.angle);
+        const radius = params.size / theta;
 
         this.curve = new three.CurvePath();
 
-        // We'll implement getPointAt/getTangentAt ourselves.
         this.theta = theta;
         this.radius = radius;
     }
@@ -26,6 +26,7 @@ export default class Bend45 extends Curve {
             r * Math.sin(angle),
             0
         );
+
         return target;
     }
 
@@ -37,7 +38,7 @@ export default class Bend45 extends Curve {
             Math.cos(angle),
             0
         );
+
         return target.normalize();
     }
-
 }

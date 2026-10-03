@@ -1,9 +1,9 @@
 import CurveRegistry from "./curve-registry.js";
 
 export default class Bend {
-    constructor(three, curve) {
+    constructor(three, curve, params={}) {
         this.three = three;
-        this.curve = CurveRegistry.get(curve, three);
+        this.curve = CurveRegistry.get(three, curve, params);
         this.minSegments = 64;
     }
     applyTo(shape) {

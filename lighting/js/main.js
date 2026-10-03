@@ -50,26 +50,28 @@ torus.addEffects([new Orbiter(2, 0.29, "z"), new Rotater(), new Squasher(0.17, 0
 
 const hedron = factory.create("dodecahedron", materials.get("iceWorld"));
 hedron.setShadows(true, true).setPosition(-3, 0, 0);
-hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater(), new Squasher(0.13, 1.1)]);
+hedron.addEffects([new Orbiter(3, 0.31, "x"), new Rotater(), new Squasher(0.13, 1.1)]);*/
 
-const floor = factory.create("hidefPlane", materials.get("floor")); 
-floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
-setPosition(0, -6, -8.5).addEffects([new Rippling()]);
-
-const box = factory.create("flexiBox", materials.get("brushedBrass"));
+/*const box = factory.create("flexiBox", materials.get("brushedBrass"));
 box.setShadows(true, true).setPosition(1, -2, 2).pullSide(0.5, 0.5);
 box.addEffects([new Rotater()]);*/
-
-const arm0 = factory.create("sphere", materials.get("greenWorld"));
-arm0.setScale(1.95, 1.95, 1.95).setPosition(0, 0, -1).addEffects([new Rotater()]);
-const arm1 = factory.create("sphere", materials.get("pinkMetal"));
-arm1.setScale(2.05, 2.05, 2.05).setPosition(0, 0, -1).addEffects([new Rotater()]);
 
 /*const wedge = factory.create("wedge", materials.get("greenWorld"));
 wedge.setPosition(6, 0, -3).setScale(2, 2, 1).addEffects([new Rotater()]);
 
 const txt = factory.create("text", materials.get("greenWorld"));
 txt.setText("Hello").setPosition(5, 0, 0).addEffects([new Rotater()]);*/
+
+const floor = factory.create("hidefPlane", materials.get("floor")); 
+floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
+setPosition(0, -6, -8.5).addEffects([new Rippling()]);
+
+const sphere0 = factory.create("box", materials.get("greenWorld"));
+sphere0.bendWith(new Bend(THREE, "bendBy", { angle: 180, size:4 }));
+sphere0.setScale(0.95, 0.95, 0.95).setPosition(0, 0, -1).addEffects([new Rotater()]);
+const sphere1 = factory.create("box", materials.get("pinkMetal"));
+sphere1.bendWith(new Bend(THREE, "bendBy", { angle: 180, size:4 }));
+sphere1.setScale(1, 1, 1).setPosition(0, 0, -1).addEffects([new Rotater()]);
 
 const mirror = factory.create(
     "mirror", 
@@ -79,12 +81,8 @@ const mirror = factory.create(
 mirror.setPosition(-5.8, 0.25, 0).setRotation(0, deg2rad(55), 0);
 
 world.addLighting(lighting).add([
-    //txt,
-    //egg, torus, hedron, 
-    //floor, 
-    //box, 
-    arm0, arm1,
-    //wedge, 
+    floor, 
+    sphere0, sphere1,
     mirror
 ]);
 
