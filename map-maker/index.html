@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Map maker</title>
+<link href="css/site.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="ui">
+    <form id="ui-ctrls">
+        <label>Height: <span id="height-lbl">0</span>
+            <input type="range" min="0" max="100" step="1" value="0" id="height" data-label="height-lbl" />
+        </label>
+    </form>
+</div>
+<div id="maps">
+    <canvas id="cnvsMap" width="512" height="512"></canvas>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
