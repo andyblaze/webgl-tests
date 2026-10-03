@@ -53,9 +53,9 @@ export default class MaterialsData {
             },
             greenWorld: {
                 color: 0x00ff00,
-                roughness: 0.5, metalness: 0.5,
-                clearcoat: 0.75, clearcoatRoughness: 0.5,
-                emissive: 0x009900, emissiveIntensity: 0.5,
+                roughness: 0.85, metalness: 0.05,
+                //clearcoat: 0.75, clearcoatRoughness: 0.5,
+                emissive: 0x009900, emissiveIntensity: 0.15,
                 sheenColor: 0x11f437, sheen: 1,
                 anisotropy: 1,
                 normalMap: {
@@ -86,14 +86,14 @@ export default class MaterialsData {
                 }
             },
             pinkMetal: {
-                color: 0xff0080,
-                roughness: 0.5, metalness: 0.25,
+                color: 0xffffff,
+                roughness: 0.75, metalness: 0.15,
                 transparent: true, opacity: 0.75,
                 clearcoat: 1, clearcoatRoughness: 0.5,
-                emissive: 0x9516e9, emissiveIntensity: 0.75,
-                sheenColor: 0xff66ff, sheen: 0.68,
+                emissive: 0x95a5e9, emissiveIntensity: 0.75,
+                sheenColor: 0xffeeff, sheen: 0.68,
                 anisotropy: 0,
-                attenuationColor: 0xf80762,
+                attenuationColor: 0xf8aaa2,
                 normalMap: {
                     tex: "textures/pebbles-normal.png",
                     normalScale: new three.Vector2(2, 2),
