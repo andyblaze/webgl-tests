@@ -19,3 +19,7 @@ canvas {
     display: block;
     line-height: 2rem;
 }
+#ui-ctrls label span {
+    display: inline-block;
+    width:3rem;
+}
