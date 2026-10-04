@@ -41,7 +41,7 @@ export default class HeightMap {
         }
         for ( let i = 0; i < this.data.length; i++ ) {
             const v = (this.data[i] - min) / (max - min);
-            this.data[i] = this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * contrast));
+            this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * contrast));
         }
         this.fillImage();
     }
