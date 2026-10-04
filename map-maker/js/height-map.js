@@ -17,34 +17,31 @@ export default class HeightMap {
         }
     }
     update(ctrls) { 
-        const height = ctrls[0];
-        const baseHeight = TypeConverter.convert(height.dataset.type, height.value);
-        const prln = ctrls[1]; 
-        const scaleCtrl = ctrls[2];
-        const scale = parseFloat(scaleCtrl.value) * 0.15;
-        const contrastCtrl = ctrls[4];
-        const contrast = parseFloat(contrastCtrl.value);
+        const heightCtrl = ctrls.height;
+        const baseHeight = TypeConverter.convert(heightCtrl.dataset.type, heightCtrl.value);
+        const perlinCtrl = ctrls.perlin; 
+        const perlinAmount = TypeConverter.convert(perlinCtrl.dataset.type, perlinCtrl.value);
+        const scaleCtrl = ctrls.scale;
+        const scale = TypeConverter.convert(scaleCtrl.dataset.type, scaleCtrl.value) * 0.15;
+        const contrastCtrl = ctrls.contrast;
+        const contrast = TypeConverter.convert(contrastCtrl.dataset.type, contrastCtrl.value);
         let min = Infinity;
         let max = -Infinity;
 
-        for (let y = 0; y < this.size; y++) {
+        for ( let y = 0; y < this.size; y++ ) {
             for (let x = 0; x < this.size; x++) {
                 const i = x + y * this.size;
 
-                const v = baseHeight + this.perlin.noise(x * scale, y * scale) * parseFloat(prln.value);
+                const v = baseHeight + this.perlin.noise(x * scale, y * scale) * perlinAmount;
                 this.data[i] = v;
 
                 if (v < min) min = v;
                 if (v > max) max = v;
             }
         }
-        for (let i = 0; i < this.data.length; i++) {
+        for ( let i = 0; i < this.data.length; i++ ) {
             const v = (this.data[i] - min) / (max - min);
-
-            this.data[i] = this.data[i] = Math.max(
-    0,
-    Math.min(1, 0.5 + (v - 0.5) * contrast)
-);
+            this.data[i] = this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * contrast));
         }
         this.fillImage();
     }

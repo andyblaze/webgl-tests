@@ -4,11 +4,9 @@ export default class UiControls {
     constructor(selector) {
         this.observers = [];
         this.ctrls = byQsArray(selector);
+        this.ctrlsObj = null;
         for ( const ctrl of this.ctrls ) {
-            if ( ctrl.type === "select" )
-                ctrl.onchange = () => this.synch(ctrl);
-            else
-                ctrl.oninput = () => this.synch(ctrl);
+            ctrl.oninput = () => this.synch(ctrl);
         }
         this.notify();
     }
@@ -21,9 +19,13 @@ export default class UiControls {
     addObserver(o) { 
         this.observers.push(o);
     } 
-    notify() {
+    notify() {  
+        if ( null === this.ctrlsObj ) this.ctrlsObj = {};
+        for ( const ctrl of this.ctrls) {
+            this.ctrlsObj[ctrl.id] = ctrl;
+        }
         for ( const o of this.observers ) {
-            o.update(this.ctrls);
+            o.update(this.ctrlsObj);
         }
     }
     updateFromConfig(cfg) { 
