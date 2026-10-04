@@ -22,8 +22,7 @@ const container = byId("three");
 const renderer = makeRenderer(THREE, container);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, container.clientWidth, container.clientHeight);
-const shape = makeShape(THREE);
-scene.add(shape);
+const shape = makeShape(THREE, scene);
 makeLights(THREE, scene);
 
 
@@ -53,7 +52,7 @@ function animate(timestamp) {
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
     shape.rotation.x += 0.002;
-    shape.rotation.y += 0.004;
+    shape.rotation.y += 0.003;
     shape.rotation.z += 0.007;
     renderer.render(scene, camera);
     requestAnimationFrame(animate);

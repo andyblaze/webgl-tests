@@ -13,11 +13,11 @@ canvas {
     display: inline-block;
 }
 #ui {
-    padding: 0 0 1rem 0;
+    padding: 1rem 0 1rem 0;
 }
 #ui-ctrls label {
     padding: 0 0 0 0;
-    display: block;
+    display: inline-block;
     line-height: 2rem;
 }
 #ui-ctrls label span {

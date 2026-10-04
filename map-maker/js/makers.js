@@ -22,7 +22,7 @@ export function makeCamera(three, w, h) {
     return camera;
 }
 
-export function makeShape(three) {
+export function makeShape(three, scene) {
     const geometry = new three.BoxGeometry(2, 2, 2);
     const material = new three.MeshPhysicalMaterial({
         color: 0xffffff,
@@ -30,7 +30,9 @@ export function makeShape(three) {
         anisotropy: 1
     });
 
-    return new three.Mesh(geometry, material);
+    const shape = new three.Mesh(geometry, material);
+    scene.add(shape);
+    return shape;
 }
 
 export function makeLights(three, scene) {
