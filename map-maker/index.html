@@ -5,6 +5,14 @@
 <link href="css/site.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<script type="importmap">
+{
+    "imports": {
+        "three": "./js/three/three.module.js",
+        "three/addons/": "./js/examples/jsm/"
+    }
+}
+</script>
 <div id="ui">
     <form id="ui-ctrls">
         <label>Height: <span id="height-lbl">0</span>
@@ -16,10 +24,22 @@
         <label>Scale: <span id="scale-lbl">0</span>
             <input type="range" min="0" max="1" step="0.01" value="0" id="scale" data-label="scale-lbl" data-type="float" />
         </label>
+        <label>Strength: <span id="strength-lbl">0</span>
+            <input type="range" min="0" max="20" step="0.1" value="0" id="strength" data-label="strength-lbl" data-type="float" />
+        </label>
     </form>
 </div>
 <div id="maps">
-    <canvas id="cnvsMap" width="512" height="512"></canvas>
+    <div>
+        <canvas id="heightMap" width="512" height="512"></canvas>
+    </div>
+    <div>
+        <button id="apply-normal">Apply</button><br />
+        <canvas id="normalMap" width="512" height="512"></canvas>
+    </div>
+    <div id="three">
+        <button id="apply-three">Apply</button><br />
+    </div>
 </div>
 <script type="module" src="js/main.js"></script>
 </body>
