@@ -24,13 +24,27 @@ export default class HeightMap {
         const scale = parseFloat(scaleCtrl.value) * 0.15;
         const contrastCtrl = ctrls[4];
         const contrast = parseFloat(contrastCtrl.value);
-        for ( let y = 0; y < this.size; y++ ) {
-            for ( let x = 0; x < this.size; x++ ) {
+        let min = Infinity;
+        let max = -Infinity;
+
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
                 const i = x + y * this.size;
-                let v = baseHeight + this.perlin.noise(x * scale, y * scale) * parseFloat(prln.value);
-                v = 0.5 + (v - 0.5) * contrast;
+
+                const v = baseHeight + this.perlin.noise(x * scale, y * scale) * parseFloat(prln.value);
                 this.data[i] = v;
+
+                if (v < min) min = v;
+                if (v > max) max = v;
             }
+        }
+        for (let i = 0; i < this.data.length; i++) {
+            const v = (this.data[i] - min) / (max - min);
+
+            this.data[i] = this.data[i] = Math.max(
+    0,
+    Math.min(1, 0.5 + (v - 0.5) * contrast)
+);
         }
         this.fillImage();
     }
