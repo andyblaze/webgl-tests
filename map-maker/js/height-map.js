@@ -116,15 +116,15 @@ export default class HeightMap {
                 const dy = y - centre; 
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                /*const radial = this.applyRadial(ui.radial, x, y, distance);
-                nx = radial.rx;
-                ny = radial.ry;
+                const radial = this.applyRadial(ui.radial, x, y, distance);
+                nx = radial.effectX;
+                ny = radial.effectY;
 
                 const twist = this.applyTwist(ui.twist, nx, ny, distance);
-                nx = twist.tx;
-                ny = twist.ty;*/
+                nx = twist.effectX;
+                ny = twist.effectY;
 
-                const noise = this.perlin.noise(x * ui.scale, y * ui.scale);
+                const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
                 v = ui.height + noise * ui.perlin;
                 v = ui.height + (v - ui.height) * ui.contrast;
 
