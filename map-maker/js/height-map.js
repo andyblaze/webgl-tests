@@ -89,6 +89,12 @@ export default class HeightMap {
             }
         } 
     }
+    applyPerlin(amount, nx, ny) {
+        const noise = this.perlin.noise(nx * amount, ny * amount);
+        //let v = ui.height + noise * ui.perlin;
+        //v = ui.height + (v - ui.height) * ui.contrast;        
+        return noise;
+    }
     update(ctrls) { 
         const ui = this.getValues(ctrls);
         const bounds = {
@@ -124,11 +130,15 @@ export default class HeightMap {
                 nx = twist.effectX;
                 ny = twist.effectY;
 
+                //const amendedPerlin = this.applyPerlin(ui, nx, ny);
+                //this.data[i] = amendedPerlin.effect;
+
                 const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
                 v = ui.height + noise * ui.perlin;
                 v = ui.height + (v - ui.height) * ui.contrast;
 
                 this.data[i] = v;
+
 
                 if (v < bounds.min) bounds.min = v;
                 if (v > bounds.max) bounds.max = v;
