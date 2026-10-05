@@ -16,8 +16,16 @@ export default class HeightMap {
             o.update(this.image);
         }
     }
+    getValues(ctrls) {
+        let result = {};
+        for ( const [key, ctrl] of Object.entries(ctrls) ) {
+            result[key] = TypeConverter.convert(ctrl.dataset.type, ctrl.value);
+        }
+        return result;
+    }
     update(ctrls) { 
-        const heightCtrl = ctrls.height;
+        const ui = this.getValues(ctrls);
+        /*const heightCtrl = ctrls.height;
         const baseHeight = TypeConverter.convert(heightCtrl.dataset.type, heightCtrl.value);
         const perlinCtrl = ctrls.perlin; 
         const perlinAmount = TypeConverter.convert(perlinCtrl.dataset.type, perlinCtrl.value);
@@ -25,23 +33,31 @@ export default class HeightMap {
         const scale = TypeConverter.convert(scaleCtrl.dataset.type, scaleCtrl.value) * 0.15;
         const contrastCtrl = ctrls.contrast;
         const contrast = TypeConverter.convert(contrastCtrl.dataset.type, contrastCtrl.value);
+        const exaggerationCtrl = ctrls.exaggeration;
+        const exaggeration = TypeConverter.convert(exaggerationCtrl.dataset.type, exaggerationCtrl.value);*/
         let min = Infinity;
         let max = -Infinity;
+        let v = 0;
 
         for ( let y = 0; y < this.size; y++ ) {
             for (let x = 0; x < this.size; x++) {
                 const i = x + y * this.size;
 
-                const v = baseHeight + this.perlin.noise(x * scale, y * scale) * perlinAmount;
+                const noise = this.perlin.noise(x * ui.scale, y * ui.scale);
+                v = ui.height + noise * ui.perlin;
+                v = ui.height + (v - ui.height) * ui.contrast;
+
                 this.data[i] = v;
 
                 if (v < min) min = v;
                 if (v > max) max = v;
             }
         }
-        for ( let i = 0; i < this.data.length; i++ ) {
-            const v = (this.data[i] - min) / (max - min);
-            this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * contrast));
+        if ( ui.exaggeration > 0 ) {
+            for ( let i = 0; i < this.data.length; i++ ) {
+                v = (this.data[i] - min) / (max - min);
+                this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * ui.exaggeration));
+            }
         }
         this.fillImage();
     }
