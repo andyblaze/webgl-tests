@@ -1,5 +1,42 @@
 import TypeConverter from "./type-converter.js";
 
+class Radial {
+    static apply(amount, x, y, distance) {
+        return {
+            effectX: x + (distance - x) * amount,
+            effectY: y + (distance - y) * amount
+        };
+    }
+}
+
+class Twist {
+    static apply(amount, nx, ny, distance, size) {
+        const centre = size / 2;
+        const angle = (amount / 10) * distance;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        // NEW: rotate the coordinates around the centre
+        const tx = nx - centre;
+        const ty = ny - centre;
+
+        //const ttx = tx * cos - ty * sin + centre;
+        //const tty = tx * sin + ty * cos + centre;  
+        return {
+            effectX: tx * cos - ty * sin + centre, 
+            effectY: tx * sin + ty * cos + centre
+        };
+    }
+}
+
+class Blend {
+    static apply(ui, noise) {
+        let v = ui.height + noise * ui.perlin;
+        v = ui.height + (v - ui.height) * ui.contrast;   
+        return v;     
+    }
+}
+
 export default class HeightMap {
     constructor(canvas, perlin) {
         this.size = 512;
@@ -122,20 +159,16 @@ export default class HeightMap {
                 const dy = y - centre; 
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                const radial = this.applyRadial(ui.radial, x, y, distance);
+                const radial = Radial.apply(ui.radial, x, y, distance);
                 nx = radial.effectX;
                 ny = radial.effectY;
 
-                const twist = this.applyTwist(ui.twist, nx, ny, distance);
+                const twist = Twist.apply(ui.twist, nx, ny, distance, this.size);
                 nx = twist.effectX;
                 ny = twist.effectY;
 
-                //const amendedPerlin = this.applyPerlin(ui, nx, ny);
-                //this.data[i] = amendedPerlin.effect;
-
                 const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
-                v = ui.height + noise * ui.perlin;
-                v = ui.height + (v - ui.height) * ui.contrast;
+                v = Blend.apply(ui, noise);
 
                 this.data[i] = v;
 
