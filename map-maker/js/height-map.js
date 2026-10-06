@@ -1,15 +1,17 @@
 import TypeConverter from "./type-converter.js";
 
 class Radial {
+    static effectX = 0;
+    static effectY = 0;
     static apply(amount, x, y, distance) {
-        return {
-            effectX: x + (distance - x) * amount,
-            effectY: y + (distance - y) * amount
-        };
+        Radial.effectX = x + (distance - x) * amount;
+        Radial.effectY = y + (distance - y) * amount;
     }
 }
 
 class Twist {
+    static effectX = 0;
+    static effectY = 0;    
     static apply(amount, nx, ny, distance, size) {
         const centre = size / 2;
         const angle = (amount / 10) * distance;
@@ -19,13 +21,9 @@ class Twist {
         // NEW: rotate the coordinates around the centre
         const tx = nx - centre;
         const ty = ny - centre;
-
-        //const ttx = tx * cos - ty * sin + centre;
-        //const tty = tx * sin + ty * cos + centre;  
-        return {
-            effectX: tx * cos - ty * sin + centre, 
-            effectY: tx * sin + ty * cos + centre
-        };
+ 
+        Twist.effectX = tx * cos - ty * sin + centre;
+        Twist.effectY = tx * sin + ty * cos + centre;
     }
 }
 
@@ -159,13 +157,13 @@ export default class HeightMap {
                 const dy = y - centre; 
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                const radial = Radial.apply(ui.radial, x, y, distance);
-                nx = radial.effectX;
-                ny = radial.effectY;
+                Radial.apply(ui.radial, x, y, distance);
+                nx = Radial.effectX;
+                ny = Radial.effectY;
 
-                const twist = Twist.apply(ui.twist, nx, ny, distance, this.size);
-                nx = twist.effectX;
-                ny = twist.effectY;
+                Twist.apply(ui.twist, nx, ny, distance, this.size);
+                nx = Twist.effectX;
+                ny = Twist.effectY;
 
                 const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
                 v = Blend.apply(ui, noise);
