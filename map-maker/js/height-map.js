@@ -1,5 +1,5 @@
 import TypeConverter from "./type-converter.js";
-import { Radial, Ripple, Exaggeration, Twist, Terrace, Blend } from "./effects.js";
+import { Radial, Ripple, Exaggeration, Twist, Terrace, Blend, Warp, Blur } from "./effects.js";
 
 export default class HeightMap {
     constructor(canvas, perlin) {
@@ -25,7 +25,10 @@ export default class HeightMap {
         return result;
     }
     postProcess(ui, bounds, v) {
-        Exaggeration.apply(this.data, ui.exaggeration, bounds, v);
+        if ( ui.exaggeration !== 0 )
+            Exaggeration.apply(this.data, ui.exaggeration, bounds, v);
+        if ( ui.blur !== 0 )
+            Blur.apply(this.data, this.size, ui.blur);
     }
     update(ctrls) { 
         const ui = this.getValues(ctrls);
@@ -40,26 +43,40 @@ export default class HeightMap {
         for ( let y = 0; y < this.size; y++ ) {
             for ( let x = 0; x < this.size; x++ ) {
 
+                nx = x;
+                ny = y;
+
                 const dx = x - centre; 
                 const dy = y - centre; 
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                Radial.apply(ui.radial, x, y, distance);
-                nx = Radial.effectX;
-                ny = Radial.effectY;
-
-                Twist.apply(ui.twist, nx, ny, distance, this.size);
-                nx = Twist.effectX;
-                ny = Twist.effectY;
+                if ( ui.radial !== 0 ) {
+                    Radial.apply(ui.radial, x, y, distance);
+                    nx = Radial.effectX;
+                    ny = Radial.effectY;
+                }
+                if ( ui.twist !== 0 ) {
+                    Twist.apply(ui.twist, nx, ny, distance, this.size);
+                    nx = Twist.effectX;
+                    ny = Twist.effectY;
+                }
+                if ( ui.warp !== 0 ) {    
+                    Warp.apply(ui.warp, nx, ny, distance);
+                    nx = Warp.effectX;
+                    ny = Warp.effectY;
+                }
 
                 const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
                 v = Blend.apply(ui, noise);
 
-                Terrace.apply(ui.terrace, v);
-                v = Terrace.effect;
-
-                Ripple.apply(ui.ripple, v, distance);
-                v = Ripple.effect;
+                if ( ui.terrace !== 0 ) {
+                    Terrace.apply(ui.terrace, v);
+                    v = Terrace.effect;
+                }
+                if ( ui.ripple !== 0 ) {
+                    Ripple.apply(ui.ripple, v, distance);
+                    v = Ripple.effect;
+                }
 
                 const i = x + y * this.size;
                 this.data[i] = v;
