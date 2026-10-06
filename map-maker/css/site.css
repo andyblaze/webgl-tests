@@ -19,6 +19,7 @@ canvas {
     padding: 0 0 0 0;
     display: inline-block;
     line-height: 2rem;
+    text-transform: capitalize;
 }
 #ui-ctrls label span {
     display: inline-block;

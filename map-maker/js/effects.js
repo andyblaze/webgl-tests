@@ -75,6 +75,17 @@ export class Exaggeration {
     }
 }
 
+export class Ridge {
+    static apply(data, amount) {
+        if (amount === 0) return;
+        for (let i = 0; i < data.length; i++) {
+            const v = data[i];
+            const ridge = 1 - Math.abs(2 * v - 1);
+            data[i] = v + (ridge - v) * amount;
+        }
+    }
+}
+
 export class Blur {
     static buffer = null;
     static apply(data, size, amount) {

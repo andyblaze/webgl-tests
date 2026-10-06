@@ -15,9 +15,7 @@
 </script>
 <div id="ui">
     <form id="ui-ctrls">
-        <label>Height: <span id="height-lbl">0.25</span>
-            <input type="range" min="0" max="1" step="0.01" value="0.25" id="height" data-label="height-lbl" data-type="float" />
-        </label>
+        {{ctrls}}
         <label>Perlin: <span id="perlin-lbl">0.5</span>
             <input type="range" min="0.01" max="1" step="0.01" value="0.5" id="perlin" data-label="perlin-lbl" data-type="float" />
         </label>
@@ -50,6 +48,9 @@
         </label>
         <label>Blur: <span id="blur-lbl">0</span>
             <input type="range" min="0" max="100" step="0.1" value="0" id="blur" data-label="blur-lbl" data-type="float" />
+        </label>
+        <label>Ridge: <span id="ridge-lbl">0</span>
+            <input type="range" min="0" max="1" step="0.01" value="0" id="ridge" data-label="ridge-lbl" data-type="float" />
         </label>
     </form>
 </div>

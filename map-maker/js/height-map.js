@@ -1,5 +1,6 @@
 import TypeConverter from "./type-converter.js";
-import { Radial, Ripple, Exaggeration, Twist, Terrace, Blend, Warp, Blur } from "./effects.js";
+import { Radial, Ripple, Exaggeration, Twist, 
+         Terrace, Blend, Warp, Blur, Ridge } from "./effects.js";
 
 export default class HeightMap {
     constructor(canvas, perlin) {
@@ -25,6 +26,8 @@ export default class HeightMap {
         return result;
     }
     postProcess(ui, bounds, v) {
+        if ( ui.ridge !== 0 )
+            Ridge.apply(this.data, ui.ridge);
         if ( ui.exaggeration !== 0 )
             Exaggeration.apply(this.data, ui.exaggeration, bounds, v);
         if ( ui.blur !== 0 )
