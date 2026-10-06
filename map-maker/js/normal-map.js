@@ -3,7 +3,7 @@ export default class NormalMap {
         this.size = size;
         this.image = canvas.createImage(size);
     }
-    make(heightMap, strength=1) {
+    make(heightMap, strength) {
         for (let y = 1; y < this.size - 1; y++) {
             for (let x = 1; x < this.size - 1; x++) {
                 const i = x + y * this.size;

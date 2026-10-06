@@ -21,6 +21,14 @@ export function randomFrom(arr) {
     return arr[mt_rand(0, arr.length - 1)];
 }
 
+export function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+}
+
+export function clamp0to1(v) {
+    return Math.max(0, Math.min(1, v));
+}
+
 export function lerp(a, b, t) {
     return a + (b - a) * t;
 } 

@@ -1,4 +1,5 @@
 import TypeConverter from "./type-converter.js";
+import { clamp0to1 } from "./functions.js";
 
 class Radial {
     static effectX = 0;
@@ -27,11 +28,38 @@ class Twist {
     }
 }
 
+class Terrace {
+    static effect = 0;
+    static apply(amount, value) {
+        const steps = 2 + amount * 30;
+        Terrace.effect = Math.floor(value * steps) / steps;
+    }
+}
+
+class Ripple {
+    static effect = 0;
+    static apply(amount, value, distance) {
+        Ripple.effect = value + Math.sin(distance * amount) * amount;
+    }
+}
+
 class Blend {
     static apply(ui, noise) {
         let v = ui.height + noise * ui.perlin;
         v = ui.height + (v - ui.height) * ui.contrast;   
         return v;     
+    }
+}
+
+class Exaggeration {
+    static apply(data, amount, bounds, v) {
+        if ( amount > 0 ) {
+            for ( let i = 0; i < data.length; i++ ) {
+                v = (data[i] - bounds.min) / (bounds.max - bounds.min);
+                //data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * amount));
+                data[i] = clamp0to1(0.5 + (v - 0.5) * amount);
+            }
+        }         
     }
 }
 
@@ -58,100 +86,21 @@ export default class HeightMap {
         }
         return result;
     }
-    applyRadial(amount, x, y, distance) {
-        return {
-            effectX: x + (distance - x) * amount,
-            effectY: y + (distance - y) * amount
-        };
-    }
-    applyTwist(amount, nx, ny, distance) {
-        const centre = this.size / 2;
-        const angle = (amount / 10) * distance;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-
-        // NEW: rotate the coordinates around the centre
-        const tx = nx - centre;
-        const ty = ny - centre;
-
-        const ttx = tx * cos - ty * sin + centre;
-        const tty = tx * sin + ty * cos + centre;  
-        return {
-            effectX: tx * cos - ty * sin + centre, 
-            effectY: tx * sin + ty * cos + centre
-        };   
-    }
-    generate(ui, bounds) {
-        //const ui = this.getValues(ctrls);
-        let v = 0;
-        let nx = 0;
-        let ny = 0;
-        const centre = this.size / 2;
-
-        for ( let y = 0; y < this.size; y++ ) {
-            for (let x = 0; x < this.size; x++) {
-                const i = x + y * this.size;
-
-                const dx = x - centre; 
-                const dy = y - centre; 
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                /*const radial = this.applyRadial(ui.radial, x, y, distance);
-                console.log(radial);
-                nx = radial.effectX;
-                ny = radial.effectY;*/
-
-                /*const twist = this.applyTwist(ui.twist, nx, ny, distance);
-                nx = twist.effectX;
-                ny = twist.effectY;*/
-
-                const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
-                v = ui.height + noise * ui.perlin;
-                v = ui.height + (v - ui.height) * ui.contrast;
-
-                this.data[i] = v;
-
-                if (v < bounds.min) bounds.min = v;
-                if (v > bounds.max) bounds.max = v;
-            }
-        }
-    }
-    postProcess(ui, bounds) {
-        if ( ui.exaggeration > 0 ) {
-            for ( let i = 0; i < this.data.length; i++ ) {
-                v = (this.data[i] - bounds.min) / (bounds.max - bounds.min);
-                this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * ui.exaggeration));
-            }
-        } 
-    }
-    applyPerlin(amount, nx, ny) {
-        const noise = this.perlin.noise(nx * amount, ny * amount);
-        //let v = ui.height + noise * ui.perlin;
-        //v = ui.height + (v - ui.height) * ui.contrast;        
-        return noise;
+    postProcess(ui, bounds, v) {
+        Exaggeration.apply(this.data, ui.exaggeration, bounds, v);
     }
     update(ctrls) { 
         const ui = this.getValues(ctrls);
-        const bounds = {
-            min: Infinity,
-            max: -Infinity
-        };
-        /*this.generate(ui, bounds);
-        this.postProcess(ui, bounds);
-        this.fillImage();
-        return;*/
+        const bounds = { min: Infinity, max: -Infinity };
         let v = 0;
         let nx = 0;
         let ny = 0;
-        let min = Infinity;
-        let max = -Infinity;
 
-        // NEW: centre of the height map 
+        // centre of the height map 
         const centre = this.size / 2;
 
         for ( let y = 0; y < this.size; y++ ) {
-            for (let x = 0; x < this.size; x++) {
-                const i = x + y * this.size;
+            for ( let x = 0; x < this.size; x++ ) {
 
                 const dx = x - centre; 
                 const dy = y - centre; 
@@ -168,19 +117,20 @@ export default class HeightMap {
                 const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
                 v = Blend.apply(ui, noise);
 
-                this.data[i] = v;
+                Terrace.apply(ui.terrace, v);
+                v = Terrace.effect;
 
+                Ripple.apply(ui.ripple, v, distance);
+                v = Ripple.effect;
+
+                const i = x + y * this.size;
+                this.data[i] = v;
 
                 if (v < bounds.min) bounds.min = v;
                 if (v > bounds.max) bounds.max = v;
             }
         }
-        if ( ui.exaggeration > 0 ) {
-            for ( let i = 0; i < this.data.length; i++ ) {
-                v = (this.data[i] - bounds.min) / (bounds.max - bounds.min);
-                this.data[i] = Math.max(0, Math.min(1, 0.5 + (v - 0.5) * ui.exaggeration));
-            }
-        }
+        this.postProcess(ui, bounds, v);
         this.fillImage();
     }
     fillImage() {

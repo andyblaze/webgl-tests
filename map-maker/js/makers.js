@@ -23,7 +23,7 @@ export function makeCamera(three, w, h) {
 }
 
 export function makeShape(three, scene) {
-    const geometry = new three.BoxGeometry(2, 2, 2);
+    const geometry = new three.SphereGeometry(1.5, 128, 128);
     const material = new three.MeshPhysicalMaterial({
         color: 0xffffff,
         roughness: 0.5, metalness: 0.5,
