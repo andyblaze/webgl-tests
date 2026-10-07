@@ -30,7 +30,7 @@ function makeGeo(three, type) {
         case "cylinder" : return new three.CylinderGeometry(0.75, 0.75, 2.5, 128, 128);
         case "capsule" : return new three.CapsuleGeometry(1, 1, 128, 128, 128);
         case "dodecahedron" : return new three.DodecahedronGeometry(1.5);
-        case "torus" : return new three.TorusGeometry(1.25, 0.25, 128, 128);
+        case "torus" : return new three.TorusGeometry(1.25, 0.25, 512, 512);
         case "torusknot" : return new three.TorusKnotGeometry(1.05, 0.25, 512, 512);
     }    
 }
@@ -70,4 +70,12 @@ export function makeLights(three, scene) {
 
     scene.add(green);
     scene.add(green.target);
+
+    const backLight = new three.DirectionalLight(0xffffff, 0.5);
+
+    backLight.position.set(-2, 3, -5);
+    backLight.target.position.set(0, 0, 0);
+
+    scene.add(backLight);
+    scene.add(backLight.target);
 }
