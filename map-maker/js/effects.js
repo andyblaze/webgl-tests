@@ -75,6 +75,38 @@ export class Exaggeration {
     }
 }
 
+export class Pinch {
+    static effectX = 0;
+    static effectY = 0;
+    static apply(amount, x, y, distance, size) {
+        const centre = size / 2;
+        const factor = 1 + amount * distance / centre;
+
+        Pinch.effectX = centre + (x - centre) * factor;
+        Pinch.effectY = centre + (y - centre) * factor;
+    }
+}
+
+export class Wave {
+    static effectX = 0;
+    static effectY = 0;
+    static apply(amount, x, y) {
+        const frequency = 0.05;
+        Wave.effectX = x + Math.sin(y * frequency) * amount;
+        Wave.effectY = y + Math.sin(x * frequency) * amount;
+    }
+}
+
+export class Shear {
+    static effectX = 0;
+    static effectY = 0;
+    static apply(amount, x, y, size) {
+        const centre = size / 2;
+        Shear.effectX = x + (y - centre) * amount;
+        Shear.effectY = y + (x - centre) * amount;
+    }
+}
+
 export class Ridge {
     static apply(data, amount) {
         if (amount === 0) return;

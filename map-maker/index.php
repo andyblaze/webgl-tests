@@ -9,7 +9,10 @@ $ctrlsData = [
     "twist" =>          ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
     "terrace" =>        ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
     "ripple" =>         ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
-    "warp" =>           ["min" => 0, "max" => 50, "step" => 0.01, "value" => 0]
+    "warp" =>           ["min" => 0, "max" => 50, "step" => 0.01, "value" => 0],
+    "pinch" =>          ["min" => -1, "max" => 1, "step" => 0.01, "value" => 0],
+    "shear" =>          ["min" => -1, "max" => 1, "step" => 0.1, "value" => 0],
+    "wave" =>           ["min" => 0, "max" => 50, "step" => 0.1, "value" => 0]
 ];
 
 $postProcess = [
@@ -18,6 +21,28 @@ $postProcess = [
     "exaggeration" =>   ["min" => 0, "max" => 6, "step" => 0.1, "value" => 0],
     "blur" =>           ["min" => 0, "max" => 100, "step" => 0.01, "value" => 0]
 ];
+
+$geometries = [
+    "sphere",
+    "box",
+    "cone",
+    "cylinder",
+    "capsule",
+    "dodecahedron",
+    "torus",
+    "torusknot"
+];
+
+function makeSelect($id, $opts) {
+    $htm = "<select id=\"{$id}\">";
+    foreach ( $opts as $key => $val ) {
+        $sel = $key === 0 ? ' selected="selected"' : '';
+        $txt = ucfirst($val);
+        $htm .= "<option value=\"{$val}\"{$sel}>{$txt}</option>";
+    }
+    $htm .= '</select>';
+    return $htm;
+}
 
 function makeCtrl(string $name, array $data) {
     $d = (object)$data;
@@ -35,7 +60,9 @@ foreach ( $ctrlsData as $key => $val )
 foreach ( $postProcess as $key => $val )
     $post .= makeCtrl($key, $val);
 
+$select = makeSelect('geometry-change', $geometries);
+
 $html = file_get_contents('view.html');
 
-echo str_replace(['{{ctrls}}', '{{post}}'], [$ctrls, $post], $html);
+echo str_replace(['{{ctrls}}', '{{post}}', '{{select}}'], [$ctrls, $post, $select], $html);
         

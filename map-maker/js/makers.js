@@ -22,17 +22,29 @@ export function makeCamera(three, w, h) {
     return camera;
 }
 
-export function makeShape(three, scene) {
-    const geometry = new three.SphereGeometry(1.5, 128, 128);
+function makeGeo(three, type) {
+    switch (type) {
+        case "sphere" : return new three.SphereGeometry(1.5, 128, 128);
+        case "box" : return new three.BoxGeometry(2, 2, 2);
+        case "cone" : return new three.ConeGeometry(1.25, 2, 128, 128);
+        case "cylinder" : return new three.CylinderGeometry(0.75, 0.75, 2.5, 128, 128);
+        case "capsule" : return new three.CapsuleGeometry(1, 1, 128, 128, 128);
+        case "dodecahedron" : return new three.DodecahedronGeometry(1.5);
+        case "torus" : return new three.TorusGeometry(1.25, 0.25, 128, 128);
+        case "torusknot" : return new three.TorusKnotGeometry(1.05, 0.25, 512, 512);
+    }    
+}
+
+export function makeShape(three, type) {
+    const geometry = makeGeo(three, type);
     const material = new three.MeshPhysicalMaterial({
         color: 0xffffff,
         roughness: 0.5, metalness: 0.5,
         anisotropy: 1
     });
 
-    const shape = new three.Mesh(geometry, material);
-    scene.add(shape);
-    return shape;
+    //const shape = new three.Mesh(geometry, material);
+    return new three.Mesh(geometry, material);
 }
 
 export function makeLights(three, scene) {

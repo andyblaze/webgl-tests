@@ -22,8 +22,20 @@ const container = byId("three");
 const renderer = makeRenderer(THREE, container);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, container.clientWidth, container.clientHeight);
-const shape = makeShape(THREE, scene);
+
 makeLights(THREE, scene);
+
+let shape = makeShape(THREE, byId("geometry-change").value);
+scene.add(shape);
+
+byId("geometry-change").onchange = (e) => {
+    scene.remove(shape);
+    shape.geometry.dispose();
+    shape.material.dispose();
+    shape = makeShape(THREE, e.target.value);
+    scene.add(shape);
+    byId("apply-three").click();
+};
 
 
 byId("apply-normal").onclick = () => {
@@ -34,10 +46,8 @@ byId("apply-normal").onclick = () => {
 };
 
 byId("apply-three").onclick = () => {
-    const mapTex = new THREE.CanvasTexture(
-        heightCanvas.canvas
-    );
-    shape.material.map = mapTex;
+    //const mapTex = new THREE.CanvasTexture(heightCanvas.canvas);
+    //shape.material.map = mapTex;
     const normTex = new THREE.CanvasTexture(normalCanvas.canvas);
     shape.material.normalMap = normTex;
     shape.material.needsUpdate = true;

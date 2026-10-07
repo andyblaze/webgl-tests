@@ -1,6 +1,7 @@
 import TypeConverter from "./type-converter.js";
 import { Radial, Ripple, Exaggeration, Twist, 
-         Terrace, Blend, Warp, Blur, Ridge } from "./effects.js";
+         Terrace, Blend, Warp, Blur, Ridge,
+        Pinch, Shear, Wave } from "./effects.js";
 
 export default class HeightMap {
     constructor(canvas, perlin) {
@@ -67,6 +68,21 @@ export default class HeightMap {
                     Warp.apply(ui.warp, nx, ny, distance);
                     nx = Warp.effectX;
                     ny = Warp.effectY;
+                }
+                if ( ui.pinch !== 0 ) {    
+                    Pinch.apply(ui.pinch, nx, ny, distance, this.size);
+                    nx = Pinch.effectX;
+                    ny = Pinch.effectY;
+                }
+                if ( ui.shear !== 0 ) {    
+                    Shear.apply(ui.shear, nx, ny, this.size);
+                    nx = Shear.effectX;
+                    ny = Shear.effectY;
+                }
+                if ( ui.wave !== 0 ) {    
+                    Wave.apply(ui.wave, nx, ny);
+                    nx = Wave.effectX;
+                    ny = Wave.effectY;
                 }
 
                 const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
