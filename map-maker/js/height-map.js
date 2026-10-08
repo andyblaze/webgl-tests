@@ -26,18 +26,18 @@ export default class HeightMap {
         }
         return result;
     }
-    postProcess(ui, bounds, v) {
+    postProcess(ui, bounds, height) {
         if ( ui.ridge !== 0 )
             Ridge.apply(this.data, ui.ridge);
         if ( ui.exaggeration !== 0 )
-            Exaggeration.apply(this.data, ui.exaggeration, bounds, v);
+            Exaggeration.apply(this.data, ui.exaggeration, bounds, height);
         if ( ui.blur !== 0 )
             Blur.apply(this.data, this.size, ui.blur);
     }
     update(ctrls) { 
         const ui = this.getValues(ctrls);
         const bounds = { min: Infinity, max: -Infinity };
-        let v = 0;
+        let height = 0;
         let sampleX = 0;
         let sampleY = 0;
 
@@ -72,25 +72,25 @@ export default class HeightMap {
                 }
 
                 const noise = this.perlin.noise(sampleX * ui.scale, sampleY * ui.scale);
-                v = Blend.apply(ui, noise);
+                height = Blend.apply(ui, noise);
 
                 if ( ui.terrace !== 0 ) {
-                    Terrace.apply(ui.terrace, v);
-                    v = Terrace.effect;
+                    Terrace.apply(ui.terrace, height);
+                    height = Terrace.effect;
                 }
                 if ( ui.ripple !== 0 ) {
-                    Ripple.apply(ui.ripple, v, distance);
-                    v = Ripple.effect;
+                    Ripple.apply(ui.ripple, height, distance);
+                    height = Ripple.effect;
                 }
 
                 const i = x + y * this.size;
-                this.data[i] = v;
+                this.data[i] = height;
 
-                if (v < bounds.min) bounds.min = v;
-                if (v > bounds.max) bounds.max = v;
+                if (height < bounds.min) bounds.min = height;
+                if (height > bounds.max) bounds.max = height;
             }
         }
-        this.postProcess(ui, bounds, v);
+        this.postProcess(ui, bounds, height);
         this.fillImage();
     }
     fillImage() {
