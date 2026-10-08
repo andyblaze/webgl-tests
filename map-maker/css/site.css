@@ -3,8 +3,13 @@ body {
     padding: 0;
     background: #000000;
     color: #ffffff;
+}
+body, button, select {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.4rem;
+}
+button, select {
+    padding: 0.25rem;
 }
 canvas {
     background-color: #ffffff;

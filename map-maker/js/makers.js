@@ -71,7 +71,7 @@ export function makeLights(three, scene) {
     scene.add(green);
     scene.add(green.target);
 
-    const backLight = new three.DirectionalLight(0xffffff, 0.5);
+    const backLight = new three.DirectionalLight(0xffffff, 0.125);
 
     backLight.position.set(-2, 3, -5);
     backLight.target.position.set(0, 0, 0);
