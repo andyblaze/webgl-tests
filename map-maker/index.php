@@ -7,17 +7,17 @@ $ctrlsData = [
     "contrast" =>       ["min" => 0.1, "max" => 3, "step" => 0.1, "value" => 1],
     "radial" =>         ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
     "twist" =>          ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
-    "terrace" =>        ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
-    "ripple" =>         ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
     "warp" =>           ["min" => 0, "max" => 50, "step" => 0.01, "value" => 0],
     "pinch" =>          ["min" => -1, "max" => 1, "step" => 0.01, "value" => 0],
     "shear" =>          ["min" => -1, "max" => 1, "step" => 0.1, "value" => 0],
-    "wave" =>           ["min" => 0, "max" => 50, "step" => 0.1, "value" => 0]
+    "wave" =>           ["min" => 0, "max" => 50, "step" => 0.1, "value" => 0],
+    "terrace" =>        ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
+    "ripple" =>         ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0]
 ];
 
 $postProcess = [
-    "strength" =>       ["min" => 0, "max" => 20, "step" => 0.1, "value" => 10],
     "ridge" =>          ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
+    "strength" =>       ["min" => 0, "max" => 20, "step" => 0.1, "value" => 10],
     "exaggeration" =>   ["min" => 0, "max" => 6, "step" => 0.1, "value" => 0],
     "blur" =>           ["min" => 0, "max" => 100, "step" => 0.01, "value" => 0]
 ];

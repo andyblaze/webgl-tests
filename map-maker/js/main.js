@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { byId, mt_rand } from "./functions.js";
+import { byId, byQsArray, mt_rand } from "./functions.js";
 import UiControls from "./uicontrols.js";
 import NormalMap from "./normal-map.js";
 import Perlin from "./perlin.js";
@@ -34,18 +34,19 @@ byId("geometry-change").onchange = (e) => {
     shape.material.dispose();
     shape = makeShape(THREE, e.target.value);
     scene.add(shape);
-    byId("apply-three").click();
+    applyNormal();
+    applyToShape();
 };
 
 
-byId("apply-normal").onclick = () => {
+function applyNormal() {
     const strength = byId("strength");
     const str = parseFloat(strength.value);
     normalMap.make(heightMap.data, str);
     normalCanvas.update(normalMap.image);
-};
+}
 
-byId("apply-three").onclick = () => {
+function applyToShape() {
     //const mapTex = new THREE.CanvasTexture(heightCanvas.canvas);
     //shape.material.map = mapTex;
     const normTex = new THREE.CanvasTexture(normalCanvas.canvas);
@@ -54,6 +55,21 @@ byId("apply-three").onclick = () => {
 
 };
 
+let running = true;
+
+const controls = byQsArray("#ui-ctrls input");
+
+for ( const ctrl of controls) {
+    ctrl.addEventListener("pointerdown", () => {
+        running = false;
+    });
+    ctrl.addEventListener("pointerup", () => {
+        applyNormal();
+        applyToShape();
+        running = true;
+    });
+}
+
 const timer = new THREE.Clock();
 const time = {dt: 0, elapsed: 0, timestamp: 0 };
 
@@ -61,10 +77,12 @@ function animate(timestamp) {
     time.dt = timer.getDelta();
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
-    shape.rotation.x += 0.002;
-    shape.rotation.y += 0.003;
-    shape.rotation.z += 0.007;
-    renderer.render(scene, camera);
+    if ( true === running ) {
+        shape.rotation.x += 0.002;
+        shape.rotation.y += 0.003;
+        shape.rotation.z += 0.007;
+        renderer.render(scene, camera);
+    }
     requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
