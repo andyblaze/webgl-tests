@@ -38,54 +38,40 @@ export default class HeightMap {
         const ui = this.getValues(ctrls);
         const bounds = { min: Infinity, max: -Infinity };
         let v = 0;
-        let nx = 0;
-        let ny = 0;
+        let sampleX = 0;
+        let sampleY = 0;
 
         // centre of the height map 
         const centre = this.size / 2;
 
+        const coordinateEffects = [
+            [ui.radial, Radial],
+            [ui.twist, Twist],
+            [ui.warp, Warp],
+            [ui.pinch, Pinch],
+            [ui.shear, Shear],
+            [ui.wave, Wave],
+        ];
+
         for ( let y = 0; y < this.size; y++ ) {
             for ( let x = 0; x < this.size; x++ ) {
 
-                nx = x;
-                ny = y;
+                sampleX = x;
+                sampleY = y;
 
                 const dx = x - centre; 
                 const dy = y - centre; 
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                if ( ui.radial !== 0 ) {
-                    Radial.apply(ui.radial, x, y, distance);
-                    nx = Radial.effectX;
-                    ny = Radial.effectY;
-                }
-                if ( ui.twist !== 0 ) {
-                    Twist.apply(ui.twist, nx, ny, distance, this.size);
-                    nx = Twist.effectX;
-                    ny = Twist.effectY;
-                }
-                if ( ui.warp !== 0 ) {    
-                    Warp.apply(ui.warp, nx, ny, distance);
-                    nx = Warp.effectX;
-                    ny = Warp.effectY;
-                }
-                if ( ui.pinch !== 0 ) {    
-                    Pinch.apply(ui.pinch, nx, ny, distance, this.size);
-                    nx = Pinch.effectX;
-                    ny = Pinch.effectY;
-                }
-                if ( ui.shear !== 0 ) {    
-                    Shear.apply(ui.shear, nx, ny, this.size);
-                    nx = Shear.effectX;
-                    ny = Shear.effectY;
-                }
-                if ( ui.wave !== 0 ) {    
-                    Wave.apply(ui.wave, nx, ny);
-                    nx = Wave.effectX;
-                    ny = Wave.effectY;
+                for (const [amount, effect] of coordinateEffects) {
+                    if ( amount !== 0 ) {
+                        effect.apply(amount, sampleX, sampleY, distance, this.size);
+                        sampleX = effect.effectX;
+                        sampleY = effect.effectY;
+                    }
                 }
 
-                const noise = this.perlin.noise(nx * ui.scale, ny * ui.scale);
+                const noise = this.perlin.noise(sampleX * ui.scale, sampleY * ui.scale);
                 v = Blend.apply(ui, noise);
 
                 if ( ui.terrace !== 0 ) {

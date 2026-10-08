@@ -3,7 +3,7 @@ import { clamp0to1 } from "./functions.js";
 export class Warp {
     static effectX = 0;
     static effectY = 0;
-    static apply(amount, x, y, distance) {
+    static apply(amount, x, y, distance, size) {
         const frequency = 0.05;
         const offset = Math.sin(distance * 0.05) * amount;
         //Warp.effectX = x + Math.sin(distance * frequency) * amount;
@@ -16,7 +16,7 @@ export class Warp {
 export class Radial {
     static effectX = 0;
     static effectY = 0;
-    static apply(amount, x, y, distance) {
+    static apply(amount, x, y, distance, size) {
         Radial.effectX = x + (distance - x) * amount;
         Radial.effectY = y + (distance - y) * amount;
     }
@@ -90,7 +90,7 @@ export class Pinch {
 export class Wave {
     static effectX = 0;
     static effectY = 0;
-    static apply(amount, x, y) {
+    static apply(amount, x, y, distance, size) {
         const frequency = 0.05;
         Wave.effectX = x + Math.sin(y * frequency) * amount;
         Wave.effectY = y + Math.sin(x * frequency) * amount;
@@ -100,7 +100,7 @@ export class Wave {
 export class Shear {
     static effectX = 0;
     static effectY = 0;
-    static apply(amount, x, y, size) {
+    static apply(amount, x, y, distance, size) {
         const centre = size / 2;
         Shear.effectX = x + (y - centre) * amount;
         Shear.effectY = y + (x - centre) * amount;
