@@ -12,7 +12,8 @@ $ctrlsData = [
     "shear" =>          ["min" => -1, "max" => 1, "step" => 0.1, "value" => 0],
     "wave" =>           ["min" => 0, "max" => 50, "step" => 0.1, "value" => 0],
     "terrace" =>        ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0],
-    "ripple" =>         ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0]
+    "multipinch" =>     ["min" => -1, "max" => 1, "step" => 0.01, "value" => 0]
+    //"ripple" =>         ["min" => 0, "max" => 1, "step" => 0.01, "value" => 0] // gone for now
 ];
 
 $postProcess = [

@@ -78,9 +78,9 @@ function animate(timestamp) {
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
     if ( true === running ) {
-        shape.rotation.x += 0.002;
-        shape.rotation.y += 0.003;
-        shape.rotation.z += 0.007;
+        shape.rotation.x += 0.002 * time.dt;
+        shape.rotation.y += 0.003 * time.dt;
+        shape.rotation.z += 0.007 * time.dt;
         renderer.render(scene, camera);
     }
     requestAnimationFrame(animate);

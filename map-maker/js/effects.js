@@ -75,6 +75,43 @@ export class Exaggeration {
     }
 }
 
+export class MultiPinch {
+    static effectX = 0;
+    static effectY = 0;
+
+    static apply(amount, x, y, distance, size) {
+        const centre = size / 2;
+        const radius = size / 4;
+        const centres = [
+            [centre, centre],
+            [centre / 2, centre / 2],
+            [centre * 1.5, centre / 2],
+            [centre / 2, centre * 1.5],
+            [centre * 1.5, centre * 1.5],
+        ];
+
+        let dx = 0;
+        let dy = 0;
+
+        for (const [cx, cy] of centres) {
+            const vx = x - cx;
+            const vy = y - cy;
+            const d = Math.sqrt(vx * vx + vy * vy);
+
+            if (d === 0) continue;
+
+            const falloff = Math.exp(-(d * d) / (radius * radius));
+            const displacement = amount * radius * falloff;
+
+            dx += (vx / d) * displacement;
+            dy += (vy / d) * displacement;
+        }
+
+        MultiPinch.effectX = x + dx;
+        MultiPinch.effectY = y + dy;
+    }
+}
+
 export class Pinch {
     static effectX = 0;
     static effectY = 0;

@@ -1,7 +1,7 @@
 import TypeConverter from "./type-converter.js";
-import { Radial, Ripple, Exaggeration, Twist, 
+import { Radial, Exaggeration, Twist, 
          Terrace, Blend, Warp, Blur, Ridge,
-        Pinch, Shear, Wave } from "./effects.js";
+        Pinch, Shear, Wave, MultiPinch } from "./effects.js";
 
 export default class HeightMap {
     constructor(canvas, perlin) {
@@ -51,6 +51,7 @@ export default class HeightMap {
             [ui.pinch, Pinch],
             [ui.shear, Shear],
             [ui.wave, Wave],
+            [ui.multipinch, MultiPinch]
         ];
 
         for ( let y = 0; y < this.size; y++ ) {
@@ -77,10 +78,6 @@ export default class HeightMap {
                 if ( ui.terrace !== 0 ) {
                     Terrace.apply(ui.terrace, height);
                     height = Terrace.effect;
-                }
-                if ( ui.ripple !== 0 ) {
-                    Ripple.apply(ui.ripple, height, distance);
-                    height = Ripple.effect;
                 }
 
                 const i = x + y * this.size;
