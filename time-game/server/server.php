@@ -43,58 +43,56 @@ class TcpSocket {
     }
 }
 
-$socket = new TcpSocket();
-if ( false === $socket->open() )
-    echo "Socket->open() failed: reason: " . $socket->error();
-if ( false === $socket->bind($address, $port) ) {
-    echo "Socket->bind() failed: reason: " . $socket->error();
-}
-if ( false === $socket->listen() ) {
-    echo "Socket->listen() failed: reason: " . $socket->error();
-}
-/*
-if (($sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false) {
-    echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
-}
+class Connections {
+    private string $address = '192.168.0.16';
+    private int $port = 10000;
+    private false|TcpSocket $socket = false;
 
-if (socket_bind($sock, $address, $port) === false) {
-    echo "socket_bind() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
-}
+    public function __construct(TcpSocket $tcpSock) {
+        $this->socket = $tcpSock;
 
-if (socket_listen($sock, 5) === false) {
-    echo "socket_listen() failed: reason: " . socket_strerror(socket_last_error($sock)) . "\n";
-}
-*/
-do {
-    if ( ($msgsock = $socket->accept()) === false ) {
-        echo "Socket->accept() failed: reason: " . $socket->error();
-        break;
+    if ( false === $this->socket->open() )
+        echo "TcpSocket->open() failed: reason: " . $this->socket->error();
+
+    if ( false === $this->socket->bind($this->address, $this->port) ) 
+        echo "TcpSocket->bind() failed: reason: " . $this->socket->error();
+
+    if ( false === $this->socket->listen() ) 
+        echo "TcpSocket->listen() failed: reason: " . $this->socket->error();
     }
-    /* Send instructions. */
-    $msg = "\nWelcome to the PHP Test Server. \n" .
-        "To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
-    $socket->write($msg, $msgsock);
+    public function run() {  
+        do {
+            if ( ($msgsock = $socket->accept()) === false ) {
+                echo "TcpSocket->accept() failed: reason: " . $socket->error();
+                break;
+            }
+            /* Send instructions. */
+            $msg = "\nWelcome to the PHP Test Server. \n" .
+                "To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
+            $socket->write($msg, $msgsock);
 
-    do {
-        if ( false === ($buf = $socket->read($msgsock))) {
-            echo "socket_read() failed: reason: " . $socket->error();
-            break 2;
-        }
-        if ( !$buf = trim($buf) ) {
-            continue;
-        }
-        if ( $buf == 'quit' ) {
-            break;
-        }
-        if ( $buf == 'shutdown' ) {
+            do {
+                if ( false === ($buf = $socket->read($msgsock))) {
+                    echo "TcpSocket->read() failed: reason: " . $socket->error();
+                    break 2;
+                }
+                if ( !$buf = trim($buf) ) {
+                    continue;
+                }
+                if ( $buf == 'quit' ) {
+                    break;
+                }
+                if ( $buf == 'shutdown' ) {
+                    socket_close($msgsock);
+                    break 2;
+                }
+                $talkback = "PHP: You said '{$buf}'.\n";
+                $socket->write($talkback, $msgsock);
+                echo "$buf\n";
+            } while (true);
             socket_close($msgsock);
-            break 2;
-        }
-        $talkback = "PHP: You said '{$buf}'.\n";
-        $socket->write($talkback, $msgsock);
-        echo "$buf\n";
-    } while (true);
-    socket_close($msgsock);
-} while (true);
+        } while (true);
 
-$socket->close();
+        $this->socket->close();
+    }
+}
