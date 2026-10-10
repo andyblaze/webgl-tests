@@ -39,6 +39,9 @@ class TcpSocket {
         $readFrom = ($msgSock === null ? $this->sock : $msgSock);
         return socket_read($readFrom, 2048, PHP_NORMAL_READ);
     }
+    public function native() : Socket {
+        return $this->sock;
+    }
 }
 
 class Config {
@@ -54,100 +57,225 @@ class Config {
     }
 }
 
-class Connections {
-    private string $address = '';
-    private int $port = 0;
-    private false|TcpSocket $listeningSocket = false;
-    private bool $running = true;
-    private false|Socket $msgSock = false;
 
-    public function __construct(TcpSocket $tcpSock, string $address, int $port) {
-        $this->listeningSocket = $tcpSock;
+final class Connections {
+    private string $address;
+    private int $port;
+
+    private Socket|false $server = false;
+
+    /** @var array<int, Socket> */
+    private array $clients = [];
+
+    /** @var array<int, string> */
+    private array $buffers = [];
+
+    private bool $running = false;
+
+    public function __construct(string $address, int $port)
+    {
         $this->address = $address;
         $this->port = $port;
-        $this->running = $this->init();
     }
-    private function init() : bool {
-        if ( false === $this->listeningSocket->open() ) {
-            $this->echoMsg('TcpSocket->open() failed: reason: ' . $this->listeningSocket->error());
-            return false;
+
+    public function init(): bool {
+        $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+
+        if ($this->server === false) {
+            return $this->reportError('socket_create');
         }
 
-        if ( false === $this->listeningSocket->bind($this->address, $this->port) ) {
-            $this->echoMsg('TcpSocket->bind() failed: reason: ' . $this->listeningSocket->error());
-            $this->listeningSocket->close();
-            return false;
+        if (!socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1)) {
+            return $this->fail('socket_set_option');
         }
 
-        if ( false === $this->listeningSocket->listen() ) {
-            $this->echoMsg('TcpSocket->listen() failed: reason: ' . $this->listeningSocket->error());
-            $this->listeningSocket->close();
-            return false;
+        if (!socket_bind($this->server, $this->address, $this->port)) {
+            return $this->fail('socket_bind');
         }
+
+        if (!socket_listen($this->server, 10)) {
+            return $this->fail('socket_listen');
+        }
+
+        // The listening socket must not block the event loop.
+        if (!socket_set_nonblock($this->server)) {
+            return $this->fail('socket_set_nonblock');
+        }
+
+        echo "Listening on {$this->address}:{$this->port}\n";
+
         return true;
     }
-    private function echoMsg(string $msg) : void {
-        echo $msg;
-    }
-    private function shutdown() : void {
-        $this->echoMsg('Server shutting down');
-        $this->running = false;
-        //socket_close($this->msgSock);
-    }
-    private function bufferOk(false|string $buf) : bool {
-        if ( $buf === false ) {
-            // Read error
-            $this->echoMsg('TcpSocket->read() failed: reason: ' . $this->listeningSocket->error($this->msgSock));
-            return false;
+
+    public function run(): void {
+        if ($this->server === false && !$this->init()) {
+            return;
         }
 
-        if ( $buf === '' ) {
-            // Client disconnected
-            $this->echoMsg('Client disconnected');
-            return false;
-        }   
-        return true;     
-    }
-    public function run() : void {  
-        do {
-            if ( ($this->msgSock = $this->listeningSocket->accept()) === false ) {
-                $this->echoMsg('TcpSocket->accept() failed: reason: ' . $this->listeningSocket->error());
-                $this->running = false;
+        $this->running = true;
+
+        while ($this->running) {
+            // socket_select() replaces this array with readable sockets.
+            $read = [$this->server];
+
+            foreach ($this->clients as $client) {
+                $read[] = $client;
             }
-            /* Send instructions. */
-            $msg = "\n Welcome to the PHP Test Server. \n To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
-            $this->listeningSocket->write($msg, $this->msgSock);
 
-            do {
-                $buf = $this->listeningSocket->read($this->msgSock);
+            $write = null;
+            $except = null;
 
-                if ( false === $this->bufferOk($buf) ) {
-                    break;
-                }
+            // Wake periodically so game timers can be processed later.
+            $ready = @socket_select($read, $write, $except, 1);
 
-                $buf = trim($buf);
+            if ($ready === false) {
+                // A signal can interrupt select; retry the loop.
+                continue;
+            }
 
-                if ( $buf === '' ) {
+            if ($ready === 0) {
+                $this->tick();
+                continue;
+            }
+
+            foreach ($read as $socket) {
+                if ($socket === $this->server) {
+                    $this->acceptClient();
                     continue;
                 }
 
-                if ( $buf == 'quit' ) 
-                    break;
+                $this->readClient($socket);
+            }
 
-                if ( $buf == 'shutdown' ) {
-                    $this->shutdown();
-                    break 2;
-                }
-                $talkback = "PHP: You said '{$buf}'.\n";
-                $this->listeningSocket->write($talkback, $this->msgSock);
-                $this->echoMsg("{$buf}\n");
-            } 
-            while ( true === $this->running );
-            socket_close($this->msgSock);
-        } 
-        while ( true === $this->running );
+            $this->tick();
+        }
 
-        $this->listeningSocket->close();
+        $this->closeAll();
+    }
+
+    private function acceptClient(): void {
+        $client = @socket_accept($this->server);
+
+        if ($client === false) {
+            return;
+        }
+
+        if (!socket_set_nonblock($client)) {
+            socket_close($client);
+            return;
+        }
+
+        $id = spl_object_id($client);
+
+        $this->clients[$id] = $client;
+        $this->buffers[$id] = '';
+
+        echo "Client connected: {$id}\n";
+
+        $this->send($client, "Welcome! Type quit to disconnect.\n");
+    }
+
+    private function readClient(Socket $client): void {
+        $id = spl_object_id($client);
+
+        // Binary mode reads whatever bytes are available without waiting
+        // for a newline. The buffer below reconstructs complete lines.
+        $data = @socket_read($client, 4096, PHP_BINARY_READ);
+
+        if ($data === false || $data === '') {
+            $this->removeClient($id);
+            return;
+        }
+
+        $this->buffers[$id] .= $data;
+
+        // Avoid an indefinitely growing buffer if a client never sends
+        // a newline. Adjust this limit to suit the eventual protocol.
+        if (strlen($this->buffers[$id]) > 16384) {
+            $this->send($client, "Input too long.\n");
+            $this->removeClient($id);
+            return;
+        }
+
+        while (($newline = strpos($this->buffers[$id], "\n")) !== false) {
+            $line = substr($this->buffers[$id], 0, $newline);
+            $this->buffers[$id] = substr($this->buffers[$id], $newline + 1);
+
+            $line = trim($line, "\r");
+
+            if ($line === 'quit') {
+                $this->removeClient($id);
+                return;
+            }
+
+            if ($line === 'shutdown') {
+                $this->send($client, "Server shutting down.\n");
+                $this->running = false;
+                return;
+            }
+
+            // Temporary echo behaviour; replace with game message handling.
+            $this->send($client, "You said: {$line}\n");
+        }
+    }
+
+    private function send(Socket $client, string $message): void {
+        $length = strlen($message);
+        $sent = 0;
+
+        // Fine for short prototype messages on a nonblocking socket:
+        // if a write would block, stop rather than blocking the whole server.
+        while ($sent < $length) {
+            $written = @socket_write($client, substr($message, $sent));
+
+            if ($written === false || $written === 0) {
+                break;
+            }
+            $sent += $written;
+        }
+    }
+
+    private function removeClient(int $id): void {
+        if (!isset($this->clients[$id])) {
+            return;
+        }
+
+        echo "Client disconnected: {$id}\n";
+
+        socket_close($this->clients[$id]);
+
+        unset($this->clients[$id], $this->buffers[$id]);
+    }
+
+    private function tick(): void {
+        // Game timers and scheduled events will go here.
+    }
+
+    private function reportError(string $operation): bool {
+        echo $operation . ': ' . socket_strerror(socket_last_error()) . "\n";
+        return false;
+    }
+
+    private function fail(string $operation): bool {
+        $this->reportError($operation);
+
+        if ($this->server !== false) {
+            socket_close($this->server);
+            $this->server = false;
+        }
+        return false;
+    }
+
+    private function closeAll(): void {
+        foreach (array_keys($this->clients) as $id) {
+            $this->removeClient($id);
+        }
+
+        if ($this->server !== false) {
+            socket_close($this->server);
+            $this->server = false;
+        }
+        echo "Server stopped.\n";
     }
 }
 
@@ -155,5 +283,11 @@ $config = new Config();
 $address = $config->item('address');
 $port = $config->item('port');
 
-$conns = new Connections(new TcpSocket(), $address, $port);
-$conns->run();
+$connections = new Connections($address, $port);
+$connections->run();
+
+
+
+
+//$conns = new Connections(new TcpSocket(), $address, $port);
+//$conns->run();
