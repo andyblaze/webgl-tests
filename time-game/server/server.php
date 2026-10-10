@@ -8,42 +8,6 @@ set_time_limit(0);
  * as it comes in. */
 ob_implicit_flush();
 
-class TcpSocket {
-    private false|Socket $sock = false;
-    public function __construct() {}
-    public function open() : bool {
-        $this->sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        return ($this->sock !== false);
-    }
-    public function bind(string $address, int $port) : bool {
-        return socket_bind($this->sock, $address, $port);
-    }
-    public function listen() : bool {
-        return socket_listen($this->sock, 5);
-    }
-    public function accept() : false|Socket {
-        return socket_accept($this->sock);
-    }
-    public function error(?Socket $sock=null) : string {
-        $sock ??= $this->sock;
-        return socket_strerror(socket_last_error($sock));
-    }
-    public function close() : void {
-        socket_close($this->sock);
-    }
-    public function write(string $msg, Socket|null $msgSock=null) : int|false {
-        $writeTo = ($msgSock === null ? $this->sock : $msgSock);
-        return socket_write($writeTo, $msg, strlen($msg));
-    }
-    public function read(Socket|null $msgSock) : string|false {
-        $readFrom = ($msgSock === null ? $this->sock : $msgSock);
-        return socket_read($readFrom, 2048, PHP_NORMAL_READ);
-    }
-    public function native() : Socket {
-        return $this->sock;
-    }
-}
-
 class Config {
     private array $data = [];
     public function __construct() {
@@ -57,6 +21,16 @@ class Config {
     }
 }
 
+interface Logger {
+    public function log(string $message): void;
+}
+
+class Reporter implements Logger {
+    public function __construct() {}
+    public function log(string $message): void {
+        echo $message . PHP_EOL;
+    }
+}
 
 final class Connections {
     private string $address;
@@ -72,10 +46,15 @@ final class Connections {
 
     private bool $running = false;
 
-    public function __construct(string $address, int $port)
-    {
+    private null|Logger $logger = null;
+
+    public function __construct(string $address, int $port) {
         $this->address = $address;
         $this->port = $port;
+    }
+
+    public function addLogger(Logger $logger) : void {
+        $this->logger = $logger;
     }
 
     public function init(): bool {
@@ -102,7 +81,7 @@ final class Connections {
             return $this->fail('socket_set_nonblock');
         }
 
-        echo "Listening on {$this->address}:{$this->port}\n";
+        $this->logger->log("Listening on {$this->address}:{$this->port}");
 
         return true;
     }
@@ -170,7 +149,7 @@ final class Connections {
         $this->clients[$id] = $client;
         $this->buffers[$id] = '';
 
-        echo "Client connected: {$id}\n";
+        $this->logger->log("Client connected: {$id}");
 
         $this->send($client, "Welcome! Type quit to disconnect.\n");
     }
@@ -215,7 +194,14 @@ final class Connections {
             }
 
             // Temporary echo behaviour; replace with game message handling.
-            $this->send($client, "You said: {$line}\n");
+            //$this->send($client, "You said: {$line}\n");
+            $this->broadcast("Client {$id}: {$line}\n");
+        }
+    }
+
+    private function broadcast(string $message): void {
+        foreach ($this->clients as $client) {
+            $this->send($client, $message);
         }
     }
 
@@ -239,11 +225,9 @@ final class Connections {
         if (!isset($this->clients[$id])) {
             return;
         }
-
-        echo "Client disconnected: {$id}\n";
+        $this->logger->log("Client disconnected: {$id}");
 
         socket_close($this->clients[$id]);
-
         unset($this->clients[$id], $this->buffers[$id]);
     }
 
@@ -252,7 +236,7 @@ final class Connections {
     }
 
     private function reportError(string $operation): bool {
-        echo $operation . ': ' . socket_strerror(socket_last_error()) . "\n";
+        $this->logger->log("{$operation} : " . socket_strerror(socket_last_error()));
         return false;
     }
 
@@ -275,7 +259,7 @@ final class Connections {
             socket_close($this->server);
             $this->server = false;
         }
-        echo "Server stopped.\n";
+        $this->logger->log("Server stopped.");
     }
 }
 
@@ -284,10 +268,5 @@ $address = $config->item('address');
 $port = $config->item('port');
 
 $connections = new Connections($address, $port);
+$connections->addLogger(new Reporter());
 $connections->run();
-
-
-
-
-//$conns = new Connections(new TcpSocket(), $address, $port);
-//$conns->run();
