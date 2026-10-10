@@ -32,7 +32,35 @@ class Reporter implements Logger {
     }
 }
 
-final class Connections {
+interface MessageContext {
+    //public function sendTo(int $clientId, string $message): void;
+    public function broadcast(string $message): void;
+    //public function disconnect(int $clientId): void;
+    public function shutdown(): void;
+}
+
+interface GameMessageHandler {
+    public function handle(int $clientId, string $line, MessageContext $context): void;
+}
+
+final class MessageHandler implements GameMessageHandler {
+    public function handle(int $clientId, string $line, MessageContext $context): void {
+        if ($line === 'quit') {
+            //$context->disconnect($clientId);
+            return;
+        }
+
+        if ($line === 'shutdown') {
+            $context->broadcast("Server shutting down.\n");
+            $context->shutdown();
+            return;
+        }
+
+        $context->broadcast("Client {$clientId}: {$line}\n");
+    }
+}
+
+final class Connections implements MessageContext {
     private string $address;
     private int $port;
 
@@ -47,6 +75,7 @@ final class Connections {
     private bool $running = false;
 
     private null|Logger $logger = null;
+    private null|MessageHandler $messageHandler = null;
 
     public function __construct(string $address, int $port) {
         $this->address = $address;
@@ -55,6 +84,10 @@ final class Connections {
 
     public function addLogger(Logger $logger) : void {
         $this->logger = $logger;
+    }
+
+    public function addMessageHandler(MessageHandler $handler) {
+        $this->messageHandler = $handler;
     }
 
     public function init(): bool {
@@ -181,25 +214,31 @@ final class Connections {
             $this->buffers[$id] = substr($this->buffers[$id], $newline + 1);
 
             $line = trim($line, "\r");
+            $this->messageHandler->handle($id, $line, $this);
 
-            if ($line === 'quit') {
+            /*if ($line === 'quit') {
                 $this->removeClient($id);
                 return;
             }
 
             if ($line === 'shutdown') {
-                $this->send($client, "Server shutting down.\n");
+                $this->broadcast("Server shutting down.\n");
                 $this->running = false;
                 return;
             }
 
             // Temporary echo behaviour; replace with game message handling.
             //$this->send($client, "You said: {$line}\n");
-            $this->broadcast("Client {$id}: {$line}\n");
+            $this->broadcast("Client {$id}: {$line}\n");*/
         }
     }
 
-    private function broadcast(string $message): void {
+    public function shutdown(): void {
+        $this->broadcast("Server shutting down.\n");
+        $this->running = false;
+    }
+
+    public function broadcast(string $message): void {
         foreach ($this->clients as $client) {
             $this->send($client, $message);
         }
@@ -269,4 +308,5 @@ $port = $config->item('port');
 
 $connections = new Connections($address, $port);
 $connections->addLogger(new Reporter());
+$connections->addMessageHandler(new MessageHandler());
 $connections->run();
