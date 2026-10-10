@@ -33,9 +33,9 @@ class Reporter implements Logger {
 }
 
 interface MessageContext {
-    //public function sendTo(int $clientId, string $message): void;
+    public function sendTo(int $clientId, string $message): void;
     public function broadcast(string $message): void;
-    //public function disconnect(int $clientId): void;
+    public function disconnect(int $clientId): void;
     public function shutdown(): void;
 }
 
@@ -46,7 +46,7 @@ interface GameMessageHandler {
 final class MessageHandler implements GameMessageHandler {
     public function handle(int $clientId, string $line, MessageContext $context): void {
         if ($line === 'quit') {
-            //$context->disconnect($clientId);
+            $context->disconnect($clientId);
             return;
         }
 
@@ -161,7 +161,6 @@ final class Connections implements MessageContext {
 
             $this->tick();
         }
-
         $this->closeAll();
     }
 
@@ -215,21 +214,6 @@ final class Connections implements MessageContext {
 
             $line = trim($line, "\r");
             $this->messageHandler->handle($id, $line, $this);
-
-            /*if ($line === 'quit') {
-                $this->removeClient($id);
-                return;
-            }
-
-            if ($line === 'shutdown') {
-                $this->broadcast("Server shutting down.\n");
-                $this->running = false;
-                return;
-            }
-
-            // Temporary echo behaviour; replace with game message handling.
-            //$this->send($client, "You said: {$line}\n");
-            $this->broadcast("Client {$id}: {$line}\n");*/
         }
     }
 
@@ -242,6 +226,14 @@ final class Connections implements MessageContext {
         foreach ($this->clients as $client) {
             $this->send($client, $message);
         }
+    }
+
+    public function sendTo(int $clientId, string $message): void {
+        if (!isset($this->clients[$clientId])) {
+            $this->logger->log("Unknown client: {$clientId}");
+            return;
+        }
+        $this->send($this->clients[$clientId], $message);
     }
 
     private function send(Socket $client, string $message): void {
@@ -258,6 +250,10 @@ final class Connections implements MessageContext {
             }
             $sent += $written;
         }
+    }
+
+    public function disconnect(int $clientId): void {
+        $this->removeClient($clientId);
     }
 
     private function removeClient(int $id): void {
