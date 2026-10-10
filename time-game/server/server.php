@@ -239,7 +239,7 @@ final class Connections implements MessageContext {
             $this->removeClient($id);
             return;
         }
-
+        // REMOVABLE ONCE TRANSLATOR IN PLACE !!!!!!!!!!!!!!!!
         while (($newline = strpos($this->buffers[$id], "\n")) !== false) {
             $line = substr($this->buffers[$id], 0, $newline);
             $this->buffers[$id] = substr($this->buffers[$id], $newline + 1);
