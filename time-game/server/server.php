@@ -226,7 +226,7 @@ final class Connections implements MessageContext {
             $this->removeClient($id);
             return;
         }
-        // NEED TO ADD A TRANSLATOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!! NEED TO ADD A TRANSLATOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //$this->translator->receive($id, $data, $this->messageHandler, $this);
 
         $this->buffers[$id] .= $data;
