@@ -24,8 +24,9 @@ class TcpSocket {
     public function accept() {
         return socket_accept($this->sock);
     }
-    public function error() {
-        return socket_strerror(socket_last_error($this->sock)) . "\n";
+    public function error(?Socket $sock=null) {
+        $sock ??= $this->sock;
+        return socket_strerror(socket_last_error($sock));
     }
     public function close() {
         socket_close($this->sock);
@@ -40,41 +41,72 @@ class TcpSocket {
     }
 }
 
+class Config {
+    private array $data = [];
+    public function __construct() {
+        $this->data = [
+            'address' => '192.168.0.16',
+            'port' => 10000
+        ];
+    }
+    public function item($key) {
+        return $this->data[$key];
+    }
+}
+
 class Connections {
-    private string $address = '192.168.0.16';
-    private int $port = 10000;
+    private string $address = '';
+    private int $port = 0;
     private false|TcpSocket $socket = false;
     private bool $running = true;
     private false|Socket $msgSock = false;
 
-    public function __construct(TcpSocket $tcpSock) {
+    public function __construct(TcpSocket $tcpSock, string $address, int $port) {
         $this->socket = $tcpSock;
+        $this->address = $address;
+        $this->port = $port;
         $this->running = $this->init();
     }
-    private function init() {
-        $ok = true;
+    private function init() : bool {
         if ( false === $this->socket->open() ) {
             $this->echoMsg('TcpSocket->open() failed: reason: ' . $this->socket->error());
-            $ok = false;
+            return false;
         }
 
         if ( false === $this->socket->bind($this->address, $this->port) ) {
             $this->echoMsg('TcpSocket->bind() failed: reason: ' . $this->socket->error());
-            $ok = false;
+            $this->socket->close();
+            return false;
         }
 
         if ( false === $this->socket->listen() ) {
             $this->echoMsg('TcpSocket->listen() failed: reason: ' . $this->socket->error());
-            $ok = false;
+            $this->socket->close();
+            return false;
         }
-        return $ok;
+        return true;
     }
     private function echoMsg(string $msg) {
         echo $msg;
     }
     private function shutdown() {
+        $this->echoMsg('Server shutting down');
         $this->running = false;
         socket_close($this->msgSock);
+    }
+    private function bufferOk($buf) {
+        if ( $buf === false ) {
+            // Read error
+            $this->echoMsg('TcpSocket->read() failed: reason: ' . $this->socket->error($this->msgSock));
+            return false;
+        }
+
+        if ( $buf === '' ) {
+            // Client disconnected
+            $this->echoMsg('Client disconnected');
+            return false;
+        }   
+        return true;     
     }
     public function run() {  
         do {
@@ -87,13 +119,17 @@ class Connections {
             $this->socket->write($msg, $this->msgSock);
 
             do {
-                if ( false === ($buf = $this->socket->read($this->msgSock))) {
-                    $this->echoMsg('TcpSocket->read() failed: reason: ' . $this->socket->error());
-                    $this->running = false;
-                    //break 2;
+                $buf = $this->socket->read($this->msgSock);
+
+                if ( false === $this->bufferOk($buf) ) {
+                    break;
                 }
-                if ( !$buf = trim($buf) ) 
+
+                $buf = trim($buf);
+
+                if ( $buf === '' ) {
                     continue;
+                }
 
                 if ( $buf == 'quit' ) 
                     break;
@@ -115,5 +151,9 @@ class Connections {
     }
 }
 
-$conns = new Connections(new TcpSocket());
+$config = new Config();
+$address = $config->item('address');
+$port = $config->item('port');
+
+$conns = new Connections(new TcpSocket(), $address, $port);
 $conns->run();
