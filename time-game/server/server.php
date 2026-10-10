@@ -8,9 +8,6 @@ set_time_limit(0);
  * as it comes in. */
 ob_implicit_flush();
 
-$address = '192.168.0.16';
-$port = 10000;
-
 class TcpSocket {
     private false|Socket $sock = false;
     public function __construct() {}
@@ -47,52 +44,76 @@ class Connections {
     private string $address = '192.168.0.16';
     private int $port = 10000;
     private false|TcpSocket $socket = false;
+    private bool $running = true;
+    private false|Socket $msgSock = false;
 
     public function __construct(TcpSocket $tcpSock) {
         $this->socket = $tcpSock;
+        $this->running = $this->init();
+    }
+    private function init() {
+        $ok = true;
+        if ( false === $this->socket->open() ) {
+            $this->echoMsg('TcpSocket->open() failed: reason: ' . $this->socket->error());
+            $ok = false;
+        }
 
-    if ( false === $this->socket->open() )
-        echo "TcpSocket->open() failed: reason: " . $this->socket->error();
+        if ( false === $this->socket->bind($this->address, $this->port) ) {
+            $this->echoMsg('TcpSocket->bind() failed: reason: ' . $this->socket->error());
+            $ok = false;
+        }
 
-    if ( false === $this->socket->bind($this->address, $this->port) ) 
-        echo "TcpSocket->bind() failed: reason: " . $this->socket->error();
-
-    if ( false === $this->socket->listen() ) 
-        echo "TcpSocket->listen() failed: reason: " . $this->socket->error();
+        if ( false === $this->socket->listen() ) {
+            $this->echoMsg('TcpSocket->listen() failed: reason: ' . $this->socket->error());
+            $ok = false;
+        }
+        return $ok;
+    }
+    private function echoMsg(string $msg) {
+        echo $msg;
+    }
+    private function shutdown() {
+        $this->running = false;
+        socket_close($this->msgSock);
     }
     public function run() {  
         do {
-            if ( ($msgsock = $socket->accept()) === false ) {
-                echo "TcpSocket->accept() failed: reason: " . $socket->error();
-                break;
+            if ( ($this->msgSock = $this->socket->accept()) === false ) {
+                $this->echoMsg('TcpSocket->accept() failed: reason: ' . $this->socket->error());
+                $this->running = false;
             }
             /* Send instructions. */
-            $msg = "\nWelcome to the PHP Test Server. \n" .
-                "To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
-            $socket->write($msg, $msgsock);
+            $msg = "\n Welcome to the PHP Test Server. \n To quit, type 'quit'. To shut down the server type 'shutdown'.\n";
+            $this->socket->write($msg, $this->msgSock);
 
             do {
-                if ( false === ($buf = $socket->read($msgsock))) {
-                    echo "TcpSocket->read() failed: reason: " . $socket->error();
-                    break 2;
+                if ( false === ($buf = $this->socket->read($this->msgSock))) {
+                    $this->echoMsg('TcpSocket->read() failed: reason: ' . $this->socket->error());
+                    $this->running = false;
+                    //break 2;
                 }
-                if ( !$buf = trim($buf) ) {
+                if ( !$buf = trim($buf) ) 
                     continue;
-                }
-                if ( $buf == 'quit' ) {
+
+                if ( $buf == 'quit' ) 
                     break;
-                }
+
                 if ( $buf == 'shutdown' ) {
-                    socket_close($msgsock);
+                    $this->shutdown();
                     break 2;
                 }
                 $talkback = "PHP: You said '{$buf}'.\n";
-                $socket->write($talkback, $msgsock);
-                echo "$buf\n";
-            } while (true);
-            socket_close($msgsock);
-        } while (true);
+                $this->socket->write($talkback, $this->msgSock);
+                $this->echoMsg("{$buf}\n");
+            } 
+            while ( true === $this->running );
+            socket_close($this->msgSock);
+        } 
+        while ( true === $this->running );
 
         $this->socket->close();
     }
 }
+
+$conns = new Connections(new TcpSocket());
+$conns->run();
