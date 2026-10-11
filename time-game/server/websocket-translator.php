@@ -25,14 +25,14 @@ class WebSocketTranslator implements Translator {
 
         // Prevent unbounded buffering of incomplete input.
         if (strlen($this->buffers[$id]) > 1_048_576) {
-            $this->fail($id, $context, 1009);
-            return;
+            //$this->fail($id, $context, 1009);
+            //return;
         }
 
         if (!$this->connected[$id]) { echo "Attempting handshake" . PHP_EOL;
             $response = $this->handshake($id, $context);
-            if ( false === $response )
-                return;
+            //if ( false === $response )
+            //    return;
             $context->sendRawTo($id, $response);
             $this->connected[$id] = true;
             /*if (!$this->handshake($id, $context)) {
@@ -41,10 +41,10 @@ class WebSocketTranslator implements Translator {
         }
 
         while (isset($this->buffers[$id])) {
-            $frame = $this->extractFrame($id);
+            $frame = $this->extractFrame($id);  echo $frame;
 
-            if ($frame === null) { echo 'needmore ';
-                return; // Need more TCP data.
+            if ($frame === null) { //echo $frame . ' needmore ';
+                //return; // Need more TCP data.
             }
 
             
