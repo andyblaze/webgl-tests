@@ -37,6 +37,7 @@ interface MessageContext {
     public function broadcast(string $message): void;
     public function disconnect(int $clientId): void;
     public function shutdown(): void;
+    public function removeClient(int $id): void;
 }
 
 interface GameMessageHandler {
@@ -62,29 +63,40 @@ final class MessageHandler implements GameMessageHandler {
 
 interface Translator {
     public function receive(int $id, string $data, MessageHandler $handler, MessageContext $context): void;
+    public function accept(int $id) : void;
+    public function removeBuffer(int $id): void;
 }
 
 class LineTranslator implements Translator {
     private array $buffers = [];
+    private int $maxLength = 16384;
 
     public function receive(int $id, string $data, MessageHandler $handler, MessageContext $context): void {
         $this->buffers[$id] = ($this->buffers[$id] ?? '') . $data;
 
+        if (strlen($this->buffers[$id]) > $this->maxLength) {
+            $this->removeBuffer($id);
+            $context->removeClient($id);
+            return;
+        }
+
         while (($newline = strpos($this->buffers[$id], "\n")) !== false) {
             $line = substr($this->buffers[$id], 0, $newline);
 
-            $this->buffers[$id] = substr(
-                $this->buffers[$id],
-                $newline + 1
-            );
+            $this->buffers[$id] = substr($this->buffers[$id], $newline + 1);
 
             $line = trim($line, "\r");
+
 
             $handler->handle($id, $line, $context);
         }
     }
 
-    public function removeClient(int $id): void {
+    public function accept(int $id) : void {
+        $this->buffers[$id] = '';
+    }
+
+    public function removeBuffer(int $id): void {
         unset($this->buffers[$id]);
     }
 }
@@ -98,13 +110,11 @@ final class Connections implements MessageContext {
     /** @var array<int, Socket> */
     private array $clients = [];
 
-    /** @var array<int, string> */
-    private array $buffers = [];
-
     private bool $running = false;
 
     private null|Logger $logger = null;
     private null|MessageHandler $messageHandler = null;
+    private null|Translator $translator = null;
 
     public function __construct(string $address, int $port) {
         $this->address = $address;
@@ -117,6 +127,10 @@ final class Connections implements MessageContext {
 
     public function addMessageHandler(MessageHandler $handler) {
         $this->messageHandler = $handler;
+    }
+
+    public function addTranslator(Translator $t) {
+        $this->translator = $t;
     }
 
     public function init(): bool {
@@ -208,7 +222,8 @@ final class Connections implements MessageContext {
         $id = spl_object_id($client);
 
         $this->clients[$id] = $client;
-        $this->buffers[$id] = '';
+        $this->translator->accept($id);
+        //$this->buffers[$id] = '';
 
         $this->logger->log("Client connected: {$id}");
 
@@ -217,36 +232,15 @@ final class Connections implements MessageContext {
 
     private function readClient(Socket $client): void {
         $id = spl_object_id($client);
-
-        // Binary mode reads whatever bytes are available without waiting
-        // for a newline. The buffer below reconstructs complete lines.
         $data = @socket_read($client, 4096, PHP_BINARY_READ);
 
         if ($data === false || $data === '') {
             $this->removeClient($id);
             return;
         }
-        // !!!!!!!!!! NEED TO ADD A TRANSLATOR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //$this->translator->receive($id, $data, $this->messageHandler, $this);
+        
+        $this->translator->receive($id, $data, $this->messageHandler, $this);
 
-        $this->buffers[$id] .= $data;
-
-        // Avoid an indefinitely growing buffer if a client never sends
-        // a newline. Adjust this limit to suit the eventual protocol.
-        // !!!!!!!!!! PUT INTO TRANSLATOR !!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (strlen($this->buffers[$id]) > 16384) {
-            $this->send($client, "Input too long.\n");
-            $this->removeClient($id);
-            return;
-        }
-        // REMOVABLE ONCE TRANSLATOR IN PLACE !!!!!!!!!!!!!!!!
-        while (($newline = strpos($this->buffers[$id], "\n")) !== false) {
-            $line = substr($this->buffers[$id], 0, $newline);
-            $this->buffers[$id] = substr($this->buffers[$id], $newline + 1);
-
-            $line = trim($line, "\r");
-            $this->messageHandler->handle($id, $line, $this);
-        }
     }
 
     public function shutdown(): void {
@@ -288,14 +282,14 @@ final class Connections implements MessageContext {
         $this->removeClient($clientId);
     }
 
-    private function removeClient(int $id): void {
+    public function removeClient(int $id): void {
         if (!isset($this->clients[$id])) {
             return;
         }
         $this->logger->log("Client disconnected: {$id}");
 
         socket_close($this->clients[$id]);
-        unset($this->clients[$id], $this->buffers[$id]);
+        unset($this->clients[$id]);//, $this->buffers[$id]);
     }
 
     private function tick(): void {
@@ -319,6 +313,7 @@ final class Connections implements MessageContext {
 
     private function closeAll(): void {
         foreach (array_keys($this->clients) as $id) {
+            $this->translator->removeBuffer($id);
             $this->removeClient($id);
         }
 
@@ -337,4 +332,5 @@ $port = $config->item('port');
 $connections = new Connections($address, $port);
 $connections->addLogger(new Reporter());
 $connections->addMessageHandler(new MessageHandler());
+$connections->addTranslator(new LineTranslator());
 $connections->run();
