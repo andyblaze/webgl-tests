@@ -178,6 +178,12 @@ final class Connections implements MessageContext {
     }
 
     public function sendRawTo(int $clientId, string $bytes): void {
+        var_dump([
+            'clientId' => $clientId,
+            'length' => strlen($bytes),
+            'hex' => bin2hex($bytes),
+            'data' => $bytes,
+        ]);
         if (!isset($this->clients[$clientId])) {
             return;
         }
@@ -206,6 +212,9 @@ final class Connections implements MessageContext {
 
             $sent += $result;
         }
+
+        var_dump($clientId, $client, $length, $sent, $result);
+        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     }
 
     public function disconnect(int $clientId): void {
