@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHP WebSocket Test</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: .25rem; }
+    p { line-height: 1.45; }
+    .row { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; margin: .8rem 0; }
+    label { display: block; font-weight: 600; margin-bottom: .25rem; }
+    input, textarea, button { font: inherit; padding: .65rem; }
+    input, textarea { box-sizing: border-box; width: 100%; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    .field { flex: 1 1 240px; min-width: 0; }
+    #status { font-weight: 700; }
+    #log { height: 280px; overflow: auto; border: 1px solid #8888; border-radius: 8px; padding: .75rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .entry { margin: 0 0 .55rem; }
+    .time { opacity: .7; font-size: .85em; }
+    .hint { opacity: .8; font-size: .92em; }
+  </style>
+</head>
+<body>
+  <h1>PHP WebSocket Test</h1>
+  <p>A tiny test console for your native PHP WebSocket server.</p>
+
+  <div class="field">
+    <label for="url">WebSocket URL</label>
+    <input id="url" value="ws://192.168.0.16:10000" spellcheck="false" autocomplete="off">
+  </div>
+
+  <div class="row">
+    <button id="connect">Connect</button>
+    <button id="disconnect" disabled>Disconnect</button>
+    <span>Status: <span id="status">Disconnected</span></span>
+  </div>
+
+  <div class="field">
+    <label for="message">Message to send</label>
+    <textarea id="message" rows="3" placeholder="Type a message..."></textarea>
+  </div>
+  <div class="row">
+    <button id="send" disabled>Send message</button>
+    <button id="clear">Clear log</button>
+  </div>
+
+  <h2>Activity</h2>
+  <div id="log" role="log" aria-live="polite"></div>
+  <p class="hint">Tip: open this page in two browser tabs to test multiple clients. The server must be reachable from this device and must be using WebSocketTranslator.</p>
+
+  <script>
+    (() => {
+      const urlInput = document.querySelector('#url');
+      const connectButton = document.querySelector('#connect');
+      const disconnectButton = document.querySelector('#disconnect');
+      const sendButton = document.querySelector('#send');
+      const clearButton = document.querySelector('#clear');
+      const messageInput = document.querySelector('#message');
+      const status = document.querySelector('#status');
+      const log = document.querySelector('#log');
+
+      let socket = null;
+
+      function writeLog(kind, message) {
+        const entry = document.createElement('p');
+        entry.className = 'entry';
+        const time = document.createElement('span');
+        time.className = 'time';
+        time.textContent = `[${new Date().toLocaleTimeString()}] `;
+        const label = document.createElement('strong');
+        label.textContent = `${kind}: `;
+        const content = document.createElement('span');
+        content.textContent = message;
+        entry.append(time, label, content);
+        log.append(entry);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function setConnected(connected) {
+        connectButton.disabled = connected;
+        disconnectButton.disabled = !connected;
+        sendButton.disabled = !connected;
+        status.textContent = connected ? 'Connected' : 'Disconnected';
+      }
+
+      connectButton.addEventListener('click', () => {
+        const url = urlInput.value.trim();
+        if (!url.startsWith('ws://') && !url.startsWith('wss://')) {
+          writeLog('Error', 'URL must start with ws:// or wss://');
+          return;
+        }
+
+        try {
+          socket = new WebSocket(url);
+        } catch (error) {
+          writeLog('Error', error.message);
+          return;
+        }
+
+        status.textContent = 'Connecting...';
+        connectButton.disabled = true;
+        writeLog('Info', `Connecting to ${url}`);
+
+        socket.addEventListener('open', () => {
+          setConnected(true);
+          writeLog('Open', 'WebSocket connection established.');
+        });
+
+        socket.addEventListener('message', (event) => {
+          writeLog('Received', typeof event.data === 'string' ? event.data : '[binary message]');
+        });
+
+        socket.addEventListener('error', () => {
+          writeLog('Error', 'WebSocket error. Check the PHP server log and connection URL.');
+        });
+
+        socket.addEventListener('close', (event) => {
+          setConnected(false);
+          writeLog('Closed', `Code ${event.code}; reason: ${event.reason || '(none)'}`);
+          socket = null;
+        });
+      });
+
+      disconnectButton.addEventListener('click', () => {
+        if (socket) {
+          socket.close(1000, 'Closed from test page');
+          status.textContent = 'Closing...';
+          disconnectButton.disabled = true;
+          sendButton.disabled = true;
+        }
+      });
+
+      sendButton.addEventListener('click', () => {
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+          writeLog('Error', 'Not connected.');
+          return;
+        }
+        const message = messageInput.value;
+        socket.send(message);
+        writeLog('Sent', message);
+        messageInput.value = '';
+        messageInput.focus();
+      });
+
+      messageInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+          event.preventDefault();
+          if (!sendButton.disabled) sendButton.click();
+        }
+      });
+
+      clearButton.addEventListener('click', () => log.replaceChildren());
+      setConnected(false);
+    })();
+  </script>
+</body>
+</html>

@@ -137,7 +137,8 @@ final class Connections implements MessageContext {
         if ($data === false || $data === '') {
             $this->removeClient($id);
             return;
-        }        
+        }     
+ 
         $this->translator->receive($id, $data, $this->messageHandler, $this);
     }
 

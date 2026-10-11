@@ -1,6 +1,8 @@
 
 <?php
 
+require_once(__DIR__ . '/if-translator.php');
+
 class WebSocketTranslator implements Translator {
     private array $buffers = [];
     private array $connected = [];
@@ -27,20 +29,27 @@ class WebSocketTranslator implements Translator {
             return;
         }
 
-        if (!$this->connected[$id]) {
-            if (!$this->handshake($id, $context)) {
+        if (!$this->connected[$id]) { echo "Attempting handshake" . PHP_EOL;
+            $response = $this->handshake($id, $context);
+            if ( false === $response )
                 return;
-            }
+            $context->sendRawTo($id, $response);
+            $this->connected[$id] = true;
+            /*if (!$this->handshake($id, $context)) {
+                return;
+            }*/
         }
 
         while (isset($this->buffers[$id])) {
             $frame = $this->extractFrame($id);
 
-            if ($frame === null) {
+            if ($frame === null) { echo 'needmore ';
                 return; // Need more TCP data.
             }
 
-            [$opcode, $fin, $payload] = $frame;
+            
+
+            [$opcode, $fin, $payload] = $frame; echo $opcode . $fin . $payload;
 
             switch ($opcode) {
                 case 0x1: // Text
@@ -56,6 +65,7 @@ class WebSocketTranslator implements Translator {
                         }
 
                         $handler->handle($id, $payload, $context);
+                        echo 'msg' . $payload;
                     } else {
                         $this->fragments[$id] = $payload;
                         $this->fragmenting[$id] = true;
@@ -86,6 +96,7 @@ class WebSocketTranslator implements Translator {
                         }
 
                         $handler->handle($id, $message, $context);
+                        echo 'msg' . $message;
                     }
                     break;
 
@@ -132,7 +143,7 @@ class WebSocketTranslator implements Translator {
         );
     }
 
-    private function handshake(int $id, MessageContext $context): bool {
+    private function handshake(int $id, MessageContext $context): string|bool { echo "Checking HTTP headers" . PHP_EOL;
         $end = strpos($this->buffers[$id], "\r\n\r\n");
 
         if ($end === false) {
@@ -182,7 +193,7 @@ class WebSocketTranslator implements Translator {
             return false;
         }
 
-        $response = $this->wsResponse($key);
+        return $this->wsResponse($key);
 
         $context->sendRawTo($id, $response);
         $this->connected[$id] = true;
