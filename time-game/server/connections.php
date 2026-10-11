@@ -1,12 +1,6 @@
 <?php
 
-interface MessageContext {
-    public function sendTo(int $clientId, string $message): void;
-    public function broadcast(string $message): void;
-    public function disconnect(int $clientId): void;
-    public function shutdown(): void;
-    public function removeClient(int $id): void;
-}
+require_once(__DIR__ . '/if-message-context.php');
 
 final class Connections implements MessageContext {
     private string $address;

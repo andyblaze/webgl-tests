@@ -1,10 +1,8 @@
 <?php
 
-interface GameMessageHandler {
-    public function handle(int $clientId, string $line, MessageContext $context): void;
-}
+require_once(__DIR__ . '/if-message-handler.php');
 
-final class MessageHandler implements GameMessageHandler {
+final class MessageHandler implements IMessageHandler {
     public function handle(int $clientId, string $line, MessageContext $context): void {
         if ($line === 'quit') {
             $context->disconnect($clientId);

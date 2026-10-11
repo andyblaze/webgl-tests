@@ -1,8 +1,6 @@
 <?php
 
-interface Logger {
-    public function log(string $message): void;
-}
+require_once(__DIR__ . '/if-logger.php');
 
 class Reporter implements Logger {
     public function __construct() {}
