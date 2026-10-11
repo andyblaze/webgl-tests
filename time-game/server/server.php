@@ -82,12 +82,9 @@ class LineTranslator implements Translator {
 
         while (($newline = strpos($this->buffers[$id], "\n")) !== false) {
             $line = substr($this->buffers[$id], 0, $newline);
-
             $this->buffers[$id] = substr($this->buffers[$id], $newline + 1);
 
             $line = trim($line, "\r");
-
-
             $handler->handle($id, $line, $context);
         }
     }
@@ -237,10 +234,8 @@ final class Connections implements MessageContext {
         if ($data === false || $data === '') {
             $this->removeClient($id);
             return;
-        }
-        
+        }        
         $this->translator->receive($id, $data, $this->messageHandler, $this);
-
     }
 
     public function shutdown(): void {
@@ -289,7 +284,7 @@ final class Connections implements MessageContext {
         $this->logger->log("Client disconnected: {$id}");
 
         socket_close($this->clients[$id]);
-        unset($this->clients[$id]);//, $this->buffers[$id]);
+        unset($this->clients[$id]);
     }
 
     private function tick(): void {
