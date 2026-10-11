@@ -176,6 +176,37 @@ final class Connections implements MessageContext {
         }
     }
 
+    public function sendRawTo(int $clientId, string $bytes): void {
+        if (!isset($this->clients[$clientId])) {
+            return;
+        }
+
+        $client = $this->clients[$clientId];
+        $length = strlen($bytes);
+        $sent = 0;
+
+        while ($sent < $length) {
+            $result = @socket_write(
+                $client,
+                substr($bytes, $sent)
+            );
+
+            if ($result === false || $result === 0) {
+                $error = socket_last_error($client);
+
+                $this->logger->log(
+                    "Raw socket write failed for client $clientId: "
+                    . socket_strerror($error)
+                );
+
+                $this->removeClient($clientId);
+                return;
+            }
+
+            $sent += $result;
+        }
+    }
+
     public function disconnect(int $clientId): void {
         $this->removeClient($clientId);
     }

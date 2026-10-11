@@ -11,7 +11,7 @@ ob_implicit_flush();
 require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/logger.php');
 require_once(__DIR__ . '/message-handler.php');
-require_once(__DIR__ . '/translator.php');
+require_once(__DIR__ . '/line-translator.php');
 require_once(__DIR__ . '/connections.php');
 
 

@@ -24,6 +24,8 @@ class LineTranslator implements Translator {
         }
     }
 
+    public function send(int $id, string $message, MessageContext $context): void {}
+
     public function accept(int $id) : void {
         $this->buffers[$id] = '';
     }
