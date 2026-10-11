@@ -11,7 +11,7 @@ ob_implicit_flush();
 require_once(__DIR__ . '/config.php');
 require_once(__DIR__ . '/logger.php');
 require_once(__DIR__ . '/message-handler.php');
-require_once(__DIR__ . '/line-translator.php');
+require_once(__DIR__ . '/websocket-translator.php');
 require_once(__DIR__ . '/connections.php');
 
 
@@ -22,5 +22,5 @@ $port = $config->item('port');
 $connections = new Connections($address, $port);
 $connections->addLogger(new Reporter());
 $connections->addMessageHandler(new MessageHandler());
-$connections->addTranslator(new LineTranslator());
+$connections->addTranslator(new WebSocketTranslator());
 $connections->run();
