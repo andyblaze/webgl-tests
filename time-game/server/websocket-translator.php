@@ -31,6 +31,13 @@ class WebSocketTranslator implements Translator {
 
         if (!$this->connected[$id]) { echo "Attempting handshake" . PHP_EOL;
             $response = $this->handshake($id, $context);
+            echo (
+                "Handshake response:\n" . str_replace(
+                    ["\r", "\n"],
+                    ['<CR>', "<LF>\n"],
+                    $response
+                )
+            );
             //if ( false === $response )
             //    return;
             $context->sendRawTo($id, $response);
