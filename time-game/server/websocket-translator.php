@@ -90,18 +90,12 @@ class WebSocketTranslator implements Translator {
                     break;
 
                 case 0x8: // Close
-                    $context->sendRawTo(
-                        $id,
-                        $this->frame(0x8, $payload)
-                    );
+                    $context->sendRawTo($id, $this->frame(0x8, $payload));
                     $context->disconnect($id);
                     return;
 
                 case 0x9: // Ping
-                    $context->sendRawTo(
-                        $id,
-                        $this->frame(0xA, $payload)
-                    );
+                    $context->sendRawTo($id, $this->frame(0xA, $payload));
                     break;
 
                 case 0xA: // Pong
@@ -188,6 +182,15 @@ class WebSocketTranslator implements Translator {
             return false;
         }
 
+        $response = $this->wsResponse($key);
+
+        $context->sendRawTo($id, $response);
+        $this->connected[$id] = true;
+
+        return true;
+    }
+
+    private function wsResponse(string $key) {
         $accept = base64_encode(
             sha1(
                 $key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11',
@@ -195,16 +198,10 @@ class WebSocketTranslator implements Translator {
             )
         );
 
-        $response =
-            "HTTP/1.1 101 Switching Protocols\r\n"
+        return "HTTP/1.1 101 Switching Protocols\r\n"
             . "Upgrade: websocket\r\n"
             . "Connection: Upgrade\r\n"
-            . "Sec-WebSocket-Accept: $accept\r\n\r\n";
-
-        $context->sendRawTo($id, $response);
-        $this->connected[$id] = true;
-
-        return true;
+            . "Sec-WebSocket-Accept: $accept\r\n\r\n";        
     }
 
     private function extractFrame(int $id): ?array {
@@ -274,8 +271,7 @@ class WebSocketTranslator implements Translator {
         $buffer = substr($buffer, $offset + $payloadLength);
 
         for ($i = 0; $i < $payloadLength; $i++) {
-            $payload[$i] = $payload[$i]
-                ^ $mask[$i % 4];
+            $payload[$i] = $payload[$i] ^ $mask[$i % 4];
         }
 
         return [$opcode, $fin, $payload];
