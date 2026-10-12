@@ -67,8 +67,13 @@ class WebSocketFrame {
         $payloadLength = $second & 0x7F;
         $offset = 2;
 
-        // This basic version accepts complete, masked text frames only.
-        if (!$fin || $opcode !== 0x1 || !$masked) {
+
+        if (!$fin || !$masked) {
+            return null;
+        }
+
+        // opcodes: text, ping, pong
+        if (!in_array($opcode, [0x1, 0x9, 0xA], true)) {
             return null;
         }
 
@@ -118,7 +123,7 @@ class WebSocketFrame {
         $offset = 2;
 
         // For now, accept complete, masked text frames only.
-        if (!$fin || $opcode !== 0x1 || !$masked) {
+        if (!$fin || !in_array($opcode, [0x1, 0x9, 0xA], true) || !$masked) {
             throw new RuntimeException('Unsupported WebSocket frame');
         }
 

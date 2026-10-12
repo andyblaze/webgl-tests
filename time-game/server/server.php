@@ -16,10 +16,12 @@ require_once(__DIR__ . '/connections.php');
 
 class Server {
     private Connections|null $connections = null;
+    private Handler|null $handler = null;
     private int $pingTime = 0;
     private bool $isRunning = true;
-    public function __construct(Connections $conns) {
+    public function __construct(Connections $conns, Handler $h) {
         $this->connections = $conns;
+        $this->handler = $h;
         $this->pingTime = time() + 10;
     }
 
@@ -40,13 +42,30 @@ class Server {
     }
 }
 
+class Handler {
+    public function update(string $line) {
+        /*if ($line === 'quit') {
+            $context->disconnect($clientId);
+            return;
+        }
+
+        if ($line === 'shutdown') {
+            $context->broadcast("Server shutting down.\n");
+            $context->shutdown();
+            return;
+        }*/
+    }
+}
+
 
 $config = new Config();
 $address = $config->item('address');
 $port = $config->item('port');
 
+$serverHandler = new Handler();
+
 $connections = new Connections($address, $port);
 $connections->addLogger(new Reporter());
-$connections->addMessageHandler(new MessageHandler());
-$server = new Server($connections);
+$connections->addMessageHandler(new MessageHandler($serverHandler));
+$server = new Server($connections, $serverHandler);
 $server->start();
