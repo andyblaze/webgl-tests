@@ -1,111 +1,67 @@
+
 <?php
 
 require_once(__DIR__ . '/if-message-context.php');
 
-final class Connections implements MessageContext {
-    private string $address;
-    private int $port;
-
-    private Socket|false $server = false;
-
-    /** @var array<int, Socket> */
+class Connections implements MessageContext {
+    private Socket|null $server = null;
     private array $clients = [];
-
-    private bool $running = false;
-
-    private null|Logger $logger = null;
-    private null|MessageHandler $messageHandler = null;
-    private null|Translator $translator = null;
+    private MessageHandler|null $handler = null;
+    private Logger|null $logger = null;
 
     public function __construct(string $address, int $port) {
-        $this->address = $address;
-        $this->port = $port;
-    }
-
-    public function addLogger(Logger $logger) : void {
+        $this->handler = $handler;
         $this->logger = $logger;
-    }
 
-    public function addMessageHandler(MessageHandler $handler) {
-        $this->messageHandler = $handler;
-    }
-
-    public function addTranslator(Translator $t) {
-        $this->translator = $t;
-    }
-
-    public function init(): bool {
         $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
         if ($this->server === false) {
-            return $this->reportError('socket_create');
+            throw new RuntimeException(socket_strerror(socket_last_error()));
         }
 
-        if (!socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1)) {
-            return $this->fail('socket_set_option');
+        socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1);
+
+        if (!socket_bind($this->server, $address, $port)) {
+            throw new RuntimeException(socket_strerror(socket_last_error($this->server)));
         }
 
-        if (!socket_bind($this->server, $this->address, $this->port)) {
-            return $this->fail('socket_bind');
+        if (!socket_listen($this->server)) {
+            throw new RuntimeException(socket_strerror(socket_last_error($this->server)));
         }
 
-        if (!socket_listen($this->server, 10)) {
-            return $this->fail('socket_listen');
-        }
+        socket_set_nonblock($this->server);
 
-        // The listening socket must not block the event loop.
-        if (!socket_set_nonblock($this->server)) {
-            return $this->fail('socket_set_nonblock');
-        }
+        $this->logger->log("Listening on {$address}:{$port}");
+    }
 
-        $this->logger->log("Listening on {$this->address}:{$this->port}");
+    public function addLogger(Logger $l) {
+        $this->logger = $l;
+    }
 
-        return true;
+    public function addMessageHandler(MessageHandler $mh) {
+        $this->handler = $mh;
     }
 
     public function run(): void {
-        if ($this->server === false && !$this->init()) {
-            return;
-        }
+        while (true) {
+            $reads = array_merge([$this->server], $this->clients);
+            $writes = [];
+            $excepts = [];
 
-        $this->running = true;
-
-        while ($this->running) {
-            // socket_select() replaces this array with readable sockets.
-            $read = [$this->server];
-
-            foreach ($this->clients as $client) {
-                $read[] = $client;
-            }
-
-            $write = null;
-            $except = null;
-
-            // Wake periodically so game timers can be processed later.
-            $ready = @socket_select($read, $write, $except, 1);
+            $ready = @socket_select($reads, $writes, $excepts, 1);
 
             if ($ready === false) {
-                // A signal can interrupt select; retry the loop.
                 continue;
             }
 
-            if ($ready === 0) {
-                $this->tick();
-                continue;
-            }
-
-            foreach ($read as $socket) {
+            foreach ($reads as $socket) {
                 if ($socket === $this->server) {
                     $this->acceptClient();
-                    continue;
+                } else {
+                    $this->readClient($socket);
                 }
-
-                $this->readClient($socket);
             }
-
-            $this->tick();
         }
-        $this->closeAll();
     }
 
     private function acceptClient(): void {
@@ -115,151 +71,72 @@ final class Connections implements MessageContext {
             return;
         }
 
-        if (!socket_set_nonblock($client)) {
-            socket_close($client);
-            return;
-        }
+        socket_set_nonblock($client);
 
         $id = spl_object_id($client);
-
         $this->clients[$id] = $client;
-        $this->translator->accept($id);
 
         $this->logger->log("Client connected: {$id}");
-
-        $this->send($client, "Welcome! Type quit to disconnect.\n");
     }
 
     private function readClient(Socket $client): void {
         $id = spl_object_id($client);
         $data = @socket_read($client, 4096, PHP_BINARY_READ);
 
-        if ($data === false || $data === '') {
+        if ($data === false) {
+            // A nonblocking socket may simply have no data ready.
+            $error = socket_last_error($client);
+
+            if ($error !== SOCKET_EWOULDBLOCK &&
+                $error !== SOCKET_EAGAIN) {
+                $this->removeClient($id);
+            }
+
+            socket_clear_error($client);
+            return;
+        }
+
+        if ($data === '') {
             $this->removeClient($id);
             return;
-        }     
- 
-        $this->translator->receive($id, $data, $this->messageHandler, $this);
+        }
+
+        $this->logger->log("Received from {$id}: " . trim($data));
+
+        $this->handler->handle($id, trim($data), $this);
     }
 
-    public function shutdown(): void {
-        $this->broadcast("Server shutting down.\n");
-        $this->running = false;
+    public function sendTo(int $id, string $message): void {
+        if (!isset($this->clients[$id])) {
+            return;
+        }
+
+        $message .= "\n";
+        @socket_write($this->clients[$id], $message, strlen($message));
     }
 
     public function broadcast(string $message): void {
-        foreach ($this->clients as $client) {
-            $this->send($client, $message);
+        foreach (array_keys($this->clients) as $id) {
+            $this->sendTo($id, $message);
         }
     }
 
-    public function sendTo(int $clientId, string $message): void {
-        if (!isset($this->clients[$clientId])) {
-            $this->logger->log("Unknown client: {$clientId}");
-            return;
-        }
-        $this->send($this->clients[$clientId], $message);
+    public function disconnect(int $id): void {
+        $this->removeClient($id);
     }
 
-    private function send(Socket $client, string $message): void {
-        $length = strlen($message);
-        $sent = 0;
+    public function shutdown(): void {
 
-        // Fine for short prototype messages on a nonblocking socket:
-        // if a write would block, stop rather than blocking the whole server.
-        while ($sent < $length) {
-            $written = @socket_write($client, substr($message, $sent));
-
-            if ($written === false || $written === 0) {
-                break;
-            }
-            $sent += $written;
-        }
-    }
-
-    public function sendRawTo(int $clientId, string $bytes): void {
-        var_dump([
-            'clientId' => $clientId,
-            'length' => strlen($bytes),
-            'hex' => bin2hex($bytes),
-            'data' => $bytes,
-        ]);
-        if (!isset($this->clients[$clientId])) {
-            return;
-        }
-
-        $client = $this->clients[$clientId];
-        $length = strlen($bytes);
-        $sent = 0;
-
-        while ($sent < $length) {
-            $result = @socket_write(
-                $client,
-                substr($bytes, $sent)
-            );
-
-            if ($result === false || $result === 0) {
-                $error = socket_last_error($client);
-
-                $this->logger->log(
-                    "Raw socket write failed for client $clientId: "
-                    . socket_strerror($error)
-                );
-
-                $this->removeClient($clientId);
-                return;
-            }
-
-            $sent += $result;
-        }
-
-        var_dump($clientId, $client, $length, $sent, $result);
-        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-    }
-
-    public function disconnect(int $clientId): void {
-        $this->removeClient($clientId);
     }
 
     public function removeClient(int $id): void {
         if (!isset($this->clients[$id])) {
             return;
         }
-        $this->logger->log("Client disconnected: {$id}");
 
         socket_close($this->clients[$id]);
         unset($this->clients[$id]);
-    }
 
-    private function tick(): void {
-        // Game timers and scheduled events will go here.
-    }
-
-    private function reportError(string $operation): bool {
-        $this->logger->log("{$operation} : " . socket_strerror(socket_last_error()));
-        return false;
-    }
-
-    private function fail(string $operation): bool {
-        $this->reportError($operation);
-
-        if ($this->server !== false) {
-            socket_close($this->server);
-            $this->server = false;
-        }
-        return false;
-    }
-
-    private function closeAll(): void {
-        foreach (array_keys($this->clients) as $id) {
-            $this->translator->removeBuffer($id);
-            $this->removeClient($id);
-        }
-
-        if ($this->server !== false) {
-            socket_close($this->server);
-            $this->server = false;
-        }
-        $this->logger->log("Server stopped.");
+        $this->logger->log("Client disconnected: {$id}");
     }
 }

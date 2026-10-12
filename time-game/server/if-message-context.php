@@ -6,5 +6,4 @@ interface MessageContext {
     public function disconnect(int $clientId): void;
     public function shutdown(): void;
     public function removeClient(int $id): void;
-    public function sendRawTo(int $id, string $data): void;
 }

@@ -22,5 +22,5 @@ $port = $config->item('port');
 $connections = new Connections($address, $port);
 $connections->addLogger(new Reporter());
 $connections->addMessageHandler(new MessageHandler());
-$connections->addTranslator(new WebSocketTranslator());
+//$connections->addTranslator(new WebSocketTranslator());
 $connections->run();
