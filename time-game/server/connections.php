@@ -4,14 +4,20 @@
 require_once(__DIR__ . '/if-message-context.php');
 
 class Connections implements MessageContext {
+    private string $address = '';
+    private int $port = 0;
+    private bool $isRunning = true;
     private Socket|null $server = null;
     private array $clients = [];
+    private array $buffers = [];
     private MessageHandler|null $handler = null;
     private Logger|null $logger = null;
 
     public function __construct(string $address, int $port) {
-        $this->handler = $handler;
-        $this->logger = $logger;
+        $this->address = $address;
+        $this->port = $port;
+    }
+    private function init() {
 
         $this->server = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
@@ -21,7 +27,7 @@ class Connections implements MessageContext {
 
         socket_set_option($this->server, SOL_SOCKET, SO_REUSEADDR, 1);
 
-        if (!socket_bind($this->server, $address, $port)) {
+        if (!socket_bind($this->server, $this->address, $this->port)) {
             throw new RuntimeException(socket_strerror(socket_last_error($this->server)));
         }
 
@@ -31,7 +37,7 @@ class Connections implements MessageContext {
 
         socket_set_nonblock($this->server);
 
-        $this->logger->log("Listening on {$address}:{$port}");
+        $this->logger->log("Listening on {$this->address}:{$this->port}");
     }
 
     public function addLogger(Logger $l) {
@@ -43,7 +49,8 @@ class Connections implements MessageContext {
     }
 
     public function run(): void {
-        while (true) {
+        $this->init();
+        while ($this->isRunning) {
             $reads = array_merge([$this->server], $this->clients);
             $writes = [];
             $excepts = [];
@@ -75,36 +82,44 @@ class Connections implements MessageContext {
 
         $id = spl_object_id($client);
         $this->clients[$id] = $client;
+        $this->buffers[$id] = '';
 
         $this->logger->log("Client connected: {$id}");
     }
 
-    private function readClient(Socket $client): void {
-        $id = spl_object_id($client);
-        $data = @socket_read($client, 4096, PHP_BINARY_READ);
 
-        if ($data === false) {
-            // A nonblocking socket may simply have no data ready.
-            $error = socket_last_error($client);
+private function readClient(Socket $client): void
+{
+    $id = spl_object_id($client);
+    $data = @socket_read($client, 4096, PHP_BINARY_READ);
 
-            if ($error !== SOCKET_EWOULDBLOCK &&
-                $error !== SOCKET_EAGAIN) {
-                $this->removeClient($id);
-            }
+    if ($data === false) {
+        $error = socket_last_error($client);
 
-            socket_clear_error($client);
-            return;
-        }
-
-        if ($data === '') {
+        if ($error !== SOCKET_EWOULDBLOCK && $error !== SOCKET_EAGAIN) {
             $this->removeClient($id);
-            return;
         }
-
-        $this->logger->log("Received from {$id}: " . trim($data));
-
-        $this->handler->handle($id, trim($data), $this);
+        socket_clear_error($client);
+        return;
     }
+
+    if ($data === '') {
+        $this->removeClient($id);
+        return;
+    }
+
+    $this->buffers[$id] .= $data;
+
+    while (($pos = strpos($this->buffers[$id], "\n")) !== false) {
+        $message = trim(substr($this->buffers[$id], 0, $pos));
+        $this->buffers[$id] = substr($this->buffers[$id], $pos + 1);
+
+        if ($message !== '') {
+            $this->logger->log("Received from {$id}: " . $message);
+            $this->handler->handle($id, $message, $this);
+        }
+    }
+}
 
     public function sendTo(int $id, string $message): void {
         if (!isset($this->clients[$id])) {
@@ -126,7 +141,11 @@ class Connections implements MessageContext {
     }
 
     public function shutdown(): void {
-
+        foreach ( $this->clients as $id=>$client )
+            unset($this->clients[$id]);
+        foreach ( $this->buffers as $id=>$buffer )
+            unset($this->buffers[$id]);
+        $this->isRunning = false;
     }
 
     public function removeClient(int $id): void {
@@ -136,6 +155,7 @@ class Connections implements MessageContext {
 
         socket_close($this->clients[$id]);
         unset($this->clients[$id]);
+        unset($this->buffers[$id]);
 
         $this->logger->log("Client disconnected: {$id}");
     }
