@@ -117,6 +117,10 @@
           writeLog('Error', 'WebSocket error. Check the PHP server log and connection URL.');
         });
 
+        socket.onmessage = (event) => {
+            console.log("From PHP:", event.data);
+        };
+
         socket.addEventListener('close', (event) => {
           setConnected(false);
           writeLog('Closed', `Code ${event.code}; reason: ${event.reason || '(none)'}`);
