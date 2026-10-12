@@ -51,27 +51,34 @@ class Connections implements MessageContext {
         $this->handler = $mh;
     }
 
-    public function run(): void {
+    public function start(): void {
         $this->init();
-        while ($this->isRunning) {
-            $reads = array_merge([$this->server], $this->clients);
-            $writes = [];
-            $excepts = [];
+    }
+    public function loop(bool $serverRunning) {
+        if ( false === $serverRunning ) return;
+        $reads = array_merge([$this->server], $this->clients);
+        $writes = [];
+        $excepts = [];
 
-            $ready = @socket_select($reads, $writes, $excepts, 1);
+        $ready = @socket_select($reads, $writes, $excepts, 1);
 
-            if ($ready === false) {
-                continue;
-            }
+        if ($ready === false) {
+            return;
+        }
 
-            foreach ($reads as $socket) {
-                if ($socket === $this->server) {
-                    $this->acceptClient();
-                } else {
-                    $this->readClient($socket);
-                }
+        foreach ($reads as $socket) {
+            if ($socket === $this->server) {
+                $this->acceptClient();
+            } else {
+                $this->readClient($socket);
             }
         }
+    }
+
+    public function ping() {
+        $frame = WebSocketFrame::makePing();
+        foreach (array_keys($this->clients) as $id)
+            @socket_write($this->clients[$id], $frame, strlen($frame));
     }
 
     private function acceptClient(): void {
@@ -115,80 +122,10 @@ class Connections implements MessageContext {
         // Handshake not completed yet.
         if (!$this->webSocketReady[$id]) {
             $this->tryHandshake($data, $id, $client);
-            /*$this->buffers[$id] .= $data;
-
-            // Wait until the complete HTTP headers have arrived.
-            $end = strpos($this->buffers[$id], "\r\n\r\n");
-
-            if ($end === false) {
-                return;
-            }
-
-            $request = substr($this->buffers[$id], 0, $end + 4);
-            $remaining = substr($this->buffers[$id], $end + 4);
-            $this->buffers[$id] = '';
-
-            $response = WebSocketFrame::handshake($request);
-
-            if ($response === null) {
-                $this->logger->log("Invalid WebSocket handshake from {$id}");
-                $this->removeClient($id);
-                return;
-            }
-
-            $written = @socket_write($client, $response, strlen($response));
-
-            if ($written !== strlen($response)) {
-                $this->logger->log("Incomplete handshake response to {$id}");
-                $this->removeClient($id);
-                return;
-            }
-
-            $this->webSocketReady[$id] = true;
-            $this->logger->log("WebSocket handshake complete: {$id}");
-
-            // Keep any bytes that arrived after the HTTP headers.
-            $this->buffers[$id] = $remaining;
-            //if ( false === $ok ) return;*/
             return;
         }
 
         $this->processFrame($data, $id);
-
-        // WebSocket frame processing will go here next.
-        /*$this->buffers[$id] .= $data;
-
-        while (isset($this->buffers[$id])) {
-            try {
-                $frame = WebSocketFrame::readMessage(
-                    $this->buffers[$id]
-                );
-            } catch (RuntimeException $e) {
-                $this->logger->log(
-                    "Invalid WebSocket frame from {$id}: " . $e->getMessage()
-                );
-                $this->removeClient($id);
-                return;
-            }
-
-            // No complete message yet. Keep buffering.
-            if ($frame === null) {
-                break;
-            }
-
-            // Remove this frame, preserving any following frames.
-            $this->buffers[$id] = substr(
-                $this->buffers[$id],
-                $frame['bytes']
-            );
-
-            $message = $frame['message'];
-
-            $this->logger->log("Received from {$id}: " . $message);
-
-            $this->handler->handle($id, $message, $this);
-        }
-        $this->logger->log("Received " . strlen($data) . " WebSocket bytes from {$id}");*/
     }
 
     private function processFrame(string $data, int $id) {
