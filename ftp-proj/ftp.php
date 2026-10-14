@@ -56,11 +56,10 @@ final class Ftp {
 
         return $this->connOk() ? ftp_get($this->conn, $this->localFile, $this->remoteFile, $this->mode, $this->offset) : false;
     }
-    public function size(): bool|int {
+    public function size(): int {
         if ( !$this->connOk() ) return false;
 
-        $size = ftp_size($this->conn, $this->remoteFile);
-        return ( $size > 0 ? $size : false );
+        return @ftp_size($this->conn, $this->remoteFile);
     }
     public function setLocalFile(string $fname): self {
         $this->localFile = $fname;
@@ -91,6 +90,19 @@ final class Ftp {
     }
 }
 
+final class Reporter {
+    private array $lines = [];
+    public function __construct() {}
+    public function addLine(string $l): void {
+        $this->lines[] = $l;
+    }
+    public function report(): string {
+        return implode("\n", $this->lines);
+    }
+}
+
+$report = new Reporter();
+
 $cfg = new Config(__DIR__ . '/config.php');
 
 $host = $cfg->item('host');
@@ -98,12 +110,23 @@ $user = $cfg->item('user');
 $pass = $cfg->item('pass');
 
 $ftp = new Ftp();
-$ftp->connect($host);
-$ftp->login($user, $pass);
+$ok = $ftp->connect($host);
+$report->addLine($ok ? 'Connection opened' : 'Connection failed');
+$ok = $ftp->login($user, $pass);
+$report->addLine($ok ? 'Logged in' : 'Login failed');
 $ftp->
     setRemoteFile('ftp_test_orders.csv')->
     setLocalFile('temp-order.csv')->
     setMode(FTP_BINARY);
-echo $ftp->size();
-$ftp->get();
-$ftp->close();
+$size = $ftp->size();
+if ( $size === -1 )
+    $report->addLine('Op size n/a on server');
+if ( $size === 0 )
+    $report->addLine('File is 0 bytes');
+if ( $size > 0 )
+    $report->addLine("File is {$size} bytes");
+$ok = $ftp->get();
+$report->addLine($ok ? 'File got' : 'File not got');
+$ok = $ftp->close();
+$report->addLine($ok ? 'Closed' : 'Close failed');
+echo $report->report();
