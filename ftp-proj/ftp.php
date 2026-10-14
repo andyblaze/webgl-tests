@@ -7,11 +7,10 @@ class Config {
     }
 
     private function load(string $filename): array {
-        if ( !is_file($filename) || !is_readable($filename) ) {
-            throw new \RuntimeException(
-                'Config file does not exist or is not readable.'
-            );
-        }
+        //$filename = realpath($filename);
+
+        if ($filename === false || !is_readable($filename)) 
+            throw new \RuntimeException('Config file does not exist or is not readable.');
 
         $config = [];
         require $filename;
@@ -92,11 +91,19 @@ final class Ftp {
     }
 }
 
+$cfg = new Config(__DIR__ . '/config.php');
+
+$host = $cfg->item('host');
+$user = $cfg->item('user');
+$pass = $cfg->item('pass');
+
 $ftp = new Ftp();
-$ftp->connect('127.0.0.1');
-$ftp->login('andy', 'roe09');
-$ftp->setRemoteFile('ftp_test_orders.csv')->setLocalFile('temp-order.csv');
-$ftp->setMode(FTP_BINARY);
+$ftp->connect($host);
+$ftp->login($user, $pass);
+$ftp->
+    setRemoteFile('ftp_test_orders.csv')->
+    setLocalFile('temp-order.csv')->
+    setMode(FTP_BINARY);
 echo $ftp->size();
 $ftp->get();
 $ftp->close();
