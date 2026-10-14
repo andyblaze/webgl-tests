@@ -15,15 +15,19 @@ final class Ftp {
         return $this->connOk(); 
     }
     public function login(string $user, string $pass): bool {
-        if ( ! $this->connOk() ) return false;
-        return @ftp_login($this->conn, $user, $pass);
+        return $this->connOk() ? @ftp_login($this->conn, $user, $pass) : false;
     }
     public function close(): bool {
-        if ( ! $this->connOk() ) return false;
-        return ftp_close($this->conn);
+        return $this->connOk() ? ftp_close($this->conn) : false;
     }
     public function get(): bool {
-        return ftp_get($this->conn, $this->localFile, $this->remoteFile, $this->mode, $this->offset);
+        return $this->connOk() ? ftp_get($this->conn, $this->localFile, $this->remoteFile, $this->mode, $this->offset) : false;
+    }
+    public function size(): bool|int {
+        if ( !$this->connOk() ) return false;
+        
+        $size = ftp_size($this->conn, $this->remoteFile);
+        return ( $size > 0 ? $size : false );
     }
     public function setLocalFile(string $fname): self {
         $this->localFile = $fname;
@@ -59,5 +63,6 @@ $ftp->connect('127.0.0.1');
 $ftp->login('andy', 'roe09');
 $ftp->setRemoteFile('ftp_test_orders.csv')->setLocalFile('temp-order.csv');
 $ftp->setMode(FTP_BINARY);
+echo $ftp->size();
 $ftp->get();
 $ftp->close();
