@@ -1,5 +1,27 @@
 <?php 
 
+class Config {
+    private array $data = [];
+    public function __construct(string $filename) {
+        $this->data = $this->load($filename);
+    }
+
+    private function load(string $filename): array {
+        if ( !is_file($filename) || !is_readable($filename) ) {
+            throw new \RuntimeException(
+                'Config file does not exist or is not readable.'
+            );
+        }
+
+        $config = [];
+        require $filename;
+        return $config;
+    }
+    public function item(string $key, mixed $default=null): mixed {
+        return $this->data[$key] ?? $default;
+    }
+}
+
 final class Ftp {
     private FTP\Connection|false $conn = false;
     private string|null $localFile = null;
