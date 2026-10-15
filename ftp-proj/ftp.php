@@ -61,6 +61,15 @@ final class Ftp {
 
         return @ftp_size($this->conn, $this->remoteFile);
     }
+    public function listFiles(string $directory='/'): array|false {
+        if ( !$this->connOk() ) return false;
+        $result = ftp_nlist($this->conn, $directory);
+        if ( false === $result ) return false;
+        $files = [];
+        foreach ( $result as $file )
+            $files[] = basename($file);
+        return $files;
+    }
     public function setLocalFile(string $fname): self {
         $this->localFile = $fname;
         return $this;
@@ -117,6 +126,7 @@ final class Reporter {
 $msgs = [
     'connect' =>[true => 'Connection opened', false => 'Connection failed'],
     'login' =>  [true=> 'Logged in', false=> 'Login failed'],
+    'filelist'=>[true=> 'File exists', false=> 'File not listed', -1=> 'Listing failed'],
     'size' =>   ['n/a' => 'Op size n/a on server', 'ok' => "File is [[size]] bytes"],
     'get' =>    [true => 'File got', false => 'File not got'],
     'close' =>  [true => 'Closed', false => 'Close failed']
@@ -159,6 +169,15 @@ class FtpClient {
         $this->notify('get', $ok);
         return $ok;
     }
+    private function listFiles(string $toFind) {
+        $fileList = $this->ftp->listFiles();
+        if ( is_array($fileList) ) {
+            $exists = in_array($toFind, $fileList, true);
+            $this->notify('filelist', $exists);  
+        }
+        else 
+            $this->notify('filelist', -1);      
+    }
     public function run(Config $cfg): bool {
         $host = $cfg->item('host');
         $user = $cfg->item('user');
@@ -166,6 +185,8 @@ class FtpClient {
 
         $ok = $this->connectAndLogin($host, $user, $pass);
         $size = 0;
+
+        $this->listFiles($cfg->item('remoteFile'));
 
         if ( $ok ) 
             $size = $this->getRemoteFileSize();
