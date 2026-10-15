@@ -92,41 +92,83 @@ final class Ftp {
 
 final class Reporter {
     private array $lines = [];
-    public function __construct() {}
-    public function addLine(string $l): void {
-        $this->lines[] = $l;
+    private array $messages = [];
+    public function __construct(array $messages) {
+        $this->messages = $messages;
+    }
+    private function addLine(string $event, bool|int $eventResult): void {
+        $e = $this->messages[$event];
+        if ( $event === 'size' ) {
+            $line = ($eventResult === -1 ? $e['n/a'] : str_replace('[[size]]', $eventResult, $e['ok']));
+            $this->lines[] = $line;
+        }
+        else {
+            $this->lines[] = $e[$eventResult];
+        }
+    }
+    public function update(string $event, bool|int $eventResult): void {
+        $this->addLine($event, $eventResult);
     }
     public function report(): string {
         return implode("\n", $this->lines);
     }
 }
 
-$report = new Reporter();
+$msgs = [
+    'connect' =>[true => 'Connection opened', false => 'Connection failed'],
+    'login' =>  [true=> 'Logged in', false=> 'Login failed'],
+    'size' =>   ['n/a' => 'Op size n/a on server', 'ok' => "File is [[size]] bytes"],
+    'get' =>    [true => 'File got', false => 'File not got'],
+    'close' =>  [true => 'Closed', false => 'Close failed']
+];
+
+class FtpClient {
+    private Ftp|null $ftp = null;
+    private Reporter|null $reporter = null;
+    private array $observers = [];
+    public function __construct(Ftp $ftp) {
+        $this->ftp = $ftp;
+    }
+    public function addObserver(Reporter $o) {
+        $this->observers[] = $o;
+    }
+    public function notify(string $event, int|bool $result) {
+        foreach ( $this->observers as $o )
+            $o->update($event, $result);
+    }
+    public function init(string $remoteFile, string $localFile, int $mode=FTP_BINARY) {
+        $this->ftp->setRemoteFile($remoteFile)->
+            setLocalFile($localFile)->
+            setMode($mode);
+    }
+    public function run(Config $cfg): void {
+        $host = $cfg->item('host');
+        $user = $cfg->item('user');
+        $pass = $cfg->item('pass');
+
+        $ok = $this->ftp->connect($host);
+        $this->notify('connect', $ok);
+        $ok = $this->ftp->login($user, $pass);
+        $this->notify('login', $ok);
+        $size = $this->ftp->size();
+        $this->notify('size', $size);
+        $ok = $this->ftp->get();
+        $this->notify('get', $ok);
+        $ok = $this->ftp->close();
+        $this->notify('close', $ok);        
+    }
+    public function report() {
+        $result = '';
+        foreach ( $this->observers as $o )
+            $result .= $o->report();
+        return $result;
+    }
+}
 
 $cfg = new Config(__DIR__ . '/config.php');
 
-$host = $cfg->item('host');
-$user = $cfg->item('user');
-$pass = $cfg->item('pass');
-
-$ftp = new Ftp();
-$ok = $ftp->connect($host);
-$report->addLine($ok ? 'Connection opened' : 'Connection failed');
-$ok = $ftp->login($user, $pass);
-$report->addLine($ok ? 'Logged in' : 'Login failed');
-$ftp->
-    setRemoteFile('ftp_test_orders.csv')->
-    setLocalFile('temp-order.csv')->
-    setMode(FTP_BINARY);
-$size = $ftp->size();
-if ( $size === -1 )
-    $report->addLine('Op size n/a on server');
-if ( $size === 0 )
-    $report->addLine('File is 0 bytes');
-if ( $size > 0 )
-    $report->addLine("File is {$size} bytes");
-$ok = $ftp->get();
-$report->addLine($ok ? 'File got' : 'File not got');
-$ok = $ftp->close();
-$report->addLine($ok ? 'Closed' : 'Close failed');
-echo $report->report();
+$ftpClient = new FtpClient(new Ftp());
+$ftpClient->addObserver(new Reporter($msgs));
+$ftpClient->init('ftp_test_orders.csv', 'temp-order.csv');
+$ftpClient->run($cfg);
+echo $ftpClient->report();
