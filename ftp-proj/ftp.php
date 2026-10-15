@@ -124,7 +124,6 @@ $msgs = [
 
 class FtpClient {
     private Ftp|null $ftp = null;
-    private Reporter|null $reporter = null;
     private array $observers = [];
     public function __construct(Ftp $ftp) {
         $this->ftp = $ftp;
