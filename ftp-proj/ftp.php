@@ -140,21 +140,42 @@ class FtpClient {
             setLocalFile($localFile)->
             setMode($mode);
     }
-    public function run(Config $cfg): void {
+    private function connectAndLogin(string $host, string $user, string $pass): bool {
+        $ok = $this->ftp->connect($host);
+        $this->notify('connect', $ok);
+        if ( false === $ok ) return false;
+
+        $ok = $this->ftp->login($user, $pass);
+        $this->notify('login', $ok);
+        return $ok;
+    }
+    private function getRemoteFileSize() {
+        $size = $this->ftp->size();
+        $this->notify('size', $size);
+        return $size;
+    }
+    private function getRemoteFile() {
+        $ok = $this->ftp->get();
+        $this->notify('get', $ok);
+        return $ok;
+    }
+    public function run(Config $cfg): bool {
         $host = $cfg->item('host');
         $user = $cfg->item('user');
         $pass = $cfg->item('pass');
 
-        $ok = $this->ftp->connect($host);
-        $this->notify('connect', $ok);
-        $ok = $this->ftp->login($user, $pass);
-        $this->notify('login', $ok);
-        $size = $this->ftp->size();
-        $this->notify('size', $size);
-        $ok = $this->ftp->get();
-        $this->notify('get', $ok);
-        $ok = $this->ftp->close();
-        $this->notify('close', $ok);        
+        $ok = $this->connectAndLogin($host, $user, $pass);
+        $size = 0;
+
+        if ( $ok ) 
+            $size = $this->getRemoteFileSize();
+
+        if ( $ok && ($size === -1 || $size > 0) ) 
+            $ok = $this->getRemoteFile();
+
+        $closed = $this->ftp->close();
+        $this->notify('close', $closed);
+        return $ok;     
     }
     public function report() {
         $result = '';
@@ -166,8 +187,11 @@ class FtpClient {
 
 $cfg = new Config(__DIR__ . '/config.php');
 
+$remoteFile = $cfg->item('remoteFile');
+$localFile = $cfg->item('localFile');
+
 $ftpClient = new FtpClient(new Ftp());
 $ftpClient->addObserver(new Reporter($msgs));
-$ftpClient->init('ftp_test_orders.csv', 'temp-order.csv');
+$ftpClient->init($remoteFile, $localFile);
 $ftpClient->run($cfg);
 echo $ftpClient->report();
