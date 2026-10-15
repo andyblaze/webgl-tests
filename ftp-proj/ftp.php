@@ -128,6 +128,7 @@ $msgs = [
     'login' =>  [true=> 'Logged in', false=> 'Login failed'],
     'filelist'=>[true=> 'File exists', false=> 'File not listed', -1=> 'Listing failed'],
     'size' =>   ['n/a' => 'Op size n/a on server', 'ok' => "File is [[size]] bytes"],
+    'sizematch'=>[true => 'File sizes match', false => 'File size mismatch'],
     'get' =>    [true => 'File got', false => 'File not got'],
     'close' =>  [true => 'Closed', false => 'Close failed']
 ];
@@ -183,16 +184,21 @@ class FtpClient {
         $user = $cfg->item('user');
         $pass = $cfg->item('pass');
 
+        $remoteFile = $cfg->item('remoteFile');
+        $localFile = $cfg->item('localFile');
+
         $ok = $this->connectAndLogin($host, $user, $pass);
         $size = 0;
 
-        $this->listFiles($cfg->item('remoteFile'));
+        $this->listFiles($remoteFile);
 
         if ( $ok ) 
             $size = $this->getRemoteFileSize();
 
-        if ( $ok && ($size === -1 || $size > 0) ) 
+        if ( $ok && ($size === -1 || $size > 0) ) {
             $ok = $this->getRemoteFile();
+            $this->notify('sizematch', $size === filesize($localFile));
+        }
 
         $closed = $this->ftp->close();
         $this->notify('close', $closed);
