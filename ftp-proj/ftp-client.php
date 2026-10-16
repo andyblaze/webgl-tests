@@ -3,7 +3,8 @@
 final class FtpResult {
     public bool $success = false;
     public bool $downloaded = false;
-    public int $fileSize = -1;
+    public int $remoteSize = -1;
+    public int $localSize = 0;
     public string $error = '';
     public string $localFile = '';
 
@@ -72,24 +73,26 @@ class FtpClient {
 
         $ok = $this->connectAndLogin($host, $user, $pass);
         $result->set('success', $ok);
-        $size = 0;
+        $remoteSize = 0;
 
         if ( $ok ) 
             $this->listFiles($remoteFile);
 
         if ( $ok ) 
-            $size = $this->getRemoteFileSize();
+            $remoteSize = $this->getRemoteFileSize();
         
-        $result->set('fileSize', $size);
+        $result->set('remoteSize', $remoteSize);
 
-        if ( $ok && ($size === -1 || $size > 0) ) 
+        if ( $ok && ($remoteSize === -1 || $remoteSize > 0) ) 
             $ok = $this->getRemoteFile();
 
         $result->set('downloaded', $ok);
 
-        if ( $ok && $size > 0 ) {
-            $this->notify('sizematch', $size === filesize($localFile));
+        if ( $ok && $remoteSize > 0 ) {
+            $localSize = filesize($localFile);
+            $this->notify('sizematch', $remoteSize === $localSize);
             $result->set('localFile', $localFile);
+            $result->set('localSize', $localSize);
         }
 
         $closed = $this->ftp->close();
