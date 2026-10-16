@@ -14,4 +14,12 @@ final class FtpResult {
     public function update(string $key, mixed $val) {
         $this->set($key, $val);
     }
+    public function ok() {
+        return (
+            (true === $this->success) &&
+            (true === $this->downloaded) &&
+            ($this->localSize > 0) &&
+            (strlen($this->localFile) > 0)
+        );
+    }
 }

@@ -10,6 +10,15 @@ require_these([
     'ftp-client'    
 ]);
 
+class Validator {
+    public function __construct() { }
+    public function check(string $fname): bool {
+        $data = file_get_contents($fname);
+        unset($data);
+        return true;
+    }
+}
+
 
 $cfg = new Config(__DIR__ . '/config-data.php');
 
@@ -19,5 +28,10 @@ $localFile = $cfg->item('localFile');
 $ftpClient = new FtpClient(new Ftp());
 $ftpClient->addObserver(new Reporter($cfg));
 $result = $ftpClient->run($cfg, new FtpResult());
-var_dump($result);
+
+if ( $result->ok() ) {
+    $valdidator = new Validator();
+    $valdidator->check($result->localFile);
+}
+
 echo $ftpClient->report();
