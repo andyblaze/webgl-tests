@@ -47,6 +47,12 @@ class FtpClient {
         else 
             $this->notify('filelist', -1);      
     }
+    private function handleSizes(string $localFile, int $remoteSize) {
+        $localSize = filesize($localFile);
+        $this->notify('sizematch', $remoteSize === $localSize);
+        $this->result->update('localFile', $localFile);
+        $this->result->update('localSize', $localSize);        
+    }
     public function run(Config $cfg, FtpResult $res): FtpResult {
 
         $this->result = $res;
@@ -65,6 +71,8 @@ class FtpClient {
         $this->result->update('success', $ok);
         $remoteSize = 0;
 
+        // we're connected and logged in if $ok is true
+
         if ( $ok ) 
             $this->listFiles($remoteFile);
 
@@ -76,14 +84,12 @@ class FtpClient {
         if ( $ok && ($remoteSize === -1 || $remoteSize > 0) ) 
             $ok = $this->getRemoteFile();
 
+        // now $ok means we downloaded something
+
         $this->result->update('downloaded', $ok);
 
-        if ( $ok && $remoteSize > 0 ) {
-            $localSize = filesize($localFile);
-            $this->notify('sizematch', $remoteSize === $localSize);
-            $this->result->update('localFile', $localFile);
-            $this->result->update('localSize', $localSize);
-        }
+        if ( $ok && $remoteSize > 0 )
+            $this->handleSizes($localFile, $remoteSize);
 
         $closed = $this->ftp->close();
         $this->notify('close', $closed);
