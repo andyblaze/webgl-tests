@@ -1,20 +1,8 @@
 <?php 
 
-final class FtpResult {
-    public bool $success = false;
-    public bool $downloaded = false;
-    public int $remoteSize = -1;
-    public int $localSize = 0;
-    public string $error = '';
-    public string $localFile = '';
-
-    public function set(string $key, mixed $val): void {
-        $this->$key = $val;
-    }
-}
-
 class FtpClient {
     private Ftp|null $ftp = null;
+    private FtpResult|null $result = null;
     private array $observers = [];
     public function __construct(Ftp $ftp) {
         $this->ftp = $ftp;
@@ -59,20 +47,22 @@ class FtpClient {
         else 
             $this->notify('filelist', -1);      
     }
-    public function run(Config $cfg): FtpResult {
+    public function run(Config $cfg, FtpResult $res): FtpResult {
+
+        $this->result = $res;
+
         $host = $cfg->item('host');
         $user = $cfg->item('user');
         $pass = $cfg->item('pass');
-
         $remoteFile = $cfg->item('remoteFile');
         $localFile = $cfg->item('localFile');
 
         $this->init($remoteFile, $localFile);
 
-        $result = new FtpResult();
+        //$result = new FtpResult();
 
         $ok = $this->connectAndLogin($host, $user, $pass);
-        $result->set('success', $ok);
+        $this->result->update('success', $ok);
         $remoteSize = 0;
 
         if ( $ok ) 
@@ -81,23 +71,23 @@ class FtpClient {
         if ( $ok ) 
             $remoteSize = $this->getRemoteFileSize();
         
-        $result->set('remoteSize', $remoteSize);
+        $this->result->update('remoteSize', $remoteSize);
 
         if ( $ok && ($remoteSize === -1 || $remoteSize > 0) ) 
             $ok = $this->getRemoteFile();
 
-        $result->set('downloaded', $ok);
+        $this->result->update('downloaded', $ok);
 
         if ( $ok && $remoteSize > 0 ) {
             $localSize = filesize($localFile);
             $this->notify('sizematch', $remoteSize === $localSize);
-            $result->set('localFile', $localFile);
-            $result->set('localSize', $localSize);
+            $this->result->update('localFile', $localFile);
+            $this->result->update('localSize', $localSize);
         }
 
         $closed = $this->ftp->close();
         $this->notify('close', $closed);
-        return $result;     
+        return $this->result;     
     }
     public function report() {
         $result = '';
