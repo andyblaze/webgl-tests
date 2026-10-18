@@ -12,6 +12,8 @@ require_these([
 
 class Validator {
     private Reporter|null $reporter = null;
+    /** @var resource|false */
+    private $handle = false;
     public function __construct(Reporter $r) {
         $this->reporter = $r;
     }
