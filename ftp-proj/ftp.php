@@ -11,7 +11,10 @@ require_these([
 ]);
 
 class Validator {
-    public function __construct() { }
+    private Reporter|null $reporter = null;
+    public function __construct(Reporter $r) {
+        $this->reporter = $r;
+    }
     public function check(string $fname): bool {
         $data = file_get_contents($fname);
         unset($data);
@@ -25,12 +28,13 @@ $cfg = new Config(__DIR__ . '/config-data.php');
 $remoteFile = $cfg->item('remoteFile');
 $localFile = $cfg->item('localFile');
 
+$reporter = new Reporter($cfg);
 $ftpClient = new FtpClient(new Ftp());
-$ftpClient->addObserver(new Reporter($cfg));
+$ftpClient->addObserver($reporter);
 $result = $ftpClient->run($cfg, new FtpResult());
 
 if ( $result->ok() ) {
-    $valdidator = new Validator();
+    $valdidator = new Validator($reporter);
     $valdidator->check($result->localFile);
 }
 

@@ -35,6 +35,9 @@ class Ftp {
 
         return $this->connOk() ? ftp_get($this->conn, $this->localFile, $this->remoteFile, $this->mode, $this->offset) : false;
     }
+    public function passive(bool $p): bool {
+        return ftp_pasv($this->conn, $p);
+    }
     public function size(): int {
         if ( !$this->connOk() ) return false;
 
