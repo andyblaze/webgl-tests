@@ -7,34 +7,70 @@ require_these([
     'config-class',
     'ftp-class',
     'reporter',
-    'ftp-client'    
+    'ftp-client',
+    'validator'
 ]);
 
-class Validator {
-    private Reporter|null $reporter = null;
+$rules = [
+    'has_header' => true,
+    'delimiter' => ',',
+    'expected_columns' => 4,
+//order_id,order_date,customer_id,customer_name,city,category,product_code,product_name,quantity,unit_price_gbp
+//ORD-1001,2026-01-05,CUST-201,Northwind Books,Leeds,BOOK,BK-014,Field Guide to Birds,2,19.99
+    'columns' => [
+        'order_id' => [
+            'type' => 'int',
+            'required' => true,
+        ],
+        'customer' => [
+            'type' => 'string',
+            'required' => true,
+        ],
+        'quantity' => [
+            'type' => 'int',
+            'required' => true,
+        ],
+        'price' => [
+            'type' => 'float',
+            'required' => true,
+        ],
+    ],
+];
+
+$policy = [
+    'max_issues' => 5,
+    'allow_blank_rows' => true,
+    'allow_extra_columns' => false,
+    'stop_on_first_error' => false,
+];
+
+class CsvReader {
     /** @var resource|false */
     private $handle = false;
-    public function __construct(Reporter $r) {
-        $this->reporter = $r;
+
+    public function open(string $file): bool {
+        if ( !is_file($file) || !is_readable($file) ) {
+            return false;
+        }
+        $this->handle = fopen($file, 'r');
+        return is_resource($this->handle);
     }
-    public function openFile(string $fname): bool {
-        if ( file_exists($fname) && is_readable($fname) ) 
-            $this->handle = fopen($fname, 'r');
-        return is_resource($this->handle); 
+    public function readRow(): array|false {
+        if ( false === $this->handle) {
+            return false;
+        }
+        return fgetcsv($this->handle);
     }
-    private function isBlank(string $line) {
-        if (  $line === '' )
-            return;
-    }
-    public function check() {
-        $rowCount = 0;
-        $line = fgetcsv($this->handle, 2048);
-        $line = trim($line);
-    }
-    public function closeFile(): bool {
-        return fclose($this->handle);
+    public function close(): bool {
+        $result = true;
+        if ( is_resource($this->handle) ) {
+            $result = fclose($this->handle);
+            $this->handle = false;
+        }
+        return $result;
     }
 }
+
 
 
 $cfg = new Config(__DIR__ . '/config-data.php');
@@ -49,7 +85,7 @@ $result = $ftpClient->run($cfg, new FtpResult());
 
 if ( $result->ok() ) {
     $valdidator = new Validator($reporter);
-    $valdidator->check($result->localFile);
+    $valdidator->openFile($result->localFile);
 }
 
 echo $ftpClient->report();
