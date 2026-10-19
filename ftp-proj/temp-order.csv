@@ -1,6 +1,5 @@
 order_id,order_date,customer_id,customer_name,city,category,product_code,product_name,quantity,unit_price_gbp
 ORD-1001,2026-01-05,CUST-201,Northwind Books,Leeds,BOOK,BK-014,Field Guide to Birds,2,19.99
-
 ORD-1002,2026-01-05,CUST-202,Oak & Ember,York,HOME,HM-031,Ceramic Mug,4,8.5
 ORD-1003,2026-01-06,CUST-203,Blue Finch Studio,Lincoln,ART,AR-008,Watercolour Pad,3,12.75
 ORD-1004,2026-01-06,CUST-204,Harbour Supply,Hull,OUTDOOR,OD-022,Insulated Bottle,2,24.0

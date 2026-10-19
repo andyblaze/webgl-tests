@@ -25,10 +25,16 @@ class Reporter {
     }
     public function update(string $event, bool|int $eventResult): void {
         $e = $this->messages[$event];
-        if ( true === $eventResult && true === in_array($event, array_keys($this->errors), true) )
-            $this->addError($event, $e[$eventResult]);
-        else 
-            $this->addLine($event, $eventResult);
+        if ( $event === 'blankLine' ) {
+            $this->addError('blankLine', $e[$eventResult]);
+            return;
+        }
+
+        if ( $event === 'countMismatch' ) {
+            $this->addError('countMismatch', $e[$eventResult]);        
+            return;
+        }
+        $this->addLine($event, $eventResult);
     }
     public function report(): string {
         $errors = "\n";
