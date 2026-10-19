@@ -36,8 +36,10 @@ class Validator {
     public function check(array $line): bool {
         if ( $this->isBlank($line) )
             $this->reporter->update('blankLine', true);
+
         if ( $this->columnsMismatch($line) )
             $this->reporter->update('countMismatch', true);
+        
         return true;
     }
 }
