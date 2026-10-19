@@ -17,14 +17,13 @@ class CsvReader {
     private int $length = 2048;
     private string $separator = ',';
     private string $enclosure = '"';
-    private string $escape = '\\';
+    private string $escape = '';
 
     public function __construct(Config $cfg) {
-        $val = (object)$cfg->item('readerCfg');
-        $this->length = $val->length;
-        $this->separator = $val->separator;
-        $this->enclosure = $val->separator;
-        $this->escape = $val->escape;
+        $this->length = $cfg->item('csvLength');
+        $this->separator = $cfg->item('csvSeparator');
+        $this->enclosure = $cfg->item('csvEnclosure');
+        $this->escape = $cfg->item('csvEscape');
 
     }
     public function open(string $file): bool {
@@ -50,14 +49,23 @@ class CsvReader {
     }
 }
 
-$cfg = new Config(__DIR__ . '/config-data.php');
+class CsvProcessor {
+    private CsvReader|null $reader = null;
+    private Validator|null $valdidator = null;
+    public function __construct(CsvReader $r, Validator $v) {
+        $this->reader = $r;
+        $this->valdidator = $v;
+    }
+    public function process(string $file): void {
+        $this->reader->open($file);
+        while ( ($line = $this->reader->readRow()) ) {
+            $this->valdidator->check($line);
+        }
+        $this->reader->close();
+    }
+}
 
-$f = $cfg->item('localFile');
-$r = new CsvReader($cfg);
-var_dump($r->open($f));
-var_dump($r->readRow());
-var_dump($r->close());
-die;
+$cfg = new Config(__DIR__ . '/config-data.php');
 
 $remoteFile = $cfg->item('remoteFile');
 $localFile = $cfg->item('localFile');
@@ -68,8 +76,11 @@ $ftpClient->addObserver($reporter);
 $result = $ftpClient->run($cfg, new FtpResult());
 
 if ( $result->ok() ) {
-    $valdidator = new Validator($reporter);
-    $valdidator->openFile($result->localFile);
+    $processor = new CsvProcessor(
+        new CsvReader($cfg), 
+        new Validator($cfg, $reporter)
+    );
+    $processor->process($localFile);
 }
 
 echo $ftpClient->report();

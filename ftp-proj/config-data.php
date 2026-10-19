@@ -17,12 +17,12 @@ $config['reporterMessages'] = [
     'close' =>  [true => 'Connection closed', false => 'Connection close failed']
 ];
 
-$config['readerCfg'] = [
-    'length' => 2048,
-    'separator' => ',',
-    'enclosure' => '"',
-    'escape' => '\\'
-];
+
+$config['csvLength'] = 2048;
+$config['csvSeparator'] = ',';
+$config['csvEnclosure'] = '"';
+$config['csvEscape'] = '';
+
 
 $config['rules'] = [
     'has_header' => true,
@@ -54,7 +54,7 @@ $config['rules'] = [
             'type' => 'string'
         ],
         'quantity' => [
-            'type' => 'string'
+            'type' => 'int'
         ],
         'unit_price_gbp' => [
             'type' => 'float'
