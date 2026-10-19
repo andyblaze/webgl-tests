@@ -31,13 +31,15 @@ class Validator {
         return (  count($line) === 1 && $line[0] === null );
     }
     private function countMismatch(array $line) {
+        if ( $this->isBlank($line) ) 
+            return false;
         return ( count($line) !== $this->columnCount );
     }
     public function check(array $line): bool {
         if ( $this->isBlank($line) )
             $this->reporter->update('blankLine', true);
 
-        if ( false === $this->isBlank($line) && true === $this->countMismatch($line) )
+        if ( $this->countMismatch($line) )
             $this->reporter->update('countMismatch', true);
 
         return true;
