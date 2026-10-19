@@ -4,7 +4,7 @@ class Validator {
     private Reporter|null $reporter = null;
     /** @var resource|false */
     private $handle = false;
-    //private object|null $rules = null;
+    private bool $hasHeader = true;
     private object|null $policy = null;
     private int $columnCount = 0;
     private array $columnNames = [];
@@ -15,6 +15,7 @@ class Validator {
         $this->reporter = $r;
     }
     private function initRules(object $rules): void {
+        $this->hasHeader = $rules->has_header;
         $this->columnCount = count($rules->columns);
         $this->columnNames = array_keys($rules->columns);
         foreach ( $rules->columns as $key=>$val) {
@@ -26,12 +27,17 @@ class Validator {
             $this->handle = fopen($fname, 'r');
         return is_resource($this->handle); 
     }
-    private function isBlank(string $line) {
-        if (  $line === '' )
-            return;
+    private function isBlank(array $line): bool {
+        return (  count($line) === 1 && $line[0] === null );
+    }
+    private function columnsMismatch(array $line) {
+        return ( count($line) !== $this->columnCount );
     }
     public function check(array $line): bool {
-        echo implode(', ', $line) . PHP_EOL;
+        if ( $this->isBlank($line) )
+            $this->reporter->update('blankLine', true);
+        if ( $this->columnsMismatch($line) )
+            $this->reporter->update('countMismatch', true);
         return true;
     }
 }

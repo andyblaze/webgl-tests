@@ -3,6 +3,10 @@
 class Reporter {
     private array $lines = [];
     private array $messages = [];
+    private array $errors = [
+        'blankLines' => 0,
+        'countMismatches' => 0
+    ];
     public function __construct(Config $cfg) {
         $this->messages = $cfg->item('reporterMessages');
     }
@@ -16,10 +20,23 @@ class Reporter {
             $this->lines[] = $e[$eventResult];
         }
     }
+    private function addError(string $type): void {
+        $this->errors[$type]++;
+    }
     public function update(string $event, bool|int $eventResult): void {
-        $this->addLine($event, $eventResult);
+        if ( $event === 'blankLine' ) {
+            $this->addError('blankLines');
+        }
+        elseif ( $event === 'countMismatch' ) {
+            $this->addError('countMismatches');
+        }
+        else 
+            $this->addLine($event, $eventResult);
     }
     public function report(): string {
-        return implode("\n", $this->lines);
+        $errors = "\n";
+        foreach ( $this->errors as $type=>$num )
+            $errors .= "{$type}: $num\n";
+        return implode("\n", $this->lines) . $errors;
     }
 }

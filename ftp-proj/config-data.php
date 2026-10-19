@@ -14,7 +14,9 @@ $config['reporterMessages'] = [
     'size' =>   ['n/a' => 'Op size n/a on server', 'ok' => "File is [[size]] bytes"],
     'sizematch'=>[true => 'File sizes match', false => 'File size mismatch'],
     'get' =>    [true => 'File got', false => 'File not got'],
-    'close' =>  [true => 'Connection closed', false => 'Connection close failed']
+    'close' =>  [true => 'Connection closed', false => 'Connection close failed'],
+    'blankLine' => [true => 1, false => 0],
+    'countMismatch' => [true => 1, false => 0]
 ];
 
 
@@ -26,8 +28,6 @@ $config['csvEscape'] = '';
 
 $config['rules'] = [
     'has_header' => true,
-    'delimiter' => ',',
-    'separator' => '"',
     'columns' => [
         'order_id' => [
             'type' => 'string'
