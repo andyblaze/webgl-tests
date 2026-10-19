@@ -11,43 +11,22 @@ require_these([
     'validator'
 ]);
 
-$rules = [
-    'has_header' => true,
-    'delimiter' => ',',
-    'expected_columns' => 4,
-//order_id,order_date,customer_id,customer_name,city,category,product_code,product_name,quantity,unit_price_gbp
-//ORD-1001,2026-01-05,CUST-201,Northwind Books,Leeds,BOOK,BK-014,Field Guide to Birds,2,19.99
-    'columns' => [
-        'order_id' => [
-            'type' => 'int',
-            'required' => true,
-        ],
-        'customer' => [
-            'type' => 'string',
-            'required' => true,
-        ],
-        'quantity' => [
-            'type' => 'int',
-            'required' => true,
-        ],
-        'price' => [
-            'type' => 'float',
-            'required' => true,
-        ],
-    ],
-];
-
-$policy = [
-    'max_issues' => 5,
-    'allow_blank_rows' => true,
-    'allow_extra_columns' => false,
-    'stop_on_first_error' => false,
-];
-
 class CsvReader {
     /** @var resource|false */
     private $handle = false;
+    private int $length = 2048;
+    private string $separator = ',';
+    private string $enclosure = '"';
+    private string $escape = '\\';
 
+    public function __construct(Config $cfg) {
+        $val = (object)$cfg->item('readerCfg');
+        $this->length = $val->length;
+        $this->separator = $val->separator;
+        $this->enclosure = $val->separator;
+        $this->escape = $val->escape;
+
+    }
     public function open(string $file): bool {
         if ( !is_file($file) || !is_readable($file) ) {
             return false;
@@ -59,7 +38,7 @@ class CsvReader {
         if ( false === $this->handle) {
             return false;
         }
-        return fgetcsv($this->handle);
+        return fgetcsv($this->handle, $this->length, $this->separator, $this->enclosure, $this->escape);
     }
     public function close(): bool {
         $result = true;
@@ -71,9 +50,14 @@ class CsvReader {
     }
 }
 
-
-
 $cfg = new Config(__DIR__ . '/config-data.php');
+
+$f = $cfg->item('localFile');
+$r = new CsvReader($cfg);
+var_dump($r->open($f));
+var_dump($r->readRow());
+var_dump($r->close());
+die;
 
 $remoteFile = $cfg->item('remoteFile');
 $localFile = $cfg->item('localFile');

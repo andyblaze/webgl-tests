@@ -16,3 +16,55 @@ $config['reporterMessages'] = [
     'get' =>    [true => 'File got', false => 'File not got'],
     'close' =>  [true => 'Connection closed', false => 'Connection close failed']
 ];
+
+$config['readerCfg'] = [
+    'length' => 2048,
+    'separator' => ',',
+    'enclosure' => '"',
+    'escape' => '\\'
+];
+
+$config['rules'] = [
+    'has_header' => true,
+    'delimiter' => ',',
+    'separator' => '"',
+    'columns' => [
+        'order_id' => [
+            'type' => 'string'
+        ],
+        'order_date' => [
+            'type' => 'string'
+        ],
+        'customer_id' => [
+            'type' => 'string'
+        ],
+        'customer_name' => [
+            'type' => 'string'
+        ],
+        'city' => [
+            'type' => 'string'
+        ],
+        'category' => [
+            'type' => 'string'
+        ],
+        'product_code' => [
+            'type' => 'string'
+        ],
+        'product_name' => [
+            'type' => 'string'
+        ],
+        'quantity' => [
+            'type' => 'string'
+        ],
+        'unit_price_gbp' => [
+            'type' => 'float'
+        ],
+    ]
+];
+
+$config['policy'] = [
+    'max_issues' => 5,
+    'allow_blank_rows' => true,
+    'allow_extra_columns' => false,
+    'stop_on_first_error' => false,
+];
