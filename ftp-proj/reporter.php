@@ -4,9 +4,7 @@ class Reporter {
     private array $lines = [];
     private array $messages = [];
     private array $errors = [];
-        /*'blankLine' => ['found' => 0, 'message' => 'Blank lines: '],
-        'countMismatch' => ['found' => 0, 'message' => 'Column mismatches:']
-    ];*/
+
     public function __construct(Config $cfg) {
         $this->messages = $cfg->item('reporterMessages');
         $this->errors = $cfg->item('reporterErrors');
@@ -28,7 +26,7 @@ class Reporter {
         $this->errors[$type]->found += $eventResult;
         $this->errors[$type]->row = $rowNumber;
     }
-    public function update(string $event, bool|int $eventResult, int $rowNumber=0): void {
+    public function update(string $event, bool|int $eventResult, int $rowNumber = 0): void {
         $e = $this->messages[$event];
         if ( true === in_array($event, array_keys($this->errors), true) ) {
             $this->addError($event, $eventResult, $rowNumber);

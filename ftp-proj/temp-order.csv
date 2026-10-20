@@ -1,6 +1,7 @@
 order_id,order_date,customer_id,customer_name,city,category,product_code,product_name,quantity,unit_price_gbp
 ORD-1001,2026-01-05,CUST-201,Northwind Books,Leeds,BOOK,BK-014,Field Guide to Birds,2,19.99
 ORD-1002,2026-01-05,CUST-202,Oak & Ember,York,HOME,HM-031,Ceramic Mug,4,8.5
+
 ORD-1003,2026-01-06,CUST-203,Blue Finch Studio,Lincoln,ART,AR-008,Watercolour Pad,3,12.75
 ORD-1004,2026-01-06,CUST-204,Harbour Supply,Hull,OUTDOOR,OD-022,Insulated Bottle,2,24.0
 ORD-1005,2026-01-07,CUST-205,Willow Market,Nottingham,FOOD,FD-105,Loose Leaf Tea,5,6.4
@@ -9,6 +10,7 @@ ORD-1007,2026-01-08,CUST-207,Paper Kite Co,Sheffield,BOOK,BK-027,Pocket Notebook
 ORD-1008,2026-01-08,CUST-208,Meadow & Moss,Newark,GARDEN,GD-012,Herb Seed Set,4,7.99
 ORD-1009,2026-01-09,CUST-209,Copper Kettle,Lincoln,KITCHEN,KT-019,Wooden Spoon Set,2,14.5
 ORD-1010,2026-01-09,CUST-210,Red Bridge Goods,Leicester,OUTDOOR,OD-037,Canvas Tote,6,5.75
+
 ORD-1011,2026-01-12,CUST-201,Northwind Books,Leeds,BOOK,BK-032,History of Maps,1,28.0
 ORD-1012,2026-01-12,CUST-202,Oak & Ember,York,HOME,HM-052,Cotton Cushion Cover,2,16.95
 ORD-1013,2026-01-13,CUST-203,Blue Finch Studio,Lincoln,ART,AR-015,Sketch Pencil Set,3,11.2
