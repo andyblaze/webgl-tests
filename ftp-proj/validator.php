@@ -1,5 +1,17 @@
 <?php 
 
+class Event {
+    public bool|int $status = 0;
+    public int $rowNumber = 0;
+    public bool $isHeader = false;
+    public function set(bool|int $s, int $rn=0, bool $h=false) {
+        $this->status = $s;
+        $this->rowNumber = $rn;
+        $this->isHeader = $h;
+        return $this;
+    }
+}
+
 class Validator {
     private Reporter|null $reporter = null;
     /** @var resource|false */
@@ -35,12 +47,25 @@ class Validator {
             return false;
         return ( count($line) !== $this->columnCount );
     }
-    public function check(array $line): bool {
+    private function hasEmptyFields(array $line): bool {
+        if ( $this->isBlank($line) ) 
+            return false;
+        $result = 0;
+        foreach ( $line as $key => $val ) {
+            if ( empty($val) )
+                $result++;        
+        }
+        return ($result > 0);
+    }
+    public function check(array $line, int $rowNumber): bool {
         if ( $this->isBlank($line) )
-            $this->reporter->update('blankLine', true);
+            $this->reporter->update('blankLine', 1, $rowNumber);
 
         if ( $this->countMismatch($line) )
-            $this->reporter->update('countMismatch', true);
+            $this->reporter->update('countMismatch', 1, $rowNumber);
+
+        if ( $this->hasEmptyFields($line) )
+            $this->reporter->update('emptyFields', 1, $rowNumber);
 
         return true;
     }

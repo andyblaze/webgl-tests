@@ -21,31 +21,31 @@ class FtpClient {
     }
     private function connectAndLogin(string $host, string $user, string $pass): bool {
         $ok = $this->ftp->connect($host);
-        $this->notify('connect', $ok);
+        $this->notify('ftp_connect', $ok);
         if ( false === $ok ) return false;
 
         $ok = $this->ftp->login($user, $pass);
-        $this->notify('login', $ok);
+        $this->notify('ftp_login', $ok);
         return $ok;
     }
     private function getRemoteFileSize() {
         $size = $this->ftp->size();
-        $this->notify('size', $size);
+        $this->notify('ftp_size', $size);
         return $size;
     }
     private function getRemoteFile() {
         $ok = $this->ftp->get();
-        $this->notify('get', $ok);
+        $this->notify('ftp_get', $ok);
         return $ok;
     }
     private function listFiles(string $toFind) {
         $fileList = $this->ftp->listFiles();
         if ( is_array($fileList) ) {
             $exists = in_array($toFind, $fileList, true);
-            $this->notify('filelist', $exists);  
+            $this->notify('ftp_filelist', $exists);  
         }
         else 
-            $this->notify('filelist', -1);      
+            $this->notify('ftp_filelist', -1);      
     }
     private function handleSizes(string $localFile, int $remoteSize) {
         $localSize = filesize($localFile);
@@ -92,7 +92,7 @@ class FtpClient {
             $this->handleSizes($localFile, $remoteSize);
 
         $closed = $this->ftp->close();
-        $this->notify('close', $closed);
+        $this->notify('ftp_close', $closed);
         return $this->result;     
     }
     public function report() {
