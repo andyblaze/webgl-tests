@@ -3,17 +3,23 @@
 class CsvProcessor {
     private CsvReader|null $reader = null;
     private Validator|null $valdidator = null;
-    private int $rowCount = 0;
-    public function __construct(CsvReader $r, Validator $v) {
+    private Reporter|null $reporter = null;
+    private int $rowCount = 1;
+    public function __construct(CsvReader $r, Validator $v, Reporter $rp) {
         $this->reader = $r;
         $this->valdidator = $v;
+        $this->reporter = $rp;
     }
     public function process(string $file): void {
-        $this->reader->open($file);
+        $ok = $this->reader->open($file);
+        $this->reporter->update('file_open', $ok);
+
         while ( ($line = $this->reader->readRow()) ) {
-            $this->rowCount++;
             $this->valdidator->check($line, $this->rowCount);
+            $this->rowCount++;
         }
-        $this->reader->close();
+        
+        $ok = $this->reader->close();
+        $this->reporter->update('file_close', $ok);
     }
 }

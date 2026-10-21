@@ -29,7 +29,8 @@ $result = $ftpClient->run($cfg, new FtpResult());
 if ( $result->ok() ) {
     $processor = new CsvProcessor(
         new CsvReader($cfg), 
-        new Validator($cfg, $reporter)
+        new Validator($cfg, $reporter),
+        $reporter
     );
     $processor->process($localFile);
 }

@@ -27,7 +27,7 @@ class Reporter {
         $this->errors[$type]->row = $rowNumber;
     }
     public function update(string $event, bool|int $eventResult, int $rowNumber = 0): void {
-        $e = $this->messages[$event];
+        //$e = $this->messages[$event];
         if ( true === in_array($event, array_keys($this->errors), true) ) {
             $this->addError($event, $eventResult, $rowNumber);
             return;

@@ -15,11 +15,12 @@ $config['reporterMessages'] = [
     'sizematch'=>       ['Remote and local file sizes mismatch', 'Remote and local file sizes match'],
     'ftp_get' =>        ['FTP: file not downloaded', 'FTP: file downloaded'],
     'ftp_close' =>      ['FTP: connection close failed', 'FTP: connection closed'],
-    'blankLine' =>      [0, 1],
-    'countMismatch' =>  [0, 1]
+    'file_open' =>      ['FILE: open failed', 'FILE: opened ok'],
+    'file_close' =>     ['FILE: close failed', 'FILE: closed ok']
 ];
 
 $config['reporterErrors'] = [
+    'headerOk' => (object)['found' => 0, 'row' => 0, 'message' => 'Header OK:'],
     'blankLine' => (object)['found' => 0, 'row' => 0, 'message' => 'Blank lines:'],
     'countMismatch' => (object)['found' => 0, 'row' => 0, 'message' => 'Column mismatches:'],
     'emptyFields' => (object)['found' => 0, 'row' => 0, 'message' => 'Empty fields:']

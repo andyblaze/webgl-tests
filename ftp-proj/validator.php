@@ -51,13 +51,31 @@ class Validator {
         if ( $this->isBlank($line) ) 
             return false;
         $result = 0;
-        foreach ( $line as $key => $val ) {
+        foreach ( $line as $val ) {
             if ( empty($val) )
                 $result++;        
         }
         return ($result > 0);
     }
+    private function headerOk(array $line): bool {
+        if ( $this->isBlank($line) ) {
+            return false;
+        }
+        if ( count($line) !== count($this->columnNames) ) {
+            return false;
+        }
+        foreach ($line as $key => $field) {
+            if ( $field !== $this->columnNames[$key] ) {
+                return false;
+            }
+        }
+        return true;
+    }
     public function check(array $line, int $rowNumber): bool {
+        if ( $rowNumber === 1 && $this->hasHeader ) {
+            $ok = $this->headerOk($line);
+            $this->reporter->update('headerOk', $ok, 1);
+        }
         if ( $this->isBlank($line) )
             $this->reporter->update('blankLine', 1, $rowNumber);
 
