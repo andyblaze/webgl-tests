@@ -36,16 +36,16 @@ const material = new THREE.MeshPhysicalMaterial({
     roughness: 0.9,
     transmission: 0.25,
     clearcoat: 1,
-    clearcoatRoughness: 0.5,
+    clearcoatRoughness: 0.75,
     thickness: 0.8,
     ior: 1,
     emissiveIntensity: 0.5,
     emissive: 0x0080ff,
-    anisotropy: 0.25,
+    anisotropy: 0.125,
     attenuationColor: 0x00ffff,
     roughnessMap,
     normalMap,
-    normalScale: new THREE.Vector2(0.5, 0.5)
+    normalScale: new THREE.Vector2(0.75, 0.75)
 });
 
 shape.material = material;
@@ -65,7 +65,7 @@ function animate(timestamp) {
 
     t += time.dt * 0.125;
 
-    shape.material.roughness = 0.5 + 0.4 * Math.sin(t * 0.7);
+    //shape.material.roughness = 0.8 + Math.sin(t * 0.7);
 
     shape.rotation.x += 0.14 * time.dt;
     shape.rotation.y += 0.17 * time.dt;
@@ -73,13 +73,13 @@ function animate(timestamp) {
 
     shape.material.emissive.setHSL((t * 0.13) % 1, 1, 0.5);
 
-    //shape.material.emissiveIntensity = 0.05 + 0.25 * Math.sin(t * 0.7);
+    shape.material.emissiveIntensity = 0.25 + ( Math.sin(t * 0.7) );
 
     
 
-    lights.r.color.setHSL(t % 1,          1, 0.5);
-    lights.g.color.setHSL((t + 0.33) % 1, 1, 0.5);
-    lights.b.color.setHSL((t + 0.66) % 1, 1, 0.5);
+    lights.r.color.setHSL(((t / 2) + 0.33) % 1, 1, 0.5);
+    lights.g.color.setHSL(((t / 3) + 0.22) % 1, 1, 0.5);
+    lights.b.color.setHSL(((t / 5) + 0.11) % 1, 1, 0.5);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
