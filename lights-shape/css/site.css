@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    color: #020202;
+}
+body, canvas, #three {
+    background-color: #080808;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+}
