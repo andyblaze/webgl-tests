@@ -9,7 +9,7 @@ const container = byId("three");
 const renderer = makeRenderer(THREE, container);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, cfg.innerW, cfg.innerH);
-const shape = makeShape(THREE, "capsule");
+const shape = makeShape(THREE, "sphere");
 
 // Dispose of the original material
 if (Array.isArray(shape.material)) {
@@ -20,7 +20,11 @@ if (Array.isArray(shape.material)) {
 
 // Load the normal map
 const loader = new THREE.TextureLoader();
-const roughnessMap = loader.load("maps/frosty-glass.png");
+const roughnessMap = loader.load("maps/tile-frosty-glass.png");
+roughnessMap.wrapS = THREE.RepeatWrapping;
+roughnessMap.wrapT = THREE.RepeatWrapping;
+roughnessMap.repeat.set(2, 2);
+roughnessMap.offset.set(0, 1);
 const normalMap = loader.load("maps/radial.png");
 
 // Create your own material
@@ -59,7 +63,9 @@ function animate(timestamp) {
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
 
-    t += time.dt * 0.0125;
+    t += time.dt * 0.125;
+
+    shape.material.roughness = 0.5 + 0.4 * Math.sin(t * 0.7);
 
     shape.rotation.x += 0.14 * time.dt;
     shape.rotation.y += 0.17 * time.dt;
