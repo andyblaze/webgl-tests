@@ -21,6 +21,14 @@ const lights = makeLights(THREE, scene);
 const timer = new THREE.Clock();
 const time = {dt: 0, elapsed: 0, timestamp: 0 };
 let t = 0;
+let lt = 0;
+
+const colourCycle = {
+    speed: 0.04,  // Overall animation speed
+    r: { period: 19, phase: 0.11 },
+    g: { period: 67, phase: 0.53 },
+    b: { period: 89, phase: 0.97 }
+};
 
 function animate(timestamp) {
     time.dt = timer.getDelta();
@@ -44,11 +52,18 @@ function animate(timestamp) {
 
     //shape.material.emissiveIntensity = sineWave(t * time.dt, 0.25, 0.5);
 
+    lt = t * colourCycle.speed;
+
+    for (const key of ["r", "g", "b"]) {
+        const { period, phase } = colourCycle[key];
+        lights[key].color.setHSL((lt / period + phase) % 1, 1, 0.5);
+    }
+
     
 
-    lights.r.color.setHSL(((t / 19) + 0.61) % 1, 1, 0.5);
+    /*lights.r.color.setHSL(((t / 19) + 0.61) % 1, 1, 0.5);
     lights.g.color.setHSL(((t / 37) + 0.23) % 1, 1, 0.5);
-    lights.b.color.setHSL(((t / 59) + 0.103) % 1, 1, 0.5);
+    lights.b.color.setHSL(((t / 59) + 0.103) % 1, 1, 0.5);*/
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
