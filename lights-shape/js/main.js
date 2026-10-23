@@ -2,44 +2,9 @@ import * as THREE from "three";
 import { byId, sineWave } from "./functions.js";
 import Config from "./config.js";
 import { makeCamera, makeLights, makeRenderer, makeShape } from "./makers.js";
+import Presets from "../presets.js";
 
 const cfg = new Config(window);
-
-class Presets {
-    constructor(three) {
-        this.three = three;
-        this.loader = new three.TextureLoader();
-        const roughnessMap = this.loader.load("maps/tile-frosty-glass.png");
-        roughnessMap.wrapS = three.RepeatWrapping;
-        roughnessMap.wrapT = three.RepeatWrapping;
-        roughnessMap.repeat.set(2, 2);
-        roughnessMap.offset.set(0, 1);
-        const normalMap = this.loader.load("maps/terrace.png");
-
-        this.p1 = {
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.8,
-            metalness: 1,
-            roughness: 0.9,
-            transmission: 0.25,
-            clearcoat: 1,
-            clearcoatRoughness: 0.75,
-            thickness: 0.8,
-            ior: 1,
-            emissiveIntensity: 0.5,
-            emissive: 0x0080ff,
-            anisotropy: 0.125,
-            attenuationColor: 0x00ffff,
-            roughnessMap,
-            normalMap,
-            normalScale: new three.Vector2(0.5, 0.5)
-        };
-    }
-    material(key) {
-        return this[key];
-    }
-}
 
 const presets = new Presets(THREE);
 
@@ -64,7 +29,7 @@ function animate(timestamp) {
 
     t += time.dt * 0.125;
 
-    shape.material.roughness = sineWave(t * 4, 0.25, 1);
+    //shape.material.roughness = sineWave(t * 4, 0.25, 1);
 
     shape.rotation.x += 0.14 * time.dt;
     shape.rotation.y += 0.17 * time.dt;
@@ -81,9 +46,9 @@ function animate(timestamp) {
 
     
 
-    lights.r.color.setHSL(((t / 2) + 0.31) % 1, 1, 0.5);
-    lights.g.color.setHSL(((t / 3) + 0.23) % 1, 1, 0.5);
-    lights.b.color.setHSL(((t / 5) + 0.13) % 1, 1, 0.5);
+    lights.r.color.setHSL(((t / 19) + 0.61) % 1, 1, 0.5);
+    lights.g.color.setHSL(((t / 37) + 0.23) % 1, 1, 0.5);
+    lights.b.color.setHSL(((t / 59) + 0.103) % 1, 1, 0.5);
 
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
