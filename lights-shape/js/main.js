@@ -12,7 +12,7 @@ const container = byId("three");
 const renderer = makeRenderer(THREE, container);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, cfg.innerW, cfg.innerH);
-const shape = makeShape(THREE, "sphere", presets.p1);
+const shape = makeShape(THREE, "sphere", presets.p2);
 //shape.receiveShadow = true;
 scene.add(shape);
 
@@ -37,18 +37,18 @@ function animate(timestamp) {
 
     t += time.dt * 0.125;
 
-    shape.material.roughness = sineWave(t * 4, 0.25, 1);
+    //shape.material.roughness = sineWave(t * 4, 0.25, 1);
 
-    shape.rotation.x += 0.14 * time.dt;
-    shape.rotation.y += 0.17 * time.dt;
-    shape.rotation.z += 0.13 * time.dt;
+    shape.rotation.x += 0.07 * time.dt;
+    shape.rotation.y += 0.09 * time.dt;
+    shape.rotation.z += 0.03 * time.dt;
 
-    shape.material.emissive.setHSL((t * 0.13) % 1, 1, 0.5);
+    //shape.material.emissive.setHSL((t * 0.13) % 1, 1, 0.5);
 
     const pulse = sineWave(t * 0.3, 0.125, 0.5);
     const shimmer = sineWave(t * 12.7, 0.57, 0.8);
 
-    shape.material.emissiveIntensity = pulse * shimmer;
+    //shape.material.emissiveIntensity = pulse * shimmer;
 
     //shape.material.emissiveIntensity = sineWave(t * time.dt, 0.25, 0.5);
 
@@ -59,6 +59,8 @@ function animate(timestamp) {
         lights[key].color.setHSL((lt / period + phase) % 1, 1, 0.5);
     }
 
+    shape.material.roughnessMap.offset.x = t * 0.8;
+shape.material.roughnessMap.offset.y = t * 0.3;
     
 
     /*lights.r.color.setHSL(((t / 19) + 0.61) % 1, 1, 0.5);

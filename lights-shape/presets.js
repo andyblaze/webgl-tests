@@ -28,6 +28,25 @@ export default class Presets {
             //normalMap,
             normalScale: new three.Vector2(1, 1)
         };
+        this.p2 = {
+            color: 0x17151c,
+            roughness: 0.82,
+            metalness: 0.75,
+
+            emissiveIntensity: 0.0125,
+            emissive: 0xcccccc,
+
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.98,
+            anisotropy: 0.121,
+
+            iridescence: 1,
+            iridescenceIOR: 1.3,
+            iridescenceThicknessRange: [100, 450],
+
+            normalMap,
+            roughnessMap: roughnessMap
+        };
     }
     material(key) {
         return this[key];
