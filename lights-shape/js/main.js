@@ -14,7 +14,7 @@ class Presets {
         roughnessMap.wrapT = three.RepeatWrapping;
         roughnessMap.repeat.set(2, 2);
         roughnessMap.offset.set(0, 1);
-        const normalMap = this.loader.load("maps/radial.png");
+        const normalMap = this.loader.load("maps/terrace.png");
 
         this.p1 = {
             color: 0xffffff,
@@ -33,7 +33,7 @@ class Presets {
             attenuationColor: 0x00ffff,
             roughnessMap,
             normalMap,
-            normalScale: new three.Vector2(0.75, 0.75)
+            normalScale: new three.Vector2(0.5, 0.5)
         };
     }
     material(key) {
@@ -48,7 +48,7 @@ const renderer = makeRenderer(THREE, container);
 const scene = new THREE.Scene();
 const camera = makeCamera(THREE, cfg.innerW, cfg.innerH);
 const shape = makeShape(THREE, "sphere", presets.p1);
-shape.receiveShadow = true;
+//shape.receiveShadow = true;
 scene.add(shape);
 
 const lights = makeLights(THREE, scene);
