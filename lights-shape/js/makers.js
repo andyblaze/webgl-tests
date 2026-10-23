@@ -25,7 +25,7 @@ function makeGeo(three, type) {
     switch (type) {
         case "sphere" : return new three.SphereGeometry(1.5, 512, 512);
         case "box" : return new three.BoxGeometry(2, 2, 2);
-        case "cone" : return new three.ConeGeometry(1.25, 2, 128, 128);
+        case "cone" : return new three.ConeGeometry(1.25, 2, 256, 256);
         case "cylinder" : return new three.CylinderGeometry(0.75, 0.75, 2.5, 128, 128);
         case "capsule" : return new three.CapsuleGeometry(1, 1, 128, 128, 128);
         case "dodecahedron" : return new three.DodecahedronGeometry(1.5);
@@ -34,13 +34,15 @@ function makeGeo(three, type) {
     }    
 }
 
-export function makeShape(three, type) {
-    const geometry = makeGeo(three, type);
-    const material = new three.MeshPhysicalMaterial({
+export function makeShape(three, type, mat=null) {
+    if ( null === mat) 
+        mat = {
         color: 0xffffff,
         roughness: 0.5, metalness: 0.5,
         anisotropy: 1
-    });
+    };
+    const geometry = makeGeo(three, type);
+    const material = new three.MeshPhysicalMaterial(mat);
 
     //const shape = new three.Mesh(geometry, material);
     return new three.Mesh(geometry, material);
@@ -70,10 +72,11 @@ export function makeLights(three, scene) {
     scene.add(green);
     scene.add(green.target);
 
-    const backLight = new three.DirectionalLight(0xffffff, 0.5);
+    const backLight = new three.DirectionalLight(0xffffff, 12);
 
-    backLight.position.set(-3, 3, -8);
-    backLight.target.position.set(0, 0, 0);
+    backLight.castShadow = true;
+    backLight.position.set(-10, 5, -18);
+    backLight.target.position.set(0, 0, 5);
 
     scene.add(backLight);
     scene.add(backLight.target);

@@ -29,6 +29,10 @@ export function clamp0to1(v) {
     return Math.max(0, Math.min(1, v));
 }
 
+export function sineWave(phase, min=-1, max=1) {
+    return min + ((Math.sin(phase) + 1) / 2) * (max - min);
+}
+
 export function lerp(a, b, t) {
     return a + (b - a) * t;
 } 
