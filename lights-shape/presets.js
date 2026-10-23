@@ -11,21 +11,21 @@ export default class Presets {
 
         this.p1 = {
             color: 0xffffff,
-            transparent: true,
-            opacity: 0.8,
+            //transparent: true,
+            //opacity: 0.8,
             metalness: 1,
             roughness: 0.9,
-            transmission: 0.25,
+            //transmission: 0.25,
             clearcoat: 1,
             clearcoatRoughness: 0.75,
-            thickness: 0.8,
-            ior: 1,
+            //thickness: 0.8,
+            //ior: 1,
             emissiveIntensity: 0.5,
             emissive: 0x0080ff,
-            anisotropy: 0.125,
-            attenuationColor: 0x00ffff,
+            //anisotropy: 0.125,
+            //attenuationColor: 0x00ffff,
             roughnessMap,
-            normalMap,
+            //normalMap,
             normalScale: new three.Vector2(1, 1)
         };
     }

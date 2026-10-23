@@ -24,7 +24,7 @@ let t = 0;
 let lt = 0;
 
 const colourCycle = {
-    speed: 0.04,  // Overall animation speed
+    speed: 4,  // Overall animation speed
     r: { period: 19, phase: 0.11 },
     g: { period: 67, phase: 0.53 },
     b: { period: 89, phase: 0.97 }
@@ -37,7 +37,7 @@ function animate(timestamp) {
 
     t += time.dt * 0.125;
 
-    //shape.material.roughness = sineWave(t * 4, 0.25, 1);
+    shape.material.roughness = sineWave(t * 4, 0.25, 1);
 
     shape.rotation.x += 0.14 * time.dt;
     shape.rotation.y += 0.17 * time.dt;
