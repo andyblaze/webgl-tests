@@ -11,19 +11,19 @@ export default class Presets {
 
         this.p1 = {
             color: 0xffffff,
-            //transparent: true,
-            //opacity: 0.8,
+            transparent: true,
+            opacity: 0.5,
             metalness: 1,
             roughness: 0.9,
-            //transmission: 0.25,
+            transmission: 0.25,
             clearcoat: 1,
             clearcoatRoughness: 0.75,
-            //thickness: 0.8,
-            //ior: 1,
+            thickness: 0.8,
+            ior: 1,
             emissiveIntensity: 0.5,
             emissive: 0x0080ff,
-            //anisotropy: 0.125,
-            //attenuationColor: 0x00ffff,
+            anisotropy: 0.25,
+            attenuationColor: 0x00ffff,
             roughnessMap,
             //normalMap,
             normalScale: new three.Vector2(1, 1)
@@ -33,12 +33,15 @@ export default class Presets {
             roughness: 0.82,
             metalness: 0.75,
 
-            emissiveIntensity: 0.0125,
-            emissive: 0xff0000,
+            //transparent: true,
+            //opacity: 0.75,
 
-            clearcoat: 1.0,
-            clearcoatRoughness: 0.98,
-            anisotropy: 0.121,
+            emissiveIntensity: 0.25,
+            emissive: 0x0000ff,
+
+            clearcoat: 1,
+            clearcoatRoughness: 0.5,
+            anisotropy: 1,
 
             iridescence: 1,
             iridescenceIOR: 1.3,
