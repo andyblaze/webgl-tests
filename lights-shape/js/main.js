@@ -4,8 +4,11 @@ import Config from "./config.js";
 import { makeCamera, makeLights, makeRenderer, makeShape } from "./makers.js";
 import Presets from "../presets.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import SkyDome from "./sky.js";
+import StarsDecor from "./stars.js";
 
 const cfg = new Config(window);
+
 
 const presets = new Presets(THREE);
 
@@ -65,6 +68,10 @@ const colourCycle = {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+
+const sky = new SkyDome(THREE, new StarsDecor(THREE, 2000));
+sky.addToScene(scene);
+
 function animate(timestamp) {
     time.dt = timer.getDelta();
     time.elapsed = timer.getElapsedTime();
@@ -91,6 +98,8 @@ function animate(timestamp) {
     }
 
     shape.material.roughnessMap.offset.x = sineWave(t * 0.8, 0, 2);
+
+    sky.update();
 
     controls.update();
     renderer.render(scene, camera);
