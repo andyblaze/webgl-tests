@@ -49,34 +49,32 @@ export function makeShape(three, type, mat=null) {
 }
 
 export function makeLights(three, scene) {
-    const red = new three.SpotLight(0xff0000, 180);
-    red.position.set(-20, 15, 5);
+    const red = new three.SpotLight(0xff0000, 180, 40, 65);
+    red.position.set(-5, 5, 5);
     red.target.position.set(0, 0, 0);
 
     scene.add(red);
     scene.add(red.target);
 
-
-    const blue = new three.SpotLight(0x0000ff, 180);
-    blue.position.set(20, 15, 5);
+    const blue = new three.SpotLight(0x0000ff, 180, 40, 65);
+    blue.position.set(5, 5, 5);
     blue.target.position.set(0, 0, 0);
 
     scene.add(blue);
     scene.add(blue.target);
 
-
-    const green = new three.SpotLight(0x00ff00, 180);
-    green.position.set(0, -18, 3);
+    const green = new three.SpotLight(0x00ff00, 180, 40, 65);
+    green.position.set(0, -5, 5);
     green.target.position.set(0, 0, 0);
 
     scene.add(green);
     scene.add(green.target);
 
-    const backLight = new three.DirectionalLight(0xffffff, 6);
+    const backLight = new three.DirectionalLight(0xffffff, 60);
 
     //backLight.castShadow = true;
-    backLight.position.set(-10, 5, -18);
-    backLight.target.position.set(0, 0, 5);
+    backLight.position.set(0, 0, -10);
+    backLight.target.position.set(0, 0, 0);
 
     scene.add(backLight);
     scene.add(backLight.target);

@@ -34,7 +34,7 @@ export default class Presets {
             metalness: 0.75,
 
             emissiveIntensity: 0.0125,
-            emissive: 0xcccccc,
+            emissive: 0xff0000,
 
             clearcoat: 1.0,
             clearcoatRoughness: 0.98,
