@@ -15,7 +15,7 @@ export function makeCamera(three, w, h) {
         45,
         w / h,
         0.1,
-        100
+        110
     );
     camera.position.z = 5;
     return camera;
