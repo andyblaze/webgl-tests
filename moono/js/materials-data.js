@@ -59,7 +59,7 @@ export default class MaterialsData {
                 //sheenColor: 0x113237, sheen: 1,
                 //anisotropy: 1,
                 emissiveMap: {
-                    tex: "textures/pebbles.png",
+                    tex: "textures/moon.jpg",
                     //normalScale: new three.Vector2(2, 2),
                     repeat: 1
                 },
@@ -72,11 +72,11 @@ export default class MaterialsData {
                 color: 0xffffff,
                 transparent: true,
                 opacity: 0.5,
-                emissive: 0xffffff, emissiveIntensity: 0.25,
+                emissive: 0xffffff, emissiveIntensity: 0.5,
                 //roughness: 1,
                 emissiveMap: {
-                    tex: "textures/pebbles.png",
-                    repeat: 100
+                    tex: "textures/tile-clouds.png",
+                    repeat: 2
                 }
             },
             brushedBrass: {

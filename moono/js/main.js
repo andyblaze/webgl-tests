@@ -23,26 +23,30 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-lighting.add(scene, "spot", { color: 0xffffff, intensity: 1, angle: deg2rad(35), distance: 15 }).
+//scene.fog = new THREE.Fog( 0xcccccc, 1, 1235 );
+
+lighting.add(scene, "spot", { color: 0xff0000, intensity: 1, angle: deg2rad(35), distance: 15 }).
     setPosition(0, 9, 5).setTarget(-3, 0, 0).
-    setShadows(true).setShadowMapSize(1024).
+    //setShadows(true).setShadowMapSize(1024).
 addEffects([new ColorCycler(THREE, 0.04)]);
 
 const moon = factory.create("sphere", materials.get("moonWorld"));
-    moon.setPosition(0, 5, -5);
+    moon.setPosition(0, 15, -45).
+    setScale(3, 3, 3);
 
-const cloud = factory.create("plane", { width: 8, height: 8, wSegs: 32, hSegs: 32 }, materials.get("cloud"));
-cloud.setPosition(0, 3, 0).
-    setRotation(deg2rad(20), 0, 0).
-    addEffects([new MapOffsetter()]);
+const cloud = factory.create("plane", { width: 64, height: 64, wSegs: 32, hSegs: 32 }, materials.get("cloud"));
+cloud.setPosition(0, 3, -60).
+    setRotation(deg2rad(60), 0, 0).
+    setScale(5, 3, 1).
+    addEffects([new MapOffsetter(23, 45)]);
 
 const mirror = factory.create(
     "mirror", 
-    { width: 48, height: 32, texW: config.dprW, texH: config.dprH },
+    { width: 96, height: 48, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
 );
-mirror.setPosition(0, -4, 0).
-    setRotation(deg2rad(290), deg2rad(0), 0);
+mirror.setPosition(0, -14, -30).
+    setRotation(deg2rad(260), 0, 0);
 
 world.addLighting(lighting).add([
     cloud,
