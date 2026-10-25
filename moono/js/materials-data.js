@@ -79,6 +79,17 @@ export default class MaterialsData {
                     repeat: 2
                 }
             },
+            cloud2: {
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.5,
+                emissive: 0xffffff, emissiveIntensity: 0.5,
+                //roughness: 1,
+                emissiveMap: {
+                    tex: "textures/tile-clouds2.png",
+                    repeat: 2
+                }
+            },
             brushedBrass: {
                 color: 0xd2c628,
                 roughness: 0.7, metalness: 0.3,

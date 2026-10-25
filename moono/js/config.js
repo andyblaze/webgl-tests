@@ -13,7 +13,7 @@ export default class Config {
             fov: 60,
             aspect: this.aspect,
             near: 0.1,
-            far: 100,
+            far: 200,
             pos: new three.Vector3(0, 0, 10),
             target: new three.Vector3(0, 0, 0)
         };
