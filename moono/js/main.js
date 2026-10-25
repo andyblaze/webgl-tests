@@ -54,7 +54,7 @@ const mirror = factory.create(
 mirror.setPosition(0, -14, -30).
     setRotation(deg2rad(260), 0, 0);
 
-console.dir(mirror.threeObj.children[2]);
+//console.dir(mirror.threeObj.children[2]);
 
 world.add([
     cloud1, cloud2,
