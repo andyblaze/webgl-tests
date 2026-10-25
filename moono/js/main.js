@@ -8,7 +8,7 @@ import Materials from "./materials.js";
 import Rippling from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-import { LightDimmer, Orbiter, ColorCycler, Rotater, Squasher } from "./effects/effects.js";
+import { LightDimmer, Orbiter, ColorCycler, Rotater, Squasher, MapOffsetter } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
 import Bend from "./curves/bend.js";
 import { deg2rad } from "./functions.js";
@@ -23,22 +23,22 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-lighting.add(scene, "point", { color: 0x00ffff, intensity: 60 }).
+/*lighting.add(scene, "point", { color: 0x00ffff, intensity: 60 }).
     setPosition(-5, -3, 0).
-addEffects([new LightDimmer(0.9, 0.02), new ColorCycler(THREE, 0.01)]);
+addEffects([new LightDimmer(0.9, 0.02), new ColorCycler(THREE, 0.01)]);*/
 
-lighting.add(scene, "spot", { color: 0x0000ff, intensity: 80, angle: deg2rad(35), distance: 15 }).
+lighting.add(scene, "spot", { color: 0xffffff, intensity: 1, angle: deg2rad(35), distance: 15 }).
     setPosition(0, 9, 5).setTarget(-3, 0, 0).
     setShadows(true).setShadowMapSize(1024).
 addEffects([new ColorCycler(THREE, 0.04)]);
 
-lighting.add(scene, "spot", { color: 0x00ff00, intensity: 80, angle: deg2rad(35), distance: 15 }).
+/*lighting.add(scene, "spot", { color: 0x00ff00, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(5, 5, 5).setTarget(0, 0, 0).
 addEffects([new ColorCycler(THREE, 0.07)]);
 
 lighting.add(scene, "spot", { color: 0x0000ff, intensity: 80, angle: deg2rad(35), distance: 15 }).
     setPosition(-5, 5, 5).setTarget(0, 0, 0).
-addEffects([new ColorCycler(THREE, 0.011)]);
+addEffects([new ColorCycler(THREE, 0.011)]);*/
 
 /*const egg = factory.create("sphere", materials.get("brushedMetal"));
 egg.setShadows(true, true).setPosition(0, 0, 4).dimple();
@@ -62,31 +62,31 @@ wedge.setPosition(6, 0, -3).setScale(2, 2, 1).addEffects([new Rotater()]);
 const txt = factory.create("text", materials.get("greenWorld"));
 txt.setText("Hello").setPosition(5, 0, 0).addEffects([new Rotater()]);*/
 
-const floor = factory.create("hidefPlane", materials.get("floor")); 
+/*const floor = factory.create("hidefPlane", materials.get("floor")); 
 floor.setShadows(false, true).setRotation(deg2rad(80), 0, 0).
-setPosition(0, -6, -8.5).addEffects([new Rippling()]);
+setPosition(0, -6, -8.5).addEffects([new Rippling()]);*/
 
-const sphere0 = factory.create("box", materials.get("greenWorld"));
-    sphere0.bendWith(new Bend(THREE, "bendBy", { angle: 260, size:4 }));
-    sphere0.setShadows(true, true).setScale(0.95, 0.95, 0.95).
-    setPosition(0, 0, -1).
-addEffects([new Rotater()]);
+const sphere0 = factory.create("sphere", materials.get("moonWorld"));
+    sphere0.setShadows(true, true).
+    setPosition(0, 5, -5);
 
-const sphere1 = factory.create("box", materials.get("pinkMetal"));
-    sphere1.bendWith(new Bend(THREE, "bendBy", { angle: 260, size:4 }));
-    sphere1.setScale(1, 1, 1).setPosition(0, 0, -1).
-addEffects([new Rotater()]);
+const cloud = factory.create("plane", { width: 8, height: 8, wSegs: 32, hSegs: 32 }, materials.get("cloud"));
+cloud.setPosition(0, 3, 0).
+    setRotation(deg2rad(20), 0, 0).
+    addEffects([new MapOffsetter()]);
 
 const mirror = factory.create(
     "mirror", 
-    { width: 8, height: 6, texW: config.dprW, texH: config.dprH },
+    { width: 48, height: 32, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
 );
-mirror.setPosition(-5.8, 0.25, 0).setRotation(0, deg2rad(55), 0);
+mirror.setPosition(0, -4, 0).
+    setRotation(deg2rad(290), deg2rad(0), 0);
 
 world.addLighting(lighting).add([
-    floor, 
-    sphere0, sphere1,
+    //floor, 
+    cloud,
+    sphere0, //sphere1,
     mirror
 ]);
 

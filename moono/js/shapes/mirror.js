@@ -23,7 +23,7 @@ export default class Mirror extends ThreeGroup {
     makeBacking(three, w, h) {
         return new three.Mesh(
             new three.PlaneGeometry(w+0.1, h+0.1),
-            new three.MeshPhysicalMaterial({ color: 0xffffff, side: three.DoubleSide })
+            new three.MeshPhysicalMaterial({ color: 0xff0000, side: three.DoubleSide })
         );
     }
     makeFrame(three, mirrorW, mirrorH) {

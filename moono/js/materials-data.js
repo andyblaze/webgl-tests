@@ -51,21 +51,32 @@ export default class MaterialsData {
                     repeat: 1
                 }
             },
-            greenWorld: {
-                color: 0x00ff00,
-                roughness: 0.85, metalness: 0.05,
+            moonWorld: {
+                color: 0xffffff,
+                roughness: 0.085, metalness: 0.05,
                 //clearcoat: 0.75, clearcoatRoughness: 0.5,
-                emissive: 0x009900, emissiveIntensity: 0.15,
-                sheenColor: 0x11f437, sheen: 1,
-                anisotropy: 1,
-                normalMap: {
-                    tex: "textures/spots-normal.png",
-                    normalScale: new three.Vector2(2, 2),
+                emissive: 0xffffff, emissiveIntensity: 1,
+                //sheenColor: 0x113237, sheen: 1,
+                //anisotropy: 1,
+                emissiveMap: {
+                    tex: "textures/pebbles.png",
+                    //normalScale: new three.Vector2(2, 2),
                     repeat: 1
                 },
                 map: {
-                    tex: "textures/spots.png",
+                    tex: "textures/pebbles.png",
                     repeat: 1
+                }
+            },
+            cloud: {
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.5,
+                emissive: 0xffffff, emissiveIntensity: 0.25,
+                //roughness: 1,
+                emissiveMap: {
+                    tex: "textures/pebbles.png",
+                    repeat: 100
                 }
             },
             brushedBrass: {

@@ -81,6 +81,22 @@ export class Rotater extends EffectBase {
         parent.rotate(dt / this.speedX, dt / this.speedY, dt / this.speedZ);
     }
 }
+
+export class MapOffsetter extends EffectBase {
+    constructor(speedX=13, speedY=15) {
+        super();
+        this.speedX = speedX;
+        this.speedY = speedY;
+    }
+    start() {
+        return this.init();
+    }
+    update(parent, time) {
+        const dt = time.dt;
+        parent.mapOffset(dt / this.speedX, dt / this.speedY);
+    }
+}
+
 export class Orbiter extends EffectBase {
     constructor(radius, speed, plane="z") {
         super();

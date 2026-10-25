@@ -65,6 +65,10 @@ export default class ThreeObj {
         this.threeObj.rotation.set(x, y, z);
         return this;
     }
+    mapOffset(x, y) {
+        this.threeObj.material.emissiveMap.offset.x += x;
+        this.threeObj.material.emissiveMap.offset.y += y;
+    }
     rotate(x, y, z) {
         this.threeObj.rotation.x += x;
         this.threeObj.rotation.y += y;
