@@ -24,19 +24,36 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
+const canvas = document.createElement("canvas");
+canvas.width = 2;
+canvas.height = 256;
+
+const ctx = canvas.getContext("2d");
+const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+
+gradient.addColorStop(0, "#000000");   // deep night
+gradient.addColorStop(1, "#1f053b"); // dusky blue
+
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, 2, 256);
+
+const texture = new THREE.CanvasTexture(canvas);
+texture.colorSpace = THREE.SRGBColorSpace;
+scene.background = texture;
+
 const water = new Water(new THREE.PlaneGeometry(128, 64), {
     textureWidth: 1024,
     textureHeight: 1024,
-    waterNormals: new THREE.TextureLoader().load('textures/marble-normal.png', function (texture) {
+    waterNormals: new THREE.TextureLoader().load('textures/pave-normal.png', function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     }),
     //sunDirection: new THREE.Vector3(0, 1, 125),
-    sunColor: "#a57e22",
+    sunColor: "#f53e22",
     waterColor: "#000000",
     distortionScale: 20,
     //alpha: 0.5,
     scale: 3,
-    flowDirection: new THREE.Vector2(0, 1),
+    flowDirection: new THREE.Vector2(1, 1),
     reflectivity: 1
 });
 water.rotation.x = deg2rad(260);
@@ -53,9 +70,9 @@ lighting.add(scene, "ambient", { color: 0x000000, intensity: 0.1 }). //, angle: 
 //addEffects([new ColorCycler(THREE, 0.04)]);
 
 const moon = factory.create("sphere", materials.get("moonWorld"));
-    moon.setPosition(0, 0, -42).
+    moon.setPosition(0, -2, -48).
     setScale(8, 8, 8).
-    addEffects([new Rotater(203, 307, 507)]);
+    addEffects([new Rotater()]);
 
 const cloud1 = factory.create("plane", { width: 64, height: 64, wSegs: 32, hSegs: 32 }, materials.get("cloud"));
 cloud1.setPosition(0, 3, -20).
@@ -94,7 +111,7 @@ function animate(timestamp) {
     time.dt = timer.getDelta();
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
-    water.material.uniforms['time'].value += 0.00125 / 2;
+    water.material.uniforms['time'].value += 0.0125 / 6;
     world.update(time);
     controls.update();
     renderer.render(scene, camera);

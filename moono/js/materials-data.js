@@ -52,21 +52,21 @@ export default class MaterialsData {
                 }
             },
             moonWorld: {
-                color: 0xa57e22,
+                color: 0xf53e22,
                 roughness: 0.085, metalness: 0.05,
                 //clearcoat: 0.75, clearcoatRoughness: 0.5,
-                emissive: 0xa57e22, emissiveIntensity: 1,
+                emissive: 0xf53e22, emissiveIntensity: 1.5,
                 //sheenColor: 0x113237, sheen: 1,
                 //anisotropy: 1,
                 emissiveMap: {
                     tex: "textures/moon.jpg",
-                    //normalScale: new three.Vector2(2, 2),
+                    normalScale: new three.Vector2(2, 2),
                     repeat: 1
-                },
+                }/*,
                 map: {
                     tex: "textures/pebbles.png",
                     repeat: 1
-                }
+                }*/
             },
             cloud: {
                 color: 0xffffff,
@@ -76,7 +76,7 @@ export default class MaterialsData {
                 //roughness: 1,
                 emissiveMap: {
                     tex: "textures/tile-clouds.png",
-                    repeat: 2
+                    repeat: 12
                 }
             },
             cloud2: {
