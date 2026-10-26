@@ -7,6 +7,7 @@ import MaterialsData from "./materials-data.js";
 import Materials from "./materials.js";
 import Rippling from "./effects/deformation.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { Water } from "./examples/jsm/objects/Water.js";
 
 import { LightDimmer, Orbiter, ColorCycler, Rotater, Squasher, MapOffsetter } from "./effects/effects.js";
 import { ShapeFactory } from "./shape-factory.js";
@@ -22,6 +23,25 @@ const lighting = new Lighting(THREE);
 const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
+
+const water = new Water(new THREE.PlaneGeometry(96, 64), {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader().load('textures/pave.png', function (texture) {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    }),
+    sunDirection: new THREE.Vector3(),
+    sunColor: 0xffffff,
+    waterColor: 0xdddddd,
+    //scale: 3,
+    flowDirection: new THREE.Vector2(1, 1),
+    reflectivity: 1
+});
+water.rotation.x = deg2rad(260);
+water.position.y = -14;
+water.position.z = -30;
+scene.add(water);
+
 
 //scene.fog = new THREE.Fog( 0xcccccc, -100, 235 );
 
@@ -46,7 +66,7 @@ cloud2.setPosition(0, 2, -60).
     setScale(5, 3, 1).
     addEffects([new MapOffsetter(180, 245)]);
 
-const mirror = factory.create(
+/*const mirror = factory.create(
     "mirror", 
     { width: 96, height: 64, texW: config.dprW, texH: config.dprH },
     { color: 0xffffff }
@@ -54,12 +74,11 @@ const mirror = factory.create(
 mirror.setPosition(0, -14, -30).
     setRotation(deg2rad(260), 0, 0);
 
-//console.dir(mirror.threeObj.children[2]);
+//console.dir(mirror.threeObj.children[2]);*/
 
 world.add([
     cloud1, cloud2,
-    moon, 
-    mirror
+    moon//, mirror
 ]);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -72,6 +91,7 @@ function animate(timestamp) {
     time.dt = timer.getDelta();
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
+    //water.material.uniforms['time'].value += 0.125 / 640.0;
     world.update(time);
     controls.update();
     renderer.render(scene, camera);
