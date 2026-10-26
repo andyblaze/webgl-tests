@@ -27,13 +27,15 @@ const world = new World(scene);
 const water = new Water(new THREE.PlaneGeometry(96, 64), {
     textureWidth: 1024,
     textureHeight: 1024,
-    waterNormals: new THREE.TextureLoader().load('textures/pebbles-normal.png', function (texture) {
+    waterNormals: new THREE.TextureLoader().load('textures/marble-normal.png', function (texture) {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     }),
-    sunDirection: new THREE.Vector3(0, 1, 125),
+    //sunDirection: new THREE.Vector3(0, 1, 125),
     sunColor: "#a57e22",
     waterColor: "#000000",
-    //scale: 3,
+    distortionScale: 20,
+    //alpha: 0.5,
+    scale: 3,
     flowDirection: new THREE.Vector2(0, 1),
     reflectivity: 1
 });
@@ -45,26 +47,27 @@ scene.add(water);
 
 //scene.fog = new THREE.Fog( 0xcccccc, -100, 235 );
 
-lighting.add(scene, "spot", { color: 0xff0000, intensity: 100, angle: deg2rad(75), distance: 15 }).
-    setPosition(0, 4, 0).setTarget(-3, -4, 0).
+lighting.add(scene, "ambient", { color: 0xff0000, intensity: 0.1 }). //, angle: deg2rad(75), distance: 1950 }).
+    setPosition(0, 50, -50).setTarget(0, 0, -20).
     //setShadows(true).setShadowMapSize(1024).
 addEffects([new ColorCycler(THREE, 0.04)]);
 
 const moon = factory.create("sphere", materials.get("moonWorld"));
-    moon.setPosition(0, 0, -125).
-    setScale(6, 6, 6);
+    moon.setPosition(0, 0, -42).
+    setScale(8, 8, 8).
+    addEffects([new Rotater(203, 307, 507)]);
 
 const cloud1 = factory.create("plane", { width: 64, height: 64, wSegs: 32, hSegs: 32 }, materials.get("cloud"));
-cloud1.setPosition(0, 3, -60).
+cloud1.setPosition(0, 3, -20).
     setRotation(deg2rad(60), 0, 0).
     setScale(5, 3, 1).
-    addEffects([new MapOffsetter(123, 145)]);
+    addEffects([new MapOffsetter(23, 145)]);
 
 const cloud2 = factory.create("plane", { width: 64, height: 64, wSegs: 32, hSegs: 32 }, materials.get("cloud2"));
-cloud2.setPosition(0, 2, -60).
+cloud2.setPosition(0, 2, -20).
     setRotation(deg2rad(60), 0, 0).
     setScale(5, 3, 1).
-    addEffects([new MapOffsetter(180, 245)]);
+    addEffects([new MapOffsetter(80, 245)]);
 
 /*const mirror = factory.create(
     "mirror", 
@@ -77,7 +80,7 @@ mirror.setPosition(0, -14, -30).
 //console.dir(mirror.threeObj.children[2]);*/
 
 world.addLighting(lighting).add([
-    //cloud1, cloud2,
+    cloud1, cloud2,
     moon//, mirror
 ]);
 

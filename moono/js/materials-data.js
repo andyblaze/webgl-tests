@@ -71,7 +71,7 @@ export default class MaterialsData {
             cloud: {
                 color: 0xffffff,
                 transparent: true,
-                opacity: 0.5,
+                opacity: 0.25,
                 emissive: 0xffffff, emissiveIntensity: 0.5,
                 //roughness: 1,
                 emissiveMap: {
@@ -82,7 +82,7 @@ export default class MaterialsData {
             cloud2: {
                 color: 0xffffff,
                 transparent: true,
-                opacity: 0.5,
+                opacity: 0.25,
                 emissive: 0xffffff, emissiveIntensity: 0.5,
                 //roughness: 1,
                 emissiveMap: {
