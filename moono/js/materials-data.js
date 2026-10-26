@@ -52,10 +52,10 @@ export default class MaterialsData {
                 }
             },
             moonWorld: {
-                color: 0xffffff,
+                color: 0xa57e22,
                 roughness: 0.085, metalness: 0.05,
                 //clearcoat: 0.75, clearcoatRoughness: 0.5,
-                emissive: 0xffffff, emissiveIntensity: 1,
+                emissive: 0xa57e22, emissiveIntensity: 1,
                 //sheenColor: 0x113237, sheen: 1,
                 //anisotropy: 1,
                 emissiveMap: {
