@@ -24,7 +24,7 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
-const water = new Water(new THREE.PlaneGeometry(96, 64), {
+const water = new Water(new THREE.PlaneGeometry(128, 64), {
     textureWidth: 1024,
     textureHeight: 1024,
     waterNormals: new THREE.TextureLoader().load('textures/marble-normal.png', function (texture) {
@@ -47,10 +47,10 @@ scene.add(water);
 
 //scene.fog = new THREE.Fog( 0xcccccc, -100, 235 );
 
-lighting.add(scene, "ambient", { color: 0xff0000, intensity: 0.1 }). //, angle: deg2rad(75), distance: 1950 }).
-    setPosition(0, 50, -50).setTarget(0, 0, -20).
+lighting.add(scene, "ambient", { color: 0x000000, intensity: 0.1 }). //, angle: deg2rad(75), distance: 1950 }).
+    setPosition(0, 50, -50).setTarget(0, 0, -20);
     //setShadows(true).setShadowMapSize(1024).
-addEffects([new ColorCycler(THREE, 0.04)]);
+//addEffects([new ColorCycler(THREE, 0.04)]);
 
 const moon = factory.create("sphere", materials.get("moonWorld"));
     moon.setPosition(0, 0, -42).
