@@ -41,7 +41,7 @@ const texture = new THREE.CanvasTexture(canvas);
 texture.colorSpace = THREE.SRGBColorSpace;
 scene.background = texture;
 
-const water = new Water(new THREE.PlaneGeometry(128, 64), {
+const water = new Water(new THREE.PlaneGeometry(128, 64, 128, 128), {
     textureWidth: 1024,
     textureHeight: 1024,
     waterNormals: new THREE.TextureLoader().load('textures/pave-normal.png', function (texture) {
@@ -64,7 +64,7 @@ scene.add(water);
 
 //scene.fog = new THREE.Fog( 0xcccccc, -100, 235 );
 
-lighting.add(scene, "ambient", { color: 0x000000, intensity: 0.1 }). //, angle: deg2rad(75), distance: 1950 }).
+lighting.add(scene, "ambient", { color: 0xffffff, intensity: 0.01 }). //, angle: deg2rad(75), distance: 1950 }).
     setPosition(0, 50, -50).setTarget(0, 0, -20);
     //setShadows(true).setShadowMapSize(1024).
 //addEffects([new ColorCycler(THREE, 0.04)]);
@@ -78,13 +78,13 @@ const cloud1 = factory.create("plane", { width: 64, height: 64, wSegs: 32, hSegs
 cloud1.setPosition(0, 3, -20).
     setRotation(deg2rad(60), 0, 0).
     setScale(5, 3, 1).
-    addEffects([new MapOffsetter(23, 145)]);
+    addEffects([new MapOffsetter(-23, -145)]);
 
 const cloud2 = factory.create("plane", { width: 64, height: 64, wSegs: 32, hSegs: 32 }, materials.get("cloud2"));
 cloud2.setPosition(0, 2, -20).
     setRotation(deg2rad(60), 0, 0).
     setScale(5, 3, 1).
-    addEffects([new MapOffsetter(80, 245)]);
+    addEffects([new MapOffsetter(-80, -245)]);
 
 /*const mirror = factory.create(
     "mirror", 
