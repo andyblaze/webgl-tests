@@ -17,11 +17,15 @@ import SpikyCube from "./shapes/spiky-cube.js";
 import Mirror from "./shapes/mirror.js";
 import Text from "./shapes/text.js";
 import Wedge from "./shapes/wedge.js";
+import waterPlane from "./shapes/water.js";
 import * as C from "./constants.js";
 
 class ShapeRegistry {
     constructor(three) {
         this.data = {
+            water: {
+                ctor: waterPlane
+            },
             bowl: {
                 ctor: Bowl,
                 defaultGeo: {
