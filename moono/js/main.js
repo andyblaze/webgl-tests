@@ -45,12 +45,8 @@ const water = factory.create("water");
 water.setRotation(deg2rad(260), 0, 0).
     setPosition(0, -14, -30);
 
-//scene.fog = new THREE.Fog( 0xcccccc, -100, 235 );
-
 lighting.add(scene, "ambient", { color: 0xffffff, intensity: 0.01 }). //, angle: deg2rad(75), distance: 1950 }).
     setPosition(0, 50, -50).setTarget(0, 0, -20);
-    //setShadows(true).setShadowMapSize(1024).
-//addEffects([new ColorCycler(THREE, 0.04)]);
 
 const moon = factory.create("sphere", materials.get("moonWorld"));
     moon.setPosition(0, -2, -48).
@@ -68,16 +64,6 @@ cloud2.setPosition(0, 2, -20).
     setRotation(deg2rad(60), 0, 0).
     setScale(5, 3, 1).
     addEffects([new MapOffsetter(-80, -245)]);
-
-/*const mirror = factory.create(
-    "mirror", 
-    { width: 96, height: 64, texW: config.dprW, texH: config.dprH },
-    { color: 0xffffff }
-);
-mirror.setPosition(0, -14, -30).
-    setRotation(deg2rad(260), 0, 0);
-
-//console.dir(mirror.threeObj.children[2]);*/
 
 world.addLighting(lighting).add([
     cloud1, cloud2, water,
