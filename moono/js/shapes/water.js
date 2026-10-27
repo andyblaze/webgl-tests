@@ -24,19 +24,3 @@ export default class waterPlane extends ThreeObj {
         this.threeObj.material.uniforms['time'].value += 0.0125 / 6;
     }
 }
-/*
-const water = new Water(new THREE.PlaneGeometry(128, 64, 128, 128), {
-    textureWidth: 1024,
-    textureHeight: 1024,
-    waterNormals: new THREE.TextureLoader().load('textures/pave-normal.png', function (texture) {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    }),
-    //sunDirection: new THREE.Vector3(0, 1, 125),
-    sunColor: "#f53e22",
-    waterColor: "#000000",
-    distortionScale: 20,
-    //alpha: 0.5,
-    scale: 3,
-    flowDirection: new THREE.Vector2(1, 1),
-    reflectivity: 1
-});*/
