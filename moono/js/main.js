@@ -41,26 +41,9 @@ const texture = new THREE.CanvasTexture(canvas);
 texture.colorSpace = THREE.SRGBColorSpace;
 scene.background = texture;
 
-const water = new Water(new THREE.PlaneGeometry(128, 64, 128, 128), {
-    textureWidth: 1024,
-    textureHeight: 1024,
-    waterNormals: new THREE.TextureLoader().load('textures/pave-normal.png', function (texture) {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    }),
-    //sunDirection: new THREE.Vector3(0, 1, 125),
-    sunColor: "#f53e22",
-    waterColor: "#000000",
-    distortionScale: 20,
-    //alpha: 0.5,
-    scale: 3,
-    flowDirection: new THREE.Vector2(1, 1),
-    reflectivity: 1
-});
-water.rotation.x = deg2rad(260);
-water.position.y = -14;
-water.position.z = -30;
-scene.add(water);
-
+const water = factory.create("water");
+water.setRotation(deg2rad(260), 0, 0).
+    setPosition(0, -14, -30);
 
 //scene.fog = new THREE.Fog( 0xcccccc, -100, 235 );
 
@@ -97,7 +80,7 @@ mirror.setPosition(0, -14, -30).
 //console.dir(mirror.threeObj.children[2]);*/
 
 world.addLighting(lighting).add([
-    cloud1, cloud2,
+    cloud1, cloud2, water,
     moon//, mirror
 ]);
 
@@ -111,7 +94,6 @@ function animate(timestamp) {
     time.dt = timer.getDelta();
     time.elapsed = timer.getElapsedTime();
     time.timestamp = timestamp;
-    water.material.uniforms['time'].value += 0.0125 / 6;
     world.update(time);
     controls.update();
     renderer.render(scene, camera);
