@@ -1,5 +1,23 @@
 <?php 
 
+class ColorGd {
+    public int $r = 0;
+    public int $g = 0;
+    public int $b = 0;
+    public int $a = 0;
+    public function __construct(int $r=0, int $g=0, int $b=0, int $a=0) {
+        $this->r = $r;
+        $this->g = $g;
+        $this->b = $b;
+        $this->a = $a;
+    }
+    public function fromHex(string $hex) {
+        if ( strpos($hex, '#') !== false )
+            $hex = str_replace($hex, '#', '');
+        $rgb = chunk_split($hex, 2);
+    }
+}
+
 class ImageGd {
     private int $width = 0;
     private int $height = 0;
@@ -43,6 +61,12 @@ class ImageGd {
         imageantialias($this->img, $enable);
         $this->antiAlias = $enable;
         return $this;
+    }
+    public function colorallocate(ColorGd $c) {
+        return imagecolorallocate($this->img, $c->r, $c->g, $c->b);
+    }
+    public function colorallocatealpha(ColorGd $c) {
+        return imagecolorallocatealpha($this->img, $c->r, $c->g, $c->b, $c->a);
     }
     public function colorat(int $x, int $y): int|false {
         $this->requireImage();
