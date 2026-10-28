@@ -70,7 +70,16 @@ class ImageGd {
         $img = imagecreatetruecolor($w, $h);
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
     }
-    private function setImg(GdImage $img, string $error): self {
+    public function filter(int $filter, array|int|float|bool ...$args): self {
+        if( $this->img && imagefilter($this->img, $filter) )
+            return $this;
+        else
+            throw new LogicException('imageGd->filter($filter, $args) failed.');
+    }
+    public function grayscale() {
+        return $this->filter(IMG_FILTER_GRAYSCALE);
+    }
+    private function setImg(GdImage|false $img, string $error): self {
         if (false === $img)
             throw new ErrorException($error);
         $this->img = $img;
