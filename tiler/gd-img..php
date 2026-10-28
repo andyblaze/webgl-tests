@@ -63,7 +63,6 @@ class ImageGd {
         ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
 
         imagecopyresampled($dstImg, $this->img, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);
-
         return $this;
     }
     public function crop(array $rect): self {
