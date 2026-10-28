@@ -14,7 +14,13 @@ class ColorGd {
     public function fromHex(string $hex) {
         if ( strpos($hex, '#') !== false )
             $hex = str_replace($hex, '#', '');
-        $rgb = chunk_split($hex, 2);
+        $rgba = chunk_split($hex, 2, "\n");
+        $rgba = explode("\n", $rgba);
+        $this->r = intval($rgba[0]);
+        $this->g = intval($rgba[1]);
+        $this->b = intval($rgba[2]);
+        if ( count($rgba) === 4 )
+            $this->a = intval($rgb[3]);
     }
 }
 
