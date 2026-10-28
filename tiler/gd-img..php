@@ -56,6 +56,16 @@ class ImageGd {
         $this->requireImage();
         return imagecolorclosestalpha($this->img, $r, $g, $b, $a);
     }
+    public function copyresampled(GdImage $dstImg, array|object $src, array|object $dst): self {
+        $this->requireImage();
+
+        ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
+        ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
+
+        imagecopyresampled($dstImg, $this->img, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);
+
+        return $this;
+    }
     public function crop(array $rect): self {
         $this->requireImage();
         $img = imagecrop($this->img, $rect);
@@ -71,12 +81,25 @@ class ImageGd {
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
     }
     public function filter(int $filter, array|int|float|bool ...$args): self {
-        if( $this->img && imagefilter($this->img, $filter) )
+        $this->requireImage();
+        if( $this->img && imagefilter($this->img, $filter, $args) )
             return $this;
         else
             throw new LogicException('imageGd->filter($filter, $args) failed.');
     }
+    public function flip(int $mode=IMG_FLIP_VERTICAL): self {
+        $this->requireImage();
+        imageflip($this->img, $mode);
+        return $this;
+    }
+    public function mirror(): self {
+        return $this->flip(IMG_FLIP_HORIZONTAL);
+    }
+    public function flipBoth(): self {
+        return $this->flip(IMG_FLIP_BOTH);
+    }
     public function grayscale() {
+        $this->requireImage();
         return $this->filter(IMG_FILTER_GRAYSCALE);
     }
     private function setImg(GdImage|false $img, string $error): self {
