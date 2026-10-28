@@ -59,31 +59,23 @@ class ImageGd {
     public function crop(array $rect): self {
         $this->requireImage();
         $img = imagecrop($this->img, $rect);
-        if (false === $img) {
-            $r = json_encode($rect);
-            throw new ErrorException("ImageGd::crop($r) failed.");
-        }
-        $this->img = $img;
-        $this->width = imagesx($img);
-        $this->height = imagesy($img);
-        return $this;
+        return $this->setImg($img, 'ImageGd->crop($rect) failed: ' . json_encode($rect));
     }
     public function scale(int $w, int $h, int $mode=IMG_BILINEAR_FIXED): self {
         $this->requireImage();
         $img = imagescale($this->img, $w, $h, $mode);
+        return $this->setImg($img, "imageGd->scale({$w}, {$h}, {$mode}) failed.");
+    }
+    public function create(int $w, int $h): self {
+        $img = imagecreatetruecolor($w, $h);
+        return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
+    }
+    private function setImg(GdImage $img, string $error): self {
         if (false === $img)
-            throw new ErrorException("ImageGd::scale({$w}, {$h}, {$mode}) failed.");
+            throw new ErrorException($error);
         $this->img = $img;
         $this->width = imagesx($img);
         $this->height = imagesy($img);
-        return $this;
-    }
-    public function create(int $w, int $h): self {
-        $this->img = imagecreatetruecolor($w, $h);
-        if ( false === $this->img ) 
-            throw new ErrorException("imageGd->create({$w}, {$h}) failed.");
-        $this->width = $w;
-        $this->height = $h;
         return $this;
     }
     private function requireImage(): void {
