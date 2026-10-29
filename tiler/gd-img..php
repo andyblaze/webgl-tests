@@ -57,9 +57,9 @@ class Copier {
     }
 }
 
-class Saver {
+class Output {
     public static function save(GdImage $img, string $file): bool {
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if ( $ext === 'png' )
             return imagepng($img, $file);
         if ( $ext === 'jpg' || $ext === 'jpeg' )
@@ -74,7 +74,7 @@ class ImageGd {
     private bool $alphaBlend = false;
     private bool $antiAlias = false;
     private bool $saveAlpha = false;
-    private GdImage|false $img = false; 
+    private GdImage|false|null $img = false; 
 
     public function __construct(int $w=0, int $h=0) {
         if ( $w > 0 && $h > 0 )
@@ -112,6 +112,12 @@ class ImageGd {
         $this->antiAlias = $enable;
         return $this;
     }
+    public function clear(): self {
+        $this->img = null;
+        $this->width = $this->height = 0;
+        $this->alphaBlend = $this->saveAlpha = $this->antiAlias = false;
+        return $this;
+    }
     public function colorallocate(ColorGd $c) {
         return imagecolorallocate($this->img, $c->r, $c->g, $c->b);
     }
@@ -133,17 +139,17 @@ class ImageGd {
     public function copyresampled(GdImage $dstImg, array|object $src, array|object $dst): self {
         $this->requireImage();
         Copier::resampled($dstImg, $this->img, $src, $dst);
-
-        /*['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
-        ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
-
-        imagecopyresampled($dstImg, $this->img, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);*/
         return $this;
     }
     public function crop(array $rect): self {
         $this->requireImage();
         $img = imagecrop($this->img, $rect);
         return $this->setImg($img, 'ImageGd->crop($rect) failed: ' . json_encode($rect));
+    }
+    public function destroy(): self {
+        $this->requireImage();
+        imagedestroy($this->img);
+        return $this;
     }
     public function scale(int $w, int $h, int $mode=IMG_BILINEAR_FIXED): self {
         $this->requireImage();
@@ -180,10 +186,20 @@ class ImageGd {
         $this->requireImage();
         return $this->filter(IMG_FILTER_GRAYSCALE);
     }
+    public function rotate(float $angle, int $bgColor): self {
+        $this->img = imagerotate($this->img, $angle, $bgColor);
+        if ( false === $this->img )
+            throw new LogicException("ImageGd->rotate({$angle}, {$bgColor}) failed.");
+        return $this;
+    }
     public function saveAs(string $file): self {
         $this->requireImage();
-        if ( false === Saver::save($this->img, $file) )
+        if ( false === Output::save($this->img, $file) )
             throw new LogicException("ImageGd->saveAs({$file}) failed.");
+        return $this;
+    }
+    public function setpixel(int $x, int $y, int $color): self {
+        imagesetpixel($this->img, $x, $y, $color);
         return $this;
     }
     private function setImg(GdImage|false $img, string $error): self {
@@ -195,7 +211,7 @@ class ImageGd {
         return $this;
     }
     private function requireImage(): void {
-        if ( false === $this->img ) 
+        if ( false === $this->img || null === $this->img ) 
             throw new LogicException('Image has not been created: Use ImageGd->create($w, $h)');
     }
 }
