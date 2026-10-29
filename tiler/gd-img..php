@@ -48,7 +48,7 @@ class Copier {
 
         imagecopyresampled($dstImg, $srcImg, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);
     }
-    public static function copy(): void {
+    public static function copy(GdImage $dstImg, GdImage $srcImg, array|object $src, array|object $dst): void {
 
         ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
         ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
@@ -59,7 +59,7 @@ class Copier {
 
 class Output {
     public static function save(GdImage $img, string $file): bool {
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
         if ( $ext === 'png' )
             return imagepng($img, $file);
         if ( $ext === 'jpg' || $ext === 'jpeg' )
@@ -146,11 +146,6 @@ class ImageGd {
         $img = imagecrop($this->img, $rect);
         return $this->setImg($img, 'ImageGd->crop($rect) failed: ' . json_encode($rect));
     }
-    public function destroy(): self {
-        $this->requireImage();
-        imagedestroy($this->img);
-        return $this;
-    }
     public function scale(int $w, int $h, int $mode=IMG_BILINEAR_FIXED): self {
         $this->requireImage();
         $img = imagescale($this->img, $w, $h, $mode);
@@ -166,10 +161,11 @@ class ImageGd {
     }
     public function filter(int $filter, array|int|float|bool ...$args): self {
         $this->requireImage();
-        if( $this->img && imagefilter($this->img, $filter, $args) )
-            return $this;
-        else
-            throw new LogicException('imageGd->filter($filter, $args) failed.');
+
+        if ( !imagefilter($this->img, $filter, ...$args) ) {
+            throw new LogicException('Image filter failed.');
+        }
+        return $this;
     }
     public function flip(int $mode=IMG_FLIP_VERTICAL): self {
         $this->requireImage();
@@ -187,10 +183,9 @@ class ImageGd {
         return $this->filter(IMG_FILTER_GRAYSCALE);
     }
     public function rotate(float $angle, int $bgColor): self {
-        $this->img = imagerotate($this->img, $angle, $bgColor);
-        if ( false === $this->img )
-            throw new LogicException("ImageGd->rotate({$angle}, {$bgColor}) failed.");
-        return $this;
+        $this->requireImage();
+        $img = imagerotate($this->img, $angle, $bgColor);
+        return $this->setImg($img, "ImageGd::rotate({$angle}) failed.");
     }
     public function saveAs(string $file): self {
         $this->requireImage();
