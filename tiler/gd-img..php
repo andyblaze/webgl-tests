@@ -40,6 +40,34 @@ class ColorGd {
     }
 }
 
+class Copier {
+    public static function resampled(GdImage $dstImg, GdImage $srcImg, array|object $src, array|object $dst): void {
+
+        ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
+        ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
+
+        imagecopyresampled($dstImg, $srcImg, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);
+    }
+    public static function copy(): void {
+
+        ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
+        ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
+
+        imagecopy($dstImg, $srcImg, $dx, $dy, $sx, $sy, $sw, $sh);        
+    }
+}
+
+class Saver {
+    public static function save(GdImage $img, string $file): bool {
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        if ( $ext === 'png' )
+            return imagepng($img, $file);
+        if ( $ext === 'jpg' || $ext === 'jpeg' )
+            return imagejpeg($img, $file);
+        return false;
+    }
+}
+
 class ImageGd {
     private int $width = 0;
     private int $height = 0;
@@ -104,11 +132,12 @@ class ImageGd {
     }
     public function copyresampled(GdImage $dstImg, array|object $src, array|object $dst): self {
         $this->requireImage();
+        Copier::resampled($dstImg, $this->img, $src, $dst);
 
-        ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
+        /*['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
         ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
 
-        imagecopyresampled($dstImg, $this->img, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);
+        imagecopyresampled($dstImg, $this->img, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);*/
         return $this;
     }
     public function crop(array $rect): self {
@@ -124,6 +153,10 @@ class ImageGd {
     public function create(int $w, int $h): self {
         $img = imagecreatetruecolor($w, $h);
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
+    }
+    public function fill(int $x, int $y, int $color): self {
+        imagefill($this->img, $x, $y, $color);
+        return $this;
     }
     public function filter(int $filter, array|int|float|bool ...$args): self {
         $this->requireImage();
@@ -146,6 +179,12 @@ class ImageGd {
     public function grayscale() {
         $this->requireImage();
         return $this->filter(IMG_FILTER_GRAYSCALE);
+    }
+    public function saveAs(string $file): self {
+        $this->requireImage();
+        if ( false === Saver::save($this->img, $file) )
+            throw new LogicException("ImageGd->saveAs({$file}) failed.");
+        return $this;
     }
     private function setImg(GdImage|false $img, string $error): self {
         if (false === $img)
