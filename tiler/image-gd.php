@@ -85,8 +85,9 @@ class ImageGd {
     }
     public function crop(int $x, int $y, int $width, int $height): self {
         $this->requireImage();
-        $rect = ['x'=> $x, 'y'=> $y, 'width'=> $width, 'height' => $height];
-        $img = imagecrop($this->img, $rect);
+        /*$rect = ['x'=> $x, 'y'=> $y, 'width'=> $width, 'height' => $height];
+        $img = imagecrop($this->img, $rect);*/
+        $img = Cropper::crop($this->img, $x, $y, $width, $height);
         return $this->setImg($img, 'ImageGd->crop($rect) failed: ' . json_encode($rect));
     }
     public function scale(int $w, int $h, int $mode=IMG_BILINEAR_FIXED): self {

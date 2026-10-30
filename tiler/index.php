@@ -6,6 +6,7 @@ require_these([
     'color-gd',
     'output',
     'copier',
+    'cropper',
     'image-gd'
 ]);
 
