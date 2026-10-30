@@ -6,9 +6,10 @@ class ImageGd {
     private bool $alphaBlend = false;
     private bool $antiAlias = false;
     private bool $saveAlpha = false;
+    private string $format = '';
     private GdImage|false|null $img = false; 
 
-    public function __construct(int $w=0, int $h=0) {
+    public function __construct(int $w=0, int $h=0, string $f='png') {
         if ( $w > 0 && $h > 0 )
             $this->create($w, $h);
     }
@@ -20,6 +21,10 @@ class ImageGd {
             'gd'     => $this->img,
             default  => throw new LogicException("Unknown property: {$name}")
         };
+    }
+    public function setFormat(string $f): self {
+        $this->format = $f;
+        return $this;
     }
     public function setPngAlpha(): self {
         $this->alphaBlend(false);
@@ -68,9 +73,14 @@ class ImageGd {
         $this->requireImage();
         return imagecolorclosestalpha($this->img, $r, $g, $b, $a);
     }
-    public function copyresampled(GdImage $dstImg, array|object $src, array|object $dst): self {
+    public function resampleTo(ImageGd $dstImg, array|object $src, array|object $dst): self {
         $this->requireImage();
-        Copier::resampled($dstImg, $this->img, $src, $dst);
+        Copier::resampled($dstImg->gd, $this->img, $src, $dst);
+        return $this;
+    }
+    public function copyTo(ImageGd $dstImg, array|object $src, array|object $dst): self {
+        $this->requireImage();
+        Copier::copy($dstImg->gd, $this->img, $src, $dst);
         return $this;
     }
     public function crop(int $x, int $y, int $width, int $height): self {
@@ -84,7 +94,8 @@ class ImageGd {
         $img = imagescale($this->img, $w, $h, $mode);
         return $this->setImg($img, "imageGd->scale({$w}, {$h}, {$mode}) failed.");
     }
-    public function create(int $w, int $h): self {
+    public function create(int $w, int $h, string $f='png'): self {
+        $this->setFormat($f);
         $img = imagecreatetruecolor($w, $h);
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
     }
@@ -130,8 +141,8 @@ class ImageGd {
         imagesetpixel($this->img, $x, $y, $color);
         return $this;
     }
-    public function toBrowser(string $type): self {
-        Output::toBrowser($this->img, 'png');
+    public function toBrowser(): self {
+        Output::toBrowser($this->img, $this->format);
         return $this;
     }
     private function setImg(GdImage|false $img, string $error): self {
