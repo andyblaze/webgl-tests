@@ -1,90 +1,5 @@
 <?php 
 
-class ColorGd {
-    public int $r = 0;
-    public int $g = 0;
-    public int $b = 0;
-    public int $a = 0;
-    public function __construct(int $r=0, int $g=0, int $b=0, int $a=0) {
-        $this->setRgb($r, $g, $b);
-        $this->a = $a;
-    }
-    public function fromHex(string $hex): self {
-        $hex = ltrim($hex, '#');
-
-        if ( !in_array(strlen($hex), [6, 8], true) || !ctype_xdigit($hex) ) 
-            throw new InvalidArgumentException("colorGd->fromHex({$hex} failed: Invalid hex color.");
-
-        $this->r = hexdec(substr($hex, 0, 2));
-        $this->g = hexdec(substr($hex, 2, 2));
-        $this->b = hexdec(substr($hex, 4, 2));
-
-        if (strlen($hex) === 8) {
-            // CSS alpha: 00 = transparent, FF = opaque.
-            // GD alpha: 127 = transparent, 0 = opaque.
-            $alpha = hexdec(substr($hex, 6, 2));
-            $this->a = 127 - (int) round($alpha * 127 / 255);
-        }
-        return $this;
-    }
-    public function set(int $r, int $g, int $b, int|null $a=null): self {
-        $this->setRgb($r, $g, $b);
-        if ( is_int($a) )
-            $this->a = $a;
-        return $this;
-    }
-    private function setRgb(int $r, int $g, int $b): void {
-        $this->r = $r;
-        $this->g = $g;
-        $this->b = $b;        
-    }
-}
-
-class Copier {
-    public static function resampled(GdImage $dstImg, GdImage $srcImg, array|object $src, array|object $dst): void {
-
-        ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
-        ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
-
-        imagecopyresampled($dstImg, $srcImg, $dx, $dy, $sx, $sy, $dw, $dh, $sw, $sh);
-    }
-    public static function copy(GdImage $dstImg, GdImage $srcImg, array|object $src, array|object $dst): void {
-
-        ['x' => $sx, 'y' => $sy, 'w' => $sw, 'h' => $sh] = (array)$src;
-        ['x' => $dx, 'y' => $dy, 'w' => $dw, 'h' => $dh] = (array)$dst;
-
-        imagecopy($dstImg, $srcImg, $dx, $dy, $sx, $sy, $sw, $sh);        
-    }
-}
-
-class Output {
-    private static function ext(string $fname): string {
-        return strtolower(pathinfo($fname, PATHINFO_EXTENSION));
-    }
-    private static function hdr(string $type): void {
-        header('Content-Type: image/' . $type);
-    }
-    public static function save(GdImage $img, string $file): bool {
-        $ext = self::ext($file);
-        if ( $ext === 'png' )
-            return imagepng($img, $file);
-        if ( $ext === 'jpg' || $ext === 'jpeg' )
-            return imagejpeg($img, $file);
-        return false;
-    }
-    public static function toBrowser(GdImage $img, string $type) {
-        if ( $type === 'png' ) {
-            self::hdr('png');
-            return imagepng($img);
-        }
-        if ( $type === 'jpg' || $type === 'jpeg' ) {
-            self::hdr('jpeg');
-            return imagejpeg($img);
-        }
-        return false;
-    }
-}
-
 class ImageGd {
     private int $width = 0;
     private int $height = 0;
@@ -158,8 +73,9 @@ class ImageGd {
         Copier::resampled($dstImg, $this->img, $src, $dst);
         return $this;
     }
-    public function crop(array $rect): self {
+    public function crop(int $x, int $y, int $width, int $height): self {
         $this->requireImage();
+        $rect = ['x'=> $x, 'y'=> $y, 'width'=> $width, 'height' => $height];
         $img = imagecrop($this->img, $rect);
         return $this->setImg($img, 'ImageGd->crop($rect) failed: ' . json_encode($rect));
     }
