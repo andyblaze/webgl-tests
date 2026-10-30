@@ -26,4 +26,12 @@ class Output {
         }
         return false;
     }
+    public static function createfrom(string $file): GdImage|false {
+        $ext = self::ext($file);
+        if ( $ext === 'png' )
+            return imagecreatefrompng($file);
+        if ( $ext === 'jpg' || $ext === 'jpeg' )
+            return imagecreatefromjpeg($file);
+        return false;
+    }
 }

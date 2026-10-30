@@ -99,6 +99,10 @@ class ImageGd {
         $img = imagecreatetruecolor($w, $h);
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
     }
+    public function createfrom(string $file): self {
+        $this->img = Output::createfrom($file);
+        return $this;
+    }
     public function fill(int $x, int $y, int $color): self {
         imagefill($this->img, $x, $y, $color);
         return $this;
@@ -121,6 +125,9 @@ class ImageGd {
     }
     public function flipBoth(): self {
         return $this->flip(IMG_FLIP_BOTH);
+    }
+    public function getSize(): array {
+        return ['w'=>$this->width, 'h'=>$this->height];
     }
     public function grayscale() {
         $this->requireImage();
