@@ -172,6 +172,7 @@ class ImageGd {
         return $this;
     }
     public function toBrowser(): self {
+        $this->requireImage();
         IO::toBrowser($this->img, $this->format);
         return $this;
     }
@@ -191,6 +192,6 @@ class ImageGd {
     }
     private function requireImage(): void {
         if ( false === $this->img || null === $this->img ) 
-            throw new LogicException('Image has not been created: Use ImageGd->create($w, $h)');
+            throw new LogicException('Image has not been created: Use ImageGd->create($w, $h, $format=png)');
     }
 }

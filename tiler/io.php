@@ -27,21 +27,38 @@ class IO {
         return false;
     }
     public static function createfrom(string $file): array {
-        $result = ['img'=>false, 'ext'=>'', 'w'=>0, 'h'=>0, 'ok'=>false];
+        $result = ['img'=>false, 'ext'=>'', 'w'=>0, 'h'=>0, 'ok'=>false, 'errors'=>[]];
 
         if ( file_exists($file) ) {
-            $result['ext'] = self::ext($file);
+            $ext = self::ext($file);
+            if ( false === in_array($ext, ['png', 'jpg', 'jpeg']) )
+                $result['errors'][] = 'Wrong file type: '. $ext;
+
+            $result['ext'] = $ext;
+
             $sz = getimagesize($file);
-            $result['w'] = $sz[0];
-            $result['h'] = $sz[1];
-        
-            if ( $result['ext'] === 'png' )
+            if ( false === $sz )
+                $result['errors'][] = 'Cannot get image size';
+            else {
+                $w = $sz[0];
+                $h = $sz[1];
+                if ( $w === 0 || $h === 0 )
+                    $result['errors'][] = 'An image dimension is zero';
+
+                    $result['w'] = $w;
+                    $result['h'] = $h;  
+            }
+
+            if ( $ext === 'png' )
                 $result['img'] = imagecreatefrompng($file);
-            if ( $result['ext'] === 'jpg' || $result['ext'] === 'jpeg' )
+            if ( $ext === 'jpg' || $ext === 'jpeg' )
                 $result['img'] = imagecreatefromjpeg($file);
-            if ( false !== $result['img'] && $result['w'] > 0 && $result['h'] > 0 )
+
+            if ( false !== $result['img'] || count($result['errors']) > 0 ) {
                 $result['ok'] = true;
+            }
         }
+        $result['errors'] = implode(', ', $result['errors']);
         return $result;
     }
 }
