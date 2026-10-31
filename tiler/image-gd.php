@@ -177,10 +177,10 @@ class ImageGd {
         return $this;
     }
     public function loadFile(string $file): self {
-        ['img'=> $img, 'ext'=> $ext, 'w'=> $w, 'h'=> $h, 'ok'=> $ok] = IO::createfrom($file);
+        ['img'=> $img, 'ext'=> $ext, 'w'=> $w, 'h'=> $h, 'ok'=> $ok, 'errors'=>$errors] = IO::createfrom($file);
         if ( true === $ok )
             $this->create($w, $h, $ext);
-        return $this->setImg($img, "ImageGd->loadFile({$file}) failed.");
+        return $this->setImg($img, "ImageGd->loadFile({$file}) failed: {$errors}");
     }
     private function setImg(GdImage|false $img, string $error): self {
         if (false === $img)

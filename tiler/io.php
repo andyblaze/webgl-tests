@@ -47,7 +47,7 @@ class IO {
 
                     $result['w'] = $w;
                     $result['h'] = $h;  
-            }
+            } 
 
             if ( $ext === 'png' )
                 $result['img'] = imagecreatefrompng($file);
