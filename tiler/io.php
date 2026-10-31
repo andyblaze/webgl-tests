@@ -26,12 +26,22 @@ class IO {
         }
         return false;
     }
-    public static function createfrom(string $file): GdImage|false {
-        $ext = self::ext($file);
-        if ( $ext === 'png' )
-            return imagecreatefrompng($file);
-        if ( $ext === 'jpg' || $ext === 'jpeg' )
-            return imagecreatefromjpeg($file);
-        return false;
+    public static function createfrom(string $file): array {
+        $result = ['img'=>false, 'ext'=>'', 'w'=>0, 'h'=>0, 'ok'=>false];
+
+        if ( file_exists($file) ) {
+            $result['ext'] = self::ext($file);
+            $sz = getimagesize($file);
+            $result['w'] = $sz[0];
+            $result['h'] = $sz[1];
+        
+            if ( $result['ext'] === 'png' )
+                $result['img'] = imagecreatefrompng($file);
+            if ( $result['ext'] === 'jpg' || $result['ext'] === 'jpeg' )
+                $result['img'] = imagecreatefromjpeg($file);
+            if ( false !== $result['img'] && $result['w'] > 0 && $result['h'] > 0 )
+                $result['ok'] = true;
+        }
+        return $result;
     }
 }

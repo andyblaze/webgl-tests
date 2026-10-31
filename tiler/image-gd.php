@@ -127,10 +127,6 @@ class ImageGd {
         $img = imagecreatetruecolor($w, $h);
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
     }
-    public function createfrom(string $file): self {
-        $this->img = IO::createfrom($file);
-        return $this;
-    }
     public function fill(int $x, int $y, int $color): self {
         imagefill($this->img, $x, $y, $color);
         return $this;
@@ -180,9 +176,11 @@ class ImageGd {
         IO::toBrowser($this->img, $this->format);
         return $this;
     }
-    public function loadFile(string $file): void {
-        $img = IO::createfrom($file);
-        $this->setImg($img, "ImageGd->loadFile({$file}) failed.");
+    public function loadFile(string $file): self {
+        ['img'=> $img, 'ext'=> $ext, 'w'=> $w, 'h'=> $h, 'ok'=> $ok] = IO::createfrom($file);
+        if ( true === $ok )
+            $this->create($w, $h, $ext);
+        return $this->setImg($img, "ImageGd->loadFile({$file}) failed.");
     }
     private function setImg(GdImage|false $img, string $error): self {
         if (false === $img)
