@@ -10,11 +10,6 @@ require_these([
     'image-gd'
 ]);
 
-$im1 = new ImageGd();
-$im1->loadFile('trt.png');
-$im1->flip()->toBrowser();
-die;
-
 $im1 = new ImageGd(256, 256);
 $im2 = new ImageGd(256, 256);
 $col = new ColorGd();
