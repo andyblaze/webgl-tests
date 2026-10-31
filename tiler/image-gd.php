@@ -11,7 +11,7 @@ class ImageGd {
 
     public function __construct(int $w=0, int $h=0, string $f='png') {
         if ( $w > 0 && $h > 0 )
-            $this->create($w, $h);
+            $this->create($w, $h, $f);
     }
     public function __get(string $name): mixed {
         $this->requireImage();
@@ -86,9 +86,25 @@ class ImageGd {
         Copier::resampled($dstImg->gd, $this->img, $src, $dst);
         return $this;
     }
+    public function convolution(array $matrix, float $divisor, float $offset): self {
+        $ok = imageconvolution($this->img, $matrix, $divisor, $offset);
+        if ( false === $ok )
+            throw new LogicException("ImageGd->convolution(matrix, {$divisor}, {$offset}) failed.");
+        return $this;
+    }
     public function copyTo(ImageGd $dstImg, array|object $src, array|object $dst): self {
         $this->requireImage();
         Copier::copy($dstImg->gd, $this->img, $src, $dst);
+        return $this;
+    }
+    public function copymergeTo(ImageGd $dstImg, array|object $src, array|object $dst, int $pct): self {
+        $this->requireImage();
+        Copier::copymerge($dstImg->gd, $this->img, $src, $dst, $pct);
+        return $this;
+    }
+    public function copymergegrayTo(ImageGd $dstImg, array|object $src, array|object $dst, int $pct): self {
+        $this->requireImage();
+        Copier::copymergegray($dstImg->gd, $this->img, $src, $dst, $pct);
         return $this;
     }
     public function crop(int $x, int $y, int $w, int $h): self {
@@ -112,7 +128,7 @@ class ImageGd {
         return $this->setImg($img, "imageGd->create({$w}, {$h}) failed.");
     }
     public function createfrom(string $file): self {
-        $this->img = Output::createfrom($file);
+        $this->img = IO::createfrom($file);
         return $this;
     }
     public function fill(int $x, int $y, int $color): self {
@@ -152,7 +168,7 @@ class ImageGd {
     }
     public function saveAs(string $file): self {
         $this->requireImage();
-        if ( false === Output::save($this->img, $file) )
+        if ( false === IO::save($this->img, $file) )
             throw new LogicException("ImageGd->saveAs({$file}) failed.");
         return $this;
     }
@@ -161,8 +177,12 @@ class ImageGd {
         return $this;
     }
     public function toBrowser(): self {
-        Output::toBrowser($this->img, $this->format);
+        IO::toBrowser($this->img, $this->format);
         return $this;
+    }
+    public function loadFile(string $file): void {
+        $img = IO::createfrom($file);
+        $this->setImg($img, "ImageGd->loadFile({$file}) failed.");
     }
     private function setImg(GdImage|false $img, string $error): self {
         if (false === $img)

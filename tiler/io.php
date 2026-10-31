@@ -1,6 +1,6 @@
 <?php 
 
-class Output {
+class IO {
     private static function ext(string $fname): string {
         return strtolower(pathinfo($fname, PATHINFO_EXTENSION));
     }
