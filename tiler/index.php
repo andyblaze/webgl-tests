@@ -13,12 +13,9 @@ require_these([
 $im1 = new ImageGd(256, 256);
 $im2 = new ImageGd(256, 256);
 $col = new ColorGd();
-$col->fromHex('#ff0000');
-$r = $im1->colorallocate($col);
-$col->set(0, 255, 0);
-$g = $im1->colorallocate($col);
-$col->set(0, 0, 255);
-$b = $im1->colorallocate($col);
+
+[$r, $g, $b] = $im1->allocateThese('#ff0000', '#00ff00', '#0000ff');
+
 $im2->fill(1, 1, $b);
 $im1->fill(2, 2, $r)
     ->rotate(23, $g)

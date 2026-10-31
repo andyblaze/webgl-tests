@@ -55,6 +55,14 @@ class ImageGd {
         $this->alphaBlend = $this->saveAlpha = $this->antiAlias = false;
         return $this;
     }
+    public function allocateThese(string ...$hexes): array {
+        $colors = [];
+        foreach ($hexes as $hex) {
+            $col = (new ColorGd())->fromHex($hex);
+            $colors[] = $this->colorallocate($col);
+        }
+        return $colors;
+    }
     public function colorallocate(ColorGd $c) {
         return imagecolorallocate($this->img, $c->r, $c->g, $c->b);
     }
@@ -83,12 +91,15 @@ class ImageGd {
         Copier::copy($dstImg->gd, $this->img, $src, $dst);
         return $this;
     }
-    public function crop(int $x, int $y, int $width, int $height): self {
+    public function crop(int $x, int $y, int $w, int $h): self {
         $this->requireImage();
-        /*$rect = ['x'=> $x, 'y'=> $y, 'width'=> $width, 'height' => $height];
-        $img = imagecrop($this->img, $rect);*/
-        $img = Cropper::crop($this->img, $x, $y, $width, $height);
-        return $this->setImg($img, 'ImageGd->crop($rect) failed: ' . json_encode($rect));
+        $img = Cropper::crop($this->img, $x, $y, $w, $h);
+        return $this->setImg($img, "ImageGd->crop({$x}, {$y}, {$w}, {$h}) failed.");
+    }
+    public function cropauto(int $mode=IMG_CROP_DEFAULT, float $threshold=0.5, int $color=-1): self {
+        $this->requireImage();
+        $img = Cropper::cropauto($this->img, $mode, $threshold, $color);
+        return $this->setImg($img, "ImageGd->cropauto({$mode}, {$threshold}, {$color}) failed.");
     }
     public function scale(int $w, int $h, int $mode=IMG_BILINEAR_FIXED): self {
         $this->requireImage();
