@@ -42,7 +42,8 @@ class IO {
             else {
                 $w = $sz[0];
                 $h = $sz[1];
-                if ( $w === 0 || $h === 0 )
+
+                if ( $w === 0 || $h === 0 ) 
                     $result['errors'][] = 'An image dimension is zero';
 
                     $result['w'] = $w;
@@ -54,7 +55,7 @@ class IO {
             if ( $ext === 'jpg' || $ext === 'jpeg' )
                 $result['img'] = imagecreatefromjpeg($file);
 
-            if ( false !== $result['img'] || count($result['errors']) > 0 ) {
+            if ( false !== $result['img'] && count($result['errors']) === 0 ) {
                 $result['ok'] = true;
             }
         }
