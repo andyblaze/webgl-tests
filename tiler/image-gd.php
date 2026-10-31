@@ -133,9 +133,8 @@ class ImageGd {
     }
     public function filter(int $filter, array|int|float|bool ...$args): self {
         $this->requireImage();
-
         if ( !imagefilter($this->img, $filter, ...$args) ) {
-            throw new LogicException('Image filter failed.');
+            throw new LogicException('ImageGd->filter() failed.');
         }
         return $this;
     }
