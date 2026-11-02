@@ -1,8 +1,13 @@
 <?php 
 
 class IO {
+    private static array $validExts = ['png', 'jpg', 'jpeg'];
     private static function ext(string $fname): string {
-        return strtolower(pathinfo($fname, PATHINFO_EXTENSION));
+        $ext = strtolower(pathinfo($fname, PATHINFO_EXTENSION));
+        if ( false === in_array($ext, self::$validExts) ) return false;
+        if ( $ext === 'jpeg' )
+            $ext = 'jpg';
+        return $ext;
     }
     private static function hdr(string $type): void {
         header('Content-Type: image/' . $type);
@@ -11,16 +16,17 @@ class IO {
         $ext = self::ext($file);
         if ( $ext === 'png' )
             return imagepng($img, $file);
-        if ( $ext === 'jpg' || $ext === 'jpeg' )
+        if ( $ext === 'jpg' )
             return imagejpeg($img, $file);
         return false;
     }
     public static function toBrowser(GdImage $img, string $type) {
-        if ( $type === 'png' ) {
+        $ext = self::ext($type);
+        if ( $ext === 'png' ) {
             self::hdr('png');
             return imagepng($img);
         }
-        if ( $type === 'jpg' || $type === 'jpeg' ) {
+        if ( $ext === 'jpg' ) {
             self::hdr('jpeg');
             return imagejpeg($img);
         }
@@ -31,8 +37,8 @@ class IO {
 
         if ( file_exists($file) ) {
             $ext = self::ext($file);
-            if ( false === in_array($ext, ['png', 'jpg', 'jpeg']) )
-                $result['errors'][] = 'Wrong file type: '. $ext;
+            if ( false === $ext )
+                $result['errors'][] = "Wrong file type: {$ext}";
 
             $result['ext'] = $ext;
 
@@ -50,9 +56,12 @@ class IO {
                     $result['h'] = $h;  
             } 
 
+            if ( count($result['errors']) > 0 )
+                array_unshift($result['errors'], "IO::createfrom({$file})");
+
             if ( $ext === 'png' )
                 $result['img'] = imagecreatefrompng($file);
-            if ( $ext === 'jpg' || $ext === 'jpeg' )
+            if ( $ext === 'jpg' )
                 $result['img'] = imagecreatefromjpeg($file);
 
             if ( false !== $result['img'] && count($result['errors']) === 0 ) {
