@@ -141,12 +141,15 @@
         this.canvas.height = h;
         this.width = w;
         this.height = h;
+        return this;
       }
       clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        return this;
       }
       draw(img) {
         this.ctx.drawImage(img, 0, 0);
+        return this;
       }
     }
     class Status {
@@ -188,9 +191,9 @@
 
     fileInput.addEventListener("change", async () => {
       const file = fileInput.files[0];
-      if (!file) return;
+      if ( !file ) return;
 
-      if ( false === srcFile.isValid(file) ) { //.type !== "image/png" && !file.name.toLowerCase().endsWith(".png")) {
+      if ( false === srcFile.isValid(file) ) {
         status.display("Please choose a PNG file.");
         fileInput.value = "";
         return;
@@ -199,9 +202,8 @@
       try {
         const bitmap = await createImageBitmap(file);
 
-        srcCanvas.setSize(bitmap.width, bitmap.height);
-        srcCanvas.clear();
-        srcCanvas.draw(bitmap);
+        srcCanvas.setSize(bitmap.width, bitmap.height).
+          clear().draw(bitmap);
         bitmap.close();
 
         // Send the selected original PNG, rather than re-encoding the canvas.
@@ -210,8 +212,7 @@
 
         status.display(`Loaded ${file.name} (${srcCanvas.width} x ${srcCanvas.height}).`);
 
-        destCanvas.clear();
-        destCanvas.setSize(256, 256);
+        destCanvas.clear().setSize(256, 256);
       } catch (error) {
         srcFile.setNull();
         sendButton.disabled = true;
@@ -223,13 +224,13 @@
       if ( srcFile.isNull() ) return;
 
       const endpoint = endpointInput.value.trim();
-      if (!endpoint) {
+      if ( !endpoint ) {
         status.display("Enter the PHP endpoint URL first.");
         return;
       }
 
       const formData = new FormData();
-      formData.append("image", srcFile, srcFile.name);
+      formData.append("image", srcFile.file, srcFile.name);
 
       sendButton.disabled = true;
       status.display("Sending image...");
@@ -254,16 +255,15 @@
         const resultBlob = await response.blob();
         const bitmap = await createImageBitmap(resultBlob);
 
-        destCanvas.setSize(bitmap.width, bitmap.height);
-        destCanvas.clear();
-        destCanvas.draw(bitmap);
+        destCanvas.setSize(bitmap.width, bitmap.height).
+          clear().draw(bitmap);
         bitmap.close();
 
-        status.display(`Received ${bitmap.width} × ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
+        status.display(`Received ${bitmap.width} x ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
       } catch (error) {
         status.display(`Request failed: ${error.message}`);
       } finally {
-        sendButton.disabled = !sourceFile;
+        sendButton.disabled = srcFile.isNull();
       }
     });
   </script>
