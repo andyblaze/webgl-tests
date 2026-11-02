@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ImageGd – Canvas test</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 { margin-top: 0; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+
+    input, button {
+      font: inherit;
+      padding: 8px 10px;
+    }
+
+    input[type="url"] {
+      width: min(420px, 80vw);
+    }
+
+    button { cursor: pointer; }
+    button:disabled { cursor: wait; opacity: 0.6; }
+
+    .canvases {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .panel { min-width: 0; }
+
+    .canvas-wrap {
+      display: grid;
+      place-items: center;
+      min-height: 280px;
+      padding: 12px;
+      overflow: auto;
+      border: 1px solid #8888;
+      border-radius: 8px;
+      background-color: #8881;
+      background-image:
+        linear-gradient(45deg, #8882 25%, transparent 25%),
+        linear-gradient(-45deg, #8882 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #8882 75%),
+        linear-gradient(-45deg, transparent 75%, #8882 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      image-rendering: auto;
+    }
+
+    #status {
+      min-height: 1.5em;
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 700px) {
+      .canvases { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <h1>ImageGd canvas test</h1>
+
+  <div class="controls">
+    <label>
+      Load a PNG
+      <input id="fileInput" type="file" accept="image/png,.png">
+    </label>
+
+    <label>
+      PHP endpoint URL
+      <input id="endpoint" type="url" value="img-processor.php" placeholder="https://example.com/process.php" autocomplete="off">
+    </label>
+
+    <button id="sendButton" type="button" disabled>Send to PHP</button>
+  </div>
+
+  <main class="canvases">
+    <section class="panel">
+      <h2>1. Source image</h2>
+      <div class="canvas-wrap">
+        <canvas id="sourceCanvas" width="256" height="256"></canvas>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>2. Processed image</h2>
+      <div class="canvas-wrap">
+        <canvas id="resultCanvas" width="256" height="256"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <p id="status" role="status" aria-live="polite">Choose a PNG to get started.</p>
+
+  <script>
+    function byId(id) {
+      return document.getElementById(id);
+    }
+    class Canvas {
+      constructor(id) {
+        this.canvas = byId(id);
+        this.ctx = this.canvas.getContext("2d");
+        this.width = 0;
+        this.height = 0;
+      }
+      setSize(w, h) {
+        this.canvas.width = w;
+        this.canvas.height = h;
+        this.width = w;
+        this.height = h;
+      }
+      clear() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+      draw(img) {
+        this.ctx.drawImage(img, 0, 0);
+      }
+    }
+    class Status {
+      constructor(id) {
+        this.status = byId(id);
+      }
+      display(msg) {
+        this.status.textContent = msg;
+      }
+    }
+    const fileInput = byId("fileInput");
+    const endpointInput = byId("endpoint");
+    const sendButton = byId("sendButton");
+    const status = new Status("status");
+
+    const srcCanvas = new Canvas("sourceCanvas");
+    const destCanvas = new Canvas("resultCanvas");
+
+    let sourceFile = null;
+
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      if (file.type !== "image/png" && !file.name.toLowerCase().endsWith(".png")) {
+        status.display("Please choose a PNG file.");
+        fileInput.value = "";
+        return;
+      }
+
+      try {
+        const bitmap = await createImageBitmap(file);
+
+        srcCanvas.setSize(bitmap.width, bitmap.height);
+        srcCanvas.clear();
+        srcCanvas.draw(bitmap);
+        bitmap.close();
+
+        // Send the selected original PNG, rather than re-encoding the canvas.
+        sourceFile = file;
+        sendButton.disabled = false;
+
+        status.display(`Loaded ${file.name} (${srcCanvas.width} x ${srcCanvas.height}).`);
+
+        destCanvas.clear();
+        destCanvas.setSize(256, 256);
+      } catch (error) {
+        sourceFile = null;
+        sendButton.disabled = true;
+        status.display(`Could not load image: ${error.message}`);
+      }
+    });
+
+    sendButton.addEventListener("click", async () => {
+      if (!sourceFile) return;
+
+      const endpoint = endpointInput.value.trim();
+      if (!endpoint) {
+        status.display("Enter the PHP endpoint URL first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", sourceFile, sourceFile.name);
+
+      sendButton.disabled = true;
+      status.display("Sending image...");
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(`HTTP ${response.status}: ${detail.slice(0, 500)}`);
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.includes("image/")) {
+          const detail = await response.text();
+          throw new Error(`Expected an image/png response, received "${contentType}". ${detail.slice(0, 300)}`);
+        }
+
+        const resultBlob = await response.blob();
+        const bitmap = await createImageBitmap(resultBlob);
+
+        destCanvas.setSize(bitmap.width, bitmap.height);
+        destCanvas.clear();
+        destCanvas.draw(bitmap);
+        bitmap.close();
+
+        status.display(`Received ${bitmap.width} × ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
+      } catch (error) {
+        status.display(`Request failed: ${error.message}`);
+      } finally {
+        sendButton.disabled = !sourceFile;
+      }
+    });
+  </script>
+</body>
+</html>
