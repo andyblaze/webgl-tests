@@ -21,12 +21,12 @@ class IO {
         return false;
     }
     public static function toBrowser(GdImage $img, string $type) {
-        $ext = self::ext($type);
-        if ( $ext === 'png' ) {
+        if ( false === in_array($type, self::$validExts) ) return false;
+        if ( $type === 'png' ) {
             self::hdr('png');
             return imagepng($img);
         }
-        if ( $ext === 'jpg' ) {
+        if ( $type === 'jpg' ) {
             self::hdr('jpeg');
             return imagejpeg($img);
         }
