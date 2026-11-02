@@ -189,7 +189,7 @@
 
     const srcFile = new SourceFile();
 
-    fileInput.addEventListener("change", async () => {
+    async function inputChange() {
       const file = fileInput.files[0];
       if ( !file ) return;
 
@@ -202,8 +202,8 @@
       try {
         const bitmap = await createImageBitmap(file);
 
-        srcCanvas.setSize(bitmap.width, bitmap.height).
-          clear().draw(bitmap);
+        srcCanvas.setSize(bitmap.width, bitmap.height).clear().draw(bitmap);
+        
         bitmap.close();
 
         // Send the selected original PNG, rather than re-encoding the canvas.
@@ -217,8 +217,10 @@
         srcFile.setNull();
         sendButton.disabled = true;
         status.display(`Could not load image: ${error.message}`);
-      }
-    });
+      }      
+    }
+
+    fileInput.addEventListener("change", inputChange);
 
     sendButton.addEventListener("click", async () => {
       if ( srcFile.isNull() ) return;
