@@ -96,7 +96,7 @@
   <div class="controls">
     <label>
       Load a PNG
-      <input id="fileInput" type="file" accept="image/png,.png">
+      <input id="fileInput" type="file" accept="image/png,.png" autocomplete="off">
     </label>
 
     <label>
@@ -104,7 +104,7 @@
       <input id="endpoint" type="url" value="img-processor.php" placeholder="https://example.com/process.php" autocomplete="off">
     </label>
 
-    <button id="sendButton" type="button" disabled>Send to PHP</button>
+    <button id="sendButton" type="button" disabled="disabled">Send to PHP</button>
   </div>
 
   <main class="canvases">
@@ -189,15 +189,21 @@
 
     const srcFile = new SourceFile();
 
-    async function inputChange() {
-      const file = fileInput.files[0];
-      if ( !file ) return;
+    function getFile(input) {
+      const file = input.files[0];
+      if ( !file ) return false;
 
       if ( false === srcFile.isValid(file) ) {
         status.display("Please choose a PNG file.");
-        fileInput.value = "";
-        return;
+        input.value = "";
+        return false;
       }
+      return file;
+    }
+
+    async function inputChange() {
+      const file = getFile(fileInput);
+      if ( false === file ) return false;
 
       try {
         const bitmap = await createImageBitmap(file);
@@ -257,8 +263,7 @@
         const resultBlob = await response.blob();
         const bitmap = await createImageBitmap(resultBlob);
 
-        destCanvas.setSize(bitmap.width, bitmap.height).
-          clear().draw(bitmap);
+        destCanvas.setSize(bitmap.width, bitmap.height).clear().draw(bitmap);
         bitmap.close();
 
         status.display(`Received ${bitmap.width} x ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
