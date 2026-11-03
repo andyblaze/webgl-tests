@@ -250,17 +250,12 @@
         data.img = bitmap;
         data.msg = `Loaded ${file.name} (${srcCanvas.width} x ${srcCanvas.height}).`;
 
-        srcCanvas.update(data);
-        
+        for ( const o of obs )
+          o.update(data);
+
         bitmap.close();
 
-        // Send the selected original PNG, rather than re-encoding the canvas.
-        srcFile.update(data);
-        sendButton.update(data);
 
-        status.update(data);
-
-        //destCanvas.clear().setSize(256, 256);
       } catch (error) {
         data.img = null;
         data.msg = `Could not load image: ${error.message}`;
