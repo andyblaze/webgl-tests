@@ -151,13 +151,16 @@
         this.ctx.drawImage(img, 0, 0);
         return this;
       }
+      update(data) {
+        this.setSize(data.img.width, data.img.height).clear().draw(data.img);
+      }
     }
     class Status {
       constructor(id) {
         this.status = byId(id);
       }
-      display(msg) {
-        this.status.textContent = msg;
+      update(data) {
+        this.status.textContent = data.msg;
       }
     }
     class SourceFile {
@@ -171,17 +174,57 @@
       setNull() {
         this.file = null;
       }
-      isValid(f) {
-        return (f.type === "image/png" && f.name.toLowerCase().endsWith(".png"));
-      }
       setFile(f) {
         this.file = f;
         this.name = f.name;
       }
+      update(data) {
+        if ( null === data.file )
+          this.setNull();
+        else 
+          this.setFile(data.file);
+      }
     }
-    const fileInput = byId("fileInput");
-    const endpointInput = byId("endpoint");
-    const sendButton = byId("sendButton");
+
+    class EndPoint {
+      constructor(id) {
+        this.input = byId(id);
+        this.url = this.input.value.trim();
+      }
+    }
+
+    class FileInput {
+      constructor(id) {
+        this.input = byId(id);
+      }
+      isValid(f) {
+        return (f.type === "image/png" && f.name.toLowerCase().endsWith(".png"));
+      }
+      getFile() {
+        const file = this.input.files[0];
+        if ( !file ) return false;    
+        if ( false === this.isValid(file) ) {
+          this.input.value = "";
+          return false;
+        }  
+        return file;  
+      }
+      onchange(func) {
+        this.input.addEventListener("change", func);
+      }
+    }
+
+    class SendButton {
+      constructor(id) {
+        this.input = byId(id);
+      }
+      update(data) {
+        this.input.disabled = data.state;
+      }
+    }
+    const fileInput = new FileInput("fileInput");
+    const endPoint = new EndPoint("endpoint");
+    const sendButton = new SendButton("sendButton");
     const status = new Status("status");
 
     const srcCanvas = new Canvas("sourceCanvas");
@@ -190,36 +233,41 @@
     const srcFile = new SourceFile();
 
     function checkFile(input) {
-      const file = input.files[0];
-      if ( !file ) return false;
+      const file = fileInput.getFile();
 
-      if ( false === srcFile.isValid(file) ) {
-        status.display("Please choose a PNG file.");
-        input.value = "";
+      if ( false === file ) {
+        status.update("Please choose a PNG file.");
         return false;
       }
       return file;
     }
 
     async function loadFile(file) {
-      try {
+      const data = { "img": null, "msg": '', "file": file, "state": false };
+      const obs = [srcCanvas, srcFile, sendButton, status];
+      try {        
         const bitmap = await createImageBitmap(file);
+        data.img = bitmap;
+        data.msg = `Loaded ${file.name} (${srcCanvas.width} x ${srcCanvas.height}).`;
 
-        srcCanvas.setSize(bitmap.width, bitmap.height).clear().draw(bitmap);
+        srcCanvas.update(data);
         
         bitmap.close();
 
         // Send the selected original PNG, rather than re-encoding the canvas.
-        srcFile.setFile(file);
-        sendButton.disabled = false;
+        srcFile.update(data);
+        sendButton.update(data);
 
-        status.display(`Loaded ${file.name} (${srcCanvas.width} x ${srcCanvas.height}).`);
+        status.update(data);
 
-        destCanvas.clear().setSize(256, 256);
+        //destCanvas.clear().setSize(256, 256);
       } catch (error) {
-        srcFile.setNull();
-        sendButton.disabled = true;
-        status.display(`Could not load image: ${error.message}`);
+        data.img = null;
+        data.msg = `Could not load image: ${error.message}`;
+        data.state = true;
+        srcFile.update(data);
+        sendButton.update(data);
+        status.update(data);
       }       
     }
 
@@ -230,14 +278,14 @@
       loadFile(file);      
     }
 
-    fileInput.addEventListener("change", inputChange);
+    fileInput.onchange(inputChange);
 
-    sendButton.addEventListener("click", async () => {
+    sendButton.input.addEventListener("click", async () => {
       if ( srcFile.isNull() ) return;
 
-      const endpoint = endpointInput.value.trim();
-      if ( !endpoint ) {
-        status.display("Enter the PHP endpoint URL first.");
+      //const endpoint = endpointInput.value.trim();
+      if ( !endPoint.url ) {
+        status.update("Enter the PHP endpoint URL first.");
         return;
       }
 
@@ -245,10 +293,10 @@
       formData.append("image", srcFile.file, srcFile.name);
 
       sendButton.disabled = true;
-      status.display("Sending image...");
+      status.update("Sending image...");
 
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(endPoint.url, {
           method: "POST",
           body: formData
         });
@@ -270,9 +318,9 @@
         destCanvas.setSize(bitmap.width, bitmap.height).clear().draw(bitmap);
         bitmap.close();
 
-        status.display(`Received ${bitmap.width} x ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
+        status.update(`Received ${bitmap.width} x ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
       } catch (error) {
-        status.display(`Request failed: ${error.message}`);
+        status.update(`Request failed: ${error.message}`);
       } finally {
         sendButton.disabled = srcFile.isNull();
       }
