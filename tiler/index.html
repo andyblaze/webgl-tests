@@ -189,7 +189,7 @@
 
     const srcFile = new SourceFile();
 
-    function getFile(input) {
+    function checkFile(input) {
       const file = input.files[0];
       if ( !file ) return false;
 
@@ -201,10 +201,7 @@
       return file;
     }
 
-    async function inputChange() {
-      const file = getFile(fileInput);
-      if ( false === file ) return false;
-
+    async function loadFile(file) {
       try {
         const bitmap = await createImageBitmap(file);
 
@@ -223,7 +220,14 @@
         srcFile.setNull();
         sendButton.disabled = true;
         status.display(`Could not load image: ${error.message}`);
-      }      
+      }       
+    }
+
+    async function inputChange() {
+      const file = checkFile(fileInput);
+      if ( false === file ) return false;
+
+      loadFile(file);      
     }
 
     fileInput.addEventListener("change", inputChange);
