@@ -25,7 +25,6 @@ fileInput.onchange((event) => loader.load(event));
 function checkOk() {
     if ( srcFile.isNull() ) return false;
 
-    //const endpoint = endpointInput.value.trim();
     if ( !endPoint.url ) {
         status.update("Enter the PHP endpoint URL first.");
         return false;
@@ -53,32 +52,40 @@ sendButton.input.addEventListener("click", async () => {
     if ( false === checkOk() ) return;
 
     const formData = prepForm();
+    const data = { "img": null, "msg": "" };
+    const obs = [destCanvas, status];
 
     try {
-    const response = await sendForm(endPoint.url, formData);
+        const response = await sendForm(endPoint.url, formData);
 
-    if (!response.ok) {
-        const detail = await response.text();
-        throw new Error(`HTTP ${response.status}: ${detail.slice(0, 500)}`);
-    }
+        if (!response.ok) {
+            const detail = await response.text();
+            throw new Error(`HTTP ${response.status}: ${detail.slice(0, 500)}`);
+        }
 
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("image/")) {
-        const detail = await response.text();
-        throw new Error(`Expected an image/png response, received "${contentType}". ${detail.slice(0, 300)}`);
-    }
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.includes("image/")) {
+            const detail = await response.text();
+            throw new Error(`Expected an image/png response, received "${contentType}". ${detail.slice(0, 300)}`);
+        }
 
-    const blob = await response.blob();    
-    const bitmap = await createImageBitmap(blob);
+        const blob = await response.blob();    
+        const bitmap = await createImageBitmap(blob);
 
-    destCanvas.update({ img: bitmap } );
-    
+        data.img = bitmap;
+        data.msg = `Received ${bitmap.width} x ${bitmap.height} image (${blob.size.toLocaleString()} bytes).`;
 
-    status.update(`Received ${bitmap.width} x ${bitmap.height} image (${blob.size.toLocaleString()} bytes).`);
-    bitmap.close();
+        for ( const o of obs )
+            o.update(data);
+
+        bitmap.close();
+
     } catch (error) {
-    status.update(`Request failed: ${error.message}`);
+        data.msg = `Request failed: ${error.message}`;
+        data.img = null;
+        status.update(data);
+        destCanvas.update(data);
     } finally {
-    sendButton.update(srcFile.isNull());
+        sendButton.update(srcFile.isNull());
     }
 });
