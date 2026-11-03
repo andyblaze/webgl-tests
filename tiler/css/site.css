@@ -1,0 +1,83 @@
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 { margin-top: 0; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+
+    input, button {
+      font: inherit;
+      padding: 8px 10px;
+    }
+
+    input[type="url"] {
+      width: min(420px, 80vw);
+    }
+
+    button { cursor: pointer; }
+    button:disabled { cursor: wait; opacity: 0.6; }
+
+    .canvases {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .panel { min-width: 0; }
+
+    .canvas-wrap {
+      display: grid;
+      place-items: center;
+      min-height: 280px;
+      padding: 12px;
+      overflow: auto;
+      border: 1px solid #8888;
+      border-radius: 8px;
+      background-color: #8881;
+      background-image:
+        linear-gradient(45deg, #8882 25%, transparent 25%),
+        linear-gradient(-45deg, #8882 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #8882 75%),
+        linear-gradient(-45deg, transparent 75%, #8882 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      image-rendering: auto;
+    }
+
+    #status {
+      min-height: 1.5em;
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 700px) {
+      .canvases { grid-template-columns: 1fr; }
+    }
