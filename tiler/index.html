@@ -265,14 +265,21 @@
       }       
     }
 
-    async function inputChange() {
-      const file = checkFile(fileInput);
-      if ( false === file ) return false;
+    class Changer {
+        constructor(input) {
+            this.input = input;
+        }
+        async inputChange() {
+        const file = checkFile(this.input);
+        if ( false === file ) return false;
 
-      loadFile(file);      
+        loadFile(file);      
+        }
     }
 
-    fileInput.onchange(inputChange);
+    const changer = new Changer(fileInput);
+
+    fileInput.onchange(changer.inputChange);
 
     sendButton.input.addEventListener("click", async () => {
       if ( srcFile.isNull() ) return;
