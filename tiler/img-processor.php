@@ -39,6 +39,3 @@ $im1->copymergegrayTo($im2, $srcSz, $destSz, 85);
 $im2->toBrowser();
 $im1->clear();
 $im2->clear();
-
-$response = ['ok'=>true, 'detail'=>'words', 'blob'=>null];
-echo json_encode($response);

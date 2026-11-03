@@ -69,13 +69,15 @@ sendButton.input.addEventListener("click", async () => {
         throw new Error(`Expected an image/png response, received "${contentType}". ${detail.slice(0, 300)}`);
     }
 
-    const resultBlob = await response.blob();
-    const bitmap = await createImageBitmap(resultBlob);
+    const blob = await response.blob();    
+    const bitmap = await createImageBitmap(blob);
+    console.log(blob, bitmap);
 
-    destCanvas.setSize(bitmap.width, bitmap.height).clear().draw(bitmap);
+    destCanvas.update({ img: bitmap } );
+    
+
+    status.update(`Received ${bitmap.width} x ${bitmap.height} image (${blob.size.toLocaleString()} bytes).`);
     bitmap.close();
-
-    status.update(`Received ${bitmap.width} x ${bitmap.height} image (${resultBlob.size.toLocaleString()} bytes).`);
     } catch (error) {
     status.update(`Request failed: ${error.message}`);
     } finally {
