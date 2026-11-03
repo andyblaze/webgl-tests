@@ -56,7 +56,6 @@ sendButton.input.addEventListener("click", async () => {
 
     try {
     const response = await sendForm(endPoint.url, formData);
-    console.log(response);
 
     if (!response.ok) {
         const detail = await response.text();
@@ -71,7 +70,6 @@ sendButton.input.addEventListener("click", async () => {
 
     const blob = await response.blob();    
     const bitmap = await createImageBitmap(blob);
-    console.log(blob, bitmap);
 
     destCanvas.update({ img: bitmap } );
     
