@@ -22,27 +22,41 @@ loader.addObservers([srcCanvas, srcFile, sendButton, status]);
 
 fileInput.onchange((event) => loader.load(event));
 
-
-sendButton.input.addEventListener("click", async () => {
-    if ( srcFile.isNull() ) return;
+function checkOk() {
+    if ( srcFile.isNull() ) return false;
 
     //const endpoint = endpointInput.value.trim();
     if ( !endPoint.url ) {
         status.update("Enter the PHP endpoint URL first.");
-        return;
+        return false;
     }
+    return true;  
+}
 
+function prepForm() {
     const formData = new FormData();
     formData.append("image", srcFile.file, srcFile.name);
 
     sendButton.update(true);
-    status.update("Sending image...");
+    status.update("Sending image...");   
+    return formData; 
+}
+
+async function sendForm(url, data) {
+    return fetch(url, {
+        method: "POST",
+        body: data
+    });
+}
+
+sendButton.input.addEventListener("click", async () => {
+    if ( false === checkOk() ) return;
+
+    const formData = prepForm();
 
     try {
-    const response = await fetch(endPoint.url, {
-        method: "POST",
-        body: formData
-    });
+    const response = await sendForm(endPoint.url, formData);
+    console.log(response);
 
     if (!response.ok) {
         const detail = await response.text();
