@@ -6,6 +6,7 @@ import Status from "./status.js";
 import Canvas from "./canvas.js";
 import SourceFile from "./srcfile.js";
 import FileLoader from "./file-loader.js";
+import Uploader from "./uploader.js";
 
 const fileInput = new FileInput("fileInput");
 const endPoint = new EndPoint("endpoint");
@@ -22,41 +23,17 @@ loader.addObservers([srcCanvas, srcFile, sendButton, status]);
 
 fileInput.onchange((event) => loader.load(event));
 
-function checkOk() {
-    if ( srcFile.isNull() ) return false;
-
-    if ( !endPoint.url ) {
-        status.update("Enter the PHP endpoint URL first.");
-        return false;
-    }
-    return true;  
-}
-
-function prepForm() {
-    const formData = new FormData();
-    formData.append("image", srcFile.file, srcFile.name);
-
-    sendButton.update(true);
-    status.update("Sending image...");   
-    return formData; 
-}
-
-async function sendForm(url, data) {
-    return fetch(url, {
-        method: "POST",
-        body: data
-    });
-}
+const uploader = new Uploader(srcFile, endPoint, status, sendButton);
 
 sendButton.input.addEventListener("click", async () => {
-    if ( false === checkOk() ) return;
+    if ( false === uploader.isOk() ) return;
+    uploader.init();
 
-    const formData = prepForm();
     const data = { "img": null, "msg": "" };
     const obs = [destCanvas, status];
 
     try {
-        const response = await sendForm(endPoint.url, formData);
+        const response = await uploader.send();
 
         if (!response.ok) {
             const detail = await response.text();
