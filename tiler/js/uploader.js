@@ -1,10 +1,13 @@
 export default class Uploader {
-    constructor(src, dest, stat, btn) {
+    constructor(src, dest, stat) {
         this.src = src;
         this.dest = dest;
         this.status = stat;
-        this.sendButton = btn;
+        this.sendButton = null;
         this.formData = null;
+    }
+    setButton(b) {
+        this.sendButton = b;
     }
     isOk() {
         if ( this.src.isNull() ) return false;
