@@ -5,30 +5,16 @@ require_once(__DIR__ . '/utils.php');
 require_these([
     'color-gd',
     'io',
+    'input',
     'copier',
     'cropper',
     'image-gd'
 ]);
 
-class Input {
-    private static function getData(array $in, string $key): object|null {
-        return isset($in[$key]) ? (object)$in[$key] : null;
-    }
-    public static function file(string $key): object|null {
-        return self::getData($_FILES, $key);
-    }
-    public static function post(string $key): object|null {
-        return self::getData($_POST, $key);
-    }
-    public static function get(string $key): object|null {
-        return self::getData($_GET, $key);
-    }
-}
+$upload = Input::file('image');
 
-$file = Input::file('image');
-
-$im1 = new ImageGd(256, 256, 'png');
-$im1->loadFile($file->tmp_name);
+$im1 = new ImageGd();
+$im1->loadFile($upload->tmp_name);
 $im1->grayscale()->toBrowser();
 $im1->clear();
 /*$im2 = new ImageGd(512, 512, 'png');
