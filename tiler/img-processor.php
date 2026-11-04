@@ -10,8 +10,19 @@ require_these([
     'image-gd'
 ]);
 
+class Input {
+    public static function file(string $key): object {
+        return (object)$_FILES[$key];
+    }
+}
+
+$file = Input::file('image');
+
 $im1 = new ImageGd(256, 256, 'png');
-$im2 = new ImageGd(512, 512, 'png');
+$im1->loadFile($file->tmp_name);
+$im1->grayscale()->toBrowser();
+$im1->clear();
+/*$im2 = new ImageGd(512, 512, 'png');
 $col = new ColorGd();
 
 [$r, $g, $b] = $im1->allocateThese('#ff0000', '#00ff00', '#0000ff');
@@ -38,4 +49,4 @@ $destSz = rect(380, 380);
 $im1->copymergegrayTo($im2, $srcSz, $destSz, 85);
 $im2->toBrowser();
 $im1->clear();
-$im2->clear();
+$im2->clear();*/

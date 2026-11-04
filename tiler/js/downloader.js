@@ -1,18 +1,11 @@
-export default class Downloader {
+import Observable from "./observable.js";
+
+export default class Downloader extends Observable {
     constructor(obs=[]) {
+        super();
         this.obsservers = obs;
         this.data = { "img": null, "msg": "" };
         this.button = null;
-    }
-    notify() {
-        for ( const o of this.obsservers )
-            o.update(this.data);
-    }
-    addObservers(o) {
-        if ( Array.isArray(o) )
-            this.obsservers = o;
-        else 
-            this.obsservers.push(o);
     }
     setButton(btn) {
         this.button = btn;

@@ -1,6 +1,4 @@
 import { byId } from "./functions.js";
-import Uploader from "./uploader.js";
-import Downloader from "./downloader.js";
 
 export default class SendButton {
     constructor(id) {
@@ -14,9 +12,6 @@ export default class SendButton {
     }
     setDownloader(d) {
         this.download = d;
-    }
-    addObservers(o) {
-        this.download.addObservers(o);
     }
     update(data) {
         this.input.disabled = data.state;

@@ -1,14 +1,10 @@
-export default class FileLoader {
+import Observable from "./observable.js";
+
+export default class FileLoader extends Observable {
     constructor(input) {
+        super();
         this.input = input;
-        this.obsservers = [];
         this.data = { "img": null, "msg": '', "file": null, "state": false };
-    }
-    addObservers(o) {
-        if ( Array.isArray(o) )
-            this.obsservers = o;
-        else 
-            this.obsservers.push(o);
     }
     checkFile() {
         const file = this.input.getFile();
@@ -19,10 +15,6 @@ export default class FileLoader {
         }
         return file;
     }  
-    notify() {
-        for ( const o of this.obsservers )
-            o.update(this.data);
-    }
     async loadFile(file) {
         try {        
             const bitmap = await createImageBitmap(file);

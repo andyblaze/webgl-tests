@@ -1,7 +1,7 @@
 <?php 
 
 class IO {
-    private static array $validExts = ['png', 'jpg', 'jpeg'];
+    private static array $validExts = ['png', 'jpg', 'jpeg', 'tmp'];
     private static function ext(string $fname): string {
         $ext = strtolower(pathinfo($fname, PATHINFO_EXTENSION));
         if ( false === in_array($ext, self::$validExts) ) return false;
@@ -40,29 +40,26 @@ class IO {
             if ( false === $ext )
                 $result['errors'][] = "Wrong file type: {$ext}";
 
-            $result['ext'] = $ext;
-
             $sz = getimagesize($file);
             if ( false === $sz )
                 $result['errors'][] = 'Cannot get image size';
             else {
-                $w = $sz[0];
-                $h = $sz[1];
-
-                if ( $w === 0 || $h === 0 ) 
-                    $result['errors'][] = 'An image dimension is zero';
-
-                    $result['w'] = $w;
-                    $result['h'] = $h;  
+                $result['w'] = $sz[0];
+                $result['h'] = $sz[1]; 
             } 
 
             if ( count($result['errors']) > 0 )
                 array_unshift($result['errors'], "IO::createfrom({$file})");
 
-            if ( $ext === 'png' )
+            if ($sz[2] === IMAGETYPE_PNG) {
                 $result['img'] = imagecreatefrompng($file);
-            if ( $ext === 'jpg' )
+                $result['ext'] = 'png';
+            }
+
+            if ($sz[2] === IMAGETYPE_JPEG) {
                 $result['img'] = imagecreatefromjpeg($file);
+                $result['ext'] = 'jpg';
+            }
 
             if ( false !== $result['img'] && count($result['errors']) === 0 ) {
                 $result['ok'] = true;
