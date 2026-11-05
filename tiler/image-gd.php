@@ -66,6 +66,9 @@ class ImageGd {
     public function colorallocate(ColorGd $c) {
         return imagecolorallocate($this->img, $c->r, $c->g, $c->b);
     }
+    public function colorallocateRaw(int $r, int $g, int $b) {
+        return imagecolorallocate($this->img, $r, $g, $b);
+    }
     public function colorallocatealpha(ColorGd $c) {
         return imagecolorallocatealpha($this->img, $c->r, $c->g, $c->b, $c->a);
     }
