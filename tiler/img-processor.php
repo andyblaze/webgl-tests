@@ -12,6 +12,51 @@ require_these([
     'image-gd'
 ]);
 
+function blendSeam(GdImage $image, int $bandWidth, string $mode): void {
+    $width = imagesx($image);
+    $height = imagesy($image);
+
+    if (!in_array($mode, ['H', 'V'], true))
+        throw new InvalidArgumentException('Invalid blend mode');
+
+    $horizontal = $mode === 'H';
+
+    $middle = intdiv($horizontal ? $height : $width, 2);
+    $length = $horizontal ? $width : $height;
+
+    for ($d = $bandWidth - 1; $d >= 0; $d--) {
+
+        $u = ($bandWidth - 1 - $d) / max(1, $bandWidth - 1);
+
+        // Smoothstep interpolation
+        $t = 0.5 * ($u * $u * (3 - 2 * $u));
+
+        $a = $middle - 1 - $d;
+        $b = $middle + $d;
+
+        for ($i = 0; $i < $length; $i++) {
+
+            $x1 = $horizontal ? $i : $a;
+            $y1 = $horizontal ? $a : $i;
+
+            $x2 = $horizontal ? $i : $b;
+            $y2 = $horizontal ? $b : $i;
+
+            $p1 = (imagecolorat($image, $x1, $y1) >> 16) & 0xFF;
+            $p2 = (imagecolorat($image, $x2, $y2) >> 16) & 0xFF;
+
+            $new1 = (int) round($p1 * (1 - $t) + $p2 * $t);
+            $new2 = (int) round($p2 * (1 - $t) + $p1 * $t);
+
+            $c1 = imagecolorallocate($image, $new1, $new1, $new1);
+            $c2 = imagecolorallocate($image, $new2, $new2, $new2);
+
+            imagesetpixel($image, $x1, $y1, $c1);
+            imagesetpixel($image, $x2, $y2, $c2);
+        }
+    }
+}
+
 $tiling = new Tiling();
 
 $upload = Input::file('image');
@@ -19,24 +64,11 @@ $upload = Input::file('image');
 $im1 = new ImageGd();
 $im1->loadFile($upload->tmp_name);
 $im2 = new ImageGd($im1->width, $im1->height, 'png');
+$im1->grayscale();
 
 $tiling->quadrantize($im1, $im2);
-
-/*$srcSz = rect(0, 0, $halfW, $halfH);
-$destSz = rect($halfW, $halfH);
-$im1->copyTo($im2, $srcSz, $destSz);
-
-$srcSz = rect($halfW, 0, $halfW, $halfH);
-$destSz = rect(0, $halfH);
-$im1->copyTo($im2, $srcSz, $destSz);
-
-$srcSz = rect(0, $halfH, $halfW, $halfH);
-$destSz = rect($halfW, 0);
-$im1->copyTo($im2, $srcSz, $destSz);
-
-$srcSz = rect($halfW, $halfH, $halfW, $halfH);
-$destSz = rect(0, 0);
-$im1->copyTo($im2, $srcSz, $destSz);*/
+blendSeam($im2->gd, 64, 'H');
+blendSeam($im2->gd, 64, 'V');
 
 $im2->toBrowser();
 $im2->clear();

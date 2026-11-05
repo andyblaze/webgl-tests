@@ -25,7 +25,8 @@ export default class Associations {
             { label: "cloud", img: "./textures/cloud-normal.png" },
             { label: "marble", img: "./textures/marble-normal.png" },
             { label: "speck", img: "./textures/speck-normal.png" },
-            { label: "circles", img: "./textures/circles-normal.png" }
+            { label: "circles", img: "./textures/circles-normal.png" },
+            { label: "first", img: "./textures/1st-tile-normal.png" }
         ];
         this.roughnessMaps = [
             { label: "spots", img: "./textures/spots.png" },
@@ -35,7 +36,8 @@ export default class Associations {
             { label: "cloud", img: "./textures/cloud.png" },
             { label: "marble", img: "./textures/marble.png" },
             { label: "speck", img: "./textures/speck.png" },
-            { label: "circles", img: "./textures/circles.png" }
+            { label: "circles", img: "./textures/circles.png" },
+            { label: "first", img: "./textures/1st-tile.png" }
         ];
     }
     groupLength(group) {
