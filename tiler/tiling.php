@@ -4,6 +4,20 @@ class Tiling {
     public function __construct() {
 
     }
+    public function mirror(ImageGd $im1, ImageGd $im2) {
+        $w = $im1->width;
+        $h = $im1->height;
+        $doubleW = $w * 2;
+        $doubleH = $h * 2;
+        $im2->scale($doubleW, $doubleH);
+        $src = rect(0, 0, $w, $h);
+        $dest = rect(0, 0, $w, $h);
+        $im1->resampleTo($im2, $src, $dest);
+        $im1->mirror();
+        $dest = rect($w, 0, $w, $h);
+        $im1->resampleTo($im2, $src, $dest);
+        $im2->scale($w, $h);
+    }
     public function quadrantize(ImageGd $im1, ImageGd $im2): void {
         $halfW = $im1->width / 2;
         $halfH =  $im1->height / 2;
@@ -71,5 +85,10 @@ class Tiling {
                 $image->setpixel($x2, $y2, $c2);
             }
         }
+    }
+    public function offsetAndBlend(ImageGd $im1, ImageGd $im2, int $bandWidth) {
+        $this->quadrantize($im1, $im2);
+        $this->blendSeam($im2, $bandWidth, 'H');
+        $this->blendSeam($im2, $bandWidth, 'V');
     }
 }
