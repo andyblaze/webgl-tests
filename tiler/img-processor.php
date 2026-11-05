@@ -8,37 +8,9 @@ require_these([
     'input',
     'copier',
     'cropper',
+    'tiling',
     'image-gd'
 ]);
-
-class Tiling {
-    public function __construct() {
-
-    }
-    public function quadrantize(ImageGd $im1, ImageGd $im2): void {
-        $w = $im1->width;
-        $h = $im1->height; 
-
-        $halfW = $w / 2;
-        $halfH =  $h / 2;
-
-        $srcSz = rect(0, 0, $halfW, $halfH);
-        $destSz = rect($halfW, $halfH);
-        $im1->copyTo($im2, $srcSz, $destSz);
-
-        $srcSz = rect($halfW, 0, $halfW, $halfH);
-        $destSz = rect(0, $halfH);
-        $im1->copyTo($im2, $srcSz, $destSz);
-
-        $srcSz = rect(0, $halfH, $halfW, $halfH);
-        $destSz = rect($halfW, 0);
-        $im1->copyTo($im2, $srcSz, $destSz);
-
-        $srcSz = rect($halfW, $halfH, $halfW, $halfH);
-        $destSz = rect(0, 0);
-        $im1->copyTo($im2, $srcSz, $destSz);
-    }
-}
 
 $tiling = new Tiling();
 
@@ -46,13 +18,6 @@ $upload = Input::file('image');
 
 $im1 = new ImageGd();
 $im1->loadFile($upload->tmp_name);
-
-/*$w = $im1->width;
-$h = $im1->height; 
-
-$halfW = $w / 2;
-$halfH =  $h / 2;*/
-
 $im2 = new ImageGd($im1->width, $im1->height, 'png');
 
 $tiling->quadrantize($im1, $im2);
