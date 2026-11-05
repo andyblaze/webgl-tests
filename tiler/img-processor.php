@@ -12,8 +12,6 @@ require_these([
     'image-gd'
 ]);
 
-
-
 $tiling = new Tiling();
 
 $upload = Input::file('image');
