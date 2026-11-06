@@ -27,8 +27,6 @@ class Tiling {
         $im1->mirror();
 
         $im1->resampleTo($im2, $src, $dests[3]);
-        $this->blendSeam($im2, 432, 'H');
-        $this->blendSeam($im2, 432, 'V');
         $im2->scale($w, $h);
     }
     public function quadrantize(ImageGd $im1, ImageGd $im2): void {
@@ -103,5 +101,53 @@ class Tiling {
         $this->quadrantize($im1, $im2);
         $this->blendSeam($im2, $bandWidth, 'H');
         $this->blendSeam($im2, $bandWidth, 'V');
+    }
+
+    public function matchEdges(ImageGd $img, int $bandWidth): void {
+        $width = $img->width;
+        $height = $img->height;
+
+        // Match left and right edges, then top and bottom.
+        foreach (['H', 'V'] as $mode) {
+
+            $horizontal = $mode === 'H';
+            $length = $horizontal ? $height : $width;
+            $depth  = $horizontal ? $width : $height;
+
+            $color = new ColorGd();
+
+            for ($d = 0; $d < $bandWidth; $d++) {
+
+                $t = ($bandWidth === 1)
+                    ? 1
+                    : 0.5 * (1 - cos(M_PI * $d / ($bandWidth - 1)));
+
+                for ($i = 0; $i < $length; $i++) {
+
+                    $x1 = $horizontal ? $d : $i;
+                    $y1 = $horizontal ? $i : $d;
+
+                    $x2 = $horizontal ? $depth - 1 - $d : $i;
+                    $y2 = $horizontal ? $i : $depth - 1 - $d;
+
+                    $p1 = ($img->colorat($x1, $y1) >> 16) & 0xFF;
+                    $p2 = ($img->colorat($x2, $y2) >> 16) & 0xFF;
+
+                    $average = ($p1 + $p2) / 2;
+
+                    $new1 = (int) round($p1 * (1 - $t) + $average * $t);
+                    $new2 = (int) round($p2 * (1 - $t) + $average * $t);
+
+                    $color->set($new1, $new1, $new1);
+                    $c1 = $img->colorallocate($color);
+
+                    $color->set($new2, $new2, $new2);
+                    $c2 = $img->colorallocate($color);
+
+                    $img->setpixel($x1, $y1, $c1);
+                    $img->setpixel($x2, $y2, $c2);
+                }
+            }
+        }
     }
 }

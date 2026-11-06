@@ -17,13 +17,18 @@ $tiling = new Tiling();
 $upload = Input::file('image');
 
 $im1 = new ImageGd();
-$im1->loadFile($upload->tmp_name);
+$im1->loadFile('trt.png');//$upload->tmp_name);
 $im2 = new ImageGd($im1->width, $im1->height, 'png');
 $im1->grayscale();
+$srcSz = rect(0, 0, 512, 512);
+$destSz = rect(0, 0, 512, 512);
+$im1->resampleTo($im2, $srcSz, $destSz);
+
+$tiling->matchEdges($im2, 64);
 
 //$tiling->mirror($im1, $im2);
 
-$tiling->offsetAndBlend($im1, $im2, 64);
+//$tiling->offsetAndBlend($im1, $im2, 64);
 
 $im2->toBrowser();
 $im2->clear();
