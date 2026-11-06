@@ -11,11 +11,24 @@ class Tiling {
         $doubleH = $h * 2;
         $im2->scale($doubleW, $doubleH);
         $src = rect(0, 0, $w, $h);
-        $dest = rect(0, 0, $w, $h);
-        $im1->resampleTo($im2, $src, $dest);
+        $dests = [
+            rect(0, 0, $w, $h),
+            rect($w, 0, $w, $h),
+            rect(0, $h, $w, $h),
+            rect($w, $h, $w, $h)
+        ];
+        $im1->resampleTo($im2, $src, $dests[0]);
         $im1->mirror();
-        $dest = rect($w, 0, $w, $h);
-        $im1->resampleTo($im2, $src, $dest);
+
+        $im1->resampleTo($im2, $src, $dests[1]);
+        $im1->mirror()->flip();
+
+        $im1->resampleTo($im2, $src, $dests[2]);
+        $im1->mirror();
+
+        $im1->resampleTo($im2, $src, $dests[3]);
+        $this->blendSeam($im2, 432, 'H');
+        $this->blendSeam($im2, 432, 'V');
         $im2->scale($w, $h);
     }
     public function quadrantize(ImageGd $im1, ImageGd $im2): void {

@@ -21,9 +21,9 @@ $im1->loadFile($upload->tmp_name);
 $im2 = new ImageGd($im1->width, $im1->height, 'png');
 $im1->grayscale();
 
-$tiling->mirror($im1, $im2);
+//$tiling->mirror($im1, $im2);
 
-//$tiling->offsetAndBlend($im1, $im2, 64);
+$tiling->offsetAndBlend($im1, $im2, 64);
 
 $im2->toBrowser();
 $im2->clear();
