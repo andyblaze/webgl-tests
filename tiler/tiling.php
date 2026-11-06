@@ -120,7 +120,9 @@ class Tiling {
 
                 $t = ($bandWidth === 1)
                     ? 1
-                    : 0.5 * (1 - cos(M_PI * $d / ($bandWidth - 1)));
+                    : 0.5 * (1 + cos(M_PI * $d / ($bandWidth - 1)));
+
+                //$t = 0.5 *  (1 + cos(M_PI * $d / ($bandWidth - 1)));
 
                 for ($i = 0; $i < $length; $i++) {
 
