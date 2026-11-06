@@ -17,7 +17,7 @@ $tiling = new Tiling();
 $upload = Input::file('image');
 
 $im1 = new ImageGd();
-$im1->loadFile('trt.png');//$upload->tmp_name);
+$im1->loadFile($upload->tmp_name);
 $im2 = new ImageGd($im1->width, $im1->height, 'png');
 $im1->grayscale();
 $srcSz = rect(0, 0, 512, 512);
