@@ -15,6 +15,7 @@ require_these([
 $tiling = new Tiling();
 
 $upload = Input::file('image');
+$func = Input::post('func');
 
 $im1 = new ImageGd();
 $im1->loadFile($upload->tmp_name);
@@ -24,11 +25,14 @@ $srcSz = rect(0, 0, 512, 512);
 $destSz = rect(0, 0, 512, 512);
 $im1->resampleTo($im2, $srcSz, $destSz);
 
-$tiling->matchEdges($im2, 64);
+if ( $func === 'mirror' )
+    $tiling->mirror($im1, $im2);
 
-//$tiling->mirror($im1, $im2);
+if ( $func === 'edgeMatch' )
+    $tiling->matchEdges($im2, 64);
 
-//$tiling->offsetAndBlend($im1, $im2, 64);
+if ( $func === 'offsetBlend' )
+    $tiling->offsetAndBlend($im1, $im2, 64);
 
 $im2->toBrowser();
 $im2->clear();

@@ -1,8 +1,9 @@
 export default class Uploader {
-    constructor(src, dest, stat) {
+    constructor(src, dest, stat, tt) {
         this.src = src;
         this.dest = dest;
         this.status = stat;
+        this.tileType = tt;
         this.sendButton = null;
         this.formData = null;
     }
@@ -21,6 +22,7 @@ export default class Uploader {
     init() {
         this.formData = new FormData();
         this.formData.append("image", this.src.file, this.src.name);
+        this.formData.append("function", this.tileType.value);
 
         this.sendButton.update(true);
         this.status.update("Sending image...");
