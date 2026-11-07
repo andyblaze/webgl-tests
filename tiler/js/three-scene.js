@@ -1,6 +1,6 @@
 import { byId } from "./functions.js";
 
-class ThreeScene {
+export default class ThreeScene {
     constructor(three, id) {
         this.wrap = byId(id);
         this.scene = new three.Scene();
@@ -20,21 +20,21 @@ class ThreeScene {
 
         this.wrap.appendChild(this.renderer.domElement);
 
-        const lightR = new three.DirectionalLight(0xff0000, 2);
-        lightR.position.set(8, 5, 0);
+        const lightR = new three.SpotLight(0xff0000, 40);
+        lightR.position.set(8, 5, 5);
         this.scene.add(lightR);
 
-        const lightG = new three.DirectionalLight(0x00ff00, 2);
-        lightG.position.set(-8, 5, 0);
+        const lightG = new three.SpotLight(0x00ff00, 40);
+        lightG.position.set(-8, 5, 5);
         this.scene.add(lightG);
 
-        const lightB = new three.DirectionalLight(0x0000ff, 2);
-        lightB.position.set(0, -8, 0);
+        const lightB = new three.SpotLight(0x0000ff, 40);
+        lightB.position.set(0, -8, 5);
         this.scene.add(lightB);
 
-        this.geometry = new three.SphereGeometry(1, 64, 64);
+        this.geometry = new three.SphereGeometry(1, 256, 256);
 
-        this.material = new three.MeshStandardMaterial({
+        this.material = new three.MeshPhysicalMaterial({
             color: 0xffffff,
             roughness: 0.6,
             metalness: 0.8,

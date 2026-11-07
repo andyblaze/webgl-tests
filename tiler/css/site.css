@@ -27,7 +27,7 @@
       font-size: 0.9rem;
     }
 
-    input, button {
+    input, button, select {
       font: inherit;
       padding: 8px 10px;
     }
