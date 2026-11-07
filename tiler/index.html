@@ -7,6 +7,13 @@
   <link href="css/site.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<script type="importmap">
+{
+    "imports": {
+        "three": "./js/three/three.module.js"
+    }
+}
+</script>
   <h1>ImageGd canvas test</h1>
 
   <div class="controls">
@@ -35,6 +42,13 @@
       <h2>2. Processed image</h2>
       <div class="canvas-wrap">
         <canvas id="resultCanvas" width="256" height="256"></canvas>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Three preview</h2>
+      <div class="canvas-wrap" id="three-wrap">
+        
       </div>
     </section>
   </main>

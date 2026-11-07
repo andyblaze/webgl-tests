@@ -18,8 +18,12 @@ export default class Canvas {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         return this;
     }
+    ondraw() {
+
+    }
     draw(img) {
         this.ctx.drawImage(img, 0, 0);
+        this.ondraw();
         return this;
     }
     update(data) {
