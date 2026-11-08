@@ -1,5 +1,9 @@
 <?php 
 
+interface Tile {
+    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void;
+}
+
 class MirrorTile {
 
 }
