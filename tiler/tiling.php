@@ -1,6 +1,39 @@
 <?php 
 
+class MirrorTile {
+
+}
+class MatchEdgesTile {
+
+}
+class OffsetAndBlendTile {
+
+}
+
+$registry = [
+    'mirror'=> 'MirrorTile',
+    'matchEdges'=> 'MatchEdgesTile',
+    'offsetAndBlend'=> 'OffsetAndBlendTile'
+];
+
+class TileFactory {
+    private static array $registry = [];
+    public static function init(array $reg) {
+        self::$registry = $reg;
+    }
+    public static function create(string $key): object|null {
+        if ( true === array_key_exists($key, self::$registry ) ) {
+            $cls = self::$registry[$key];
+            return new $cls();
+        }
+        return null;
+    }
+}
+
+TileFactory::init($registry);
+
 class Tiling {
+    private object|null $strategy = null;
     public function __construct() {
 
     }
@@ -102,7 +135,6 @@ class Tiling {
         $this->blendSeam($im2, $bandWidth, 'H');
         $this->blendSeam($im2, $bandWidth, 'V');
     }
-
     public function matchEdges(ImageGd $img, int $bandWidth): void {
         $width = $img->width;
         $height = $img->height;
