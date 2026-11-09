@@ -4,14 +4,32 @@ interface Tile {
     public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void;
 }
 
-class MirrorTile {
-
+class MirrorTile implements Tile {
+    private Tiling|null $tiling = null; 
+    public function __construct(Tiling $t) {
+        $this->tiling = $t;
+    }
+    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
+        $this->tiling->mirror($im1, $im2);
+    }
 }
 class MatchEdgesTile {
-
+    private Tiling|null $tiling = null; 
+    public function __construct(Tiling $t) {
+        $this->tiling = $t;
+    }
+    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
+        $this->tiling->matchEdges($im1, $bandWidth);
+    }
 }
 class OffsetAndBlendTile {
-
+    private Tiling|null $tiling = null; 
+    public function __construct(Tiling $t) {
+        $this->tiling = $t;
+    }
+    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
+        $this->tiling->offsetAndBlend($im1, $im2, $bandWidth);
+    }
 }
 
 $registry = [
@@ -25,10 +43,10 @@ class TileFactory {
     public static function init(array $reg) {
         self::$registry = $reg;
     }
-    public static function create(string $key): object|null {
+    public static function create(string $key, Tiling $t): object|null {
         if ( true === array_key_exists($key, self::$registry ) ) {
             $cls = self::$registry[$key];
-            return new $cls();
+            return new $cls($t);
         }
         return null;
     }
