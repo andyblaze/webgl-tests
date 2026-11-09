@@ -26,7 +26,9 @@ $classname = Input::post('classname');
 $tiler = TileFactory::create($classname, new Tiling());
 $tiler->apply($im1, $im2, 64);
 
-$im2->toBrowser();
+$im3 = normalMap($im2, 1);
+
+$im3->toBrowser();
 $im2->clear();
 
 /* 

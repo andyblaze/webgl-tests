@@ -57,7 +57,7 @@ export default class ThreeScene {
         tex.wrapT = three.RepeatWrapping;
 
         tex.repeat.set(4, 4);
-        this.material.map = tex;
+        this.material.normalMap = tex;
         this.material.needsUpdate = true;        
     }
     render() {
