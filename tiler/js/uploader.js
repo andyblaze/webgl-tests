@@ -21,8 +21,8 @@ export default class Uploader {
     }
     init() {
         this.formData = new FormData();
-        this.formData.append("method", this.tileType.value);
-        this.formData.append("image", this.src.file, this.src.name);        
+        this.formData.append(this.tileType.name, this.tileType.value);
+        this.formData.append('image', this.src.file, this.src.name);        
 
         this.sendButton.update(true);
         this.status.update("Sending image...");

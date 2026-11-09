@@ -10,23 +10,7 @@ import Uploader from "./uploader.js";
 import Downloader from "./downloader.js";
 import ThreeScene from "./three-scene.js"
 import * as THREE from "three";
-import { byId } from "./functions.js";
-
-class TileType {
-    constructor(id) {
-        this.select = byId(id);
-        this.val = this.select.value;
-    }
-    onchange(func) {
-        this.select.addEventListener("change", func);
-    }
-    change() {
-        this.val = this.select.value;
-    }
-    get value() {
-        return this.val;
-    }
-}
+import TileType from "./tiletype.js";
 
 const tileType = new TileType("tileType");
 tileType.onchange((event) => tileType.change(event));

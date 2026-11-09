@@ -10,7 +10,7 @@ class MirrorTile implements Tile {
         $this->tiling = $t;
     }
     public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
-        $this->tiling->mirror($im1, $im2);
+        $this->tiling->mirror($img1, $img2);
     }
 }
 class MatchEdgesTile {
@@ -19,7 +19,7 @@ class MatchEdgesTile {
         $this->tiling = $t;
     }
     public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
-        $this->tiling->matchEdges($im1, $bandWidth);
+        $this->tiling->matchEdges($img2, $bandWidth);
     }
 }
 class OffsetAndBlendTile {
@@ -28,7 +28,7 @@ class OffsetAndBlendTile {
         $this->tiling = $t;
     }
     public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
-        $this->tiling->offsetAndBlend($im1, $im2, $bandWidth);
+        $this->tiling->offsetAndBlend($img1, $img2, $bandWidth);
     }
 }
 

@@ -12,29 +12,19 @@ require_these([
     'image-gd'
 ]);
 
-$tiling = new Tiling();
-
 $upload = Input::file('image');
-$method = Input::post('method');
 
 $im1 = new ImageGd();
 $im1->loadFile($upload->tmp_name);
 $im2 = new ImageGd($im1->width, $im1->height, 'png');
 $im1->grayscale();
-$srcSz = rect(0, 0, 512, 512);
-$destSz = rect(0, 0, 512, 512);
+$srcSz = rect(0, 0, $im1->width, $im1->height);
+$destSz = rect(0, 0, $im1->width, $im1->height);
 $im1->resampleTo($im2, $srcSz, $destSz);
 
-switch ($method) {
-    case 'mirror' : $tiling->mirror($im1, $im2);
-    break;
-
-    case 'matchEdges' : $tiling->matchEdges($im2, 64);
-    break;
-
-    case 'offsetAndBlend' : $tiling->offsetAndBlend($im1, $im2, 64);
-    break;
-}
+$classname = Input::post('classname');
+$tiler = TileFactory::create($classname, new Tiling());
+$tiler->apply($im1, $im2, 64);
 
 $im2->toBrowser();
 $im2->clear();
