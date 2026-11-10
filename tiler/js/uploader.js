@@ -5,6 +5,7 @@ export default class Uploader {
         this.status = args.status;
         this.tileType = args.tileType;
         this.strength = args.strength;
+        this.bandwidth = args.bandwidth;
         this.sendButton = null;
         this.formData = null;
     }
@@ -24,6 +25,7 @@ export default class Uploader {
         this.formData = new FormData();
         this.formData.append(this.tileType.name, this.tileType.value);
         this.formData.append(this.strength.name, this.strength.value);
+        this.formData.append(this.bandwidth.name, this.bandwidth.value);
         this.formData.append('image', this.src.file, this.src.name);        
 
         this.sendButton.update(true);

@@ -24,7 +24,9 @@ $im1->resampleTo($im2, $srcSz, $destSz);
 
 $classname = Input::post('classname');
 $tiler = TileFactory::create($classname, new Tiling());
-$tiler->apply($im1, $im2, 64);
+
+$bandwidth = Input::post('bandwidth');
+$tiler->apply($im1, $im2, $bandwidth);
 
 $strength = Input::post('strength');
 $im3 = normalMap($im2, $strength);

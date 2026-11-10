@@ -32,13 +32,18 @@
     </label>
 
     <label>
+      Band Width
+      <input id="bandwidth" name="bandwidth" type="range" min="8" max="64" step="8" value="16" autocomplete="off">
+    </label>
+
+    <label>
       PHP endpoint URL
       <input id="endpoint" type="url" value="php/img-processor.php" placeholder="https://example.com/process.php" autocomplete="off">
     </label>
 
     <label>
       Strength
-      <input id="strength" name="strength" type="range" min="0.5" max="5" step="0.25" value="1" autocomplete="off">
+      <input id="strength" name="strength" type="range" min="0.5" max="10" step="0.25" value="1" autocomplete="off">
     </label>
 
     <button id="sendButton" type="button" disabled>Send to PHP</button>

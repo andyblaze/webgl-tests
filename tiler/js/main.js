@@ -18,6 +18,9 @@ tileType.onchange((event) => tileType.change(event));
 const strength = new StdInput("strength");
 strength.onchange((event) => strength.change(event));
 
+const bandwidth = new StdInput("bandwidth");
+bandwidth.onchange((event) => bandwidth.change(event));
+
 const fileInput = new FileInput("fileInput");
 const endPoint = new EndPoint("endpoint");
 const status = new Status("status");
@@ -36,7 +39,7 @@ fileInput.onchange((event) => loader.load(event));
 
 const uploadData = {
     "src": srcFile, "status": status, "url": endPoint.url, 
-    "tileType": tileType, "strength": strength
+    "tileType": tileType, "strength": strength, "bandwidth": bandwidth
 };
 sendButton.setUploader(new Uploader(uploadData));
 sendButton.setDownloader(new Downloader([destCanvas, status]));
