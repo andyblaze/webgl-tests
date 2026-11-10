@@ -24,6 +24,86 @@ const materials = new Materials(THREE, new MaterialsData(THREE));
 const factory = new ShapeFactory(THREE);
 const world = new World(scene);
 
+class Land {
+    constructor(three) {
+
+        const segments = 256;
+        const size = 20;
+
+        const geometry = new three.PlaneGeometry(
+            size,
+            size,
+            segments,
+            segments
+        );
+
+        // Rotate plane to lie horizontally
+        geometry.rotateX(-Math.PI / 2);
+
+        const positions = geometry.attributes.position;
+        this.createTerrain(positions);
+
+        positions.needsUpdate = true;
+        geometry.computeVertexNormals();       
+        
+        const loader = new three.TextureLoader();
+        const texmap = loader.load("textures/marble-normal.png");
+        texmap.wrapS = three.RepeatWrapping;
+        texmap.wrapT = three.RepeatWrapping;
+
+        texmap.repeat.set(2, 2);
+
+        const material = new three.MeshPhysicalMaterial({
+            color: 0x00000e, transmission: 0.2,
+            roughness: 1, metalness: 0,
+            emissive: 0x02200e, emissiveIntensity: 0.1,
+            sheenColor: 0x00000e, sheen: 0.18,
+            side: THREE.DoubleSide,
+            normalScale: new THREE.Vector2(2, 2),
+            normalMap: texmap
+        });
+
+        this.terrain = new three.Mesh(geometry, material);
+
+        this.terrain.receiveShadow = true;
+        this.terrain.castShadow = true;        
+    }
+    createTerrain(positions) {
+        for ( let i = 0; i < positions.count; i++ ) {
+
+            const x = positions.getX(i);
+            const z = positions.getZ(i);
+
+            // Distance from centre
+            const distance = Math.sqrt(x*x + z*z);
+
+            // Radial falloff
+            const radius = 18;
+            const falloff = Math.max(0, 2 - distance / radius);
+
+            // Original terrain waves
+            let height = 0;
+
+            height += Math.sin(x * 0.25) * 1.5;
+            height += Math.cos(z * 0.3) * 1.5;
+            height += Math.sin((x + z) * 0.18) * 2.0;
+
+            // Apply falloff
+            height *= falloff;
+
+            positions.setY(i, height);
+        }
+    }
+}
+
+const land = new Land(THREE);
+land.terrain.position.y = -16;
+land.terrain.position.z = -48;
+land.terrain.position.x = 28;
+land.terrain.scale.set(4, 0.5);
+
+scene.add(land.terrain);
+
 const canvas = document.createElement("canvas");
 canvas.width = 2;
 canvas.height = 256;
