@@ -1,4 +1,15 @@
-<!doctype html>
+<?php 
+
+require_once('php/tile-registry.php');
+
+$select = '<select id="tileType" name="classname" autocomplete="off">';
+foreach ( TileRegistry::$registry as $key=>$val ) {
+    $sel = $key === 'matchEdges' ? ' selected="selected"' : '';
+    $select .= "<option{$sel} value=\"{$key}\">{$val['label']}</option>";
+}
+$select .= '</select>';
+
+?><!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -24,11 +35,7 @@
 
     <label>
       Pick a tiling method
-      <select id="tileType" name="classname" autocomplete="off">
-        <option value="mirror">Mirror</option>
-        <option value="matchEdges" selected="selected">Match Edges</option>
-        <option value="offsetAndBlend">Offset and Blend</option>
-      </select>
+      <?= $select;?>
     </label>
 
     <label>
