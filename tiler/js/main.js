@@ -10,10 +10,13 @@ import Uploader from "./uploader.js";
 import Downloader from "./downloader.js";
 import ThreeScene from "./three-scene.js"
 import * as THREE from "three";
-import TileType from "./tiletype.js";
+import StdInput from "./std-input.js";
 
-const tileType = new TileType("tileType");
+const tileType = new StdInput("tileType");
 tileType.onchange((event) => tileType.change(event));
+
+const strength = new StdInput("strength");
+strength.onchange((event) => strength.change(event));
 
 const fileInput = new FileInput("fileInput");
 const endPoint = new EndPoint("endpoint");
@@ -31,7 +34,11 @@ loader.addObservers([srcCanvas, srcFile, sendButton, status]);
 
 fileInput.onchange((event) => loader.load(event));
 
-sendButton.setUploader(new Uploader(srcFile, endPoint, status, tileType));
+const uploadData = {
+    "src": srcFile, "status": status, "url": endPoint.url, 
+    "tileType": tileType, "strength": strength
+};
+sendButton.setUploader(new Uploader(uploadData));
 sendButton.setDownloader(new Downloader([destCanvas, status]));
 
 sendButton.onclick((event) => sendButton.clicked(event));
@@ -42,26 +49,9 @@ destCanvas.ondraw = function() {
     threeScene.setTexture(THREE, destCanvas.canvas);
 };
 
-
-// Animation
 function animate() {
     requestAnimationFrame(animate);
     threeScene.rotateShape();
     threeScene.render();
 }
-
 animate();
-
-// Handle resizing
-/*const resizeObserver = new ResizeObserver(() => {
-    const width = wrap.clientWidth;
-    const height = wrap.clientHeight;
-
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(width, height);
-});
-
-resizeObserver.observe(wrap);*/
-

@@ -1,58 +1,7 @@
 <?php 
 
-interface Tile {
-    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void;
-}
-
-class MirrorTile implements Tile {
-    private Tiling|null $tiling = null; 
-    public function __construct(Tiling $t) {
-        $this->tiling = $t;
-    }
-    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
-        $this->tiling->mirror($img1, $img2);
-    }
-}
-class MatchEdgesTile {
-    private Tiling|null $tiling = null; 
-    public function __construct(Tiling $t) {
-        $this->tiling = $t;
-    }
-    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
-        $this->tiling->matchEdges($img2, $bandWidth);
-    }
-}
-class OffsetAndBlendTile {
-    private Tiling|null $tiling = null; 
-    public function __construct(Tiling $t) {
-        $this->tiling = $t;
-    }
-    public function apply(ImageGd $img1, ?ImageGd $img2, ?int $bandWidth): void {
-        $this->tiling->offsetAndBlend($img1, $img2, $bandWidth);
-    }
-}
-
-$registry = [
-    'mirror'=> 'MirrorTile',
-    'matchEdges'=> 'MatchEdgesTile',
-    'offsetAndBlend'=> 'OffsetAndBlendTile'
-];
-
-class TileFactory {
-    private static array $registry = [];
-    public static function init(array $reg) {
-        self::$registry = $reg;
-    }
-    public static function create(string $key, Tiling $t): object|null {
-        if ( true === array_key_exists($key, self::$registry ) ) {
-            $cls = self::$registry[$key];
-            return new $cls($t);
-        }
-        return null;
-    }
-}
-
-TileFactory::init($registry);
+require_once(__DIR__ . '/tile-classes.php');
+require_once(__DIR__ . '/tile-factory.php');
 
 class Tiling {
     private object|null $strategy = null;

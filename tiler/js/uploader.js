@@ -1,9 +1,10 @@
 export default class Uploader {
-    constructor(src, dest, stat, tt) {
-        this.src = src;
-        this.dest = dest;
-        this.status = stat;
-        this.tileType = tt;
+    constructor(args) {
+        this.src = args.src;
+        this.url = args.url;
+        this.status = args.status;
+        this.tileType = args.tileType;
+        this.strength = args.strength;
         this.sendButton = null;
         this.formData = null;
     }
@@ -13,7 +14,7 @@ export default class Uploader {
     isOk() {
         if ( this.src.isNull() ) return false;
 
-        if ( !this.dest.url ) {
+        if ( !this.url ) {
             this.status.update("Enter the PHP endpoint URL first.");
             return false;
         }
@@ -22,13 +23,14 @@ export default class Uploader {
     init() {
         this.formData = new FormData();
         this.formData.append(this.tileType.name, this.tileType.value);
+        this.formData.append(this.strength.name, this.strength.value);
         this.formData.append('image', this.src.file, this.src.name);        
 
         this.sendButton.update(true);
         this.status.update("Sending image...");
     }
     async send() {
-        return fetch(this.dest.url, {
+        return fetch(this.url, {
             method: "POST",
             body: this.formData
         });        

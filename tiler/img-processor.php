@@ -26,10 +26,13 @@ $classname = Input::post('classname');
 $tiler = TileFactory::create($classname, new Tiling());
 $tiler->apply($im1, $im2, 64);
 
-$im3 = normalMap($im2, 1);
+$strength = Input::post('strength');
+$im3 = normalMap($im2, $strength);
 
 $im3->toBrowser();
+$im1->clear();
 $im2->clear();
+$im3->clear();
 
 /* 
 $col = new ColorGd();
