@@ -99,8 +99,8 @@ class Land {
 const land = new Land(THREE);
 land.terrain.position.y = -16;
 land.terrain.position.z = -48;
-land.terrain.position.x = 28;
-land.terrain.scale.set(4, 0.5);
+land.terrain.position.x = 16;
+land.terrain.scale.set(4, 0.5, 1);
 
 scene.add(land.terrain);
 
