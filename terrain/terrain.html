@@ -100,84 +100,100 @@ sunlight.position.set(15, 30, 10);
 sunlight.castShadow = true;
 scene.add(sunlight);
 
+class Materials {
+    constructor(three) {
+        this.three = three;
+        this.loader = new three.TextureLoader();
+        this.data = {
+            "green": {
+                color: 0x49850e, transmission: 0.2,
+                roughness: 1, metalness: 0,
+                emissive: 0x008040, emissiveIntensity: 0.12,
+                sheenColor: 0x008080, sheen: 0.18,
+                side: three.DoubleSide,
+                normalScale: new three.Vector2(2, 2),
+                normalMap: this.getMap("marble-normal.png", 4)
+            }
+        };
+    }
+    getMap(map, repeat=0) {
+        const texmap = this.loader.load(map);
+        if ( repeat > 1 ) {
+            texmap.wrapS = this.three.RepeatWrapping;
+            texmap.wrapT = this.three.RepeatWrapping;
+            texmap.repeat.set(repeat, repeat);
+        }
+        return texmap;
+    }
+    getMat(key) {
+        return this.data[key];
+    }
+}
+
+const materials = new Materials(THREE);
+
 
 // TERRAIN PLANE
 
 class Land {
-    constructor(three) {
-
-        const segments = 256;
-        const size = 60;
-
-        const geometry = new three.PlaneGeometry(
-            size,
-            size,
-            segments,
-            segments
-        );
-
+    constructor(three, sz, segs) {
+        this.three = three;
+        this.material = new three.MeshPhysicalMaterial({color: 0xffffff});
+        this.geometry = new three.PlaneGeometry(sz, sz, segs, segs);
         // Rotate plane to lie horizontally
-        geometry.rotateX(-Math.PI / 2);
-
-        const positions = geometry.attributes.position;
-        this.createTerrain(positions);
-
-        positions.needsUpdate = true;
-        geometry.computeVertexNormals();       
-        
-        const loader = new three.TextureLoader();
-        const texmap = loader.load("marble-normal.png");
-        texmap.wrapS = three.RepeatWrapping;
-        texmap.wrapT = three.RepeatWrapping;
-
-        texmap.repeat.set(8, 8);
-
-        const material = new three.MeshPhysicalMaterial({
-            color: 0x49850e, transmission: 0.2,
-            roughness: 1, metalness: 0,
-            emissive: 0x008040, emissiveIntensity: 0.12,
-            sheenColor: 0x008080, sheen: 0.18,
-            side: THREE.DoubleSide,
-            normalScale: new THREE.Vector2(2, 2),
-            normalMap: texmap
-        });
-
-        this.terrain = new three.Mesh(geometry, material);
-
-        this.terrain.receiveShadow = true;
-        this.terrain.castShadow = true;        
+        this.geometry.rotateX(-Math.PI / 2);    
     }
-    createTerrain(positions) {
-        for ( let i = 0; i < positions.count; i++ ) {
-
-            const x = positions.getX(i);
-            const z = positions.getZ(i);
-
-            // Distance from centre
-            const distance = Math.sqrt(x*x + z*z);
-
-            // Radial falloff
-            const radius = 18;
-            const falloff = Math.max(0, 2 - distance / radius);
-
-            // Original terrain waves
-            let height = 0;
-
-            height += Math.sin(x * 0.25) * 1.5;
-            height += Math.cos(z * 0.3) * 1.5;
-            height += Math.sin((x + z) * 0.18) * 2.0;
-
-            // Apply falloff
-            height *= falloff;
-
-            positions.setY(i, height);
-        }
+    setShadows(recv, cast) {
+        this.terrain.receiveShadow = recv;
+        this.terrain.castShadow = cast; 
+    }
+    setMaterial(m) {
+        this.material.dispose();
+        this.material = new this.three.MeshPhysicalMaterial(m);
+        this.terrain = new this.three.Mesh(this.geometry, this.material);
+    }
+    get native() {
+        return this.terrain;
+    }
+    terraform(func) {        
+        const positions = this.geometry.attributes.position;
+        func(positions);
+        positions.needsUpdate = true;
+        this.geometry.computeVertexNormals(); 
     }
 }
 
-const land = new Land(THREE);
+function sineWave(positions) {
+    for ( let i = 0; i < positions.count; i++ ) {
 
-scene.add(land.terrain);
+        const x = positions.getX(i);
+        const z = positions.getZ(i);
+
+        // Distance from centre
+        const distance = Math.sqrt(x*x + z*z);
+
+        // Radial falloff
+        const radius = 18;
+        const falloff = Math.max(0, 2 - distance / radius);
+
+        // Original terrain waves
+        let height = 0;
+
+        height += Math.sin(x * 0.25) * 1.5;
+        height += Math.cos(z * 0.3) * 1.5;
+        height += Math.sin((x + z) * 0.18) * 2.0;
+
+        // Apply falloff
+        height *= falloff;
+
+        positions.setY(i, height);
+    }
+}
+
+const land = new Land(THREE, 40, 256);
+land.setMaterial(materials.getMat("green"));
+land.terraform(sineWave);
+scene.add(land.native);
 
 
 // OPTIONAL GRID HELPER
