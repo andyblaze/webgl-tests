@@ -135,7 +135,7 @@ const materials = new Materials(THREE);
 
 // TERRAIN PLANE
 
-class Land {
+class Terrain {
     constructor(three, sz, segs) {
         this.three = three;
         this.material = new three.MeshPhysicalMaterial({color: 0xffffff});
@@ -146,11 +146,13 @@ class Land {
     setShadows(recv, cast) {
         this.terrain.receiveShadow = recv;
         this.terrain.castShadow = cast; 
+        return this;
     }
     setMaterial(m) {
         this.material.dispose();
         this.material = new this.three.MeshPhysicalMaterial(m);
         this.terrain = new this.three.Mesh(this.geometry, this.material);
+        return this;
     }
     get native() {
         return this.terrain;
@@ -160,6 +162,10 @@ class Land {
         func(positions);
         positions.needsUpdate = true;
         this.geometry.computeVertexNormals(); 
+        return this;
+    }
+    addTo(scene) {
+        scene.add(this.terrain);
     }
 }
 
@@ -190,10 +196,10 @@ function sineWave(positions) {
     }
 }
 
-const land = new Land(THREE, 40, 256);
-land.setMaterial(materials.getMat("green"));
-land.terraform(sineWave);
-scene.add(land.native);
+const land = new Terrain(THREE, 40, 256);
+land.setMaterial(materials.getMat("green"))
+    .terraform(sineWave)
+    .addTo(scene);
 
 
 // OPTIONAL GRID HELPER
