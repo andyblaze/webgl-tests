@@ -169,8 +169,7 @@ class Terrain {
 
 
 class Perlin {
-
-    constructor(seed = 12345) {
+    constructor(seed=12345) {
 
         // Seeded random number generator
         const random = () => {
@@ -203,20 +202,16 @@ class Perlin {
             [-Math.SQRT1_2, -Math.SQRT1_2]
         ];
     }
-
     fade(t) {
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
-
     lerp(a, b, t) {
         return a + t * (b - a);
     }
-
     grad(hash, x, y) {
         const g = this.gradients[hash & 7];
         return g[0] * x + g[1] * y;
     }
-
     noise(x, y) {
 
         const p = this.permutation;
@@ -252,6 +247,10 @@ class Perlin {
 
         return this.lerp(n1, n2, v);
     }
+}
+
+function mt_rand(min = 0, max = 2147483647) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 
@@ -338,7 +337,7 @@ class Deformer {
     };
 }
 
-const deform = new Deformer(new Perlin());
+const deform = new Deformer(new Perlin(mt_rand(1000, 100000)));
 
 const land = new Terrain(THREE, 40, 256);
 land.setMaterial(materials.getMat("green"))
