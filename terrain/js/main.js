@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import Terrain from './terrain.js';
-import Factory from './deformer.js';
+import DeformerFactory from './deformer.js';
 import Materials from './materials.js';
 
 // SCENE
@@ -36,15 +36,13 @@ sunlight.position.set(15, 30, 10);
 sunlight.castShadow = true;
 scene.add(sunlight);
 
-
-
 const materials = new Materials(THREE);
 const land = new Terrain(THREE, 40, 256);
-const factory = new Factory();
+const deformer = new DeformerFactory();
 
-const hills = factory.create("hills");
-const mountain = factory.create("mountain");
-const noise = factory.create("noise");
+const hills = deformer.create("hills");
+const mountain = deformer.create("mountain");
+const noise = deformer.create("noise");
 
 land.setMaterial(materials.getMat("green"))
     .terraform(hills)
