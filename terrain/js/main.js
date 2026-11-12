@@ -1,9 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import Perlin from './perlin.js';
 import Terrain from './terrain.js';
-import { mt_rand } from './functions.js';
-import { Deformer, Factory } from './deformer.js';
+import Factory from './deformer.js';
 import Materials from './materials.js';
 
 // SCENE
@@ -41,17 +39,17 @@ scene.add(sunlight);
 
 
 const materials = new Materials(THREE);
-const deform = new Deformer(new Perlin(mt_rand(1000, 100000)));
-const factory = new Factory();
 const land = new Terrain(THREE, 40, 256);
+const factory = new Factory();
 
 const hills = factory.create("hills");
 const mountain = factory.create("mountain");
+const noise = factory.create("noise");
 
 land.setMaterial(materials.getMat("green"))
-    .terraform(hills.apply)
-    .terraform(mountain.apply)
-    .terraform(deform.noise)
+    .terraform(hills)
+    .terraform(mountain)
+    .terraform(noise)
     .addTo(scene);
 
 function animate() {

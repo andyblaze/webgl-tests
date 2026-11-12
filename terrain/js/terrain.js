@@ -20,9 +20,9 @@ export default class Terrain {
     get native() {
         return this.terrain;
     }
-    terraform(func) {        
+    terraform(deformer) {        
         const positions = this.geometry.attributes.position;
-        func(positions);
+        deformer.apply(positions);
         positions.needsUpdate = true;
         this.geometry.computeVertexNormals(); 
         return this;

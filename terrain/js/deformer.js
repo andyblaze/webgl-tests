@@ -1,6 +1,10 @@
+import Perlin from './perlin.js';
+import { mt_rand } from './functions.js';
+
 class Mountain {
     constructor() {
-
+        this.maxRadius = 13;
+        this.maxHeight = 8;
     }
     apply(positions) {
         for (let i = 0; i < positions.count; i++) {
@@ -12,7 +16,7 @@ class Mountain {
             const angle = Math.atan2(z, x);
 
             const radius =
-                13 +
+                this.maxRadius +
                 Math.sin(angle * 2) * 3 +
                 Math.cos(angle * 3) * 2 +
                 Math.sin(angle * 5) * 1.5;
@@ -30,11 +34,7 @@ class Mountain {
                 Math.sin(x * 0.3 + z * 0.2) * 0.8 +
                 Math.cos(z * 0.4 - x * 0.15) * 0.6;
 
-            const height = Math.max(
-                0,
-                Math.pow(falloff, 2) * 12 +
-                variation// * falloff
-            );
+            const height = Math.max(0, Math.pow(falloff, 2) * this.maxHeight + variation);
 
             positions.setY(i, height);
         }
@@ -43,7 +43,8 @@ class Mountain {
 
 class Hills {
     constructor() {
-
+        this.maxRadius = 18;
+        this.falloffRate = 2;
     }
     apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
@@ -55,8 +56,8 @@ class Hills {
             const distance = Math.sqrt(x*x + z*z);
 
             // Radial falloff
-            const radius = 18;
-            const falloff = Math.max(0, 2 - distance / radius);
+            const radius = this.maxRadius;
+            const falloff = Math.max(0, this.falloffRate - distance / radius);
 
             // Original terrain waves
             let height = 0;
@@ -76,24 +77,25 @@ class Hills {
 class Noise {
     constructor(p) {
         this.perlin = p;
+        this.scale = 0.16;
+        this.amplitude = 3;    
     }
-    apply = (positions) => {
-        const scale = 0.16;
-        const amplitude = 3;
+    apply(positions) {
+
 
         for (let i = 0; i < positions.count; i++) {
 
             const x = positions.getX(i);
             const z = positions.getZ(i);
 
-            const height = this.perlin.noise(x * scale, z * scale);
+            const height = this.perlin.noise(x * this.scale, z * this.scale);
 
-            positions.setY(i, positions.getY(i) + height * amplitude);
+            positions.setY(i, positions.getY(i) + height * this.amplitude);
         }
-    };
+    }
 }
 
-export class Factory {
+export default class Factory {
     constructor() {
         this.data = {
             "noise": {
@@ -109,11 +111,13 @@ export class Factory {
     }
     create(key) {
         const cls = this.data[key];
+        if ( key === "noise" )
+            return new cls.ctor(new Perlin(mt_rand(1000, 100000)));
         return new cls.ctor();
     }
 }
 
-export class Deformer {
+class Deformer {
     constructor(p) {
         this.perlin = p;
     }
