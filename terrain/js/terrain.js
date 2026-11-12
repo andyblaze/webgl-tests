@@ -2,9 +2,12 @@ export default class Terrain {
     constructor(three, sz, segs) {
         this.three = three;
         this.material = new three.MeshPhysicalMaterial({color: 0xffffff});
-        this.geometry = new three.PlaneGeometry(sz, sz, segs, segs);
-        // Rotate plane to lie horizontally
-        this.geometry.rotateX(-Math.PI / 2);    
+        this.geometry = new three.PlaneGeometry(sz, sz, segs, segs); 
+    }
+    setRotation(x, y, z) {
+        this.geometry.rotateX(x);
+        this.geometry.rotateY(y);
+        this.geometry.rotateZ(z);
     }
     setShadows(recv, cast) {
         this.terrain.receiveShadow = recv;

@@ -37,17 +37,21 @@ sunlight.castShadow = true;
 scene.add(sunlight);
 
 const materials = new Materials(THREE);
-const land = new Terrain(THREE, 40, 256);
+const land = new Terrain(THREE, 40, 128);
 const deformer = new DeformerFactory();
+
+land.setRotation(-Math.PI / 2, 0, 0);
 
 const hills = deformer.create("hills");
 const mountain = deformer.create("mountain");
 const noise = deformer.create("noise");
+const smooth = deformer.create("smoothing");
 
 land.setMaterial(materials.getMat("green"))
     .terraform(hills)
     .terraform(mountain)
     .terraform(noise)
+    .terraform(smooth)
     .addTo(scene);
 
 function animate() {
