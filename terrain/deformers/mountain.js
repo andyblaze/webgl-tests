@@ -1,7 +1,8 @@
 export default class Mountain {
-    constructor() {
+    constructor(options = {}) {
         this.maxRadius = 13;
         this.maxHeight = 8;
+        Object.assign(this, options);
     }
     apply(positions) {
         for (let i = 0; i < positions.count; i++) {

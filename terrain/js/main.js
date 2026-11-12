@@ -31,28 +31,27 @@ controls.enableDamping = true;
 const ambient = new THREE.AmbientLight(0xffffff, 0.6);
 scene.add(ambient);
 
-const sunlight = new THREE.DirectionalLight(0xffffff, 2.0);
-sunlight.position.set(15, 10, 10);
+const sunlight = new THREE.DirectionalLight(0xffffff, 6);
+sunlight.position.set(5, 10, 10);
 sunlight.castShadow = true;
 scene.add(sunlight);
 
 const materials = new Materials(THREE);
-const land = new Terrain(THREE, 40, 128);
+const land = new Terrain(THREE, 50, 128);
 const deformer = new DeformerFactory();
-
-land.setRotation(-Math.PI / 2, Math.PI / 5, 0);
 
 const hills = deformer.create("hills");
 const mountain = deformer.create("mountain");
 const noise = deformer.create("noise");
-const smooth = deformer.create("smoothing");
+const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
-land.setMaterial(materials.getMat("green"))
-    .setShadows(true, true)
+land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
+    .setMaterial(materials.getMat("green"))
     .terraform(hills)
     .terraform(mountain)
     .terraform(noise)
     .terraform(smooth)
+    .setShadows(true, true)
     .addTo(scene);
 
 function animate() {

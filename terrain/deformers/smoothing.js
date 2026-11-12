@@ -1,8 +1,9 @@
 export default class Smoothing {
 
-    constructor() {
+    constructor(options = {}) {
         this.iterations = 1;
         this.strength = 0.125;
+        Object.assign(this, options);
     }
     apply(positions) {
 

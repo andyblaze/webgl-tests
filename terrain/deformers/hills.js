@@ -1,7 +1,8 @@
 export default class Hills {
-    constructor() {
+    constructor(options = {}) {
         this.maxRadius = 18;
         this.falloffRate = 2;
+        Object.assign(this, options);
     }
     apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
