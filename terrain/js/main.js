@@ -28,11 +28,11 @@ controls.enableDamping = true;
 
 
 // LIGHTING
-const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+const ambient = new THREE.AmbientLight(0xffffff, 1.6);
 scene.add(ambient);
 
-const sunlight = new THREE.DirectionalLight(0xffffff, 6);
-sunlight.position.set(5, 10, 10);
+const sunlight = new THREE.DirectionalLight(0xffffff, 2);
+sunlight.position.set(15, 8, 0);
 sunlight.castShadow = true;
 scene.add(sunlight);
 
@@ -40,9 +40,9 @@ const materials = new Materials(THREE);
 const land = new Terrain(THREE, 50, 128);
 const deformer = new DeformerFactory();
 
-const hills = deformer.create("hills");
-const mountain = deformer.create("mountain");
-const noise = deformer.create("noise");
+const hills = deformer.create("hills", { maxRadius: 18, falloffRate: 2 });
+const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
+const noise = deformer.create("noise", { scale: 0.16, amplitude: 3 });
 const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
 land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
