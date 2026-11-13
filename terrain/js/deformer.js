@@ -2,6 +2,7 @@ import Noise from '../deformers/noise.js';
 import Hills from '../deformers/hills.js';
 import Mountain from '../deformers/mountain.js';
 import Smoothing from '../deformers/smoothing.js';
+import Heightmap from '../deformers/heightmap.js';
 
 export default class DeformerFactory {
     constructor() {
@@ -17,6 +18,9 @@ export default class DeformerFactory {
             },
             "smoothing": {
                 ctor: Smoothing
+            },
+            'heightmap': {
+                ctor: Heightmap
             }
         };
     }
