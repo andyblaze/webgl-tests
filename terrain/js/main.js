@@ -52,10 +52,10 @@ await heightmap.load("./hm1.png");
 land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
     .setMaterial(materials.getMat("green"))
     .terraform(heightmap)
-    /*.terraform(hills)
-    .terraform(mountain)
-    .terraform(noise)
-    .terraform(smooth)*/
+    //.terraform(hills)
+    //.terraform(mountain)
+    //.terraform(noise)
+    //.terraform(smooth)
     .setShadows(true, true)
     .addTo(scene);
 
