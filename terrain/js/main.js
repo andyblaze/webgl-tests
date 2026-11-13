@@ -10,8 +10,8 @@ scene.background = new THREE.Color(0x18212b);
 
 
 // CAMERA
-const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(30, 25, 35);
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 50);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -31,12 +31,14 @@ controls.enableDamping = true;
 const ambient = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambient);
 
-const sunlight = new THREE.DirectionalLight(0xffffff, 2);
-sunlight.position.set(8, -8, 0);
-sunlight.castShadow = true;
+const sunlight = new THREE.DirectionalLight(0xffffff, 4);
+sunlight.position.set(-48, 24, 0);
+sunlight.target.position.set(0, 0, 0);
+sunlight.castShadow = false;//true;
 scene.add(sunlight);
-const helper = new THREE.CameraHelper(sunlight.shadow.camera);
-scene.add(helper);
+scene.add(sunlight.target);
+/*const helper = new THREE.CameraHelper(sunlight.shadow.camera);
+scene.add(helper);*/
 
 const materials = new Materials(THREE);
 const land = new Terrain(THREE, 50, 128);
