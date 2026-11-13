@@ -131,17 +131,6 @@ export default class Heightmap {
 
             // Get height from heightmap
             const height = this.getHeight(nx, nz);
-
-            if (Number.isNaN(height)) {
-                console.error("Invalid heightmap sample:", {
-                    nx,
-                    nz,
-                    width: this.width,
-                    height: this.height,
-                    pixels: this.pixels?.length
-                });
-            }
-
             // Set vertex Y position
             positions.setY(i, height * this.maxHeight);
         }
