@@ -4,13 +4,13 @@ export default class Materials {
         this.loader = new three.TextureLoader();
         this.data = {
             "green": {
-                color: 0x49850e, transmission: 0.2,
+                color: 0x493925, transmission: 0.2,
                 roughness: 1, metalness: 0,
-                emissive: 0x008040, emissiveIntensity: 0.12,
-                sheenColor: 0x008080, sheen: 0.18,
+                emissive: 0x493925, emissiveIntensity: 0.12,
+                sheenColor: 0x493925, sheen: 0.18,
                 side: three.DoubleSide,
                 normalScale: new three.Vector2(2, 2),
-                normalMap: this.getMap("marble-normal.png", 8)
+                normalMap: this.getMap("rocky-normal.png", 8)
             }
         };
     }

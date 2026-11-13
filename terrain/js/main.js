@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import Terrain from './terrain.js';
 import DeformerFactory from './deformer.js';
-import Materials from './materials.js';
+import Materials from './materials.js?g';
 
 // SCENE
 const scene = new THREE.Scene();
@@ -28,13 +28,15 @@ controls.enableDamping = true;
 
 
 // LIGHTING
-const ambient = new THREE.AmbientLight(0xffffff, 1.6);
+const ambient = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambient);
 
 const sunlight = new THREE.DirectionalLight(0xffffff, 2);
-sunlight.position.set(15, 8, 0);
+sunlight.position.set(8, -8, 0);
 sunlight.castShadow = true;
 scene.add(sunlight);
+const helper = new THREE.CameraHelper(sunlight.shadow.camera);
+scene.add(helper);
 
 const materials = new Materials(THREE);
 const land = new Terrain(THREE, 50, 128);
@@ -45,7 +47,7 @@ const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
 const noise = deformer.create("noise", { scale: 0.16, amplitude: 3 });
 const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
-const heightmap = deformer.create("heightmap", { terrainSize: 50, maxHeight: 12});
+const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
 await heightmap.load("./hm2.png");
 
