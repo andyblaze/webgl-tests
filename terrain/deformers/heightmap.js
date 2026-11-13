@@ -92,6 +92,17 @@ export default class Heightmap {
         return normalised;
     }
 
+    // Release temporary image resources
+    dispose() {
+        this.image = null;
+        this.canvas = null;
+        this.context = null;
+        this.pixels = null;
+        this.width = 0;
+        this.height = 0;
+        return this;
+    }
+
     // Apply heightmap to terrain geometry
     apply(positions) {
         let minX = Infinity;
@@ -134,6 +145,7 @@ export default class Heightmap {
             // Set vertex Y position
             positions.setY(i, height * this.maxHeight);
         }
+        this.dispose();
         return this;
     }
 }
