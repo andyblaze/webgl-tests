@@ -10,6 +10,9 @@ export default class Terrain {
         this.geometry.rotateZ(z);
         return this;
     }
+    rotate(r) {
+        this.terrain.rotateY(r);
+    }
     setShadows(recv, cast) {
         this.terrain.receiveShadow = recv;
         this.terrain.castShadow = cast; 

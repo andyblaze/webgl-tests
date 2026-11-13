@@ -63,9 +63,12 @@ land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
     .setShadows(true, true)
     .addTo(scene);
 
+let rot = 0.001;
+
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
+    land.rotate(0.001);
     renderer.render(scene, camera);
 }
 animate();
