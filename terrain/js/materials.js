@@ -10,7 +10,7 @@ export default class Materials {
                 sheenColor: 0x008080, sheen: 0.18,
                 side: three.DoubleSide,
                 normalScale: new three.Vector2(2, 2),
-                normalMap: this.getMap("marble-normal.png", 4)
+                normalMap: this.getMap("marble-normal.png", 8)
             }
         };
     }

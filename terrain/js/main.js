@@ -47,14 +47,14 @@ const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
 const heightmap = deformer.create("heightmap", { terrainSize: 50, maxHeight: 12});
 
-await heightmap.load("./hm1.png");
+await heightmap.load("./hm2.png");
 
 land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
     .setMaterial(materials.getMat("green"))
     .terraform(heightmap)
     //.terraform(hills)
     //.terraform(mountain)
-    //.terraform(noise)
+    .terraform(noise)
     //.terraform(smooth)
     .setShadows(true, true)
     .addTo(scene);
