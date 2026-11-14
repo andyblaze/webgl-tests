@@ -6,13 +6,13 @@ export default class Materials {
             "green": {
                 color: 0x493925, transmission: 0.2,
                 roughness: 1, metalness: 1,
-                emissive: 0x493925, emissiveIntensity: 0.12,
-                sheenColor: 0x493925, sheen: 0.18,
+                emissive: 0x493925, emissiveIntensity: 0.2,
+                sheenColor: 0x493925, sheen: 0.2,
                 anisotropy: 1,
                 side: three.DoubleSide,
+                roughnessMap: this.getMap("rocky-normal.png", 1),
                 normalScale: new three.Vector2(0.4, 0.4),
-                normalMap: this.getMap("rocky-normal.png", 8),
-                roughnessMap: this.getMap("rocky-normal.png", 1)
+                normalMap: this.getMap("rocky-normal.png", 8)
             }
         };
     }
