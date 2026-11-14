@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import Terrain from './terrain.js';
 import DeformerFactory from './deformer.js';
 import Materials from './materials.js?g';
+import { C } from './angles.js';
 
 // SCENE
 const scene = new THREE.Scene();
@@ -52,7 +53,7 @@ const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
 await heightmap.load("./hm2.png");
 
-land.setRotation(Math.PI / 2, 0, 0)//Math.PI / 2, Math.PI / 4.5, 0)
+land.setRotation(C.DEG90, 0, 0)//Math.PI / 2, Math.PI / 4.5, 0)
     .setMaterial(materials.getMat("green"))
     .setPosition(0, -11, 0)
     .terraform(heightmap)
