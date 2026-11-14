@@ -53,7 +53,7 @@ const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
 await heightmap.load("./hm2.png");
 
-land.setRotation(C.DEG90, 0, 0)//Math.PI / 2, Math.PI / 4.5, 0)
+land.setRotation(C.DEG90, 0, 0)
     .setMaterial(materials.getMat("green"))
     .setPosition(0, -11, 0)
     .terraform(heightmap)
