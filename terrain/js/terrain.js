@@ -10,6 +10,12 @@ export default class Terrain {
         this.geometry.rotateZ(z);
         return this;
     }
+    setPosition(x, y, z) {
+        this.terrain.position.x = x;
+        this.terrain.position.y = y;
+        this.terrain.position.z = z;
+        return this;
+    }
     rotate(r) {
         this.terrain.rotateY(r);
     }

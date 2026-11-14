@@ -26,18 +26,17 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-
 // LIGHTING
-const ambient = new THREE.AmbientLight(0xffffff, 2);
+const ambient = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambient);
 
-const sunlight = new THREE.DirectionalLight(0xffffff, 4);
-sunlight.position.set(-48, 24, 0);
-sunlight.target.position.set(0, 0, 0);
-sunlight.castShadow = false;//true;
-scene.add(sunlight);
-scene.add(sunlight.target);
-/*const helper = new THREE.CameraHelper(sunlight.shadow.camera);
+const sun = new THREE.DirectionalLight(0xffffff, 4);
+sun.position.set(-24, 0, 0);
+sun.target.position.set(0, 0, 0);
+sun.castShadow = false;//true;
+scene.add(sun);
+scene.add(sun.target);
+/*const helper = new THREE.CameraHelper(sun.shadow.camera);
 scene.add(helper);*/
 
 const materials = new Materials(THREE);
@@ -46,15 +45,16 @@ const deformer = new DeformerFactory();
 
 const hills = deformer.create("hills", { maxRadius: 18, falloffRate: 2 });
 const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
-const noise = deformer.create("noise", { scale: 0.16, amplitude: 3 });
+const noise = deformer.create("noise", { scale: 0.0000016, amplitude: 0.0000013 });
 const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
 const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
 await heightmap.load("./hm2.png");
 
-land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
+land.setRotation(Math.PI / 2, 0, 0)//Math.PI / 2, Math.PI / 4.5, 0)
     .setMaterial(materials.getMat("green"))
+    .setPosition(0, -11, 0)
     .terraform(heightmap)
     //.terraform(hills)
     //.terraform(mountain)
@@ -62,8 +62,6 @@ land.setRotation(1,0,0)//Math.PI / 2, Math.PI / 4.5, 0)
     //.terraform(smooth)
     .setShadows(true, true)
     .addTo(scene);
-
-let rot = 0.001;
 
 function animate() {
     requestAnimationFrame(animate);
