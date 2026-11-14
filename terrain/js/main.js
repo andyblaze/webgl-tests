@@ -28,7 +28,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 // LIGHTING
-const ambient = new THREE.AmbientLight(0xffffff, 1);
+const ambient = new THREE.AmbientLight(0xffffff, 2);
 scene.add(ambient);
 
 const sun = new THREE.DirectionalLight(0xffffff, 4);
@@ -44,7 +44,7 @@ const materials = new Materials(THREE);
 const land = new Terrain(THREE, 50, 128);
 const deformer = new DeformerFactory();
 
-const hills = deformer.create("hills", { maxRadius: 18, falloffRate: 2 });
+const hills = deformer.create("hills", { maxRadius: 8, falloffRate: 0.2 });
 const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
 const noise = deformer.create("noise", {
     detailSize: 0.05,
