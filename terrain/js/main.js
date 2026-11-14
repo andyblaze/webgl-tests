@@ -47,7 +47,7 @@ const deformer = new DeformerFactory();
 const hills = deformer.create("hills", { maxRadius: 18, falloffRate: 2 });
 const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
 const noise = deformer.create("noise", {
-    frequency: 1,
+    detailSize: 0.05,
     amplitude: 2,
     octaves: 4,
     persistence: 0.5
