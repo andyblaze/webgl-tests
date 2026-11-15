@@ -3,11 +3,22 @@ export default class Materials {
         this.three = three;
         this.loader = new three.TextureLoader();
         this.data = {
-            "green": {
+            "brown": {
                 color: 0x493925, transmission: 0.2,
                 roughness: 1, metalness: 1,
                 emissive: 0x493925, emissiveIntensity: 0.2,
                 sheenColor: 0x493925, sheen: 0.2,
+                anisotropy: 1,
+                side: three.DoubleSide,
+                roughnessMap: this.getMap("rocky.png", 1),
+                normalScale: new three.Vector2(0.4, 0.4),
+                normalMap: this.getMap("rocky-normal.png", 8)
+            },
+            "cyan": {
+                color: 0x009999, transmission: 0.2,
+                roughness: 1, metalness: 1,
+                emissive: 0x009999, emissiveIntensity: 0.2,
+                sheenColor: 0x009999, sheen: 0.2,
                 anisotropy: 1,
                 side: three.DoubleSide,
                 roughnessMap: this.getMap("rocky-normal.png", 1),
