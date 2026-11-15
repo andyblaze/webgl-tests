@@ -22,6 +22,13 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
+function makeLight(three, col, x, y, z) {
+    const lt = new three.DirectionalLight(col, 3);
+    lt.position.set(x, y, z);
+    lt.target.position.set(0, -5, 0);
+    lt.castShadow = false;//true;
+    return lt;
+}
 
 // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -31,26 +38,14 @@ controls.enableDamping = true;
 const ambient = new THREE.AmbientLight(0xffffff, 4);
 scene.add(ambient);
 
-const sunr = new THREE.DirectionalLight(0xff0000, 3);
-sunr.position.set(-12, 6, 0);
-sunr.target.position.set(0, -5, 0);
-sunr.castShadow = false;//true;
-scene.add(sunr);
-scene.add(sunr.target);
+const sunr = makeLight(THREE, 0xff0000, -12, 6, 0);
+scene.add(sunr, sunr.target);
 
-const sung = new THREE.DirectionalLight(0x00ff00, 3);
-sung.position.set(12, 6, 0);
-sung.target.position.set(0, -5, 0);
-sung.castShadow = false;//true;
-scene.add(sung);
-scene.add(sung.target);
+const sung = makeLight(THREE, 0x00ff00, 12, 6, 0);
+scene.add(sung, sung.target);
 
-const sunb = new THREE.DirectionalLight(0x0000ff, 3);
-sunb.position.set(0, 6, -12);
-sunb.target.position.set(0, -5, 0);
-sunb.castShadow = false;//true;
-scene.add(sunb);
-scene.add(sunb.target);
+const sunb = makeLight(THREE, 0x0000ff, 0, 6, -12);
+scene.add(sunb, sunb.target);
 /*const helper = new THREE.CameraHelper(sun.shadow.camera);
 scene.add(helper);*/
 
