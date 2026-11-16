@@ -73,7 +73,7 @@ land.setRotation(C.DEG90, 0, 0)
     //.terraform(heightmap)    
     //.terraform(mountain)
     .terraform(hills)
-    //.terraform(noise)
+    .terraform(noise)
     //.terraform(smooth)
     .setShadows(true, true)
     .addTo(scene);

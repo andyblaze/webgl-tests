@@ -129,6 +129,8 @@ export default class Hills {
                 falloff *
                 falloffRate;
 
+            //if ( finalHeight < 0 ) finalHeight = 0;
+
             positions.setY(i, positions.getY(i) + finalHeight);
         }
         //positions.needsUpdate = true;
