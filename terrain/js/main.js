@@ -31,8 +31,8 @@ function makeLight(three, col, x, y, z) {
 }
 
 
-function colorCycle(light, speed = 0.0002) {
-    let hue = 0;
+function colorCycle(light, h, speed = 0.0002) {
+    let hue = h;
     return function update() {
         hue = (hue + speed) % 1;
         light.color.setHSL(hue, 1, 0.5);
@@ -74,7 +74,7 @@ const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
 const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
-await heightmap.load("./hm2.png");
+await heightmap.load("./hm1.png");
 
 land.setRotation(C.DEG90, 0, 0)
     .setMaterial(materials.getMat("brown"))
@@ -87,9 +87,9 @@ land.setRotation(C.DEG90, 0, 0)
     .setShadows(true, true)
     .addTo(scene);
 
-const cycleR = colorCycle(sunr, 0.0002);
-const cycleG = colorCycle(sunr, 0.0005);
-const cycleB = colorCycle(sunr, 0.0007);
+const cycleR = colorCycle(sunr, 0, 0.00019);
+const cycleG = colorCycle(sung, 0.333, 0.00029);
+const cycleB = colorCycle(sunb, 0.583, 0.00031);
 
 function animate() {
     requestAnimationFrame(animate);
