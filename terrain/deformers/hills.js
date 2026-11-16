@@ -1,33 +1,93 @@
+
 export default class Hills {
+
     constructor(options = {}) {
-        this.maxRadius = 18;
-        this.falloffRate = 2;
+
+        this.radius = 38;
+
+        // Height
+        this.amplitude = 0.75;
+
+        // Wave frequency
+        this.frequency = 3;
+
+        // Wave amplitudes
+        this.wave1 = 1.5;
+        this.wave2 = 1.5;
+        this.wave3 = 2.0;
+
+        // Individual wave frequencies
+        this.freq1 = 0.25;
+        this.freq2 = 0.3;
+        this.freq3 = 0.18;
+
+        // Falloff
+        this.falloff = 2;
+
+        // Hill centre
+        this.centerX = 0;
+        this.centerZ = 0;
+
+        // Pattern offset
+        this.offsetX = 0;
+        this.offsetZ = 0;
+
         Object.assign(this, options);
     }
+
     apply(positions) {
-        for ( let i = 0; i < positions.count; i++ ) {
+
+        const {
+            radius,
+            amplitude,
+            frequency,
+            falloff,
+            centerX,
+            centerZ,
+            offsetX,
+            offsetZ
+        } = this;
+
+        for (let i = 0; i < positions.count; i++) {
 
             const x = positions.getX(i);
             const z = positions.getZ(i);
 
-            // Distance from centre
-            const distance = Math.sqrt(x*x + z*z);
+            // Distance from hill centre
+            const dx = x - centerX;
+            const dz = z - centerZ;
 
-            // Radial falloff
-            const radius = this.maxRadius;
-            const falloff = Math.max(0, this.falloffRate - distance / radius);
+            const distance = Math.sqrt(dx * dx + dz * dz);
 
-            // Original terrain waves
+            // Normalised distance
+            const t = Math.max(0, Math.min(1, 1 - distance / radius));
+
+            // Smooth radial falloff
+            const smooth = t * t * (3 - 2 * t);
+
+            const envelope = Math.pow(smooth, falloff);
+
+            // Wave coordinates
+            const px = (x + offsetX) * frequency;
+            const pz = (z + offsetZ) * frequency;
+
+            // Terrain waves
             let height = 0;
 
-            height += Math.sin(x * 0.25) * 1.5;
-            height += Math.cos(z * 0.3) * 1.5;
-            height += Math.sin((x + z) * 0.18) * 2.0;
+            height += Math.sin(px * this.freq1) * this.wave1;
+            height += Math.cos(pz * this.freq2) * this.wave2;
+            height += Math.sin((px + pz) * this.freq3) * this.wave3;
 
-            // Apply falloff
-            height *= falloff;
+            // Final contribution
+            height *= amplitude * envelope;
 
-            positions.setY(i, height);
+            // Add to existing terrain
+            positions.setY(
+                i,
+                positions.getY(i) + height
+            );
         }
+
+        positions.needsUpdate = true;
     }
 }

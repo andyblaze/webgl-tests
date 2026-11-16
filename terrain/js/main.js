@@ -53,7 +53,7 @@ const materials = new Materials(THREE);
 const land = new Terrain(THREE, 50, 128);
 const deformer = new DeformerFactory();
 
-const hills = deformer.create("hills", { maxRadius: 4, falloffRate: 0.02 });
+const hills = deformer.create("hills", { maxRadius: 8 });
 const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
 const noise = deformer.create("noise", {
     detailSize: 0.5,
@@ -70,10 +70,10 @@ await heightmap.load("./hm1.png");
 land.setRotation(C.DEG90, 0, 0)
     .setMaterial(materials.getMat("brown"))
     .setPosition(0, -11, 0)
-    .terraform(heightmap)    
+    //.terraform(heightmap)    
     //.terraform(mountain)
-    .terraform(noise)
-    //.terraform(hills)
+    .terraform(hills)
+    //.terraform(noise)
     //.terraform(smooth)
     .setShadows(true, true)
     .addTo(scene);
