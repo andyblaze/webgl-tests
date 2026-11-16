@@ -30,6 +30,15 @@ function makeLight(three, col, x, y, z) {
     return lt;
 }
 
+
+function colorCycle(light, speed = 0.0002) {
+    let hue = 0;
+    return function update() {
+        hue = (hue + speed) % 1;
+        light.color.setHSL(hue, 1, 0.5);
+    };
+}
+
 // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -65,12 +74,12 @@ const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
 const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
-await heightmap.load("./hm1.png");
+await heightmap.load("./hm2.png");
 
 land.setRotation(C.DEG90, 0, 0)
     .setMaterial(materials.getMat("brown"))
     .setPosition(0, -11, 0)
-    //.terraform(heightmap)    
+    .terraform(heightmap)    
     //.terraform(mountain)
     .terraform(hills)
     .terraform(noise)
@@ -78,9 +87,16 @@ land.setRotation(C.DEG90, 0, 0)
     .setShadows(true, true)
     .addTo(scene);
 
+const cycleR = colorCycle(sunr, 0.0002);
+const cycleG = colorCycle(sunr, 0.0005);
+const cycleB = colorCycle(sunr, 0.0007);
+
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
+    cycleR();
+    cycleG();
+    cycleB();
     land.rotate(0.001);
     renderer.render(scene, camera);
 }
