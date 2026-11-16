@@ -31,13 +31,27 @@ function makeLight(three, col, x, y, z) {
 }
 
 
-function colorCycle(light, h, speed = 0.0002) {
+
+function colorCycle(light, h, speed = 0.0002, radius = 2) {
+
     let hue = h;
+    let angle = 0;
+
+    const origin = light.position.clone();
+
     return function update() {
+
         hue = (hue + speed) % 1;
+        angle += speed * 30;
+
         light.color.setHSL(hue, 1, 0.5);
+
+        light.position.x = origin.x + Math.cos(angle) * radius;
+        light.position.z = origin.z + Math.sin(angle) * radius;
+
     };
 }
+
 
 // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -87,9 +101,9 @@ land.setRotation(C.DEG90, 0, 0)
     .setShadows(true, true)
     .addTo(scene);
 
-const cycleR = colorCycle(sunr, 0, 0.00019);
-const cycleG = colorCycle(sung, 0.333, 0.00029);
-const cycleB = colorCycle(sunb, 0.583, 0.00031);
+const cycleR = colorCycle(sunr, 0, 0.00019, 5);
+const cycleG = colorCycle(sung, 0.333, 0.00029, 7);
+const cycleB = colorCycle(sunb, 0.583, 0.00031, 11);
 
 function animate() {
     requestAnimationFrame(animate);
@@ -97,7 +111,7 @@ function animate() {
     cycleR();
     cycleG();
     cycleB();
-    land.rotate(0.001);
+    //land.rotate(0.001);
     renderer.render(scene, camera);
 }
 animate();
