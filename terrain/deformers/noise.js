@@ -26,7 +26,7 @@ export default class Noise {
                 frequency *= 2;
                 amplitude *= this.persistence;
             }
-            positions.setXYZ(0, i, positions.getY(i) + height, 0);
+            positions.setXYZ(i, positions.getX(i), positions.getY(i) + height, positions.getZ(i));
         }
     }
 }
