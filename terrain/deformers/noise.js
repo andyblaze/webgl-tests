@@ -33,13 +33,16 @@ export default class Noise {
     getLength(pos) {
         return 1;
     }
-    applyOctaves(pos, distortion, frequency, amplitude) {
+    applyOctaves(pos, length=0) {
+        let distortion = 0;
+        let frequency = this.detailSize;
+        let amplitude = this.amplitude;
         for ( let o = 0; o < this.octaves; o++ ) {
             distortion += this.getHeight(pos, frequency) * amplitude;
             frequency *= 2;
             amplitude *= this.persistence;
         }
-        return distortion;
+        return distortion + length;
     }
     apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
@@ -47,20 +50,12 @@ export default class Noise {
             
             const length = this.getLength(pos);
             
-            this.transform(pos, length);
-
-            let distortion = 0;
-            let frequency = this.detailSize;
-            let amplitude = this.amplitude;
-
-            /*for ( let o = 0; o < this.octaves; o++ ) {
-                distortion += this.getHeight(pos, frequency) * amplitude;
-                frequency *= 2;
-                amplitude *= this.persistence;
-            }*/
-            distortion = this.applyOctaves(pos, distortion, frequency, amplitude);
-            this.distort(pos, distortion);
-            positions.setXYZ(i, pos.x, pos.y, pos.z);
+            if ( length > 0 ) {             
+                this.transform(pos, length);
+                const distortion = this.applyOctaves(pos, length);
+                this.distort(pos, distortion);
+                positions.setXYZ(i, pos.x, pos.y, pos.z);
+            }
         }
     }
 }
