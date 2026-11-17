@@ -13,7 +13,7 @@ export default class Noise {
         Object.assign(this, options);
     }
     apply(positions) {
-        for (let i = 0; i < positions.count; i++) {
+        for ( let i = 0; i < positions.count; i++ ) {
             const x = positions.getX(i);
             const z = positions.getZ(i);
 
