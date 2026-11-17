@@ -79,6 +79,7 @@ const deformer = new DeformerFactory();
 
 const hills = deformer.create("hills", { maxRadius: 8 });
 const mountain = deformer.create("mountain", { maxRadius: 23, maxHeight: 12 });
+
 const noise = deformer.create("noise", {
     detailSize: 0.5,
     amplitude: 2,
@@ -115,13 +116,23 @@ const sphere = new THREE.Mesh(
 
 sphere.position.set(0, 6, 0);
 
-
+class NoiseStrategy {
+    static distort(pos, amount) {
+        pos.x *= amount;
+        pos.y *= amount;
+        pos.z *= amount;
+    }
+    static getLength(pos) {
+        return Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+    }
+}
 
 const shills = new SphereNoise({
     detailSize: 2,
     amplitude: 1.5,
     octaves: 4,
-    persistence: 0.5
+    persistence: 0.5,
+    strategy: NoiseStrategy
 });
 
 shills.apply(sphere.geometry.attributes.position);

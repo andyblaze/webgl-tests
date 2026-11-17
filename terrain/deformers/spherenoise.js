@@ -11,6 +11,7 @@ export default class SphereNoise {
         this.amplitude = 1;
         this.octaves = 4;
         this.persistence = 0.5;
+        this.strategy = null;
 
         Object.assign(this, options);
     }
@@ -27,15 +28,13 @@ export default class SphereNoise {
         pos.z /= length;
     }
     distort(pos, amount) {
-        pos.x *= amount;
-        pos.y *= amount;
-        pos.z *= amount;
+        this.strategy.distort(pos, amount);
     }
     getHeight(pos, frequency) {
         return this.perlin.noise(pos.x * frequency, pos.y * frequency, pos.z * frequency);
     }
     getLength(pos) {
-        return Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+        return this.strategy.getLength(pos);
     }
     applyOctaves(pos, length=0) {
         let distortion = 0;

@@ -9,6 +9,7 @@ export default class Noise {
         this.amplitude = 1;
         this.octaves = 1;
         this.persistence = 0.5;
+        this.strategy = null;
 
         Object.assign(this, options);
     }
