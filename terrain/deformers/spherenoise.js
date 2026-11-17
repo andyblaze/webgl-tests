@@ -21,12 +21,13 @@ export default class SphereNoise {
             z: positions.getZ(i)
         };      
     }
-    newPos(pos, length) {
-        return {
-            x: pos.x / length,
-            y: pos.y / length,
-            z: pos.z / length
-        };
+    transform(pos, length) {
+        pos.x /= length;
+        pos.y /= length;
+        pos.z /= length;
+    }
+    getHeight(pos, frequency) {
+        return this.perlin.noise(pos.x * frequency, pos.y * frequency, pos.z * frequency);
     }
     apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
@@ -37,7 +38,7 @@ export default class SphereNoise {
 
             if ( length === 0 ) continue;
 
-            const newPos = this.newPos(pos, length);
+            this.transform(pos, length);
 
             // Accumulate fractal noise
             let height = 0;
@@ -45,14 +46,14 @@ export default class SphereNoise {
             let amplitude = this.amplitude;
 
             for ( let o = 0; o < this.octaves; o++ ) {
-                height += this.perlin.noise(newPos.x * frequency, newPos.y * frequency, newPos.z * frequency) * amplitude;
+                height += this.getHeight(pos, frequency) * amplitude;
                 frequency *= 2;
                 amplitude *= this.persistence;
             }
             // Push/pull vertex radially
             const radius = length + height;
 
-            positions.setXYZ(i, newPos.x * radius, newPos.y * radius, newPos.z * radius);
+            positions.setXYZ(i, pos.x * radius, pos.y * radius, pos.z * radius);
         }
     }
 }
