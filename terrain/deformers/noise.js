@@ -1,4 +1,3 @@
-
 import Perlin from '../js/perlin.js';
 import { mt_rand } from '../js/functions.js';
 
