@@ -13,29 +13,21 @@ export default class Noise {
 
         Object.assign(this, options);
     }
-apply(positions) {
-    for (let i = 0; i < positions.count; i++) {
-        const x = positions.getX(i);
-        const z = positions.getZ(i);
+    apply(positions) {
+        for (let i = 0; i < positions.count; i++) {
+            const x = positions.getX(i);
+            const z = positions.getZ(i);
 
-        let height = 0;
-        let frequency = this.detailSize;
-        let amplitude = this.amplitude;
+            let height = 0;
+            let frequency = this.detailSize;
+            let amplitude = this.amplitude;
 
-        for (let o = 0; o < this.octaves; o++) {
-            height += this.perlin.noise(
-                x * frequency,
-                z * frequency
-            ) * amplitude;
-
-            frequency *= 2;
-            amplitude *= this.persistence;
+            for ( let o = 0; o < this.octaves; o++ ) {
+                height += this.perlin.noise(x * frequency, z * frequency) * amplitude;
+                frequency *= 2;
+                amplitude *= this.persistence;
+            }
+            positions.setY(i, positions.getY(i) + height);
         }
-
-        positions.setY(
-            i,
-            positions.getY(i) + height
-        );
     }
-}
 }
