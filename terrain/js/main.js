@@ -118,8 +118,8 @@ sphere.position.set(0, 6, 0);
 
 
 const shills = new SphereHills({
-    detailSize: 3,
-    amplitude: 1.2,
+    detailSize: 2,
+    amplitude: 1.5,
     octaves: 4,
     persistence: 0.5
 });
