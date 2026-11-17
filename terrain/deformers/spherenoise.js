@@ -14,50 +14,45 @@ export default class SphereNoise {
 
         Object.assign(this, options);
     }
-
+    getPos(positions, i) {
+        return {
+            x: positions.getX(i),
+            y: positions.getY(i),
+            z: positions.getZ(i)
+        };      
+    }
+    newPos(pos, length) {
+        return {
+            x: pos.x / length,
+            y: pos.y / length,
+            z: pos.z / length
+        };
+    }
     apply(positions) {
-
-        for (let i = 0; i < positions.count; i++) {
-
-            const x = positions.getX(i);
-            const y = positions.getY(i);
-            const z = positions.getZ(i);
+        for ( let i = 0; i < positions.count; i++ ) {
+            const pos = this.getPos(positions, i);
 
             // Direction from sphere centre
-            const length = Math.sqrt(x*x + y*y + z*z);
+            const length = Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
 
-            if (length === 0) continue;
+            if ( length === 0 ) continue;
 
-            const nx = x / length;
-            const ny = y / length;
-            const nz = z / length;
+            const newPos = this.newPos(pos, length);
 
             // Accumulate fractal noise
             let height = 0;
             let frequency = this.detailSize;
             let amplitude = this.amplitude;
 
-            for (let o = 0; o < this.octaves; o++) {
-
-                height += this.perlin.noise(
-                    nx * frequency,
-                    ny * frequency,
-                    nz * frequency
-                ) * amplitude;
-
+            for ( let o = 0; o < this.octaves; o++ ) {
+                height += this.perlin.noise(newPos.x * frequency, newPos.y * frequency, newPos.z * frequency) * amplitude;
                 frequency *= 2;
                 amplitude *= this.persistence;
             }
-
             // Push/pull vertex radially
             const radius = length + height;
 
-            positions.setXYZ(
-                i,
-                nx * radius,
-                ny * radius,
-                nz * radius
-            );
+            positions.setXYZ(i, newPos.x * radius, newPos.y * radius, newPos.z * radius);
         }
     }
 }
