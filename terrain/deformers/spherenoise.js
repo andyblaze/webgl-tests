@@ -21,7 +21,7 @@ export default class SphereNoise {
             z: positions.getZ(i)
         };      
     }
-    transform(pos, length) {
+    transform(pos, length=1) {
         pos.x /= length;
         pos.y /= length;
         pos.z /= length;
@@ -34,30 +34,42 @@ export default class SphereNoise {
     getHeight(pos, frequency) {
         return this.perlin.noise(pos.x * frequency, pos.y * frequency, pos.z * frequency);
     }
+    getLength(pos) {
+        return Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+    }
+    applyOctaves(pos, distortion, frequency, amplitude) {
+        for ( let o = 0; o < this.octaves; o++ ) {
+            distortion += this.getHeight(pos, frequency) * amplitude;
+            frequency *= 2;
+            amplitude *= this.persistence;
+        }
+        return distortion;
+    }
     apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
             const pos = this.getPos(positions, i);
 
             // Direction from sphere centre
-            const length = Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+            const length = this.getLength(pos);
 
             if ( length === 0 ) continue;
 
             this.transform(pos, length);
 
             // Accumulate fractal noise
-            let height = 0;
+            let distortion = 0;
             let frequency = this.detailSize;
             let amplitude = this.amplitude;
 
-            for ( let o = 0; o < this.octaves; o++ ) {
-                height += this.getHeight(pos, frequency) * amplitude;
+            /*for ( let o = 0; o < this.octaves; o++ ) {
+                distortion += this.getHeight(pos, frequency) * amplitude;
                 frequency *= 2;
                 amplitude *= this.persistence;
-            }
+            }*/
+            distortion = this.applyOctaves(pos, distortion, frequency, amplitude);
             // Push/pull vertex radially
-            const distortion = length + height;
-            this.distort(pos, distortion);
+            //const distortion = length + height;
+            this.distort(pos, distortion + length);
 
             positions.setXYZ(i, pos.x, pos.y, pos.z);
         }

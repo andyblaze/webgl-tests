@@ -19,31 +19,48 @@ export default class Noise {
             z: positions.getZ(i)
         };      
     }
+    transform(pos, length=1) {
+        pos.x /= length;
+        pos.y /= length;
+        pos.z /= length;
+    }    
+    distort(pos, amount) {
+        pos.y += amount;
+    }
     getHeight(pos, frequency) {
         return this.perlin.noise(pos.x * frequency, pos.z * frequency);
     }
-     distort(pos, amount) {
-        //pos.x *= amount;
-        pos.y += amount;
-        //pos.z *= amount;
+    getLength(pos) {
+        return 1;
     }
-   apply(positions) {
+    applyOctaves(pos, distortion, frequency, amplitude) {
+        for ( let o = 0; o < this.octaves; o++ ) {
+            distortion += this.getHeight(pos, frequency) * amplitude;
+            frequency *= 2;
+            amplitude *= this.persistence;
+        }
+        return distortion;
+    }
+    apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
             const pos = this.getPos(positions, i);
-            /*const x = positions.getX(i);
-            const z = positions.getZ(i);*/
+            
+            const length = this.getLength(pos);
+            
+            this.transform(pos, length);
 
-            let height = 0;
+            let distortion = 0;
             let frequency = this.detailSize;
             let amplitude = this.amplitude;
 
-            for ( let o = 0; o < this.octaves; o++ ) {
-                height += this.getHeight(pos, frequency) * amplitude;
+            /*for ( let o = 0; o < this.octaves; o++ ) {
+                distortion += this.getHeight(pos, frequency) * amplitude;
                 frequency *= 2;
                 amplitude *= this.persistence;
-            }
-            const distortion = height;
-            positions.setXYZ(i, positions.getX(i), positions.getY(i) + distortion, positions.getZ(i));
+            }*/
+            distortion = this.applyOctaves(pos, distortion, frequency, amplitude);
+            this.distort(pos, distortion);
+            positions.setXYZ(i, pos.x, pos.y, pos.z);
         }
     }
 }
