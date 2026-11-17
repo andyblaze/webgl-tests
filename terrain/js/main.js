@@ -4,7 +4,7 @@ import Terrain from './terrain.js';
 import DeformerFactory from './deformer.js';
 import Materials from './materials.js?g';
 import { C } from './angles.js';
-import SphereHills from '../deformers/spherehills.js';
+import SphereNoise from '../deformers/spherenoise.js';
 
 // SCENE
 const scene = new THREE.Scene();
@@ -117,7 +117,7 @@ sphere.position.set(0, 6, 0);
 
 
 
-const shills = new SphereHills({
+const shills = new SphereNoise({
     detailSize: 2,
     amplitude: 1.5,
     octaves: 4,
