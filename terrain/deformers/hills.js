@@ -1,4 +1,3 @@
-
 import { mt_rand } from "../js/functions.js";
 export default class Hills {
 
