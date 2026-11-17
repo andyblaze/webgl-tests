@@ -88,7 +88,7 @@ const smooth = deformer.create("smoothing", { iterations: 3, strength: 0.65 });
 
 const heightmap = deformer.create("heightmap", { maxHeight: 12});
 
-await heightmap.load("./hm1.png");
+await heightmap.load("./hm2.png");
 
 land.setRotation(C.DEG90, 0, 0)
     .setMaterial(materials.getMat("brown"))
@@ -111,7 +111,7 @@ function animate() {
     cycleR();
     cycleG();
     cycleB();
-    //land.rotate(0.001);
+    land.rotate(0.001);
     renderer.render(scene, camera);
 }
 animate();
