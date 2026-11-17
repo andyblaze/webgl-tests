@@ -26,6 +26,11 @@ export default class SphereNoise {
         pos.y /= length;
         pos.z /= length;
     }
+    distort(pos, amount) {
+        pos.x *= amount;
+        pos.y *= amount;
+        pos.z *= amount;
+    }
     getHeight(pos, frequency) {
         return this.perlin.noise(pos.x * frequency, pos.y * frequency, pos.z * frequency);
     }
@@ -51,9 +56,10 @@ export default class SphereNoise {
                 amplitude *= this.persistence;
             }
             // Push/pull vertex radially
-            const radius = length + height;
+            const distortion = length + height;
+            this.distort(pos, distortion);
 
-            positions.setXYZ(i, pos.x * radius, pos.y * radius, pos.z * radius);
+            positions.setXYZ(i, pos.x, pos.y, pos.z);
         }
     }
 }

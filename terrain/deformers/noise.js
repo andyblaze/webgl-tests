@@ -12,21 +12,38 @@ export default class Noise {
 
         Object.assign(this, options);
     }
-    apply(positions) {
+    getPos(positions, i) {
+        return {
+            x: positions.getX(i),
+            y: positions.getY(i),
+            z: positions.getZ(i)
+        };      
+    }
+    getHeight(pos, frequency) {
+        return this.perlin.noise(pos.x * frequency, pos.z * frequency);
+    }
+     distort(pos, amount) {
+        //pos.x *= amount;
+        pos.y += amount;
+        //pos.z *= amount;
+    }
+   apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
-            const x = positions.getX(i);
-            const z = positions.getZ(i);
+            const pos = this.getPos(positions, i);
+            /*const x = positions.getX(i);
+            const z = positions.getZ(i);*/
 
             let height = 0;
             let frequency = this.detailSize;
             let amplitude = this.amplitude;
 
             for ( let o = 0; o < this.octaves; o++ ) {
-                height += this.perlin.noise(x * frequency, z * frequency) * amplitude;
+                height += this.getHeight(pos, frequency) * amplitude;
                 frequency *= 2;
                 amplitude *= this.persistence;
             }
-            positions.setXYZ(i, positions.getX(i), positions.getY(i) + height, positions.getZ(i));
+            const distortion = height;
+            positions.setXYZ(i, positions.getX(i), positions.getY(i) + distortion, positions.getZ(i));
         }
     }
 }
