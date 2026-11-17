@@ -4,6 +4,7 @@ import Terrain from './terrain.js';
 import DeformerFactory from './deformer.js';
 import Materials from './materials.js?g';
 import { C } from './angles.js';
+import SphereHills from '../deformers/spherehills.js';
 
 // SCENE
 const scene = new THREE.Scene();
@@ -105,6 +106,29 @@ const cycleR = colorCycle(sunr, 0, 0.00019, 5);
 const cycleG = colorCycle(sung, 0.333, 0.00029, 7);
 const cycleB = colorCycle(sunb, 0.583, 0.00031, 11);
 
+
+
+const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(5, 128, 128),
+    new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
+);
+
+sphere.position.set(0, 6, 0);
+
+
+
+const shills = new SphereHills({
+    detailSize: 3,
+    amplitude: 1.2,
+    octaves: 4,
+    persistence: 0.5
+});
+
+shills.apply(sphere.geometry.attributes.position);
+
+sphere.geometry.computeVertexNormals();
+scene.add(sphere);
+
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
@@ -112,6 +136,9 @@ function animate() {
     cycleG();
     cycleB();
     land.rotate(0.001);
+    sphere.rotateX(0.001);
+    sphere.rotateY(0.002);
+    sphere.rotateZ(0.003);
     renderer.render(scene, camera);
 }
 animate();
