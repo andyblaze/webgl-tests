@@ -5,6 +5,7 @@ import DeformerFactory from './deformer.js';
 import Materials from './materials.js?g';
 import { C } from './angles.js';
 import SphereNoise from '../deformers/radial-noise.js';
+import BoxNoise from '../deformers/box-noise.js';
 
 // SCENE
 const scene = new THREE.Scene();
@@ -114,7 +115,7 @@ const sphere = new THREE.Mesh(
     new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
 );
 
-sphere.position.set(0, 6, 0);
+sphere.position.set(-8, 6, 0);
 
 class RadialNoise {
     static distort(pos, amount) {
@@ -132,7 +133,7 @@ class RadialNoise {
     }
 }
 
-const shills = new SphereNoise({
+const snoise = new SphereNoise({
     detailSize: 2,
     amplitude: 1.5,
     octaves: 4,
@@ -140,10 +141,30 @@ const shills = new SphereNoise({
     strategy: RadialNoise
 });
 
-shills.apply(sphere.geometry.attributes.position);
+snoise.apply(sphere.geometry.attributes.position);
 
 sphere.geometry.computeVertexNormals();
 scene.add(sphere);
+
+const box = new THREE.Mesh(
+    new THREE.BoxGeometry(6, 6, 6),
+    new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
+);
+
+box.position.set(8, 6, 0);
+const bnoise = new BoxNoise({
+    detailSize: 2,
+    amplitude: 1.5,
+    octaves: 4,
+    persistence: 0.5
+});
+    const positions = box.geometry.attributes.position;
+    const normals = box.geometry.attributes.normal;
+
+    bnoise.apply(positions, normals);
+    positions.needsUpdate = true;
+    box.geometry.computeVertexNormals();
+scene.add(box);
 
 function animate() {
     requestAnimationFrame(animate);
@@ -155,6 +176,9 @@ function animate() {
     sphere.rotateX(0.001);
     sphere.rotateY(0.002);
     sphere.rotateZ(0.003);
+    box.rotateX(0.001);
+    box.rotateY(0.002);
+    box.rotateZ(0.003);
     renderer.render(scene, camera);
 }
 animate();
