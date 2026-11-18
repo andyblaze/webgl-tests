@@ -42,21 +42,7 @@ export default class BoxNoise {
             const y = positions.getY(i);
             const z = positions.getZ(i);
 
-            /*let height = 0;
-            let frequency = this.detailSize;
-            let amplitude = this.amplitude;
-
-            for (let o = 0; o < this.octaves; o++) {
-                height += this.perlin.noise3D(
-                    x * frequency,
-                    y * frequency,
-                    z * frequency
-                ) * amplitude;
-
-                frequency *= 2;
-                amplitude *= this.persistence;
-            }*/
-           const height = this.applyOctaves(x, y, z);
+            const height = this.applyOctaves(x, y, z);
 
             positions.setXYZ(
                 i,
