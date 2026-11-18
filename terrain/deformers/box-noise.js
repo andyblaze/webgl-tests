@@ -12,14 +12,37 @@ export default class BoxNoise {
 
         Object.assign(this, options);
     }
+    applyOctaves(x, y, z) {
+        let height = 0;
+        let frequency = this.detailSize;
+        let amplitude = this.amplitude;
 
+        for ( let o = 0; o < this.octaves; o++ ) {
+            height += this.perlin.noise3D(
+                x * frequency,
+                y * frequency,
+                z * frequency
+            ) * amplitude;
+
+            frequency *= 2;
+            amplitude *= this.persistence;
+        }  
+        return height;      
+    }
+    getPos(positions, i) {
+        return {
+            x: positions.getX(i),
+            y: positions.getY(i),
+            z: positions.getZ(i)
+        };      
+    }
     apply(positions, normals) {
         for (let i = 0; i < positions.count; i++) {
             const x = positions.getX(i);
             const y = positions.getY(i);
             const z = positions.getZ(i);
 
-            let height = 0;
+            /*let height = 0;
             let frequency = this.detailSize;
             let amplitude = this.amplitude;
 
@@ -32,7 +55,8 @@ export default class BoxNoise {
 
                 frequency *= 2;
                 amplitude *= this.persistence;
-            }
+            }*/
+           const height = this.applyOctaves(x, y, z);
 
             positions.setXYZ(
                 i,
