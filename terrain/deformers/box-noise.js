@@ -24,8 +24,9 @@ export default class BoxNoise {
             let amplitude = this.amplitude;
 
             for (let o = 0; o < this.octaves; o++) {
-                height += this.perlin.noise(
+                height += this.perlin.noise3D(
                     x * frequency,
+                    y * frequency,
                     z * frequency
                 ) * amplitude;
 

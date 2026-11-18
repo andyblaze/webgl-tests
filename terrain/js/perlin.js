@@ -1,5 +1,6 @@
+
 export default class Perlin {
-    constructor(seed=12345) {
+    constructor(seed = 12345) {
 
         // Seeded random number generator
         const random = () => {
@@ -23,6 +24,7 @@ export default class Perlin {
         // Duplicate table to avoid overflow
         this.permutation = [...p, ...p];
 
+        // 2D gradients (existing)
         this.gradients = [
             [1, 0], [-1, 0],
             [0, 1], [0, -1],
@@ -31,19 +33,38 @@ export default class Perlin {
             [Math.SQRT1_2, -Math.SQRT1_2],
             [-Math.SQRT1_2, -Math.SQRT1_2]
         ];
+
+        // 3D gradients
+        this.gradients3D = [
+            [1, 1, 0], [-1, 1, 0],
+            [1, -1, 0], [-1, -1, 0],
+            [1, 0, 1], [-1, 0, 1],
+            [1, 0, -1], [-1, 0, -1],
+            [0, 1, 1], [0, -1, 1],
+            [0, 1, -1], [0, -1, -1]
+        ];
     }
+
     fade(t) {
         return t * t * t * (t * (t * 6 - 15) + 10);
     }
+
     lerp(a, b, t) {
         return a + t * (b - a);
     }
+
     grad(hash, x, y) {
         const g = this.gradients[hash & 7];
         return g[0] * x + g[1] * y;
     }
-    noise(x, y) {
 
+    grad3(hash, x, y, z) {
+        const g = this.gradients3D[hash % 12];
+        return g[0] * x + g[1] * y + g[2] * z;
+    }
+
+    // Existing 2D noise - unchanged
+    noise(x, y) {
         const p = this.permutation;
 
         const floorX = Math.floor(x);
@@ -76,5 +97,54 @@ export default class Perlin {
         );
 
         return this.lerp(n1, n2, v);
+    }
+
+    // New 3D noise
+    noise3D(x, y, z) {
+        const p = this.permutation;
+
+        const floorX = Math.floor(x);
+        const floorY = Math.floor(y);
+        const floorZ = Math.floor(z);
+
+        const xi = floorX & 255;
+        const yi = floorY & 255;
+        const zi = floorZ & 255;
+
+        const xf = x - floorX;
+        const yf = y - floorY;
+        const zf = z - floorZ;
+
+        const u = this.fade(xf);
+        const v = this.fade(yf);
+        const w = this.fade(zf);
+
+        // Hash the eight corners of the cube
+        const hash = (dx, dy, dz) =>
+            p[p[p[xi + dx] + yi + dy] + zi + dz];
+
+        // Calculate gradient values at each corner
+        const n000 = this.grad3(hash(0, 0, 0), xf, yf, zf);
+        const n100 = this.grad3(hash(1, 0, 0), xf - 1, yf, zf);
+        const n010 = this.grad3(hash(0, 1, 0), xf, yf - 1, zf);
+        const n110 = this.grad3(hash(1, 1, 0), xf - 1, yf - 1, zf);
+
+        const n001 = this.grad3(hash(0, 0, 1), xf, yf, zf - 1);
+        const n101 = this.grad3(hash(1, 0, 1), xf - 1, yf, zf - 1);
+        const n011 = this.grad3(hash(0, 1, 1), xf, yf - 1, zf - 1);
+        const n111 = this.grad3(hash(1, 1, 1), xf - 1, yf - 1, zf - 1);
+
+        // Interpolate along X
+        const x00 = this.lerp(n000, n100, u);
+        const x10 = this.lerp(n010, n110, u);
+        const x01 = this.lerp(n001, n101, u);
+        const x11 = this.lerp(n011, n111, u);
+
+        // Interpolate along Y
+        const y0 = this.lerp(x00, x10, v);
+        const y1 = this.lerp(x01, x11, v);
+
+        // Interpolate along Z
+        return this.lerp(y0, y1, w);
     }
 }

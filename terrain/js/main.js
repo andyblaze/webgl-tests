@@ -147,10 +147,9 @@ sphere.geometry.computeVertexNormals();
 scene.add(sphere);
 
 const box = new THREE.Mesh(
-    new THREE.BoxGeometry(6, 6, 6),
+    new THREE.BoxGeometry(6, 6, 6, 24, 24, 24),
     new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
 );
-
 box.position.set(8, 6, 0);
 const bnoise = new BoxNoise({
     detailSize: 2,
@@ -158,12 +157,12 @@ const bnoise = new BoxNoise({
     octaves: 4,
     persistence: 0.5
 });
-    const positions = box.geometry.attributes.position;
-    const normals = box.geometry.attributes.normal;
+const positions = box.geometry.attributes.position;
+const normals = box.geometry.attributes.normal;
 
-    bnoise.apply(positions, normals);
-    positions.needsUpdate = true;
-    box.geometry.computeVertexNormals();
+bnoise.apply(positions, normals);
+positions.needsUpdate = true;
+box.geometry.computeVertexNormals();
 scene.add(box);
 
 function animate() {

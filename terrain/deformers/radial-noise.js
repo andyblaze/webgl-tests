@@ -29,7 +29,7 @@ export default class SphereNoise {
         this.strategy.distort(pos, amount);
     }
     getHeight(pos, frequency) {
-        return this.perlin.noise(pos.x * frequency, pos.y * frequency, pos.z * frequency);
+        return this.perlin.noise3D(pos.x * frequency, pos.y * frequency, pos.z * frequency);
     }
     getLength(pos) {
         return this.strategy.getLength(pos);
