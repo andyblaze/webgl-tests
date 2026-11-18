@@ -6,7 +6,8 @@ import Materials from './materials.js?g';
 import { C } from './angles.js';
 import SphereNoise from '../deformers/radial-noise.js';
 import BoxNoise from '../deformers/box-noise.js';
-
+import CylinderNoise from '../deformers/cylinder-noise.js';
+import CapsuleNoise from '../deformers/capsule-noise.js';
 // SCENE
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
@@ -165,6 +166,54 @@ positions.needsUpdate = true;
 box.geometry.computeVertexNormals();
 scene.add(box);
 
+const cyl = new THREE.Mesh(
+    new THREE.CylinderGeometry(3, 3, 8, 48, 48),
+    new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
+);
+
+cyl.position.set(22, 6, 0);
+
+const cnoise = new CylinderNoise({
+    detailSize: 0.5,
+    amplitude: 1,
+    octaves: 4,
+    persistence: 0.5
+});
+
+const cpositions = cyl.geometry.attributes.position;
+const cnormals = cyl.geometry.attributes.normal;
+
+cnoise.apply(cpositions, cnormals);
+
+cpositions.needsUpdate = true;
+cyl.geometry.computeVertexNormals();
+
+scene.add(cyl);
+
+const cap = new THREE.Mesh(
+    new THREE.CapsuleGeometry(2, 6, 64, 64),
+    new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
+);
+
+cap.position.set(-24, 6, 0);
+
+const cpnoise = new CapsuleNoise({
+    detailSize: 0.5,
+    amplitude: 0.8,
+    octaves: 4,
+    persistence: 0.5
+});
+
+const cppositions = cap.geometry.attributes.position;
+const cpnormals = cap.geometry.attributes.normal;
+
+cnoise.apply(cppositions, cpnormals);
+
+positions.needsUpdate = true;
+cap.geometry.computeVertexNormals();
+
+scene.add(cap);
+
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
@@ -178,6 +227,12 @@ function animate() {
     box.rotateX(0.001);
     box.rotateY(0.002);
     box.rotateZ(0.003);
+    cyl.rotateX(0.001);
+    cyl.rotateY(0.002);
+    cyl.rotateZ(0.003);
+    cap.rotateX(0.001);
+    cap.rotateY(0.002);
+    cap.rotateZ(0.003);
     renderer.render(scene, camera);
 }
 animate();
