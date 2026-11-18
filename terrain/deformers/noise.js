@@ -47,8 +47,7 @@ export default class Noise {
     }
     apply(positions) {
         for ( let i = 0; i < positions.count; i++ ) {
-            const pos = this.getPos(positions, i);
-            
+            const pos = this.getPos(positions, i);            
             const length = this.getLength(pos);
             
             if ( length > 0 ) {             

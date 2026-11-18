@@ -60,16 +60,13 @@ export default class BoxNoise {
     }
     apply(positions, normals) {
         for (let i = 0; i < positions.count; i++) {
-
             const pos = this.getPos(positions, i);
-
             const length = this.getLength(pos);
 
             if ( length > 0 ) {
                 this.transform(pos, length);
                 const distortion = this.applyOctaves(pos);
                 this.distort(pos, distortion, normals, i);
-
                 positions.setXYZ(i, pos.x, pos.y, pos.z);
             }
         }
