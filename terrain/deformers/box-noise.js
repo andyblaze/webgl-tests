@@ -39,6 +39,8 @@ export default class BoxNoise {
         };      
     }
     getNorm(normals, i) {
+        if ( null === normals )
+            return { x: 1, y: 1, z: 1 };
         return {
             x: normals.getX(i),
             y: normals.getY(i),
@@ -46,8 +48,7 @@ export default class BoxNoise {
         };
     }
     distort(pos, amount, normals=null, i) {
-        const norm = normals ? this.getNorm(normals, i) : {x:1, y:1, z:1};
-
+        const norm = this.getNorm(normals, i);
         pos.x += norm.x * amount;
         pos.y += norm.y * amount;
         pos.z += norm.z * amount;       
