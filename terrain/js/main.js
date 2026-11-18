@@ -27,7 +27,7 @@ document.body.appendChild(renderer.domElement);
 function makeLight(three, col, x, y, z) {
     const lt = new three.DirectionalLight(col, 3);
     lt.position.set(x, y, z);
-    lt.target.position.set(0, -5, 0);
+    lt.target.position.set(0, -7, 0);
     lt.castShadow = false;//true;
     return lt;
 }
@@ -147,12 +147,12 @@ sphere.geometry.computeVertexNormals();
 scene.add(sphere);
 
 const box = new THREE.Mesh(
-    new THREE.BoxGeometry(6, 6, 6, 24, 24, 24),
+    new THREE.BoxGeometry(8, 8, 8, 48, 48, 48),
     new THREE.MeshPhysicalMaterial(materials.getMat("brown"))
 );
 box.position.set(8, 6, 0);
 const bnoise = new BoxNoise({
-    detailSize: 0.5,
+    detailSize: 1,
     amplitude: 0.75,
     octaves: 4,
     persistence: 0.5
