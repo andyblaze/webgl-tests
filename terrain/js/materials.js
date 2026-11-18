@@ -8,7 +8,7 @@ export default class Materials {
                 roughness: 1, metalness: 1,
                 emissive: 0x493925, emissiveIntensity: 0.2,
                 sheenColor: 0x493925, sheen: 0.2,
-                clearcoat: 1, clearcoatRoughness: 0.5,
+                clearcoat: 1, clearcoatRoughness: 0.25, 
                 anisotropy: 0.75,
                 side: three.DoubleSide,
                 roughnessMap: this.getMap("rocky.png", 2),

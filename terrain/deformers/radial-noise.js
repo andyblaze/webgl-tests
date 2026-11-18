@@ -23,9 +23,7 @@ export default class SphereNoise {
         };      
     }
     transform(pos, length=1) {
-        pos.x /= length;
-        pos.y /= length;
-        pos.z /= length;
+        this.strategy.transform(pos, length);
     }
     distort(pos, amount) {
         this.strategy.distort(pos, amount);

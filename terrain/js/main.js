@@ -4,7 +4,7 @@ import Terrain from './terrain.js';
 import DeformerFactory from './deformer.js';
 import Materials from './materials.js?g';
 import { C } from './angles.js';
-import SphereNoise from '../deformers/spherenoise.js';
+import SphereNoise from '../deformers/radial-noise.js';
 
 // SCENE
 const scene = new THREE.Scene();
@@ -116,7 +116,7 @@ const sphere = new THREE.Mesh(
 
 sphere.position.set(0, 6, 0);
 
-class NoiseStrategy {
+class RadialNoise {
     static distort(pos, amount) {
         pos.x *= amount;
         pos.y *= amount;
@@ -125,6 +125,11 @@ class NoiseStrategy {
     static getLength(pos) {
         return Math.sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
     }
+    static transform(pos, length=1) {
+        pos.x /= length;
+        pos.y /= length;
+        pos.z /= length;
+    }
 }
 
 const shills = new SphereNoise({
@@ -132,7 +137,7 @@ const shills = new SphereNoise({
     amplitude: 1.5,
     octaves: 4,
     persistence: 0.5,
-    strategy: NoiseStrategy
+    strategy: RadialNoise
 });
 
 shills.apply(sphere.geometry.attributes.position);
