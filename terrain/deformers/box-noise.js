@@ -45,21 +45,33 @@ export default class BoxNoise {
             z: normals.getZ(i)
         };
     }
-    distort(pos, norm, height) {
-        pos.x += norm.x * height;
-        pos.y += norm.y * height;
-        pos.z += norm.z * height;       
+    distort(pos, amount, normals=null, i) {
+        const norm = normals ? this.getNorm(normals, i) : {x:1, y:1, z:1};
+
+        pos.x += norm.x * amount;
+        pos.y += norm.y * amount;
+        pos.z += norm.z * amount;       
+    }
+    getLength(pos) {
+        return 1;
+    }
+    transform(pos, length) {
+
     }
     apply(positions, normals) {
         for (let i = 0; i < positions.count; i++) {
 
             const pos = this.getPos(positions, i);
 
-            const height = this.applyOctaves(pos);
-            const norm = this.getNorm(normals, i);
-            this.distort(pos, norm, height);
+            const length = this.getLength(pos);
 
-            positions.setXYZ(i, pos.x, pos.y, pos.z);
+            if ( length > 0 ) {
+                this.transform(pos, length);
+                const distortion = this.applyOctaves(pos);
+                this.distort(pos, distortion, normals, i);
+
+                positions.setXYZ(i, pos.x, pos.y, pos.z);
+            }
         }
     }
 }
