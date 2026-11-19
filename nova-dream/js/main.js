@@ -11,7 +11,9 @@ const camera = makeCamera(THREE);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const core = new Core(scene);
-const particles = new ParticleEngine(scene);
+const particles = new ParticleEngine(scene, {
+    count: 5000
+});
 
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };

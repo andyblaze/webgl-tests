@@ -6,11 +6,11 @@ export class ParticleEngine {
         this.scene = scene;
 
         this.count = options.count ?? 5000;
-        this.innerRadius = options.innerRadius ?? 2.4;
-        this.outerRadius = options.outerRadius ?? 5.8;
+        this.innerRadius = options.innerRadius ?? 2.5;
+        this.outerRadius = options.outerRadius ?? 5.6;
 
         this.time = 0;
-        this.energy = 0.5;
+        this.energy = 0.65;
 
         this.uniforms = {
             uTime: { value: 0 },
@@ -27,60 +27,91 @@ export class ParticleEngine {
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
-        const positions = new Float32Array(this.count * 3);
         const radii = new Float32Array(this.count);
         const angles = new Float32Array(this.count);
-        const heights = new Float32Array(this.count);
+        const inclinations = new Float32Array(this.count);
         const speeds = new Float32Array(this.count);
         const sizes = new Float32Array(this.count);
         const phases = new Float32Array(this.count);
         const colors = new Float32Array(this.count * 3);
+        const brightness = new Float32Array(this.count);
 
-        const colorPalette = [
+        const palette = [
             new THREE.Color(0x00eaff),
-            new THREE.Color(0x653cff),
-            new THREE.Color(0xff32bd),
-            new THREE.Color(0xffa52f),
-            new THREE.Color(0x9b70ff)
+            new THREE.Color(0x347bff),
+            new THREE.Color(0x914bff),
+            new THREE.Color(0xff36c7),
+            new THREE.Color(0xff8b43),
+            new THREE.Color(0xc3a0ff)
         ];
+
+        const streamCount = 6;
 
         for (let i = 0; i < this.count; i++) {
             const i3 = i * 3;
 
-            // Spherical distribution
-            const theta = Math.acos(2 * Math.random() - 1);
-            const phi = Math.random() * Math.PI * 2;
-
-            // Slightly favour particles around the orbital plane
-            const orbitalBias = Math.pow(Math.abs(Math.sin(theta)), 0.65);
-
-            const radius = THREE.MathUtils.lerp(
-                this.innerRadius,
-                this.outerRadius,
-                Math.random()
+            // Assign each particle to an orbital stream
+            const stream = Math.floor(
+                Math.random() * streamCount
             );
 
-            positions[i3] = Math.sin(theta) * Math.cos(phi);
-            positions[i3 + 1] = Math.cos(theta);
-            positions[i3 + 2] = Math.sin(theta) * Math.sin(phi);
+            const streamPosition =
+                stream / (streamCount - 1);
 
-            radii[i] = radius;
-            angles[i] = phi;
-            heights[i] = orbitalBias;
-            
-            // Different orbital speeds and directions
-            speeds[i] = THREE.MathUtils.lerp(0.08, 0.35, Math.random());
+            const streamRadius = THREE.MathUtils.lerp(
+                this.innerRadius,
+                this.outerRadius,
+                streamPosition
+            );
 
-            sizes[i] = THREE.MathUtils.lerp(1.0, 3.2, Math.random());
+            // Each stream has a slightly different width
+            radii[i] = streamRadius +
+                (Math.random() - 0.5) * 0.55;
+
+            angles[i] = Math.random() * Math.PI * 2;
+
+            // Different orbital inclinations
+            const baseInclination =
+                (stream - 2.5) * 0.19;
+
+            inclinations[i] =
+                baseInclination +
+                (Math.random() - 0.5) * 0.32;
+
+            // Some particles orbit backwards
+            const direction = Math.random() < 0.12 ? -1 : 1;
+
+            speeds[i] = direction *
+                THREE.MathUtils.lerp(0.12, 0.42, Math.random());
+
+            // More variation in particle size
+            sizes[i] = THREE.MathUtils.lerp(
+                1.5,
+                4.8,
+                Math.pow(Math.random(), 1.6)
+            );
 
             phases[i] = Math.random() * Math.PI * 2;
 
-            // Choose and blend nearby cosmic palette colours
-            const paletteIndex = Math.floor(
-                Math.random() * colorPalette.length
+            brightness[i] = THREE.MathUtils.lerp(
+                0.55,
+                1.5,
+                Math.random()
             );
 
-            const color = colorPalette[paletteIndex].clone();
+            // Pick an individual colour identity
+            const colorIndex = Math.floor(
+                Math.random() * palette.length
+            );
+
+            const color = palette[colorIndex].clone();
+
+            // Slight individual colour variation
+            color.offsetHSL(
+                (Math.random() - 0.5) * 0.035,
+                0,
+                (Math.random() - 0.5) * 0.12
+            );
 
             colors[i3] = color.r;
             colors[i3 + 1] = color.g;
@@ -89,7 +120,9 @@ export class ParticleEngine {
 
         geometry.setAttribute(
             'position',
-            new THREE.BufferAttribute(positions, 3)
+            new THREE.BufferAttribute(
+                new Float32Array(this.count * 3), 3
+            )
         );
 
         geometry.setAttribute(
@@ -103,8 +136,8 @@ export class ParticleEngine {
         );
 
         geometry.setAttribute(
-            'aHeight',
-            new THREE.BufferAttribute(heights, 1)
+            'aInclination',
+            new THREE.BufferAttribute(inclinations, 1)
         );
 
         geometry.setAttribute(
@@ -127,6 +160,11 @@ export class ParticleEngine {
             new THREE.BufferAttribute(colors, 3)
         );
 
+        geometry.setAttribute(
+            'aBrightness',
+            new THREE.BufferAttribute(brightness, 1)
+        );
+
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
 
@@ -136,55 +174,61 @@ export class ParticleEngine {
 
                 attribute float aRadius;
                 attribute float aAngle;
-                attribute float aHeight;
+                attribute float aInclination;
                 attribute float aSpeed;
                 attribute float aSize;
                 attribute float aPhase;
                 attribute vec3 aColor;
+                attribute float aBrightness;
 
                 varying vec3 vColor;
+                varying float vBrightness;
                 varying float vAlpha;
 
                 void main() {
                     float time = uTime;
 
-                    // Individual orbital movement
-                    float angle = aAngle + time * aSpeed;
+                    // Orbital travel
+                    float angle =
+                        aAngle + time * aSpeed;
 
-                    // Energy-driven radial breathing
-                    float breathing = sin(
-                        time * 0.8 + aPhase
-                    ) * (0.12 + uEnergy * 0.22);
+                    // Gentle individual breathing
+                    float breathing =
+                        sin(time * 1.1 + aPhase) * 0.12;
 
-                    float radius = aRadius + breathing;
+                    float radius =
+                        aRadius + breathing * (0.5 + uEnergy);
 
-                    // Gentle turbulence
-                    float turbulence = sin(
-                        time * 0.7 + aPhase
-                    ) * 0.12;
+                    // Slightly elliptical orbital paths
+                    float x = cos(angle) * radius;
+                    float z = sin(angle) * radius * 0.78;
 
-                    float verticalDrift = cos(
-                        time * 0.45 + aPhase
-                    ) * 0.18;
+                    // Individual vertical motion
+                    float wave =
+                        sin(angle * 2.0 + aPhase) * 0.16;
 
-                    // Spherical cloud with orbital bias
-                    vec3 particlePosition;
+                    float y =
+                        wave +
+                        sin(time * 0.65 + aPhase) * 0.12;
 
-                    particlePosition.x =
-                        cos(angle) * radius
-                        + turbulence;
+                    // Rotate each stream into its own plane
+                    float inc = aInclination;
 
-                    particlePosition.y =
-                        position.y * radius
-                        + verticalDrift;
+                    float tiltedY =
+                        y * cos(inc) - z * sin(inc);
 
-                    particlePosition.z =
-                        sin(angle) * radius
-                        + turbulence * 0.5;
+                    float tiltedZ =
+                        y * sin(inc) + z * cos(inc);
 
-                    // Subtle energy expansion
+                    vec3 particlePosition = vec3(
+                        x,
+                        tiltedY,
+                        tiltedZ
+                    );
+
+                    // Energy gently expands the entire system
                     particlePosition *=
-                        1.0 + uEnergy * 0.035;
+                        1.0 + uEnergy * 0.025;
 
                     vec4 mvPosition =
                         modelViewMatrix *
@@ -193,57 +237,70 @@ export class ParticleEngine {
                     gl_Position =
                         projectionMatrix * mvPosition;
 
+                    // Larger, more visible particles
                     gl_PointSize = clamp(
-                        aSize * (35.0 / -mvPosition.z),
-                        1.0,
-                        7.0
+                        aSize * (85.0 / -mvPosition.z),
+                        1.5,
+                        12.0
                     );
 
                     vColor = aColor;
+                    vBrightness = aBrightness;
 
-                    vAlpha = 0.55 +
-                        0.35 * sin(time + aPhase);
+                    // Individual twinkling
+                    vAlpha = 0.72 +
+                        0.28 * sin(time * 1.5 + aPhase);
                 }
             `,
 
-            fragmentShader: `
+            fragmentShader: `                
                 varying vec3 vColor;
+                varying float vBrightness;
                 varying float vAlpha;
 
                 void main() {
                     vec2 uv = gl_PointCoord - 0.5;
+                    float d = length(uv) * 2.0;
 
-                    float distanceFromCenter = length(uv);
+                    if (d > 1.0) discard;
 
-                    if (distanceFromCenter > 0.5) {
-                        discard;
-                    }
+                    // Broad coloured atmosphere
+                    float atmosphere = exp(-d * 4.5);
 
-                    // Soft glowing particle
-                    float glow = exp(
-                        -distanceFromCenter * 12.0
-                    );
+                    // Defined luminous body
+                    float body = smoothstep(1.0, 0.12, d);
 
-                    float core = exp(
-                        -distanceFromCenter * 35.0
-                    );
+                    // Bright central nucleus
+                    float nucleus = exp(-d * 18.0);
 
-                    vec3 finalColor =
-                        vColor * (glow + core * 0.8);
+                    // Soft outer falloff
+                    float halo = exp(-d * 2.8);
+
+                    vec3 color =
+                        vColor * (
+                            atmosphere * 0.7 +
+                            body * 0.65 +
+                            nucleus * 1.8
+                        );
+
+                    // Slightly warm-white luminous centre
+                    color += vec3(0.65, 0.8, 1.0) * nucleus * 0.45;
 
                     float alpha =
-                        glow * vAlpha;
+                        (atmosphere * 0.32 +
+                        body * 0.55 +
+                        nucleus * 0.8) * vAlpha;
 
-                    gl_FragColor = vec4(
-                        finalColor,
-                        alpha
-                    );
-                }
-            `,
+                    color *= vBrightness;
+
+                    gl_FragColor = vec4(color, alpha);
+                }`,
 
             transparent: true,
             depthWrite: false,
-            blending: THREE.AdditiveBlending
+            depthTest: true,
+            blending: THREE.AdditiveBlending,
+            toneMapped: false
         });
 
         this.particles = new THREE.Points(
@@ -259,10 +316,9 @@ export class ParticleEngine {
 
         this.uniforms.uTime.value = this.time;
 
-        // Slow overall movement of the particle cloud
-        this.group.rotation.x += dt * 0.00000012;
-        this.group.rotation.y += dt * 0.00000018;
-        this.group.rotation.z += dt * 0.00000006;
+        /*this.group.rotation.x += dt * 0.012;
+        this.group.rotation.y += dt * 0.018;
+        this.group.rotation.z += dt * 0.006;*/
     }
 
     setEnergy(value) {
