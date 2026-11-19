@@ -25,11 +25,9 @@ export class Core {
 
         this.scene.add(this.group);
     }
-
     // ======================================
     // MAIN CORE
     // ======================================
-
     createCore() {
         const geometry = new THREE.IcosahedronGeometry(2.0, 96);
 
@@ -226,20 +224,13 @@ export class Core {
 
         this.group.add(this.mesh);
     }
-
     // ======================================
     // OUTER SHELL
     // ======================================
-
     createOuterShell() {
-
-        const geometry = new THREE.IcosahedronGeometry(
-            2.12,
-            64
-        );
+        const geometry = new THREE.IcosahedronGeometry(2.12, 64);
 
         const material = new THREE.ShaderMaterial({
-
             uniforms: this.uniforms,
 
             vertexShader: `
@@ -305,58 +296,47 @@ export class Core {
 
         this.group.add(this.shell);
     }
-
     // ======================================
     // UPDATE
     // ======================================
-
     update(dt) {
-
         this.time += dt;
-
         this.uniforms.uTime.value = this.time;
 
         // Gentle organic rotation
+        this.group.rotation.x += dt * 0.031;
         this.group.rotation.y += dt * 0.08;
-        this.group.rotation.x += dt * 0.035;
+        this.group.rotation.z += dt * 0.023;
 
         // Slow breathing
-        const breathing = 1.0 +
-            Math.sin(this.time * 0.8) * 0.025;
-
+        const breathing = 1.0 + Math.sin(this.time * 0.8) * 0.025;
         this.group.scale.setScalar(breathing);
 
         // Outer shell movement
-        this.shell.rotation.y = -this.time * 0.05;
-        this.shell.rotation.z = this.time * 0.025;
+        this.shell.rotation.x = -this.time * 0.11;
+        this.shell.rotation.y = -this.time * 0.07;
+        this.shell.rotation.z = this.time * 0.029;
     }
-
     // ======================================
     // PUBLIC PARAMETERS
     // ======================================
-
     setEnergy(value) {
         this.uniforms.uEnergy.value = value;
     }
-
     setDistortion(value) {
         this.uniforms.uDistortion.value = value;
     }
-
     setColorShift(value) {
         this.uniforms.uColorShift.value = value;
     }
-
     setBrightness(value) {
         this.uniforms.uBrightness.value = value;
     }
-
     // ======================================
     // CLEANUP
     // ======================================
 
     dispose() {
-
         this.mesh.geometry.dispose();
         this.mesh.material.dispose();
 
