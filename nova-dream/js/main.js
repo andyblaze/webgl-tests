@@ -1,80 +1,17 @@
 import * as THREE from "three";
+import { byId, makeCamera, makeRenderer } from "./functions.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-// ==========================================
-// SUPERNOVA DREAM ENGINE
-// Main application
-// ==========================================
-
-// Canvas
-const canvas = document.querySelector('#universe');
-
-// ==========================================
-// RENDERER
-// ==========================================
-
-const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: true,
-    alpha: false,
-    powerPreference: 'high-performance'
-});
-
-renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
-);
-
-renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-);
-
-// Colour management
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
-
-// Black background
-renderer.setClearColor(0x000000, 1);
-
-// ==========================================
-// SCENE
-// ==========================================
-
+const canvas = byId("universe");
+const renderer = makeRenderer(THREE, canvas);
 const scene = new THREE.Scene();
-
 scene.background = new THREE.Color(0x000000);
-
-// ==========================================
-// CAMERA
-// ==========================================
-
-const camera = new THREE.PerspectiveCamera(
-    55,                                     // FOV
-    window.innerWidth / window.innerHeight,
-    0.1,                                    // Near clipping
-    1000                                    // Far clipping
-);
-
-camera.position.set(0, 0, 12);
-
-camera.lookAt(0, 0, 0);
-
-// ==========================================
-// CLOCK
-// ==========================================
+const camera = makeCamera(THREE);
 
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };
 
-
-// ==========================================
-// ANIMATION LOOP
-// ==========================================
-
 function animate(timestamp) {
-
     requestAnimationFrame(animate);
 
     time.dt = Math.min(clock.getDelta(), 0.05);
@@ -93,7 +30,7 @@ function animate(timestamp) {
 // START
 // ==========================================
 
-animate();
+requestAnimationFrame(animate);
 
 console.log(
     '%c SUPERNOVA DREAM ENGINE ',
@@ -105,18 +42,13 @@ console.log(
 // ==========================================
 
 function onResize() {
-
     const width = window.innerWidth;
     const height = window.innerHeight;
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
-
+    
     renderer.setSize(width, height);
-
-    renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 2)
-    );
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 }
-
 window.addEventListener('resize', onResize);
