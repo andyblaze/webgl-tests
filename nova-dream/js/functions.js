@@ -38,3 +38,9 @@ export function makeCamera(three) {
     cam.lookAt(0, 0, 0);  
     return cam;  
 }
+
+export function makeScene(three) {
+    const s = new three.Scene();
+    s.background = new three.Color(0x000000);
+    return s;
+}
