@@ -1,0 +1,36 @@
+[x] 1. Black canvas, camera and renderer
+
+Full-screen Three.js scene, responsive resize and animation loop.
+
+
+[ ] 2. Central energy core
+
+Custom shader sphere with procedural displacement and emission.
+
+
+[ ] 3. Particle engine
+
+35,000 particles, orbital movement and GPU animation.
+
+
+[ ] 4. Filament engine
+
+Procedural spiral structures with animated distortion.
+
+
+[ ] 5. Orbital structures
+
+Rings, toroids and rotating geometric forms.
+
+
+[ ] 6. Evolution controller
+
+Lifecycle transitions, parameter interpolation and random generation.
+
+
+[ ] 7. Post-processing
+
+Bloom, colour grading, chromatic aberration and vignette.
+
+
+[ ] 8. Polish and performance
