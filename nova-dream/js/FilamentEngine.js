@@ -1,6 +1,7 @@
 
 import * as THREE from 'three';
 import { filamentShader } from './shaders/filament.js';
+import { trailShader } from './shaders/trail.js';
 
 // ==========================================
 // SUPERNOVA — FILAMENT ENGINE
@@ -14,7 +15,7 @@ export default class FilamentEngine {
         this.time = 0;
 
         this.params = {
-            count: 16,
+            count: 8,
             segments: 160,
             radialSegments: 7,
 
@@ -49,6 +50,94 @@ export default class FilamentEngine {
 
         this.group = new THREE.Group();
         this.material = this.createMaterial();
+// Glowing orange energy markers
+this.markerGeometry = new THREE.SphereGeometry(
+    0.055, 16, 16
+);
+
+this.markerHaloGeometry = new THREE.SphereGeometry(
+    0.12, 16, 16
+);
+
+this.markerCoreMaterial = new THREE.MeshBasicMaterial({
+    color: '#ff8a18',
+    toneMapped: false
+});
+
+this.markerCoreMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        uTime: { value: 0 }
+    },
+
+    vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vPosition = position;
+
+            gl_Position = projectionMatrix *
+                          modelViewMatrix *
+                          vec4(position, 1.0);
+        }
+    `,
+
+    fragmentShader: `
+        uniform float uTime;
+
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+
+        void main() {
+            vec3 normal = normalize(vNormal);
+
+            // Warm orange body, with a darker edge
+            float rim = pow(1.0 - abs(normal.z), 2.0);
+
+            // Slow energy fluctuations
+            float pulse = 0.5 + 0.5 * sin(
+                uTime * 7.0 +
+                vPosition.x * 18.0 +
+                vPosition.y * 13.0
+            );
+
+            vec3 deepOrange = vec3(1.0, 0.12, 0.005);
+            vec3 hotOrange  = vec3(1.0, 0.38, 0.015);
+            vec3 amber      = vec3(1.0, 0.65, 0.04);
+
+            vec3 colour = mix(
+                deepOrange,
+                hotOrange,
+                pulse * 0.65
+            );
+
+            colour = mix(
+                colour,
+                amber,
+                pow(rim, 1.5) * 0.45
+            );
+
+            gl_FragColor = vec4(colour, 1.0);
+        }
+    `,
+
+    toneMapped: false
+});
+this.trailMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        uTime: { value: 0 }
+    },
+    vertexShader: trailShader.vertex,
+    fragmentShader: trailShader.fragment,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false
+});
+
+this.trailPointCount = 40;
+this.trailLength = 0.13;
 
         this.filaments = [];
 
@@ -56,6 +145,38 @@ export default class FilamentEngine {
 
         this.scene.add(this.group);
     }
+
+createTrail(curve) {
+    const count = this.trailPointCount;
+
+    const geometry = new THREE.BufferGeometry();
+
+    const positions = new Float32Array(count * 3);
+    const progress = new Float32Array(count);
+
+    for (let i = 0; i < count; i++) {
+        progress[i] = i / (count - 1);
+    }
+
+    geometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(positions, 3)
+    );
+
+    geometry.setAttribute(
+        'aTrailProgress',
+        new THREE.BufferAttribute(progress, 1)
+    );
+
+    const trail = new THREE.Points(
+        geometry,
+        this.trailMaterial
+    );
+
+    trail.frustumCulled = false;
+
+    return trail;
+}
 
 
     // ======================================
@@ -87,16 +208,16 @@ export default class FilamentEngine {
     // GENERATE FILAMENTS
     // ======================================
 
-    createFilaments() {
+createFilaments() {
 
-        for (let i = 0; i < this.params.count; i++) {
+    for (let i = 0; i < this.params.count; i++) {
 
-            const filament = this.createFilament(i);
+        const filament = this.createFilament(i);
 
-            this.filaments.push(filament);
-            this.group.add(filament);
-        }
+        this.filaments.push(filament);
+        this.group.add(filament.mesh);
     }
+}
 
 
     // ======================================
@@ -215,6 +336,39 @@ const curve = new THREE.CatmullRomCurve3(points);
             geometry,
             this.material
         );
+// Marker group
+const marker = new THREE.Group();
+
+const markerCore = new THREE.Mesh(
+    this.markerGeometry,
+    this.markerCoreMaterial
+);
+
+/*const markerHalo = new THREE.Mesh(
+    this.markerHaloGeometry,
+    this.markerHaloMaterial
+);
+
+marker.add(markerHalo);*/
+marker.add(markerCore);
+
+// Attach marker to filament mesh
+mesh.add(marker);
+
+const trail = this.createTrail(curve);
+mesh.add(trail);
+
+// Initial position along curve
+const progress = Math.random();
+
+const speed = THREE.MathUtils.randFloat(
+    0.035,
+    0.09
+);
+
+const direction = Math.random() < 0.5 ? 1 : -1;
+
+marker.position.copy(curve.getPointAt(progress));     
 
         // Give each filament its own orientation
         mesh.rotation.set(
@@ -223,7 +377,15 @@ const curve = new THREE.CatmullRomCurve3(points);
             THREE.MathUtils.randFloatSpread(0.6)
         );
 
-        return mesh;
+        return {
+    mesh,
+    curve,
+    marker,
+    trail,
+    progress,
+    speed,
+    direction
+};
     }
 
 
@@ -353,17 +515,76 @@ const curve = new THREE.CatmullRomCurve3(points);
     // ANIMATION
     // ======================================
 
-    update(dt) {
 
-        this.time += dt;
+updateTrail(filament) {
+    const positions = filament.trail.geometry.attributes.position;
+    const count = this.trailPointCount;
 
-        this.uniforms.uTime.value = this.time;
+    for (let i = 0; i < count; i++) {
+        const t = i / (count - 1);
 
-        // Very subtle overall movement
-        this.group.rotation.y += dt * 0.018;
-        this.group.rotation.x =
-            Math.sin(this.time * 0.12) * 0.035;
+        // Sample backwards from the moving marker
+        const trailProgress =
+            filament.progress -
+            filament.direction * this.trailLength * t;
+
+        const clampedProgress = THREE.MathUtils.clamp(
+            trailProgress,
+            0,
+            1
+        );
+
+        const point = filament.curve.getPointAt(clampedProgress);
+
+        positions.setXYZ(i, point.x, point.y, point.z);
     }
+
+    positions.needsUpdate = true;
+}
+
+
+update(dt) {
+
+    this.time += dt;
+
+    this.uniforms.uTime.value = this.time;
+    this.markerCoreMaterial.uniforms.uTime.value += dt;
+    this.trailMaterial.uniforms.uTime.value += dt;
+
+    // Gentle overall movement
+    this.group.rotation.y += dt * 0.018;
+
+    this.group.rotation.x =
+        Math.sin(this.time * 0.12) * 0.035;
+
+    // Move each orange energy marker
+    for (const filament of this.filaments) {
+
+        filament.progress +=
+            filament.speed *
+            dt *
+            filament.direction;
+
+        // Reverse at either end of the filament
+        if (filament.progress >= 1.0) {
+            filament.progress = 1.0;
+            filament.direction = -1;
+        }
+
+        if (filament.progress <= 0.0) {
+            filament.progress = 0.0;
+            filament.direction = 1;
+        }
+
+        // Follow the actual curved filament path
+        filament.marker.position.copy(
+            filament.curve.getPointAt(
+                filament.progress
+            )
+        );
+        this.updateTrail(filament);
+    }
+}
 
 
     // ======================================
@@ -402,6 +623,14 @@ const curve = new THREE.CatmullRomCurve3(points);
         }
 
         this.material.dispose();
+
+this.markerGeometry.dispose();
+//this.markerHaloGeometry.dispose();
+
+this.markerCoreMaterial.dispose();
+//this.markerHaloMaterial.dispose();
+this.trailMaterial.dispose();
+filament.trail.geometry.dispose();
 
         this.scene.remove(this.group);
 

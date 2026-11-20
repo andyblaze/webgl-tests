@@ -165,7 +165,7 @@ colour = mix(
                 endFade *
                 (0.55 + vPulse * 0.35);
 
-            alpha *= uBrightness * 0.25;
+            alpha *= uBrightness;
 
             gl_FragColor = vec4(colour, alpha);
         }
