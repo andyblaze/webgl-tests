@@ -2,6 +2,82 @@
 import * as THREE from 'three';
 import { filamentShader } from './shaders/filament.js';
 import { trailShader } from './shaders/trail.js';
+import { markerShader } from './shaders/marker.js';
+
+class Trail {
+    
+    static material = new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 }
+        },
+        vertexShader: trailShader.vertex,
+        fragmentShader: trailShader.fragment,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        toneMapped: false
+    });
+
+    static pointCount = 40;
+    static length = 0.13;
+
+    static create(curve) {
+        const count = this.pointCount;
+
+        const geometry = new THREE.BufferGeometry();
+
+        const positions = new Float32Array(count * 3);
+        const progress = new Float32Array(count);
+
+        for (let i = 0; i < count; i++) {
+            progress[i] = i / (count - 1);
+        }
+
+        geometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(positions, 3)
+        );
+
+        geometry.setAttribute(
+            'aTrailProgress',
+            new THREE.BufferAttribute(progress, 1)
+        );
+
+        const trail = new THREE.Points(
+            geometry,
+            this.material
+        );
+
+        trail.frustumCulled = false;
+
+        return trail;
+    }
+    static update(filament) {
+        const positions = filament.trail.geometry.attributes.position;
+        const count = this.pointCount;
+
+        for (let i = 0; i < count; i++) {
+            const t = i / (count - 1);
+
+            // Sample backwards from the moving marker
+            const trailProgress =
+                filament.progress -
+                filament.direction * this.trailLength * t;
+
+            const clampedProgress = THREE.MathUtils.clamp(trailProgress, 0, 1);
+
+            const point = filament.curve.getPointAt(clampedProgress);
+            console.log(point);
+
+            positions.setXYZ(i, point.x, point.y, point.z);
+        }
+
+        positions.needsUpdate = true;
+    }
+    static updateMaterial(dt) {
+        this.material.uniforms.uTime.value += dt;
+    }
+}
 
 // ==========================================
 // SUPERNOVA — FILAMENT ENGINE
@@ -50,80 +126,8 @@ export default class FilamentEngine {
 
         this.group = new THREE.Group();
         this.material = this.createMaterial();
-// Glowing orange energy markers
-this.markerGeometry = new THREE.SphereGeometry(
-    0.055, 16, 16
-);
 
-this.markerHaloGeometry = new THREE.SphereGeometry(
-    0.12, 16, 16
-);
 
-this.markerCoreMaterial = new THREE.MeshBasicMaterial({
-    color: '#ff8a18',
-    toneMapped: false
-});
-
-this.markerCoreMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        uTime: { value: 0 }
-    },
-
-    vertexShader: `
-        varying vec3 vNormal;
-        varying vec3 vPosition;
-
-        void main() {
-            vNormal = normalize(normalMatrix * normal);
-            vPosition = position;
-
-            gl_Position = projectionMatrix *
-                          modelViewMatrix *
-                          vec4(position, 1.0);
-        }
-    `,
-
-    fragmentShader: `
-        uniform float uTime;
-
-        varying vec3 vNormal;
-        varying vec3 vPosition;
-
-        void main() {
-            vec3 normal = normalize(vNormal);
-
-            // Warm orange body, with a darker edge
-            float rim = pow(1.0 - abs(normal.z), 2.0);
-
-            // Slow energy fluctuations
-            float pulse = 0.5 + 0.5 * sin(
-                uTime * 7.0 +
-                vPosition.x * 18.0 +
-                vPosition.y * 13.0
-            );
-
-            vec3 deepOrange = vec3(1.0, 0.12, 0.005);
-            vec3 hotOrange  = vec3(1.0, 0.38, 0.015);
-            vec3 amber      = vec3(1.0, 0.65, 0.04);
-
-            vec3 colour = mix(
-                deepOrange,
-                hotOrange,
-                pulse * 0.65
-            );
-
-            colour = mix(
-                colour,
-                amber,
-                pow(rim, 1.5) * 0.45
-            );
-
-            gl_FragColor = vec4(colour, 1.0);
-        }
-    `,
-
-    toneMapped: false
-});
 this.trailMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uTime: { value: 0 }
@@ -178,6 +182,27 @@ createTrail(curve) {
     return trail;
 }
 
+    createMarker() {
+        const markerGeometry = new THREE.SphereGeometry(0.055, 16, 16);
+
+        const markerCoreMaterial = new THREE.ShaderMaterial({
+            uniforms: { uTime: { value: 0 } },
+            vertexShader: markerShader.vertex,
+            fragmentShader: markerShader.fragment,
+            toneMapped: false
+        });
+        // Marker group
+        const marker = new THREE.Group();
+
+        const markerCore = new THREE.Mesh(
+            markerGeometry,
+            markerCoreMaterial
+        );
+
+        marker.add(markerCore);
+        return marker;
+    }
+
 
     // ======================================
     // SHARED SHADER MATERIAL
@@ -208,16 +233,16 @@ createTrail(curve) {
     // GENERATE FILAMENTS
     // ======================================
 
-createFilaments() {
+    createFilaments() {
 
-    for (let i = 0; i < this.params.count; i++) {
+        for (let i = 0; i < this.params.count; i++) {
 
-        const filament = this.createFilament(i);
+            const filament = this.createFilament(i);
 
-        this.filaments.push(filament);
-        this.group.add(filament.mesh);
+            this.filaments.push(filament);
+            this.group.add(filament.mesh);
+        }
     }
-}
 
 
     // ======================================
@@ -263,65 +288,59 @@ createFilaments() {
             Math.random()
         );
 
-        //const points = [];
+        const points = [];
 
+        // Orbital plane: X and Z
+        const baseRadius = THREE.MathUtils.lerp(
+            p.minRadius,
+            p.maxRadius,
+            Math.random()
+        );
 
+        const orbitWidth = THREE.MathUtils.randFloat(
+            2.5,
+            6.1
+        );
 
-const points = [];
+        const verticalOffset = THREE.MathUtils.randFloatSpread(0.7);
 
-// Orbital plane: X and Z
-const baseRadius = THREE.MathUtils.lerp(
-    p.minRadius,
-    p.maxRadius,
-    Math.random()
-);
+        const verticalWave = THREE.MathUtils.randFloat(
+            0.12,
+            0.35
+        );
 
-const orbitWidth = THREE.MathUtils.randFloat(
-    2.5,
-    6.1
-);
+        const orbitPhase = Math.random() * Math.PI * 2;
 
-const verticalOffset = THREE.MathUtils.randFloatSpread(0.7);
+        // Generate an extended elliptical spiral
+        for (let j = 0; j <= p.segments; j++) {
 
-const verticalWave = THREE.MathUtils.randFloat(
-    0.12,
-    0.35
-);
+            const t = j / p.segments;
 
-const orbitPhase = Math.random() * Math.PI * 2;
+            const angle =
+                orbitPhase +
+                t * Math.PI * 2 * turns;
 
-// Generate an extended elliptical spiral
-for (let j = 0; j <= p.segments; j++) {
+            // Gradual expansion and contraction
+            const envelope = Math.sin(Math.PI * t);
 
-    const t = j / p.segments;
+            const radius =
+                baseRadius +
+                orbitWidth * envelope +
+                Math.sin(angle * 2.0 + phase) * wobble;
 
-    const angle =
-        orbitPhase +
-        t * Math.PI * 2 * turns;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius * 0.85;
 
-    // Gradual expansion and contraction
-    const envelope = Math.sin(Math.PI * t);
+            // Keep vertical movement subtle
+            const y =
+                verticalOffset +
+                Math.sin(angle * 0.5 + phase) *
+                verticalWave;
 
-    const radius =
-        baseRadius +
-        orbitWidth * envelope +
-        Math.sin(angle * 2.0 + phase) * wobble;
+            points.push(new THREE.Vector3(x, y, z));
+        }
 
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius * 0.85;
-
-    // Keep vertical movement subtle
-    const y =
-        verticalOffset +
-        Math.sin(angle * 0.5 + phase) *
-        verticalWave;
-
-    points.push(new THREE.Vector3(x, y, z));
-}
-
-const curve = new THREE.CatmullRomCurve3(points);
-
-
+        const curve = new THREE.CatmullRomCurve3(points);
 
         const geometry = this.createTubeGeometry(
             curve,
@@ -336,39 +355,26 @@ const curve = new THREE.CatmullRomCurve3(points);
             geometry,
             this.material
         );
-// Marker group
-const marker = new THREE.Group();
+        // Marker group
+        const marker = this.createMarker();
 
-const markerCore = new THREE.Mesh(
-    this.markerGeometry,
-    this.markerCoreMaterial
-);
+        // Attach marker to filament mesh
+        mesh.add(marker);
 
-/*const markerHalo = new THREE.Mesh(
-    this.markerHaloGeometry,
-    this.markerHaloMaterial
-);
+        const trail = Trail.create(curve);//this.createTrail(curve);
+        mesh.add(trail);
 
-marker.add(markerHalo);*/
-marker.add(markerCore);
+        // Initial position along curve
+        const progress = Math.random();
 
-// Attach marker to filament mesh
-mesh.add(marker);
+        const speed = THREE.MathUtils.randFloat(
+            0.035,
+            0.09
+        );
 
-const trail = this.createTrail(curve);
-mesh.add(trail);
+        const direction = Math.random() < 0.5 ? 1 : -1;
 
-// Initial position along curve
-const progress = Math.random();
-
-const speed = THREE.MathUtils.randFloat(
-    0.035,
-    0.09
-);
-
-const direction = Math.random() < 0.5 ? 1 : -1;
-
-marker.position.copy(curve.getPointAt(progress));     
+        marker.position.copy(curve.getPointAt(progress));     
 
         // Give each filament its own orientation
         mesh.rotation.set(
@@ -377,15 +383,8 @@ marker.position.copy(curve.getPointAt(progress));
             THREE.MathUtils.randFloatSpread(0.6)
         );
 
-        return {
-    mesh,
-    curve,
-    marker,
-    trail,
-    progress,
-    speed,
-    direction
-};
+        return { mesh, curve, marker, trail,
+            progress, speed, direction };
     }
 
 
@@ -548,7 +547,7 @@ update(dt) {
     this.time += dt;
 
     this.uniforms.uTime.value = this.time;
-    this.markerCoreMaterial.uniforms.uTime.value += dt;
+    //this.markerCoreMaterial.uniforms.uTime.value += dt;
     this.trailMaterial.uniforms.uTime.value += dt;
 
     // Gentle overall movement
