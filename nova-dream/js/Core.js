@@ -62,7 +62,7 @@ export class Core {
     // ======================================
 
     createOuterShell() {
-        const geometry = new THREE.IcosahedronGeometry(2.12, 64);
+        const geometry = new THREE.IcosahedronGeometry(2.16, 64);
 
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
@@ -71,7 +71,7 @@ export class Core {
 
             transparent: true,
             depthWrite: false,
-            side: THREE.BackSide,
+            side: THREE.DoubleSide,
             blending: THREE.AdditiveBlending
         });
 
