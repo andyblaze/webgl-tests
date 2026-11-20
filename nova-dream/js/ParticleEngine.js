@@ -19,9 +19,34 @@ export class ParticleEngine {
 
         this.group = new THREE.Group();
 
+        this.palette = [
+            new THREE.Color(0x00eaff),
+            new THREE.Color(0x347bff),
+            new THREE.Color(0x914bff),
+            new THREE.Color(0xff36c7),
+            new THREE.Color(0xff8b43),
+            new THREE.Color(0xc3a0ff)
+        ];
+
         this.createParticles();
 
         this.scene.add(this.group);
+    }
+    getColor() {
+        // Pick an individual colour identity
+        const colorIndex = Math.floor(
+            Math.random() * this.palette.length
+        );
+
+        const color = this.palette[colorIndex].clone();
+
+        // Slight individual colour variation
+        color.offsetHSL(
+            (Math.random() - 0.5) * 0.035,
+            0,
+            (Math.random() - 0.5) * 0.12
+        );   
+        return color;     
     }
 
     createParticles() {
@@ -36,27 +61,15 @@ export class ParticleEngine {
         const colors = new Float32Array(this.count * 3);
         const brightness = new Float32Array(this.count);
 
-        const palette = [
-            new THREE.Color(0x00eaff),
-            new THREE.Color(0x347bff),
-            new THREE.Color(0x914bff),
-            new THREE.Color(0xff36c7),
-            new THREE.Color(0xff8b43),
-            new THREE.Color(0xc3a0ff)
-        ];
-
         const streamCount = 6;
 
         for (let i = 0; i < this.count; i++) {
             const i3 = i * 3;
 
             // Assign each particle to an orbital stream
-            const stream = Math.floor(
-                Math.random() * streamCount
-            );
+            const stream = Math.floor(Math.random() * streamCount);
 
-            const streamPosition =
-                stream / (streamCount - 1);
+            const streamPosition = stream / (streamCount - 1);
 
             const streamRadius = THREE.MathUtils.lerp(
                 this.innerRadius,
@@ -65,24 +78,19 @@ export class ParticleEngine {
             );
 
             // Each stream has a slightly different width
-            radii[i] = streamRadius +
-                (Math.random() - 0.5) * 0.55;
+            radii[i] = streamRadius + (Math.random() - 0.5) * 0.55;
 
             angles[i] = Math.random() * Math.PI * 2;
 
             // Different orbital inclinations
-            const baseInclination =
-                (stream - 2.5) * 0.19;
+            const baseInclination = (stream - 2.5) * 0.19;
 
-            inclinations[i] =
-                baseInclination +
-                (Math.random() - 0.5) * 0.32;
+            inclinations[i] = baseInclination + (Math.random() - 0.5) * 0.32;
 
             // Some particles orbit backwards
             const direction = Math.random() < 0.12 ? -1 : 1;
 
-            speeds[i] = direction *
-                THREE.MathUtils.lerp(0.12, 0.42, Math.random());
+            speeds[i] = direction * THREE.MathUtils.lerp(0.12, 0.42, Math.random());
 
             // More variation in particle size
             sizes[i] = THREE.MathUtils.lerp(
@@ -99,19 +107,7 @@ export class ParticleEngine {
                 Math.random()
             );
 
-            // Pick an individual colour identity
-            const colorIndex = Math.floor(
-                Math.random() * palette.length
-            );
-
-            const color = palette[colorIndex].clone();
-
-            // Slight individual colour variation
-            color.offsetHSL(
-                (Math.random() - 0.5) * 0.035,
-                0,
-                (Math.random() - 0.5) * 0.12
-            );
+            const color = this.getColor();//palette[colorIndex].clone();
 
             colors[i3] = color.r;
             colors[i3 + 1] = color.g;
@@ -177,27 +173,21 @@ export class ParticleEngine {
             toneMapped: false
         });
 
-        this.particles = new THREE.Points(
-            geometry,
-            material
-        );
-
+        this.particles = new THREE.Points(geometry, material);
         this.group.add(this.particles);
     }
 
     update(dt) {
         this.time += dt;
-
         this.uniforms.uTime.value = this.time;
-
-        /*this.group.rotation.x += dt * 0.012;
-        this.group.rotation.y += dt * 0.018;
-        this.group.rotation.z += dt * 0.006;*/
     }
 
     setEnergy(value) {
         this.energy = THREE.MathUtils.clamp(value, 0, 2);
         this.uniforms.uEnergy.value = this.energy;
+    }
+    setPalette(p) {
+        this.palette = p;
     }
 
     dispose() {

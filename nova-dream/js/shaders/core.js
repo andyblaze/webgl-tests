@@ -1,3 +1,4 @@
+
 export const coreShader = {
     vertex: `
 
@@ -10,9 +11,7 @@ export const coreShader = {
         varying vec3 vViewPosition;
         varying float vDisplacement;
 
-        // 3D procedural hash
         vec3 hash33(vec3 p) {
-
             p = vec3(
                 dot(p, vec3(127.1, 311.7, 74.7)),
                 dot(p, vec3(269.5, 183.3, 246.1)),
@@ -22,9 +21,7 @@ export const coreShader = {
             return -1.0 + 2.0 * fract(sin(p) * 43758.5453);
         }
 
-        // 3D value noise
         float noise3D(vec3 p) {
-
             vec3 i = floor(p);
             vec3 f = fract(p);
 
@@ -67,7 +64,6 @@ export const coreShader = {
 
             float t = uTime * 0.35;
 
-            // Layered procedural noise
             float n1 = noise3D(
                 p * 1.5 + vec3(t, 0.0, 0.0)
             );
@@ -88,25 +84,22 @@ export const coreShader = {
             displacement *= uDistortion;
             displacement *= (0.8 + uEnergy * 0.8);
 
-            // Pulsating core
             float pulse = sin(uTime * 1.5) * 0.06;
 
             p += normal * (displacement + pulse);
 
             vDisplacement = displacement;
-
             vPosition = p;
             vNormal = normalize(normalMatrix * normal);
 
-            // View-space position
-            vec4 mvPosition = modelViewMatrix *
-                vec4(p, 1.0);
+            vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
 
             vViewPosition = -mvPosition.xyz;
 
             gl_Position = projectionMatrix * mvPosition;
         }
     `,
+
     fragment: `
 
         uniform float uTime;
@@ -114,32 +107,41 @@ export const coreShader = {
         uniform float uColorShift;
         uniform float uBrightness;
 
+        uniform vec3 uCoreColorA;
+        uniform vec3 uCoreColorB;
+        uniform vec3 uCoreColorC;
+
         varying vec3 vPosition;
         varying vec3 vNormal;
         varying vec3 vViewPosition;
         varying float vDisplacement;
 
-        // Animated colour palette
+        // Three-colour animated palette
         vec3 palette(float t) {
 
-            vec3 a = vec3(0.5, 0.5, 0.5);
-            vec3 b = vec3(0.5, 0.5, 0.5);
-            vec3 c = vec3(1.0, 1.0, 1.0);
+            float flow = fract(t);
 
-            vec3 d = vec3(
-                0.00,
-                0.15,
-                0.25
-            );
+            vec3 color;
 
-            return a + b * cos(
-                6.28318 * (c * t + d)
-            );
+            if (flow < 0.5) {
+                color = mix(
+                    uCoreColorA,
+                    uCoreColorB,
+                    smoothstep(0.0, 0.5, flow)
+                );
+            } else {
+                color = mix(
+                    uCoreColorB,
+                    uCoreColorC,
+                    smoothstep(0.5, 1.0, flow)
+                );
+            }
+
+            return color;
         }
 
         void main() {
 
-            // Animated colour field
             float colourFlow =
                 vDisplacement * 2.0 +
                 length(vPosition) * 0.35 -
@@ -154,8 +156,14 @@ export const coreShader = {
                 8.0
             );
 
-            col += vec3(0.0, 0.7, 1.0) *
-                energyLines * 0.8;
+            // Derive energy-line colour from the palette
+            vec3 electricColour = mix(
+                uCoreColorA,
+                uCoreColorC,
+                0.5 + 0.5 * sin(colourFlow * 3.0)
+            );
+
+            col += electricColour * energyLines * 0.8;
 
             // Fresnel illumination
             vec3 normal = normalize(vNormal);
@@ -166,13 +174,18 @@ export const coreShader = {
                 2.5
             );
 
-            col += vec3(1.0, 0.1, 0.65) *
-                fresnel * 1.5;
+            vec3 fresnelColour = mix(
+                uCoreColorB,
+                uCoreColorC,
+                0.5
+            );
 
-            // Energy and brightness
+            col += fresnelColour * fresnel * 1.5;
+
             col *= uBrightness;
             col *= 0.8 + uEnergy * 0.8;
 
             gl_FragColor = vec4(col, 1.0);
-        }`
-}
+        }
+    `
+};

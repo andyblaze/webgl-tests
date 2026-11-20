@@ -1,3 +1,4 @@
+
 export const shellShader = {
     vertex: `
 
@@ -15,16 +16,19 @@ export const shellShader = {
             gl_Position = projectionMatrix * mvPosition;
         }
     `,
-    fragment: `
 
+    fragment: `
         uniform float uTime;
         uniform float uEnergy;
+
+        uniform vec3 uShellColorA;
+        uniform vec3 uShellColorB;
+        uniform vec3 uShellColorC;
 
         varying vec3 vNormal;
         varying vec3 vViewPosition;
 
         void main() {
-
             vec3 viewDir = normalize(vViewPosition);
 
             float fresnel = pow(
@@ -32,12 +36,29 @@ export const shellShader = {
                 3.0
             );
 
-            vec3 colour = mix(
-                vec3(0.0, 0.8, 1.0),
-                vec3(1.0, 0.0, 0.7),
-                sin(uTime * 0.4) * 0.5 + 0.5
-            );
+            // Animated three-colour transition
+            float colourFlow = sin(uTime * 0.4) * 0.5 + 0.5;
 
+            vec3 colour;
+
+            if (colourFlow < 0.5) {
+
+                colour = mix(
+                    uShellColorA,
+                    uShellColorB,
+                    smoothstep(0.0, 0.5, colourFlow)
+                );
+
+            } else {
+
+                colour = mix(
+                    uShellColorB,
+                    uShellColorC,
+                    smoothstep(0.5, 1.0, colourFlow)
+                );
+            }
+
+            // Energy-responsive shell brightness
             float alpha = fresnel *
                 (0.12 + uEnergy * 0.16);
 
@@ -45,5 +66,6 @@ export const shellShader = {
                 colour,
                 alpha
             );
-        }`
-}
+        }
+    `
+};
