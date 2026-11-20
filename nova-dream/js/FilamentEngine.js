@@ -62,7 +62,7 @@ class Trail {
             // Sample backwards from the moving marker
             const trailProgress =
                 filament.progress -
-                filament.direction * this.trailLength * t;
+                filament.direction * this.length * t;
 
             const clampedProgress = THREE.MathUtils.clamp(trailProgress, 0, 1);
 
