@@ -306,10 +306,7 @@ export default class FilamentEngine {
         // Initial position along curve
         const progress = Math.random();
 
-        const speed = THREE.MathUtils.randFloat(
-            0.035,
-            0.09
-        );
+        const speed = THREE.MathUtils.randFloat(0.035, 0.09);
 
         const direction = Math.random() < 0.5 ? 1 : -1;
 
@@ -448,139 +445,89 @@ export default class FilamentEngine {
 
         return geometry;
     }
-
-
     // ======================================
     // ANIMATION
     // ======================================
+    update(dt) {
+        this.time += dt;
 
+        this.uniforms.uTime.value = this.time;
+        //this.markerCoreMaterial.uniforms.uTime.value += dt;
+        //this.trailMaterial.uniforms.uTime.value += dt;
+        
 
-updateTrail(filament) {
-    const positions = filament.trail.geometry.attributes.position;
-    const count = this.trailPointCount;
+        // Gentle overall movement
+        this.group.rotation.y += dt * 0.018;
 
-    for (let i = 0; i < count; i++) {
-        const t = i / (count - 1);
+        this.group.rotation.x = Math.sin(this.time * 0.12) * 0.035;
 
-        // Sample backwards from the moving marker
-        const trailProgress =
-            filament.progress -
-            filament.direction * this.trailLength * t;
+        // Move each orange energy marker
+        for (const filament of this.filaments) {
 
-        const clampedProgress = THREE.MathUtils.clamp(
-            trailProgress,
-            0,
-            1
-        );
+            filament.progress +=
+                filament.speed *
+                dt *
+                filament.direction;
 
-        const point = filament.curve.getPointAt(clampedProgress);
+            // Reverse at either end of the filament
+            if (filament.progress >= 1.0) {
+                filament.progress = 1.0;
+                filament.direction = -1;
+            }
 
-        positions.setXYZ(i, point.x, point.y, point.z);
-    }
+            if (filament.progress <= 0.0) {
+                filament.progress = 0.0;
+                filament.direction = 1;
+            }
 
-    positions.needsUpdate = true;
-}
-
-
-update(dt) {
-
-    this.time += dt;
-
-    this.uniforms.uTime.value = this.time;
-    //this.markerCoreMaterial.uniforms.uTime.value += dt;
-    //this.trailMaterial.uniforms.uTime.value += dt;
-    
-
-    // Gentle overall movement
-    this.group.rotation.y += dt * 0.018;
-
-    this.group.rotation.x =
-        Math.sin(this.time * 0.12) * 0.035;
-
-    // Move each orange energy marker
-    for (const filament of this.filaments) {
-
-        filament.progress +=
-            filament.speed *
-            dt *
-            filament.direction;
-
-        // Reverse at either end of the filament
-        if (filament.progress >= 1.0) {
-            filament.progress = 1.0;
-            filament.direction = -1;
+            // Follow the actual curved filament path
+            filament.marker.position.copy(
+                filament.curve.getPointAt(
+                    filament.progress
+                )
+            );
+            filament.trail.position.copy(
+                filament.curve.getPointAt(
+                    filament.progress
+                )
+            );
+            //Trail.update(filament);
+            //Trail.updateMaterial(dt);
+            //this.updateTrail(filament);
         }
-
-        if (filament.progress <= 0.0) {
-            filament.progress = 0.0;
-            filament.direction = 1;
-        }
-
-        // Follow the actual curved filament path
-        filament.marker.position.copy(
-            filament.curve.getPointAt(
-                filament.progress
-            )
-        );
-        filament.trail.position.copy(
-            filament.curve.getPointAt(
-                filament.progress
-            )
-        );
-        //Trail.update(filament);
-        //Trail.updateMaterial(dt);
-        //this.updateTrail(filament);
     }
-}
-
-
     // ======================================
     // CONTROLS
     // ======================================
-
     setEnergy(value) {
-
         this.uniforms.uEnergy.value = value;
     }
-
-
     setBrightness(value) {
-
         this.uniforms.uBrightness.value = value;
     }
-
-
     setPalette(colors) {
-
         this.uniforms.uColorA.value.set(colors[0]);
         this.uniforms.uColorB.value.set(colors[1]);
         this.uniforms.uColorC.value.set(colors[2]);
     }
-
-
     // ======================================
     // CLEANUP
     // ======================================
-
     dispose() {
-
         for (const filament of this.filaments) {
 
             filament.geometry.dispose();
         }
-
         this.material.dispose();
+        this.markerGeometry.dispose();
+        //this.markerHaloGeometry.dispose();
 
-this.markerGeometry.dispose();
-//this.markerHaloGeometry.dispose();
-
-this.markerCoreMaterial.dispose();
-//this.markerHaloMaterial.dispose();
-this.trailMaterial.dispose();
-filament.trail.geometry.dispose();
+        this.markerCoreMaterial.dispose();
+        //this.markerHaloMaterial.dispose();
+        this.trailMaterial.dispose();
+        filament.trail.geometry.dispose();
 
         this.scene.remove(this.group);
-
         this.filaments = [];
     }
 }
