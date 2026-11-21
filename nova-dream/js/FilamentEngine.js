@@ -1,82 +1,10 @@
 
 import * as THREE from 'three';
 import { filamentShader } from './shaders/filament.js';
-import { trailShader } from './shaders/trail.js';
+
 import { markerShader } from './shaders/marker.js';
+import Trail from './Trail.js';
 
-class Trail {    
-    static material = new THREE.ShaderMaterial({
-        uniforms: {
-            uTime: { value: 0 }
-        },
-        vertexShader: trailShader.vertex,
-        fragmentShader: trailShader.fragment,
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        toneMapped: false
-    });
-    static pointCount = 40;
-    static length = 0.13;
-    static geometry = new THREE.BufferGeometry();
-
-    static create(curve) {
-        const count = this.pointCount;
-
-        //const geometry = new THREE.BufferGeometry();
-
-        const positions = new Float32Array(count * 3);
-        const progress = new Float32Array(count);
-
-        for (let i = 0; i < count; i++) {
-            progress[i] = i / (count - 1);
-        }
-
-        this.geometry.setAttribute(
-            'position',
-            new THREE.BufferAttribute(positions, 3)
-        );
-
-        this.geometry.setAttribute(
-            'aTrailProgress',
-            new THREE.BufferAttribute(progress, 1)
-        );
-
-        const trail = new THREE.Points(
-            this.geometry,
-            this.material
-        );
-
-        trail.frustumCulled = false;
-
-        return trail;
-    }
-    static update(filament) {
-
-        const positions = this.geometry.attributes.position;
-        const count = this.pointCount;
-
-        for (let i = 0; i < count; i++) {
-            const t = i / (count - 1);
-
-            // Sample backwards from the moving marker
-            const trailProgress =
-                filament.progress -
-                filament.direction * this.length * t;
-
-            const clampedProgress = THREE.MathUtils.clamp(trailProgress, 0, 1);
-
-            const point = filament.curve.getPointAt(clampedProgress);
-
-            positions.setXYZ(i, point.x, point.y, point.z);
-        }
-
-        positions.needsUpdate = true;
-    }
-    static updateMaterial(dt) {
-        this.material.uniforms.uTime.value += dt;
-    }
-}
 
 class Marker {
     static create() {
@@ -304,6 +232,49 @@ class Curve {
     }
 }
 
+class Filament {
+    static create(index, params, material) {
+        const { curve, thickness, phase } = Curve.create(params);
+
+        const geometry = TubeGeometry.create(
+            curve, params.segments, params.radialSegments,
+            thickness, index, phase
+        );
+
+        const mesh = new THREE.Mesh(geometry, material);
+        // Marker group
+        const marker = Marker.create();
+        //const trail = Trail.create(curve);
+        //marker.add(trail);
+
+        // Attach marker to filament mesh
+        mesh.add(marker);
+
+        const trail = Trail.create(curve);
+        mesh.add(trail);
+
+        // Initial position along curve
+        const progress = Math.random();
+
+        const speed = THREE.MathUtils.randFloat(0.035, 0.09);
+
+        const direction = Math.random() < 0.5 ? 1 : -1;
+
+        marker.position.copy(curve.getPointAt(progress));     
+        trail.position.copy(curve.getPointAt(progress));  
+
+        // Give each filament its own orientation
+        mesh.rotation.set(
+            THREE.MathUtils.randFloatSpread(0.6),
+            0,//THREE.MathUtils.randFloatSpread(Math.PI * 2),
+            THREE.MathUtils.randFloatSpread(0.6)
+        );
+
+        return { mesh, curve, marker, trail,
+            progress, speed, direction };
+    }
+}
+
 
 // ==========================================
 // SUPERNOVA — FILAMENT ENGINE
@@ -380,54 +351,10 @@ export default class FilamentEngine {
     // ======================================
     createFilaments() {
         for (let i = 0; i < this.params.count; i++) {
-            const filament = this.createFilament(i);
+            const filament = Filament.create(i, this.params, this.material);
             this.filaments.push(filament);
             this.group.add(filament.mesh);
         }
-    }
-    createFilament(index) {
-        const { curve, thickness, phase } = Curve.create(this.params);
-
-        const geometry = TubeGeometry.create(
-            curve,
-            this.params.segments,
-            this.params.radialSegments,
-            thickness,
-            index,
-            phase
-        );
-
-        const mesh = new THREE.Mesh(geometry, this.material);
-        // Marker group
-        const marker = Marker.create();
-        //const trail = Trail.create(curve);
-        //marker.add(trail);
-
-        // Attach marker to filament mesh
-        mesh.add(marker);
-
-        const trail = Trail.create(curve);
-        mesh.add(trail);
-
-        // Initial position along curve
-        const progress = Math.random();
-
-        const speed = THREE.MathUtils.randFloat(0.035, 0.09);
-
-        const direction = Math.random() < 0.5 ? 1 : -1;
-
-        marker.position.copy(curve.getPointAt(progress));     
-        trail.position.copy(curve.getPointAt(progress));  
-
-        // Give each filament its own orientation
-        mesh.rotation.set(
-            THREE.MathUtils.randFloatSpread(0.6),
-            0,//THREE.MathUtils.randFloatSpread(Math.PI * 2),
-            THREE.MathUtils.randFloatSpread(0.6)
-        );
-
-        return { mesh, curve, marker, trail,
-            progress, speed, direction };
     }
     // ======================================
     // ANIMATION
