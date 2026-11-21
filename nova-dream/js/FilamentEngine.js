@@ -184,8 +184,8 @@ export default class FilamentEngine {
     // ======================================
     // CREATE INDIVIDUAL SPIRAL
     // ======================================
-    createFilament(index) {
-        const p = this.params;
+    createCurve(p) {
+        //const p = this.params;
         const phase = Math.random() * Math.PI * 2;
 
         const radius = THREE.MathUtils.lerp(
@@ -273,7 +273,11 @@ export default class FilamentEngine {
             points.push(new THREE.Vector3(x, y, z));
         }
 
-        const curve = new THREE.CatmullRomCurve3(points);
+        return { "curve": new THREE.CatmullRomCurve3(points), "thickness": thickness, "phase": phase };        
+    }
+    createFilament(index) {
+        const p = this.params;
+        const { curve, thickness, phase } = this.createCurve(p); //new THREE.CatmullRomCurve3(points);
 
         const geometry = this.createTubeGeometry(
             curve,
