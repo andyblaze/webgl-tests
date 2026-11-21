@@ -21,10 +21,12 @@ class Trail {
     static pointCount = 40;
     static length = 0.13;
 
+    static geometry = new THREE.BufferGeometry();
+
     static create(curve) {
         const count = this.pointCount;
 
-        const geometry = new THREE.BufferGeometry();
+        //const geometry = new THREE.BufferGeometry();
 
         const positions = new Float32Array(count * 3);
         const progress = new Float32Array(count);
@@ -33,18 +35,18 @@ class Trail {
             progress[i] = i / (count - 1);
         }
 
-        geometry.setAttribute(
+        this.geometry.setAttribute(
             'position',
             new THREE.BufferAttribute(positions, 3)
         );
 
-        geometry.setAttribute(
+        this.geometry.setAttribute(
             'aTrailProgress',
             new THREE.BufferAttribute(progress, 1)
         );
 
         const trail = new THREE.Points(
-            geometry,
+            this.geometry,
             this.material
         );
 
@@ -53,7 +55,8 @@ class Trail {
         return trail;
     }
     static update(filament) {
-        const positions = filament.trail.geometry.attributes.position;
+
+        const positions = this.geometry.attributes.position;
         const count = this.pointCount;
 
         for (let i = 0; i < count; i++) {
@@ -67,7 +70,6 @@ class Trail {
             const clampedProgress = THREE.MathUtils.clamp(trailProgress, 0, 1);
 
             const point = filament.curve.getPointAt(clampedProgress);
-            console.log(point);
 
             positions.setXYZ(i, point.x, point.y, point.z);
         }
@@ -357,6 +359,8 @@ createTrail(curve) {
         );
         // Marker group
         const marker = this.createMarker();
+        //const trail = Trail.create(curve);
+        //marker.add(trail);
 
         // Attach marker to filament mesh
         mesh.add(marker);
@@ -375,6 +379,7 @@ createTrail(curve) {
         const direction = Math.random() < 0.5 ? 1 : -1;
 
         marker.position.copy(curve.getPointAt(progress));     
+        trail.position.copy(curve.getPointAt(progress));  
 
         // Give each filament its own orientation
         mesh.rotation.set(
@@ -548,7 +553,8 @@ update(dt) {
 
     this.uniforms.uTime.value = this.time;
     //this.markerCoreMaterial.uniforms.uTime.value += dt;
-    this.trailMaterial.uniforms.uTime.value += dt;
+    //this.trailMaterial.uniforms.uTime.value += dt;
+    
 
     // Gentle overall movement
     this.group.rotation.y += dt * 0.018;
@@ -581,7 +587,14 @@ update(dt) {
                 filament.progress
             )
         );
-        this.updateTrail(filament);
+        filament.trail.position.copy(
+            filament.curve.getPointAt(
+                filament.progress
+            )
+        );
+        //Trail.update(filament);
+        //Trail.updateMaterial(dt);
+        //this.updateTrail(filament);
     }
 }
 
