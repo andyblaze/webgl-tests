@@ -7,7 +7,7 @@ import { shellShader } from './shaders/shell.js';
 // SUPERNOVA — CENTRAL ENERGY CORE
 // ==========================================
 
-export class Core {
+export default class Core {
     constructor(scene) {
         this.scene = scene;
         this.time = 0;

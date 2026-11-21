@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { shader } from './shaders/particle.js';
 
-export class ParticleEngine {
+export default class ParticleEngine {
     constructor(scene, options = {}) {
         this.scene = scene;
 
