@@ -46,11 +46,9 @@ export default class FilamentEngine {
             uColorA: {
                 value: new THREE.Color('#fffb00')
             },
-
             uColorB: {
                 value: new THREE.Color('#ffa32b')
             },
-
             uColorC: {
                 value: new THREE.Color('#ff3232')
             }
@@ -89,15 +87,14 @@ export default class FilamentEngine {
 
         this.uniforms.uTime.value = this.time;
         //this.markerCoreMaterial.uniforms.uTime.value += dt;
-        //this.trailMaterial.uniforms.uTime.value += dt;
-        
+        //this.trailMaterial.uniforms.uTime.value += dt;        
 
         // Gentle overall movement
         this.group.rotation.y += dt * 0.018;
         this.group.rotation.x = Math.sin(this.time * 0.12) * 0.035;
 
         // Move each orange energy marker
-        for (const filament of this.filaments) {
+        for ( const filament of this.filaments ) {
             filament.progress +=
                 filament.speed *
                 dt *
@@ -113,7 +110,6 @@ export default class FilamentEngine {
                 filament.progress = 0.0;
                 filament.direction = 1;
             }
-
             // Follow the actual curved filament path
             filament.marker.position.copy(
                 filament.curve.getPointAt(
