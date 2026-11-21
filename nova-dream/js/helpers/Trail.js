@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { trailShader } from './shaders/trail.js';
+import { trailShader } from '../shaders/trail.js';
 
 export default class Trail {    
     static material = new THREE.ShaderMaterial({

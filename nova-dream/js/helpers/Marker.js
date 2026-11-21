@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { markerShader } from './shaders/marker.js';
+import { markerShader } from '../shaders/marker.js';
 
 export default class Marker {
     static create() {

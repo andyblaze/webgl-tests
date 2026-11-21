@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { filamentShader } from './shaders/filament.js';
-import Filament from './Filament.js';
+import Filament from './helpers/Filament.js';
 
 // ==========================================
 // SUPERNOVA — FILAMENT ENGINE
