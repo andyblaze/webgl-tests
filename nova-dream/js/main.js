@@ -4,6 +4,7 @@ import { Core } from './Core.js';
 import { ParticleEngine } from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import World from "./World.js";
 
 const canvas = byId("universe");
 const renderer = makeRenderer(THREE, canvas);
@@ -15,6 +16,9 @@ const core = new Core(scene);
 const particles = new ParticleEngine(scene, { count: 500 });
 const filaments = new FilamentEngine(scene);
 
+const world = new World();
+world.add([core, particles, filaments]);
+
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };
 
@@ -25,15 +29,9 @@ function animate(timestamp) {
     time.dt = Math.min(clock.getDelta(), 0.05);
     time.elapsed = clock.getElapsed();
     time.timestamp = timestamp;
-    core.update(time.dt);
-    particles.update(time.dt);
-    filaments.update(time.dt);
-    controls.update();
 
-    // Future systems will update here:
-    // evolution.update(dt);
-    // universe.update(elapsed, dt);
-    // cameraController.update(dt);
+    world.update(time);
+    controls.update();
 
     renderer.render(scene, camera);
 }
