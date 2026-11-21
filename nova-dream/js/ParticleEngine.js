@@ -20,12 +20,12 @@ export class ParticleEngine {
         this.group = new THREE.Group();
 
         this.palette = [
-            new THREE.Color(0x00eaff),
-            new THREE.Color(0x347bff),
-            new THREE.Color(0x914bff),
-            new THREE.Color(0xff36c7),
-            new THREE.Color(0xff8b43),
-            new THREE.Color(0xc3a0ff)
+            new THREE.Color('#ff2600'),
+            new THREE.Color('#ffd000'),
+            new THREE.Color('#f7a090'),
+            new THREE.Color('#f5f0f0'),
+            new THREE.Color('#fbff00'),
+            new THREE.Color('#b82107')
         ];
 
         this.createParticles();

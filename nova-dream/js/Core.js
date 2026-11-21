@@ -25,9 +25,9 @@ export class Core {
             uCoreColorC: { value: new THREE.Color('#fff3b0') },
 
             // SHELL PALETTE
-            uShellColorA: { value: new THREE.Color('#ff00cc') },
-            uShellColorB: { value: new THREE.Color('#7200ff') },
-            uShellColorC: { value: new THREE.Color('#00d9ff') }
+            uShellColorA: { value: new THREE.Color('#ff2600') },
+            uShellColorB: { value: new THREE.Color('#ff9d00') },
+            uShellColorC: { value: new THREE.Color('#fff3b0') }
         };
 
         this.group = new THREE.Group();
