@@ -5,6 +5,7 @@ import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import World from "./World.js";
+import PerformanceMonitor from "./perf-monitor.js";
 
 const canvas = byId("universe");
 const renderer = makeRenderer(THREE, canvas);
@@ -23,6 +24,7 @@ world.add([core, particles, filaments]);
 
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };
+const monitor = new PerformanceMonitor(renderer);
 
 function animate(timestamp) {
     requestAnimationFrame(animate);
@@ -36,6 +38,7 @@ function animate(timestamp) {
     controls.update();
 
     renderer.render(scene, camera);
+    //monitor.update(timestamp);
 }
 requestAnimationFrame(animate);
 
