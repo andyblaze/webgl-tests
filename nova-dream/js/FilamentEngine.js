@@ -90,15 +90,12 @@ export default class FilamentEngine {
         //this.trailMaterial.uniforms.uTime.value += dt;        
 
         // Gentle overall movement
-        this.group.rotation.y += dt * 0.018;
+        this.group.rotation.y += dt * 0.028;
         this.group.rotation.x = Math.sin(this.time * 0.12) * 0.035;
 
         // Move each orange energy marker
         for ( const filament of this.filaments ) {
-            filament.progress +=
-                filament.speed *
-                dt *
-                filament.direction;
+            filament.progress += filament.speed * dt * filament.direction;
 
             // Reverse at either end of the filament
             if (filament.progress >= 1.0) {

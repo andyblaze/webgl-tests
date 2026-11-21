@@ -12,7 +12,7 @@ const camera = makeCamera(THREE);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 const core = new Core(scene);
-const particles = new ParticleEngine(scene, { count: 5000 });
+const particles = new ParticleEngine(scene, { count: 500 });
 const filaments = new FilamentEngine(scene);
 
 const clock = new THREE.Timer();
