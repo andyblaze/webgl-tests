@@ -4,8 +4,7 @@ import { filamentShader } from './shaders/filament.js';
 import { trailShader } from './shaders/trail.js';
 import { markerShader } from './shaders/marker.js';
 
-class Trail {
-    
+class Trail {    
     static material = new THREE.ShaderMaterial({
         uniforms: {
             uTime: { value: 0 }
@@ -17,10 +16,8 @@ class Trail {
         blending: THREE.AdditiveBlending,
         toneMapped: false
     });
-
     static pointCount = 40;
     static length = 0.13;
-
     static geometry = new THREE.BufferGeometry();
 
     static create(curve) {
@@ -81,110 +78,8 @@ class Trail {
     }
 }
 
-// ==========================================
-// SUPERNOVA — FILAMENT ENGINE
-// ==========================================
-
-export default class FilamentEngine {
-
-    constructor(scene) {
-
-        this.scene = scene;
-        this.time = 0;
-
-        this.params = {
-            count: 8,
-            segments: 160,
-            radialSegments: 7,
-
-            minRadius: 1.0,
-            maxRadius: 1.5,
-
-            minThickness: 0.012,
-            maxThickness: 0.025,
-
-            turns: 1,
-            verticalSpread: 1.3
-        };
-
-        // Shader uniforms
-        this.uniforms = {
-            uTime: { value: 0 },
-            uEnergy: { value: 0.5 },
-            uBrightness: { value: 1.0 },
-
-            uColorA: {
-                value: new THREE.Color('#00eaff')
-            },
-
-            uColorB: {
-                value: new THREE.Color('#8a2bff')
-            },
-
-            uColorC: {
-                value: new THREE.Color('#ff32bd')
-            }
-        };
-
-        this.group = new THREE.Group();
-        this.material = this.createMaterial();
-
-
-this.trailMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        uTime: { value: 0 }
-    },
-    vertexShader: trailShader.vertex,
-    fragmentShader: trailShader.fragment,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    toneMapped: false
-});
-
-this.trailPointCount = 40;
-this.trailLength = 0.13;
-
-        this.filaments = [];
-
-        this.createFilaments();
-
-        this.scene.add(this.group);
-    }
-
-createTrail(curve) {
-    const count = this.trailPointCount;
-
-    const geometry = new THREE.BufferGeometry();
-
-    const positions = new Float32Array(count * 3);
-    const progress = new Float32Array(count);
-
-    for (let i = 0; i < count; i++) {
-        progress[i] = i / (count - 1);
-    }
-
-    geometry.setAttribute(
-        'position',
-        new THREE.BufferAttribute(positions, 3)
-    );
-
-    geometry.setAttribute(
-        'aTrailProgress',
-        new THREE.BufferAttribute(progress, 1)
-    );
-
-    const trail = new THREE.Points(
-        geometry,
-        this.trailMaterial
-    );
-
-    trail.frustumCulled = false;
-
-    return trail;
-}
-
-    createMarker() {
+class Marker {
+    static create() {
         const markerGeometry = new THREE.SphereGeometry(0.055, 16, 16);
 
         const markerCoreMaterial = new THREE.ShaderMaterial({
@@ -202,59 +97,95 @@ createTrail(curve) {
         );
 
         marker.add(markerCore);
-        return marker;
+        return marker;        
     }
+}
 
+// ==========================================
+// SUPERNOVA — FILAMENT ENGINE
+// ==========================================
 
+export default class FilamentEngine {
+
+    constructor(scene) {
+        this.scene = scene;
+        this.time = 0;
+        this.setParams();
+        this.setUniforms();
+
+        this.group = new THREE.Group();
+        this.material = this.createMaterial();
+
+        this.filaments = [];
+        this.createFilaments();
+        this.scene.add(this.group);
+    }
+    setParams() {
+        this.params = {
+            count: 8,
+            segments: 160,
+            radialSegments: 7,
+
+            minRadius: 1.0,
+            maxRadius: 1.5,
+
+            minThickness: 0.012,
+            maxThickness: 0.025,
+
+            turns: 1,
+            verticalSpread: 1.3
+        };
+    }
+    setUniforms() {
+        // Shader uniforms
+        this.uniforms = {
+            uTime: { value: 0 },
+            uEnergy: { value: 0.5 },
+            uBrightness: { value: 1.0 },
+
+            uColorA: {
+                value: new THREE.Color('#fffb00')
+            },
+
+            uColorB: {
+                value: new THREE.Color('#ffa32b')
+            },
+
+            uColorC: {
+                value: new THREE.Color('#ff3232')
+            }
+        };
+    }
     // ======================================
     // SHARED SHADER MATERIAL
     // ======================================
-
     createMaterial() {
-
         return new THREE.ShaderMaterial({
-
             uniforms: this.uniforms,
-
             vertexShader: filamentShader.vertex,
             fragmentShader: filamentShader.fragment,
-
             transparent: true,
             depthWrite: false,
-
             side: THREE.DoubleSide,
-
             blending: THREE.AdditiveBlending,
-
             toneMapped: false
         });
     }
-
-
     // ======================================
     // GENERATE FILAMENTS
     // ======================================
-
     createFilaments() {
-
         for (let i = 0; i < this.params.count; i++) {
-
             const filament = this.createFilament(i);
-
             this.filaments.push(filament);
             this.group.add(filament.mesh);
         }
     }
-
-
     // ======================================
     // CREATE INDIVIDUAL SPIRAL
     // ======================================
-
     createFilament(index) {
-
         const p = this.params;
-
         const phase = Math.random() * Math.PI * 2;
 
         const radius = THREE.MathUtils.lerp(
@@ -358,7 +289,7 @@ createTrail(curve) {
             this.material
         );
         // Marker group
-        const marker = this.createMarker();
+        const marker = Marker.create();
         //const trail = Trail.create(curve);
         //marker.add(trail);
 
