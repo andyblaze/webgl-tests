@@ -10,26 +10,20 @@ export default class Filament {
         this.curve = curve; 
 
         this.createMesh(params, thickness, index, phase, material);
-        // Marker group
-        this.marker = Marker.create();
-        //const trail = Trail.create(curve);
-        //marker.add(trail);
-
-        // Attach marker to filament mesh
-        this.mesh.add(this.marker);
-
-        this.trail = Trail.create(curve);
-        this.mesh.add(this.trail);
 
         // Initial position along curve
         this.progress = Math.random();
-
         this.speed = THREE.MathUtils.randFloat(0.035, 0.09);
-
         this.direction = Math.random() < 0.5 ? 1 : -1;
 
+        // Marker group
+        this.marker = Marker.create();
+        this.mesh.add(this.marker);
+
+        this.trail = new Trail();
+        this.mesh.add(this.trail.mesh);
+
         this.marker.position.copy(curve.getPointAt(this.progress));     
-        this.trail.position.copy(curve.getPointAt(this.progress));  
 
         // Give each filament its own orientation
         this.mesh.rotation.set(
@@ -63,10 +57,6 @@ export default class Filament {
                 this.progress
             )
         );
-        this.trail.position.copy(
-            this.curve.getPointAt(
-                this.progress
-            )
-        );
+        this.trail.update(this);
     }
 }

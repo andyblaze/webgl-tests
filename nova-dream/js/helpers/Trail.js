@@ -2,25 +2,23 @@ import * as THREE from 'three';
 import { trailShader } from '../shaders/trail.js';
 
 export default class Trail {    
-    static material = new THREE.ShaderMaterial({
-        uniforms: {
-            uTime: { value: 0 }
-        },
-        vertexShader: trailShader.vertex,
-        fragmentShader: trailShader.fragment,
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        toneMapped: false
-    });
-    static pointCount = 40;
-    static length = 0.13;
-    static geometry = new THREE.BufferGeometry();
+    constructor() {
+        this.material = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0 }
+            },
+            vertexShader: trailShader.vertex,
+            fragmentShader: trailShader.fragment,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            toneMapped: false
+        });
+        this.pointCount = 50;
+        this.length = 0.18;
 
-    static create(curve) {
         const count = this.pointCount;
-
-        //const geometry = new THREE.BufferGeometry();
+        const geometry = new THREE.BufferGeometry();
 
         const positions = new Float32Array(count * 3);
         const progress = new Float32Array(count);
@@ -29,37 +27,30 @@ export default class Trail {
             progress[i] = i / (count - 1);
         }
 
-        this.geometry.setAttribute(
+        geometry.setAttribute(
             'position',
             new THREE.BufferAttribute(positions, 3)
         );
 
-        this.geometry.setAttribute(
+        geometry.setAttribute(
             'aTrailProgress',
             new THREE.BufferAttribute(progress, 1)
         );
 
-        const trail = new THREE.Points(
-            this.geometry,
+        this.mesh = new THREE.Points(
+            geometry,
             this.material
         );
-
-        trail.frustumCulled = false;
-
-        return trail;
+        this.mesh.frustumCulled = false;
     }
-    static update(filament) {
-        const positions = this.geometry.attributes.position;
-        const count = this.pointCount;
+    update(filament) {
+        const positions = this.mesh.geometry.attributes.position;
+        const count = this.pointCount; 
 
         for ( let i = 0; i < count; i++ ) {
             const t = i / (count - 1);
 
-            // Sample backwards from the moving marker
-            const trailProgress =
-                filament.progress -
-                filament.direction * this.length * t;
-
+            const trailProgress = filament.progress - filament.direction * this.length * t;
             const clampedProgress = THREE.MathUtils.clamp(trailProgress, 0, 1);
             const point = filament.curve.getPointAt(clampedProgress);
 
@@ -67,7 +58,7 @@ export default class Trail {
         }
         positions.needsUpdate = true;
     }
-    static updateMaterial(dt) {
+    updateMaterial(dt) {
         this.material.uniforms.uTime.value += dt;
     }
 }

@@ -17,7 +17,7 @@ export const trailShader = {
                 uTime * 8.0 - aTrailProgress * 12.0
             );
 
-            float size = mix(11.0, 2.0, aTrailProgress);
+            float size = mix(7.0, 2.0, aTrailProgress);
 
             gl_PointSize = size * (180.0 / -mvPosition.z);
             gl_Position = projectionMatrix * mvPosition;
