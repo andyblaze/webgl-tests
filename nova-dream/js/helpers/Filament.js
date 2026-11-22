@@ -5,44 +5,68 @@ import TubeGeometry from './TubeGeometry.js';
 import Curve from './Curve.js';
 
 export default class Filament {
-    static create(index, params, material) {
+    constructor(index, params, material) {
         const { curve, thickness, phase } = Curve.create(params);
+        this.curve = curve; 
 
-        const geometry = TubeGeometry.create(
-            curve, params.segments, params.radialSegments,
-            thickness, index, phase
-        );
-
-        const mesh = new THREE.Mesh(geometry, material);
+        this.createMesh(params, thickness, index, phase, material);
         // Marker group
-        const marker = Marker.create();
+        this.marker = Marker.create();
         //const trail = Trail.create(curve);
         //marker.add(trail);
 
         // Attach marker to filament mesh
-        mesh.add(marker);
+        this.mesh.add(this.marker);
 
-        const trail = Trail.create(curve);
-        mesh.add(trail);
+        this.trail = Trail.create(curve);
+        this.mesh.add(this.trail);
 
         // Initial position along curve
-        const progress = Math.random();
+        this.progress = Math.random();
 
-        const speed = THREE.MathUtils.randFloat(0.035, 0.09);
+        this.speed = THREE.MathUtils.randFloat(0.035, 0.09);
 
-        const direction = Math.random() < 0.5 ? 1 : -1;
+        this.direction = Math.random() < 0.5 ? 1 : -1;
 
-        marker.position.copy(curve.getPointAt(progress));     
-        trail.position.copy(curve.getPointAt(progress));  
+        this.marker.position.copy(curve.getPointAt(this.progress));     
+        this.trail.position.copy(curve.getPointAt(this.progress));  
 
         // Give each filament its own orientation
-        mesh.rotation.set(
+        this.mesh.rotation.set(
             THREE.MathUtils.randFloatSpread(0.6),
             0,//THREE.MathUtils.randFloatSpread(Math.PI * 2),
             THREE.MathUtils.randFloatSpread(0.6)
         );
+    }
+    createMesh(params, thickness, index, phase, material) {
+        const geometry = TubeGeometry.create(
+            this.curve, params.segments, params.radialSegments,
+            thickness, index, phase
+        );
+        this.mesh = new THREE.Mesh(geometry, material);        
+    }
+    update(dt) {
+        this.progress += this.speed * dt * this.direction;
+        // Reverse at either end of the filament
+        if (this.progress >= 1.0) {
+            this.progress = 1.0;
+            this.direction = -1;
+        }
 
-        return { mesh, curve, marker, trail,
-            progress, speed, direction };
+        if (this.progress <= 0.0) {
+            this.progress = 0.0;
+            this.direction = 1;
+        }
+        // Follow the actual curved filament path
+        this.marker.position.copy(
+            this.curve.getPointAt(
+                this.progress
+            )
+        );
+        this.trail.position.copy(
+            this.curve.getPointAt(
+                this.progress
+            )
+        );
     }
 }

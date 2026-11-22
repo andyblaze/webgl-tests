@@ -74,7 +74,7 @@ export default class FilamentEngine {
     // ======================================
     createFilaments() {
         for (let i = 0; i < this.params.count; i++) {
-            const filament = Filament.create(i, this.params, this.material);
+            const filament = new Filament(i, this.params, this.material);
             this.filaments.push(filament);
             this.group.add(filament.mesh);
         }
@@ -83,11 +83,7 @@ export default class FilamentEngine {
     // ANIMATION
     // ======================================
     update(dt) {
-        this.time += dt;
-
-        this.uniforms.uTime.value = this.time;
-        //this.markerCoreMaterial.uniforms.uTime.value += dt;
-        //this.trailMaterial.uniforms.uTime.value += dt;        
+        this.time += dt;   
 
         // Gentle overall movement
         this.group.rotation.y += dt * 0.028;
@@ -95,32 +91,7 @@ export default class FilamentEngine {
 
         // Move each orange energy marker
         for ( const filament of this.filaments ) {
-            filament.progress += filament.speed * dt * filament.direction;
-
-            // Reverse at either end of the filament
-            if (filament.progress >= 1.0) {
-                filament.progress = 1.0;
-                filament.direction = -1;
-            }
-
-            if (filament.progress <= 0.0) {
-                filament.progress = 0.0;
-                filament.direction = 1;
-            }
-            // Follow the actual curved filament path
-            filament.marker.position.copy(
-                filament.curve.getPointAt(
-                    filament.progress
-                )
-            );
-            filament.trail.position.copy(
-                filament.curve.getPointAt(
-                    filament.progress
-                )
-            );
-            //Trail.update(filament);
-            //Trail.updateMaterial(dt);
-            //this.updateTrail(filament);
+            filament.update(dt);//filament.progress += filament.speed * dt * filament.direction;
         }
     }
     // ======================================
