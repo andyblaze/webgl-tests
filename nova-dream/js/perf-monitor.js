@@ -4,9 +4,11 @@ export default class PerformanceMonitor {
         this.sampleSize = sampleSize;
         this.frames = [];
         this.lastFrame = 0;
+        this.lastDelta = 0;
         this.logInterval = 2000;
         this.lastLog = 0;
         this.active = true;
+        this.observer = null;
 
         this.stats = {
             fps: 0,
@@ -21,13 +23,7 @@ export default class PerformanceMonitor {
     setActive(a) {
         this.active = a;
     }
-    getStats(delta) {
-        this.frames.push(delta);
-
-        if (this.frames.length > this.sampleSize) {
-            this.frames.shift();
-        }
-
+    getStats() {
         const sorted = [...this.frames].sort(
             (a, b) => a - b
         );
@@ -45,10 +41,10 @@ export default class PerformanceMonitor {
         : average;
 
         return {
-            fps: 1000 / delta,
+            fps: 1000 / this.lastDelta,
             averageFPS: 1000 / average,
             lowFPS: 1000 / lowAverage,
-            frameTime: delta,
+            frameTime: this.lastDelta,
             p99: sorted[Math.floor(count * 0.99)],
             drawCalls: this.renderer.info.render.calls,
             triangles: this.renderer.info.render.triangles
@@ -64,22 +60,39 @@ export default class PerformanceMonitor {
             `Triangles: ${this.stats.triangles}`
         );
     }
+    addObserver(o) {
+        this.observer = o;
+    }
+    notify() {
+        if ( null === this.observer )
+            this.toConsole();
+        else 
+            this.observer.update(this.stats);
+    }
     update(timestamp) {
-        if ( false === this.active ) return;
+        if (false === this.active) return;
+
         if ( this.lastFrame !== 0 ) {
             const delta = timestamp - this.lastFrame;
 
             // Ignore background-tab pauses
             if ( delta > 0 && delta < 1000 ) {
-                this.stats = this.getStats(delta);
+                this.frames.push(delta);
+
+                if ( this.frames.length > this.sampleSize ) {
+                    this.frames.shift();
+                }
+                this.lastDelta = delta;
             }
         }
-
         this.lastFrame = timestamp;
-        if (timestamp - this.lastLog >= this.logInterval) {
-            this.toConsole();            
+
+        if ( timestamp - this.lastLog >= this.logInterval ) {
+            if ( this.frames.length > 0 ) {
+                this.stats = this.getStats();
+                this.notify();
+            }
             this.lastLog = timestamp;
         }
-        return this.stats;
     }
 }
