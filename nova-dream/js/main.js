@@ -25,6 +25,7 @@ world.add([core, particles, filaments]);
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };
 const monitor = new PerformanceMonitor(renderer);
+monitor.setActive(false);
 
 function animate(timestamp) {
     requestAnimationFrame(animate);
@@ -38,7 +39,7 @@ function animate(timestamp) {
     controls.update();
 
     renderer.render(scene, camera);
-    //monitor.update(timestamp);
+    monitor.update(timestamp);
 }
 requestAnimationFrame(animate);
 

@@ -7,6 +7,7 @@ export default class PerformanceMonitor {
     this.lastFrame = 0;
     this.logInterval = 2000;
     this.lastLog = 0;
+    this.active = true;
 
     this.stats = {
       fps: 0,
@@ -18,8 +19,11 @@ export default class PerformanceMonitor {
       triangles: 0
     };
   }
-
+  setActive(a) {
+    this.active = a;
+  }
   update(timestamp) {
+    if ( false === this.active ) return;
     if (this.lastFrame !== 0) {
       const delta = timestamp - this.lastFrame;
 
