@@ -15,13 +15,13 @@ export default class Flash {
         // Colour
         this.colorIndex = Math.floor(Math.random() * 6);
 
-        const color = this.paletteManager
-            .getSystemColors('particles')[this.colorIndex];
+        const color = this.paletteManager.getSystemColors('particles')[this.colorIndex];
+        this.baseColor = color.clone();
 
         // Explosion state (reserved for later)
         this.isExploding = false;
         this.explosionElapsed = 0;
-        this.explosionDuration = 0.4;
+        this.explosionDuration = 1.4;
         this.explosionIntensity = 1;
         this.baseScale = 1;
         this.expansion = 4;
@@ -64,12 +64,15 @@ update(dt) {
         }
     }
 }
-    updatePalette() {
-        const color = this.paletteManager
-            .getSystemColors('particles')[this.colorIndex];
+updatePalette() {
+    const color = this.paletteManager.getSystemColors('particles')[this.colorIndex];
 
+    this.baseColor.copy(color);
+
+    if (!this.isExploding) {
         this.material.uniforms.uColor.value.copy(color);
     }
+}
 
 onExplode() {
     this.isExploding = true;
@@ -85,12 +88,16 @@ updateExplosion(dt) {
         1
     );
 
-    // Smooth expansion and contraction
     const pulse = Math.sin(t * Math.PI);
 
+    // Scale
     const scale = this.baseScale + pulse * this.expansion;
-
     this.mesh.scale.setScalar(scale);
+
+    // Colour
+    this.material.uniforms.uColor.value
+        .copy(this.baseColor)
+        .lerp(new THREE.Color(1, 1, 1), pulse);
 
     if (t >= 1) {
         this.reset();
@@ -104,6 +111,7 @@ reset() {
     this.nextExplosion = THREE.MathUtils.randFloat(5, 12);
 
     this.mesh.scale.setScalar(this.baseScale);
+    this.material.uniforms.uColor.value.copy(this.baseColor);
 }
 
 
