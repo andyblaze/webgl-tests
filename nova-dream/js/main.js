@@ -4,6 +4,7 @@ import PaletteManager from "./PaletteManager.js";
 import Core from './Core.js';
 import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
+import FlashEngine from './FlashEngine.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import World from "./World.js";
 import PerformanceMonitor from "./perf-monitor.js";
@@ -20,9 +21,10 @@ controls.enableDamping = true;
 const core = new Core(scene, paletteManager);
 const particles = new ParticleEngine(scene, paletteManager, { count: 500 });
 const filaments = new FilamentEngine(scene, paletteManager);
+const flashes = new FlashEngine(scene, paletteManager, { count: 20 });
 
 const world = new World();
-world.add([core, particles, filaments]);
+world.add([core, particles, filaments, flashes]);
 
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };
