@@ -38,21 +38,17 @@ export default class FilamentEngine {
         };
     }
     setUniforms() {
-        // Shader uniforms
+
+        const colors = this.paletteManager.getSystemColors('filaments');
+
         this.uniforms = {
             uTime: { value: 0 },
             uEnergy: { value: 0.5 },
             uBrightness: { value: 1.0 },
 
-            uColorA: {
-                value: new THREE.Color('#fffb00')
-            },
-            uColorB: {
-                value: new THREE.Color('#ffa32b')
-            },
-            uColorC: {
-                value: new THREE.Color('#ff3232')
-            }
+            uColorA: { value: colors[0].clone() },
+            uColorB: { value: colors[1].clone() },
+            uColorC: { value: colors[2].clone() }
         };
     }
     // ======================================
@@ -84,7 +80,8 @@ export default class FilamentEngine {
     // ANIMATION
     // ======================================
     update(dt) {
-        this.time += dt;   
+        this.time += dt;  
+        this.updatePalette(); 
 
         // Gentle overall movement
         this.group.rotation.y += dt * 0.028;
@@ -94,6 +91,13 @@ export default class FilamentEngine {
         for ( const filament of this.filaments ) {
             filament.update(dt);//filament.progress += filament.speed * dt * filament.direction;
         }
+    }
+    updatePalette() {
+        const colors = this.paletteManager.getSystemColors('filaments');
+
+        this.uniforms.uColorA.value.copy(colors[0]);
+        this.uniforms.uColorB.value.copy(colors[1]);
+        this.uniforms.uColorC.value.copy(colors[2]);
     }
     // ======================================
     // CONTROLS
