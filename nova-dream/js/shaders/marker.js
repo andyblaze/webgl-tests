@@ -14,6 +14,7 @@ export const markerShader = {
     `,
     fragment: `
         uniform float uTime;
+        uniform vec3 uMarkerColor;
 
         varying vec3 vNormal;
         varying vec3 vPosition;
@@ -31,19 +32,19 @@ export const markerShader = {
                 vPosition.y * 13.0
             );
 
-            vec3 deepOrange = vec3(1.0, 0.12, 0.005);
-            vec3 hotOrange  = vec3(1.0, 0.38, 0.015);
-            vec3 amber      = vec3(1.0, 0.65, 0.04);
+            vec3 deepColor = uMarkerColor * 0.45;
+            vec3 hotColor  = uMarkerColor;
+            vec3 brightColor = mix(uMarkerColor, vec3(1.0), 0.45);
 
             vec3 colour = mix(
-                deepOrange,
-                hotOrange,
+                deepColor,
+                hotColor,
                 pulse * 0.65
             );
 
             colour = mix(
                 colour,
-                amber,
+                brightColor,
                 pow(rim, 1.5) * 0.45
             );
 

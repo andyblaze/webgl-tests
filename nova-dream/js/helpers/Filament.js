@@ -5,7 +5,8 @@ import TubeGeometry from './TubeGeometry.js';
 import Curve from './Curve.js';
 
 export default class Filament {
-    constructor(index, params, material) {
+    constructor(index, params, material, pm) {
+        this.paletteManager = pm;
         const { curve, thickness, phase } = Curve.create(params);
         this.curve = curve; 
 
@@ -17,7 +18,7 @@ export default class Filament {
         this.direction = Math.random() < 0.5 ? 1 : -1;
 
         // Marker group
-        this.marker = Marker.create();
+        this.marker = Marker.create(pm);
         this.mesh.add(this.marker);
 
         this.trail = new Trail();
@@ -51,6 +52,7 @@ export default class Filament {
             this.progress = 0.0;
             this.direction = 1;
         }
+        Marker.updatePalette(this.marker, this.paletteManager);
         // Follow the actual curved filament path
         this.marker.position.copy(
             this.curve.getPointAt(

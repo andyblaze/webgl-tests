@@ -7,8 +7,9 @@ import Filament from './helpers/Filament.js';
 // ==========================================
 export default class FilamentEngine {
 
-    constructor(scene) {
+    constructor(scene, pm) {
         this.scene = scene;
+        this.paletteManager = pm;
         this.time = 0;
         this.setParams();
         this.setUniforms();
@@ -74,7 +75,7 @@ export default class FilamentEngine {
     // ======================================
     createFilaments() {
         for (let i = 0; i < this.params.count; i++) {
-            const filament = new Filament(i, this.params, this.material);
+            const filament = new Filament(i, this.params, this.material, this.paletteManager);
             this.filaments.push(filament);
             this.group.add(filament.mesh);
         }

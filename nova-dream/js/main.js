@@ -19,7 +19,7 @@ controls.enableDamping = true;
 
 const core = new Core(scene, paletteManager);
 const particles = new ParticleEngine(scene, paletteManager, { count: 500 });
-const filaments = new FilamentEngine(scene);
+const filaments = new FilamentEngine(scene, paletteManager);
 
 const world = new World();
 world.add([core, particles, filaments]);
