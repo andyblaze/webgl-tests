@@ -21,10 +21,10 @@ export default class Flash {
         // Explosion state (reserved for later)
         this.isExploding = false;
         this.explosionElapsed = 0;
-        this.explosionDuration = 1.4;
+        this.explosionDuration = 2.0;
         this.explosionIntensity = 1;
         this.baseScale = 1;
-        this.expansion = 4;
+        this.expansion = 8;
         // Temporary automatic triggering
         this.explosionTimer = 0;
         this.nextExplosion = THREE.MathUtils.randFloat(5, 12);
@@ -37,7 +37,10 @@ export default class Flash {
             },
             vertexShader: flashShader.vertex,
             fragmentShader: flashShader.fragment,
-            toneMapped: false
+            toneMapped: false,
+            transparent: true,
+            opacity: 0.6,
+            depthWrite: false
         });
 
         this.mesh = new THREE.Mesh(geometry, this.material);
@@ -52,6 +55,9 @@ update(dt) {
     const z = Math.sin(this.angle) * this.radius * Math.sin(this.inclination);
 
     this.mesh.position.set(x, y, z);
+    this.mesh.rotation.x += 0.001;
+    this.mesh.rotation.y += 0.003;
+    this.mesh.rotation.z += 0.005;
 
     this.updatePalette();
 
@@ -97,9 +103,9 @@ updateExplosion(dt) {
     this.mesh.scale.setScalar(scale);
 
     // Colour
-    this.material.uniforms.uColor.value
+    /*this.material.uniforms.uColor.value
         .copy(this.baseColor)
-        .lerp(new THREE.Color(1, 1, 1), pulse);
+        .lerp(new THREE.Color(1, 1, 1), pulse);*/
 
     if (t >= 1) {
         this.reset();

@@ -10,7 +10,7 @@ export default class FlashEngine {
         this.group = new THREE.Group();
         this.scene.add(this.group);
 
-        this.geometry = new THREE.SphereGeometry(0.035, 36, 36);
+        this.geometry = new THREE.IcosahedronGeometry(0.035, 3);
 
         this.flashes = [];
 
