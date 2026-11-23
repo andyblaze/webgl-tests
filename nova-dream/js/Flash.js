@@ -23,7 +23,11 @@ export default class Flash {
         this.explosionElapsed = 0;
         this.explosionDuration = 0.4;
         this.explosionIntensity = 1;
-        this.expansion = 1;
+        this.baseScale = 1;
+        this.expansion = 4;
+        // Temporary automatic triggering
+        this.explosionTimer = 0;
+        this.nextExplosion = THREE.MathUtils.randFloat(5, 12);
 
         // Material
         this.material = new THREE.ShaderMaterial({
@@ -39,22 +43,27 @@ export default class Flash {
         this.mesh.position.set(0, 0, 0);
     }
 
-    update(dt) {
-        this.angle += this.speed * dt;
+update(dt) {
+    this.angle += this.speed * dt;
 
-        const x = Math.cos(this.angle) * this.radius;
-        const y = Math.sin(this.angle) * this.radius * Math.cos(this.inclination);
-        const z = Math.sin(this.angle) * this.radius * Math.sin(this.inclination);
+    const x = Math.cos(this.angle) * this.radius;
+    const y = Math.sin(this.angle) * this.radius * Math.cos(this.inclination);
+    const z = Math.sin(this.angle) * this.radius * Math.sin(this.inclination);
 
-        this.mesh.position.set(x, y, z);
+    this.mesh.position.set(x, y, z);
 
-        this.updatePalette();
+    this.updatePalette();
 
-        if (this.isExploding) {
-            this.updateExplosion(dt);
+    if (this.isExploding) {
+        this.updateExplosion(dt);
+    } else {
+        this.explosionTimer += dt;
+
+        if (this.explosionTimer >= this.nextExplosion) {
+            this.onExplode();
         }
     }
-
+}
     updatePalette() {
         const color = this.paletteManager
             .getSystemColors('particles')[this.colorIndex];
@@ -62,27 +71,41 @@ export default class Flash {
         this.material.uniforms.uColor.value.copy(color);
     }
 
-    onExplode() {
-        this.isExploding = true;
-        this.explosionElapsed = 0;
-        this.explosionIntensity = 1;
-        this.expansion = 1;
-    }
+onExplode() {
+    this.isExploding = true;
+    this.explosionElapsed = 0;
+    this.mesh.scale.setScalar(this.baseScale);
+}
 
-    updateExplosion(dt) {
-        this.explosionElapsed += dt;
+updateExplosion(dt) {
+    this.explosionElapsed += dt;
 
-        if (this.explosionElapsed >= this.explosionDuration) {
-            this.reset();
-        }
-    }
+    const t = Math.min(
+        this.explosionElapsed / this.explosionDuration,
+        1
+    );
 
-    reset() {
-        this.isExploding = false;
-        this.explosionElapsed = 0;
-        this.explosionIntensity = 1;
-        this.expansion = 1;
+    // Smooth expansion and contraction
+    const pulse = Math.sin(t * Math.PI);
+
+    const scale = this.baseScale + pulse * this.expansion;
+
+    this.mesh.scale.setScalar(scale);
+
+    if (t >= 1) {
+        this.reset();
     }
+}
+
+reset() {
+    this.isExploding = false;
+    this.explosionElapsed = 0;
+    this.explosionTimer = 0;
+    this.nextExplosion = THREE.MathUtils.randFloat(5, 12);
+
+    this.mesh.scale.setScalar(this.baseScale);
+}
+
 
     dispose() {
         this.material.dispose();
