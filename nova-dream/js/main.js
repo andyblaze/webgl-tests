@@ -17,7 +17,7 @@ const paletteManager = new PaletteManager();
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
-const core = new Core(scene);
+const core = new Core(scene, paletteManager);
 const particles = new ParticleEngine(scene, paletteManager, { count: 500 });
 const filaments = new FilamentEngine(scene);
 

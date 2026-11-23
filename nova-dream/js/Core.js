@@ -8,9 +8,13 @@ import { shellShader } from './shaders/shell.js';
 // ==========================================
 
 export default class Core {
-    constructor(scene) {
+    constructor(scene, pm) {
         this.scene = scene;
+        this.paletteManager = pm;
         this.time = 0;
+
+        const coreColors = this.paletteManager.getSystemColors('core');
+        const shellColors = this.paletteManager.getSystemColors('shell');
 
         this.uniforms = {
             uTime: { value: 0 },
@@ -19,15 +23,13 @@ export default class Core {
             uColorShift: { value: 0.0 },
             uBrightness: { value: 1.0 },
 
-            // CORE PALETTE
-            uCoreColorA: { value: new THREE.Color('#ff2600') },
-            uCoreColorB: { value: new THREE.Color('#ff9d00') },
-            uCoreColorC: { value: new THREE.Color('#fff3b0') },
+            uCoreColorA: { value: coreColors[0].clone() },
+            uCoreColorB: { value: coreColors[1].clone() },
+            uCoreColorC: { value: coreColors[2].clone() },
 
-            // SHELL PALETTE
-            uShellColorA: { value: new THREE.Color('#ff2600') },
-            uShellColorB: { value: new THREE.Color('#ff9d00') },
-            uShellColorC: { value: new THREE.Color('#fff3b0') }
+            uShellColorA: { value: shellColors[0].clone() },
+            uShellColorB: { value: shellColors[1].clone() },
+            uShellColorC: { value: shellColors[2].clone() }
         };
 
         this.group = new THREE.Group();
@@ -99,25 +101,27 @@ export default class Core {
         this.shell.rotation.x = -this.time * 0.11;
         this.shell.rotation.y = -this.time * 0.07;
         this.shell.rotation.z = this.time * 0.029;
+
+        this.updatePalette();
     }
 
     // ======================================
     // PALETTE CONTROL
     // ======================================
 
-    setPalette(palette) {
-        if (palette.core) {
-            this.uniforms.uCoreColorA.value.set(palette.core[0]);
-            this.uniforms.uCoreColorB.value.set(palette.core[1]);
-            this.uniforms.uCoreColorC.value.set(palette.core[2]);
-        }
+updatePalette() {
 
-        if (palette.shell) {
-            this.uniforms.uShellColorA.value.set(palette.shell[0]);
-            this.uniforms.uShellColorB.value.set(palette.shell[1]);
-            this.uniforms.uShellColorC.value.set(palette.shell[2]);
-        }
-    }
+    const core = this.paletteManager.getSystemColors('core');
+    const shell = this.paletteManager.getSystemColors('shell');
+
+    this.uniforms.uCoreColorA.value.copy(core[0]);
+    this.uniforms.uCoreColorB.value.copy(core[1]);
+    this.uniforms.uCoreColorC.value.copy(core[2]);
+
+    this.uniforms.uShellColorA.value.copy(shell[0]);
+    this.uniforms.uShellColorB.value.copy(shell[1]);
+    this.uniforms.uShellColorC.value.copy(shell[2]);
+}
 
     // ======================================
     // PUBLIC PARAMETERS
