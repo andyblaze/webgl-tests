@@ -2,10 +2,12 @@ import * as THREE from 'three';
 import { trailShader } from '../shaders/trail.js';
 
 export default class Trail {    
-    constructor() {
+    constructor(paletteManager) {
+        const color = paletteManager.getSystemColors('trail')[0];
         this.material = new THREE.ShaderMaterial({
             uniforms: {
-                uTime: { value: 0 }
+                uTime: { value: 0 },
+                uTrailColor: { value: color.clone() }
             },
             vertexShader: trailShader.vertex,
             fragmentShader: trailShader.fragment,
@@ -30,7 +32,7 @@ export default class Trail {
         geometry.setAttribute(
             'position',
             new THREE.BufferAttribute(positions, 3)
-        );
+        ); 
 
         geometry.setAttribute(
             'aTrailProgress',
@@ -57,6 +59,10 @@ export default class Trail {
             positions.setXYZ(i, point.x, point.y, point.z);
         }
         positions.needsUpdate = true;
+    }
+    updatePalette(paletteManager) {
+        const color = paletteManager.getSystemColors('trail')[0];
+        this.material.uniforms.uTrailColor.value.copy(color);
     }
     updateMaterial(dt) {
         this.material.uniforms.uTime.value += dt;

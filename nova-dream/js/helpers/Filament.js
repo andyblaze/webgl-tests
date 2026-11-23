@@ -21,7 +21,7 @@ export default class Filament {
         this.marker = Marker.create(pm);
         this.mesh.add(this.marker);
 
-        this.trail = new Trail();
+        this.trail = new Trail(this.paletteManager);
         this.mesh.add(this.trail.mesh);
 
         this.marker.position.copy(curve.getPointAt(this.progress));     
@@ -59,6 +59,7 @@ export default class Filament {
                 this.progress
             )
         );
+        this.trail.updatePalette(this.paletteManager);
         this.trail.update(this);
     }
 }

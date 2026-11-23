@@ -27,6 +27,7 @@ export const trailShader = {
     fragment: `
         varying float vFade;
         varying float vPulse;
+        uniform vec3 uTrailColor;
 
         void main() {
             vec2 uv = gl_PointCoord - 0.5;
@@ -37,11 +38,16 @@ export const trailShader = {
             float glow = exp(-d * 5.0);
             float hotCore = exp(-d * 15.0);
 
-            vec3 orange = vec3(1.0, 0.22, 0.015);
-            vec3 red = vec3(0.8, 0.035, 0.005);
-            vec3 colour = mix(red, orange, 1.0 - vFade);
+            vec3 darkColor = uTrailColor * 0.45;
+            vec3 brightColor = mix(uTrailColor, vec3(1.0), 0.35);
 
-            colour += vec3(1.0, 0.35, 0.04) * hotCore * 0.45;
+            vec3 colour = mix(
+                darkColor,
+                uTrailColor,
+                1.0 - vFade
+            );
+
+            colour += brightColor * hotCore * 0.45;
 
             float alpha = glow * vFade * vPulse * 0.8;
 
