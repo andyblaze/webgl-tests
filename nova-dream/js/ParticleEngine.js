@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import { shader } from './shaders/particle.js';
 
 export default class ParticleEngine {
-    constructor(scene, options = {}) {
+    constructor(scene, pm, options = {}) {
         this.scene = scene;
+        this.paletteManager = pm;
 
         this.count = options.count ?? 5000;
         this.innerRadius = options.innerRadius ?? 2.5;
@@ -11,6 +12,7 @@ export default class ParticleEngine {
 
         this.time = 0;
         this.energy = 0.65;
+        this.colorIndices = [];
 
         this.uniforms = {
             uTime: { value: 0 },
@@ -18,37 +20,36 @@ export default class ParticleEngine {
         };
 
         this.group = new THREE.Group();
-
-        this.palette = [
-            new THREE.Color('#ff2600'),
-            new THREE.Color('#ffd000'),
-            new THREE.Color('#f7a090'),
-            new THREE.Color('#f5f0f0'),
-            new THREE.Color('#fbff00'),
-            new THREE.Color('#b82107')
-        ];
-
         this.createParticles();
-
         this.scene.add(this.group);
     }
-    getColor() {
-        // Pick an individual colour identity
-        const colorIndex = Math.floor(
-            Math.random() * this.palette.length
-        );
+    getColor(colorIndex) {
+        const palette = this.paletteManager.getSystemColors('particles');
+        const color = palette[colorIndex].clone();
 
-        const color = this.palette[colorIndex].clone();
-
-        // Slight individual colour variation
         color.offsetHSL(
             (Math.random() - 0.5) * 0.035,
             0,
             (Math.random() - 0.5) * 0.12
-        );   
-        return color;     
+        );
+        return color;
     }
+    updateColors() {
+        const colors = this.particles.geometry.attributes.aColor;
+        const palette = this.paletteManager.getSystemColors('particles');
 
+        for (let i = 0; i < this.count; i++) {
+            const i3 = i * 3;
+            // Preserve each particle's individual colour identity.
+            const colorIndex = this.colorIndices[i];
+            const color = palette[colorIndex];
+
+            colors.array[i3] = color.r;
+            colors.array[i3 + 1] = color.g;
+            colors.array[i3 + 2] = color.b;
+        }
+        colors.needsUpdate = true;
+    }
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
@@ -62,6 +63,7 @@ export default class ParticleEngine {
         const brightness = new Float32Array(this.count);
 
         const streamCount = 6;
+        this.colorIndices = [];
 
         for (let i = 0; i < this.count; i++) {
             const i3 = i * 3;
@@ -107,7 +109,10 @@ export default class ParticleEngine {
                 Math.random()
             );
 
-            const color = this.getColor();//palette[colorIndex].clone();
+            //const color = this.getColor();
+            const colorIndex = Math.floor(Math.random() * 6);
+            this.colorIndices[i] = colorIndex;
+            const color = this.getColor(colorIndex);
 
             colors[i3] = color.r;
             colors[i3 + 1] = color.g;
@@ -180,6 +185,7 @@ export default class ParticleEngine {
     update(dt) {
         this.time += dt;
         this.uniforms.uTime.value = this.time;
+        this.updateColors();
     }
 
     setEnergy(value) {

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { byId, makeCamera, makeRenderer, makeScene } from "./functions.js";
+import PaletteManager from "./PaletteManager.js";
 import Core from './Core.js';
 import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
@@ -11,12 +12,13 @@ const canvas = byId("universe");
 const renderer = makeRenderer(THREE, canvas);
 const scene = makeScene(THREE);
 const camera = makeCamera(THREE);
+const paletteManager = new PaletteManager();
 
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
 const core = new Core(scene);
-const particles = new ParticleEngine(scene, { count: 500 });
+const particles = new ParticleEngine(scene, paletteManager, { count: 500 });
 const filaments = new FilamentEngine(scene);
 
 const world = new World();
@@ -35,6 +37,7 @@ function animate(timestamp) {
     time.elapsed = clock.getElapsed();
     time.timestamp = timestamp;
 
+    paletteManager.update(time.dt);
     world.update(time);
     controls.update();
 
