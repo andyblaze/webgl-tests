@@ -32,7 +32,8 @@ export default class Flash {
         // Material
         this.material = new THREE.ShaderMaterial({
             uniforms: {
-                uColor: { value: color.clone() }
+                uColor: { value: color.clone() },
+                uExplosion: { value: 0 }
             },
             vertexShader: flashShader.vertex,
             fragmentShader: flashShader.fragment,
@@ -89,6 +90,7 @@ updateExplosion(dt) {
     );
 
     const pulse = Math.sin(t * Math.PI);
+    this.material.uniforms.uExplosion.value = pulse;
 
     // Scale
     const scale = this.baseScale + pulse * this.expansion;
@@ -109,6 +111,7 @@ reset() {
     this.explosionElapsed = 0;
     this.explosionTimer = 0;
     this.nextExplosion = THREE.MathUtils.randFloat(5, 12);
+    this.material.uniforms.uExplosion.value = 0;
 
     this.mesh.scale.setScalar(this.baseScale);
     this.material.uniforms.uColor.value.copy(this.baseColor);
