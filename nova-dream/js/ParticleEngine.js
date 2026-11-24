@@ -93,8 +93,9 @@ export default class ParticleEngine {
         }
 
         const attributes = motion.getAttributes();
+        Object.assign(attributes, attrs);
 
-        for (const [name, array] of Object.entries(attributes)) {
+        for ( const [name, array] of Object.entries(attributes) ) {
             geometry.setAttribute(
                 name,
                 new THREE.BufferAttribute(array, 1)
@@ -107,14 +108,6 @@ export default class ParticleEngine {
                 new Float32Array(this.count * 3), 3
             )
         );
-
-        for (const [name, array] of Object.entries(attrs)) {
-            const n = name === "aColor" ? 3 : 1;
-            geometry.setAttribute(
-                name,
-                new THREE.BufferAttribute(array, n)
-            );
-        }
 
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
