@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { shader } from './shaders/particle.js';
-//import OrbitMotion from './helpers/OrbitMotion.js';
 
 export default class ParticleEngine {
     constructor(scene, pm, motion, options = {}) {
@@ -93,12 +92,20 @@ export default class ParticleEngine {
         }
 
         const attributes = motion.getAttributes();
-        Object.assign(attributes, attrs);
+        //Object.assign(attributes, attrs);
 
         for ( const [name, array] of Object.entries(attributes) ) {
             geometry.setAttribute(
                 name,
                 new THREE.BufferAttribute(array, 1)
+            );
+        }
+
+        for ( const [name, array] of Object.entries(attrs) ) {
+            const n = name === "aColor" ? 3 : 1;
+            geometry.setAttribute(
+                name,
+                new THREE.BufferAttribute(array, n)
             );
         }
 
