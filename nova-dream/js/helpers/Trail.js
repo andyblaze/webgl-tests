@@ -16,8 +16,8 @@ export default class Trail {
             blending: THREE.AdditiveBlending,
             toneMapped: false
         });
-        this.pointCount = 50;
-        this.length = 0.18;
+        this.pointCount = 60;
+        this.length = 0.12;
 
         const count = this.pointCount;
         const geometry = new THREE.BufferGeometry();
