@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { byId, makeCamera, makeRenderer, makeScene } from "./functions.js";
 import PaletteManager from "./PaletteManager.js";
 import Core from './Core.js';
+import OrbitMotion from "./helpers/OrbitMotion.js";
 import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
 import FlashEngine from './FlashEngine.js';
@@ -19,7 +20,13 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
 const core = new Core(scene, paletteManager);
-const particles = new ParticleEngine(scene, paletteManager, { count: 500 });
+const particles = new ParticleEngine(
+    scene,
+    paletteManager, 
+    new OrbitMotion(), 
+    { count: 500 }
+);
+//particles.setMotion(new OrbitMotion(particles.count));
 const filaments = new FilamentEngine(scene, paletteManager);
 const flashes = new FlashEngine(scene, paletteManager, { count: 20 });
 
