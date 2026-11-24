@@ -13,7 +13,6 @@ export default class ParticleEngine {
         this.motion = motion;
         this.motion.init(this.count, this.innerRadius, this.outerRadius);
 
-
         this.time = 0;
         this.energy = 0.65;
         this.colorIndices = [];
@@ -54,44 +53,46 @@ export default class ParticleEngine {
         }
         colors.needsUpdate = true;
     }
+    getSize() {
+        // More variation in particle size
+        return THREE.MathUtils.lerp(1.5, 4.8, Math.pow(Math.random(), 1.6));
+    }
+    getBrightness() {
+        return THREE.MathUtils.lerp(0.55, 1.5, Math.random());
+    }
+    getColorAt(i) {
+        const colorIndex = Math.floor(Math.random() * 6);
+        this.colorIndices[i] = colorIndex;
+        return this.getColor(colorIndex);
+    }
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
-        const sizes = new Float32Array(this.count);
-        const colors = new Float32Array(this.count * 3);
-        const brightness = new Float32Array(this.count);
+        const attrs = {
+            aSize : new Float32Array(this.count),
+            aColor: new Float32Array(this.count * 3),
+            aBrightness: new Float32Array(this.count)
+        };
 
-        //const streamCount = 6;
+        const motion = this.motion;
         this.colorIndices = [];
 
         for ( let i = 0; i < this.count; i++ ) {
             const i3 = i * 3;
 
-            this.motion.create(i);
+            motion.create(i);
 
-            // More variation in particle size
-            sizes[i] = THREE.MathUtils.lerp(
-                1.5,
-                4.8,
-                Math.pow(Math.random(), 1.6)
-            );
+            attrs.aSize[i] = this.getSize();
+            attrs.aBrightness[i] = this.getBrightness();
 
-            brightness[i] = THREE.MathUtils.lerp(
-                0.55,
-                1.5,
-                Math.random()
-            );
+            const color = this.getColorAt(i);
 
-            const colorIndex = Math.floor(Math.random() * 6);
-            this.colorIndices[i] = colorIndex;
-            const color = this.getColor(colorIndex);
-
-            colors[i3] = color.r;
-            colors[i3 + 1] = color.g;
-            colors[i3 + 2] = color.b;
+            attrs.aColor[i3] = color.r;
+            attrs.aColor[i3 + 1] = color.g;
+            attrs.aColor[i3 + 2] = color.b;
         }
 
-        const attributes = this.motion.getAttributes();
+        const attributes = motion.getAttributes();
 
         for (const [name, array] of Object.entries(attributes)) {
             geometry.setAttribute(
@@ -107,20 +108,13 @@ export default class ParticleEngine {
             )
         );
 
-        geometry.setAttribute(
-            'aSize',
-            new THREE.BufferAttribute(sizes, 1)
-        );
-
-        geometry.setAttribute(
-            'aColor',
-            new THREE.BufferAttribute(colors, 3)
-        );
-
-        geometry.setAttribute(
-            'aBrightness',
-            new THREE.BufferAttribute(brightness, 1)
-        );
+        for (const [name, array] of Object.entries(attrs)) {
+            const n = name === "aColor" ? 3 : 1;
+            geometry.setAttribute(
+                name,
+                new THREE.BufferAttribute(array, n)
+            );
+        }
 
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
