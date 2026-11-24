@@ -47,11 +47,11 @@ export default class OrbitMotion {
     }
     getAttributes() {
         return {
-            aRadius: this.radii,
-            aAngle: this.angles,
-            aInclination: this.inclinations,
-            aSpeed: this.speeds,
-            aPhase: this.phases
+            mRadius: this.radii,
+            mAngle: this.angles,
+            mInclination: this.inclinations,
+            mSpeed: this.speeds,
+            mPhase: this.phases
         };
     }
 }

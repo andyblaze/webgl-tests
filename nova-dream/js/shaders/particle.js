@@ -3,12 +3,12 @@ export const shader = {
         uniform float uTime;
         uniform float uEnergy;
 
-        attribute float aRadius;
-        attribute float aAngle;
-        attribute float aInclination;
-        attribute float aSpeed;
+        attribute float mRadius;
+        attribute float mAngle;
+        attribute float mInclination;
+        attribute float mSpeed;
         attribute float aSize;
-        attribute float aPhase;
+        attribute float mPhase;
         attribute vec3 aColor;
         attribute float aBrightness;
 
@@ -21,14 +21,14 @@ export const shader = {
 
             // Orbital travel
             float angle =
-                aAngle + time * aSpeed;
+                mAngle + time * mSpeed;
 
             // Gentle individual breathing
             float breathing =
-                sin(time * 1.1 + aPhase) * 0.12;
+                sin(time * 1.1 + mPhase) * 0.12;
 
             float radius =
-                aRadius + breathing * (0.5 + uEnergy);
+                mRadius + breathing * (0.5 + uEnergy);
 
             // Slightly elliptical orbital paths
             float x = cos(angle) * radius;
@@ -36,14 +36,14 @@ export const shader = {
 
             // Individual vertical motion
             float wave =
-                sin(angle * 2.0 + aPhase) * 0.16;
+                sin(angle * 2.0 + mPhase) * 0.16;
 
             float y =
                 wave +
-                sin(time * 0.65 + aPhase) * 0.12;
+                sin(time * 0.65 + mPhase) * 0.12;
 
             // Rotate each stream into its own plane
-            float inc = aInclination;
+            float inc = mInclination;
 
             float tiltedY =
                 y * cos(inc) - z * sin(inc);
@@ -80,7 +80,7 @@ export const shader = {
 
             // Individual twinkling
             vAlpha = 0.72 +
-                0.28 * sin(time * 1.5 + aPhase);
+                0.28 * sin(time * 1.5 + mPhase);
         }`
     ,
     fragment: `              
