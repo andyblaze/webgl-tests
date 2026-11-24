@@ -26,7 +26,7 @@ const particles = new ParticleEngine(
     new OrbitMotion(), 
     { count: 500 }
 );
-//particles.setMotion(new OrbitMotion(particles.count));
+
 const filaments = new FilamentEngine(scene, paletteManager);
 const flashes = new FlashEngine(scene, paletteManager, { count: 20 });
 
