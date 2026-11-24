@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { MathUtils } from "three";
 
 export default class OrbitMotion {
     constructor() {
@@ -26,7 +26,7 @@ export default class OrbitMotion {
         const stream = Math.floor(Math.random() * this.streamCount);
 
         const streamPosition = stream / (this.streamCount - 1);
-        const streamRadius = THREE.MathUtils.lerp(this.innerRadius, this.outerRadius, streamPosition);
+        const streamRadius = MathUtils.lerp(this.innerRadius, this.outerRadius, streamPosition);
 
         // Each stream has a slightly different width
         this.radii[i] = streamRadius + (Math.random() - 0.5) * 0.55;
@@ -41,7 +41,7 @@ export default class OrbitMotion {
         // Some particles orbit backwards
         const direction = Math.random() < 0.12 ? -1 : 1;
 
-        this.speeds[i] = direction * THREE.MathUtils.lerp(0.12, 0.42, Math.random());
+        this.speeds[i] = direction * MathUtils.lerp(0.12, 0.42, Math.random());
 
         this.phases[i] = Math.random() * Math.PI * 2;        
     }
