@@ -45,4 +45,13 @@ export default class OrbitMotion {
 
         this.phases[i] = Math.random() * Math.PI * 2;        
     }
+    getAttributes() {
+        return {
+            aRadius: this.radii,
+            aAngle: this.angles,
+            aInclination: this.inclinations,
+            aSpeed: this.speeds,
+            aPhase: this.phases
+        };
+    }
 }

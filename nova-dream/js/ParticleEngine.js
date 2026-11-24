@@ -91,36 +91,20 @@ export default class ParticleEngine {
             colors[i3 + 2] = color.b;
         }
 
+        const attributes = this.motion.getAttributes();
+
+        for (const [name, array] of Object.entries(attributes)) {
+            geometry.setAttribute(
+                name,
+                new THREE.BufferAttribute(array, 1)
+            );
+        }
+
         geometry.setAttribute(
             'position',
             new THREE.BufferAttribute(
                 new Float32Array(this.count * 3), 3
             )
-        );
-
-        geometry.setAttribute(
-            'aRadius',
-            new THREE.BufferAttribute(this.motion.radii, 1)
-        );
-
-        geometry.setAttribute(
-            'aAngle',
-            new THREE.BufferAttribute(this.motion.angles, 1)
-        );
-
-        geometry.setAttribute(
-            'aInclination',
-            new THREE.BufferAttribute(this.motion.inclinations, 1)
-        );
-
-        geometry.setAttribute(
-            'aSpeed',
-            new THREE.BufferAttribute(this.motion.speeds, 1)
-        );
-
-        geometry.setAttribute(
-            'aPhase',
-            new THREE.BufferAttribute(this.motion.phases, 1)
         );
 
         geometry.setAttribute(
