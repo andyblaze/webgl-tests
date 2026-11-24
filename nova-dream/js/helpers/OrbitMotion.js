@@ -6,7 +6,6 @@ export default class OrbitMotion {
         this.innerRadius = 0;
         this.outerRadius = 0;
         this.streamCount = 6;
-        this.init();
     }
     init(count, innerRadius, outerRadius) {
         this.count = count;
