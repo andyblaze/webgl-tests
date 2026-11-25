@@ -5,7 +5,9 @@ import TubeGeometry from './TubeGeometry.js';
 import Curve from './Curve.js';
 
 export default class Filament {
-    constructor(index, params, material, pm) {
+    constructor(index, params, pm) {
+        this.index = index;
+        this.params = params;
         this.paletteManager = pm;
         this.thickness = THREE.MathUtils.lerp(
             params.minThickness,
@@ -13,9 +15,10 @@ export default class Filament {
             Math.random()
         );
         this.phase = Math.random() * Math.PI * 2;
-        this.curve = Curve.create(params, this.phase);
-
-        this.mesh = this.createMesh(params, index, material);
+    }
+    render(material) {
+        this.curve = Curve.create(this.params, this.phase);
+        this.mesh = this.createMesh(this.params, this.index, material);
 
         // Initial position along curve
         this.progress = Math.random();
@@ -23,7 +26,7 @@ export default class Filament {
         this.direction = Math.random() < 0.5 ? 1 : -1;
 
         // Marker group
-        this.marker = Marker.create(pm);
+        this.marker = Marker.create(this.paletteManager);
         this.mesh.add(this.marker);
 
         this.trail = new Trail(this.paletteManager);

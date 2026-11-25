@@ -71,7 +71,8 @@ export default class FilamentEngine {
     // ======================================
     createFilaments() {
         for (let i = 0; i < this.params.count; i++) {
-            const filament = new Filament(i, this.params, this.material, this.paletteManager);
+            const filament = new Filament(i, this.params, this.paletteManager);
+            filament.render(this.material);
             this.filaments.push(filament);
             this.group.add(filament.mesh);
         }
