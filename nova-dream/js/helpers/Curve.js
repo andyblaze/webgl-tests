@@ -21,18 +21,10 @@ export default class Curve {
             Math.random()
         );
 
-        const orbitWidth = MathUtils.randFloat(
-            2.5,
-            6.1
-        );
+        const orbitWidth = MathUtils.randFloat(2.5, 6.1);
 
         const verticalOffset = MathUtils.randFloatSpread(0.7);
-
-        const verticalWave = MathUtils.randFloat(
-            0.12,
-            0.35
-        );
-
+        const verticalWave = MathUtils.randFloat(0.12, 0.35);
         const orbitPhase = Math.random() * Math.PI * 2;
 
         const points = [];
