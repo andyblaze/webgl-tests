@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { shader } from './shaders/particle.js';
+import { shader } from './shaders/lissajou.js';
 
 class Attributes {
     constructor() {

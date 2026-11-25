@@ -3,6 +3,7 @@ import { byId, makeCamera, makeRenderer, makeScene } from "./functions.js";
 import PaletteManager from "./PaletteManager.js";
 import Core from './Core.js';
 import OrbitMotion from "./helpers/OrbitMotion.js";
+import LissajouMotion from "./helpers/LissajousMotion.js";
 import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
 import FlashEngine from './FlashEngine.js';
@@ -23,8 +24,8 @@ const core = new Core(scene, paletteManager);
 const particles = new ParticleEngine(
     scene,
     paletteManager, 
-    new OrbitMotion(), 
-    { count: 500 }
+    new LissajouMotion(), 
+    { count: 1500 }
 );
 
 const filaments = new FilamentEngine(scene, paletteManager);
