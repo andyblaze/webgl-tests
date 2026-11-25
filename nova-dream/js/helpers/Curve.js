@@ -5,12 +5,6 @@ export default class Curve {
         //const p = this.params;
         const phase = Math.random() * Math.PI * 2;
 
-        const radius = THREE.MathUtils.lerp(
-            p.minRadius,
-            p.maxRadius,
-            Math.random()
-        );
-
         const thickness = THREE.MathUtils.lerp(
             p.minThickness,
             p.maxThickness,
@@ -23,18 +17,9 @@ export default class Curve {
             Math.random()
         );
 
-        const verticalSpread = p.verticalSpread *
-            THREE.MathUtils.lerp(0.5, 1.4, Math.random());
-
         const wobble = THREE.MathUtils.lerp(
             0.12,
             0.38,
-            Math.random()
-        );
-
-        const drift = THREE.MathUtils.lerp(
-            -0.8,
-            0.8,
             Math.random()
         );
 
