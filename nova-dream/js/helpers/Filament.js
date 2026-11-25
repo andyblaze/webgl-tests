@@ -15,7 +15,7 @@ export default class Filament {
         this.phase = Math.random() * Math.PI * 2;
         this.curve = Curve.create(params, this.phase);
 
-        this.createMesh(params, index, material);
+        this.mesh = this.createMesh(params, index, material);
 
         // Initial position along curve
         this.progress = Math.random();
@@ -43,7 +43,7 @@ export default class Filament {
             this.curve, params.segments, params.radialSegments,
             this.thickness, index, this.phase
         );
-        this.mesh = new THREE.Mesh(geometry, material);        
+        return new THREE.Mesh(geometry, material);        
     }
     update(dt) {
         this.progress += this.speed * dt * this.direction;
