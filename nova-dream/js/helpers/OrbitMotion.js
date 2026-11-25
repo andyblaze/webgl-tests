@@ -1,7 +1,9 @@
 import { MathUtils } from "three";
+import { shader } from "../shaders/orbit.js";
 
 export default class OrbitMotion {
     constructor() {
+        this.shader = shader;
         this.count = 0;
         this.innerRadius = 0;
         this.outerRadius = 0;
@@ -21,7 +23,7 @@ export default class OrbitMotion {
         this.streamCount = sc;
         return this;
     }
-    create(i) {
+    initParticle(i) {
         // Assign each particle to an orbital stream
         const stream = Math.floor(Math.random() * this.streamCount);
 

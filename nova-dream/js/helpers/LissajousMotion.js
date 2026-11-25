@@ -1,8 +1,9 @@
-
 import { MathUtils } from "three";
+import { shader } from '../shaders/lissajou.js';
 
 export default class LissajouMotion {
     constructor() {
+        this.shader = shader;
         this.count = 0;
         this.amplitude = 4;
         this.frequencyX = 3;
@@ -33,7 +34,7 @@ export default class LissajouMotion {
         return this;
     }
 
-    create(i) {
+    initParticle(i) {
         // Distribute particles along the shared curve
         const position = i / this.count;
 

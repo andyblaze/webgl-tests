@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { shader } from './shaders/lissajou.js';
+//import { shader } from './shaders/lissajou.js';
 
 class Attributes {
     constructor() {
@@ -100,23 +100,6 @@ export default class ParticleEngine {
         this.colorIndices[i] = colorIndex;
         return this.getColor(colorIndex);
     }
-    applyAttributes(geometry, ...attributeSets) {
-        const allAttrs = Object.assign({}, ...attributeSets);
-
-        for ( const [key, val] of Object.entries(allAttrs) ) {
-            geometry.setAttribute(
-                key,
-                new THREE.BufferAttribute(val.array, val.size)
-            );
-        }
-
-        geometry.setAttribute(
-            'position',
-            new THREE.BufferAttribute(
-                new Float32Array(this.count * 3), 3
-            )
-        );        
-    }
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
@@ -130,7 +113,7 @@ export default class ParticleEngine {
         this.colorIndices = [];
 
         for ( let i = 0; i < this.count; i++ ) {
-            motion.create(i);
+            motion.initParticle(i);
             attributes.set(i, "stdSize", this.getSize());
             attributes.set(i, "stdBrightness", this.getBrightness());
             attributes.setColor(i, "stdColor", this.getColorAt(i));
@@ -141,8 +124,8 @@ export default class ParticleEngine {
 
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
-            vertexShader: shader.vertex,
-            fragmentShader: shader.fragment,
+            vertexShader: motion.shader.vertex,
+            fragmentShader: motion.shader.fragment,
 
             transparent: true,
             depthWrite: false,
