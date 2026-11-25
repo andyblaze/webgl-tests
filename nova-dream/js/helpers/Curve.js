@@ -30,7 +30,7 @@ export default class Curve {
         const points = [];
 
         // Generate an extended elliptical spiral
-        for (let j = 0; j <= p.segments; j++) {
+        for ( let j = 0; j <= p.segments; j++ ) {
 
             const t = j / p.segments;
 

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { MathUtils, Mesh } from 'three';
 import Marker from './Marker.js';
 import Trail from './Trail.js';
 import TubeGeometry from './TubeGeometry.js';
@@ -9,21 +9,20 @@ export default class Filament {
         this.index = index;
         this.params = params;
         this.paletteManager = pm;
-        this.thickness = THREE.MathUtils.lerp(
+        this.thickness = MathUtils.lerp(
             params.minThickness,
             params.maxThickness,
             Math.random()
         );
         this.phase = Math.random() * Math.PI * 2;
+        // Initial position along curve
+        this.progress = Math.random();
+        this.speed = MathUtils.randFloat(0.035, 0.09);
+        this.direction = Math.random() < 0.5 ? 1 : -1;
     }
     render(material) {
         this.curve = Curve.create(this.params, this.phase);
-        this.mesh = this.createMesh(this.params, this.index, material);
-
-        // Initial position along curve
-        this.progress = Math.random();
-        this.speed = THREE.MathUtils.randFloat(0.035, 0.09);
-        this.direction = Math.random() < 0.5 ? 1 : -1;
+        this.mesh = this.createMesh(material);
 
         // Marker group
         this.marker = Marker.create(this.paletteManager);
@@ -36,17 +35,17 @@ export default class Filament {
 
         // Give each filament its own orientation
         this.mesh.rotation.set(
-            THREE.MathUtils.randFloatSpread(0.6),
-            0,//THREE.MathUtils.randFloatSpread(Math.PI * 2),
-            THREE.MathUtils.randFloatSpread(0.6)
+            MathUtils.randFloatSpread(0.6),
+            0,//THREE.MathUtils.randFloatSpread(Math.PI * 2),  !! maybe put back later
+            MathUtils.randFloatSpread(0.6)
         );
     }
-    createMesh(params, index, material) {
+    createMesh(material) {
         const geometry = TubeGeometry.create(
-            this.curve, params.segments, params.radialSegments,
-            this.thickness, index, this.phase
+            this.curve, this.params.segments, this.params.radialSegments,
+            this.thickness, this.index, this.phase
         );
-        return new THREE.Mesh(geometry, material);        
+        return new Mesh(geometry, material);        
     }
     update(dt) {
         this.progress += this.speed * dt * this.direction;
