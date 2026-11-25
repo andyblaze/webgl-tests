@@ -97,7 +97,6 @@ export default class ParticleEngine {
         };
 
         for ( const [key, val] of Object.entries(allAttrs) ) {
-            //const n = name === "stdColor" ? 3 : 1;
             geometry.setAttribute(
                 key,
                 new THREE.BufferAttribute(val.array, val.size)
