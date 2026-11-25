@@ -64,6 +64,23 @@ export default class ParticleEngine {
         this.colorIndices[i] = colorIndex;
         return this.getColor(colorIndex);
     }
+    applyAttributes(geometry, ...attributeSets) {
+        const allAttrs = Object.assign({}, ...attributeSets);
+
+        for ( const [key, val] of Object.entries(allAttrs) ) {
+            geometry.setAttribute(
+                key,
+                new THREE.BufferAttribute(val.array, val.size)
+            );
+        }
+
+        geometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(
+                new Float32Array(this.count * 3), 3
+            )
+        );        
+    }
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
@@ -91,24 +108,7 @@ export default class ParticleEngine {
             stdAttrs.stdColor.array[i3 + 2] = color.b;
         }
 
-        const allAttrs = {
-            ...motion.getAttributes(),
-            ...stdAttrs
-        };
-
-        for ( const [key, val] of Object.entries(allAttrs) ) {
-            geometry.setAttribute(
-                key,
-                new THREE.BufferAttribute(val.array, val.size)
-            );
-        }
-
-        geometry.setAttribute(
-            'position',
-            new THREE.BufferAttribute(
-                new Float32Array(this.count * 3), 3
-            )
-        );
+        this.applyAttributes(geometry, stdAttrs, motion.getAttributes());
 
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
