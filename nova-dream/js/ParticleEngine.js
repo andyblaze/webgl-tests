@@ -1,6 +1,42 @@
 import * as THREE from 'three';
 import { shader } from './shaders/particle.js';
 
+class Attributes {
+    constructor() {
+        this.attribs = {};
+    }
+    add(atts) {
+        Object.assign(this.attribs, atts);
+        //console.log(this.attribs);
+    }
+    set(index, key, val) {
+        this.attribs[key].array[index] = val;
+    }
+    setColor(index, key, color) {
+        const i3 = index * 3;
+        this.attribs[key].array[i3] = color.r;
+        this.attribs[key].array[i3 + 1] = color.g;
+        this.attribs[key].array[i3 + 2] = color.b;        
+    }
+    applyTo(geometry, count) {
+        for ( const [key, val] of Object.entries(this.attribs) ) {
+            geometry.setAttribute(
+                key,
+                new THREE.BufferAttribute(val.array, val.size)
+            );
+        }
+        geometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(
+                new Float32Array(count * 3), 3
+            )
+        );  
+        //console.log(this.attribs);
+    }
+}
+
+const attributes = new Attributes();
+
 export default class ParticleEngine {
     constructor(scene, pm, motion, options = {}) {
         this.count = options.count ?? 5000;
@@ -84,31 +120,24 @@ export default class ParticleEngine {
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
-        const stdAttrs = {
+        attributes.add({
             stdSize : { array: new Float32Array(this.count), size: 1 },
             stdColor: { array: new Float32Array(this.count * 3), size: 3 },
             stdBrightness: { array: new Float32Array(this.count), size: 1 }
-        };
+        });
 
         const motion = this.motion;
         this.colorIndices = [];
 
         for ( let i = 0; i < this.count; i++ ) {
-            const i3 = i * 3;
-
             motion.create(i);
-
-            stdAttrs.stdSize.array[i] = this.getSize();
-            stdAttrs.stdBrightness.array[i] = this.getBrightness();
-
-            const color = this.getColorAt(i);
-
-            stdAttrs.stdColor.array[i3] = color.r;
-            stdAttrs.stdColor.array[i3 + 1] = color.g;
-            stdAttrs.stdColor.array[i3 + 2] = color.b;
+            attributes.set(i, "stdSize", this.getSize());
+            attributes.set(i, "stdBrightness", this.getBrightness());
+            attributes.setColor(i, "stdColor", this.getColorAt(i));
         }
 
-        this.applyAttributes(geometry, stdAttrs, motion.getAttributes());
+        attributes.add(motion.getAttributes());
+        attributes.applyTo(geometry, this.count);
 
         const material = new THREE.ShaderMaterial({
             uniforms: this.uniforms,
