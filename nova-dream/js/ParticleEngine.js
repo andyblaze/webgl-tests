@@ -37,7 +37,7 @@ export default class ParticleEngine {
         return color;
     }
     updateColors() {
-        const colors = this.particles.geometry.attributes.aColor;
+        const colors = this.particles.geometry.attributes.stdColor;
         const palette = this.paletteManager.getSystemColors('particles');
 
         for (let i = 0; i < this.count; i++) {
@@ -67,10 +67,10 @@ export default class ParticleEngine {
     createParticles() {
         const geometry = new THREE.BufferGeometry();
 
-        const attrs = {
-            aSize : new Float32Array(this.count),
-            aColor: new Float32Array(this.count * 3),
-            aBrightness: new Float32Array(this.count)
+        const stdAttrs = {
+            stdSize : { array: new Float32Array(this.count), size: 1 },
+            stdColor: { array: new Float32Array(this.count * 3), size: 3 },
+            stdBrightness: { array: new Float32Array(this.count), size: 1 }
         };
 
         const motion = this.motion;
@@ -81,31 +81,26 @@ export default class ParticleEngine {
 
             motion.create(i);
 
-            attrs.aSize[i] = this.getSize();
-            attrs.aBrightness[i] = this.getBrightness();
+            stdAttrs.stdSize.array[i] = this.getSize();
+            stdAttrs.stdBrightness.array[i] = this.getBrightness();
 
             const color = this.getColorAt(i);
 
-            attrs.aColor[i3] = color.r;
-            attrs.aColor[i3 + 1] = color.g;
-            attrs.aColor[i3 + 2] = color.b;
+            stdAttrs.stdColor.array[i3] = color.r;
+            stdAttrs.stdColor.array[i3 + 1] = color.g;
+            stdAttrs.stdColor.array[i3 + 2] = color.b;
         }
 
-        const attributes = motion.getAttributes();
-        //Object.assign(attributes, attrs);
+        const allAttrs = {
+            ...motion.getAttributes(),
+            ...stdAttrs
+        };
 
-        for ( const [name, array] of Object.entries(attributes) ) {
+        for ( const [key, val] of Object.entries(allAttrs) ) {
+            //const n = name === "stdColor" ? 3 : 1;
             geometry.setAttribute(
-                name,
-                new THREE.BufferAttribute(array, 1)
-            );
-        }
-
-        for ( const [name, array] of Object.entries(attrs) ) {
-            const n = name === "aColor" ? 3 : 1;
-            geometry.setAttribute(
-                name,
-                new THREE.BufferAttribute(array, n)
+                key,
+                new THREE.BufferAttribute(val.array, val.size)
             );
         }
 

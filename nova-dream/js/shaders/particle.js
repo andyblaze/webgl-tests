@@ -3,14 +3,15 @@ export const shader = {
         uniform float uTime;
         uniform float uEnergy;
 
-        attribute float mRadius;
-        attribute float mAngle;
-        attribute float mInclination;
-        attribute float mSpeed;
-        attribute float aSize;
-        attribute float mPhase;
-        attribute vec3 aColor;
-        attribute float aBrightness;
+        attribute float motionRadius;
+        attribute float motionAngle;
+        attribute float motionInclination;
+        attribute float motionSpeed;
+        attribute float motionPhase;
+        
+        attribute float stdSize;
+        attribute vec3 stdColor;
+        attribute float stdBrightness;
 
         varying vec3 vColor;
         varying float vBrightness;
@@ -20,67 +21,49 @@ export const shader = {
             float time = uTime;
 
             // Orbital travel
-            float angle =
-                mAngle + time * mSpeed;
+            float angle = motionAngle + time * motionSpeed;
 
             // Gentle individual breathing
-            float breathing =
-                sin(time * 1.1 + mPhase) * 0.12;
+            float breathing = sin(time * 1.1 + motionPhase) * 0.12;
 
-            float radius =
-                mRadius + breathing * (0.5 + uEnergy);
+            float radius = motionRadius + breathing * (0.5 + uEnergy);
 
             // Slightly elliptical orbital paths
             float x = cos(angle) * radius;
             float z = sin(angle) * radius * 0.78;
 
             // Individual vertical motion
-            float wave =
-                sin(angle * 2.0 + mPhase) * 0.16;
+            float wave = sin(angle * 2.0 + motionPhase) * 0.16;
 
-            float y =
-                wave +
-                sin(time * 0.65 + mPhase) * 0.12;
+            float y = wave + sin(time * 0.65 + motionPhase) * 0.12;
 
             // Rotate each stream into its own plane
-            float inc = mInclination;
+            float inc = motionInclination;
 
-            float tiltedY =
-                y * cos(inc) - z * sin(inc);
+            float tiltedY = y * cos(inc) - z * sin(inc);
+            float tiltedZ = y * sin(inc) + z * cos(inc);
 
-            float tiltedZ =
-                y * sin(inc) + z * cos(inc);
-
-            vec3 particlePosition = vec3(
-                x,
-                tiltedY,
-                tiltedZ
-            );
+            vec3 particlePosition = vec3(x, tiltedY, tiltedZ);
 
             // Energy gently expands the entire system
-            particlePosition *=
-                1.0 + uEnergy * 0.025;
+            particlePosition *= 1.0 + uEnergy * 0.025;
 
-            vec4 mvPosition =
-                modelViewMatrix *
-                vec4(particlePosition, 1.0);
+            vec4 mvPosition = modelViewMatrix * vec4(particlePosition, 1.0);
 
-            gl_Position =
-                projectionMatrix * mvPosition;
+            gl_Position = projectionMatrix * mvPosition;
 
             // Larger, more visible particles
             gl_PointSize = clamp(
-                aSize * (85.0 / -mvPosition.z),
+                stdSize * (85.0 / -mvPosition.z),
                 1.5,
                 12.0
             );
 
-            vColor = aColor;
-            vBrightness = aBrightness;
+            vColor = stdColor;
+            vBrightness = stdBrightness;
 
             // Individual twinkling
-            vAlpha = 0.72 +
-                0.28 * sin(time * 1.5 + mPhase);
+            vAlpha = 0.72 + 0.28 * sin(time * 1.5 + motionPhase);
         }`
     ,
     fragment: `              
