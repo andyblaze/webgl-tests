@@ -1,34 +1,34 @@
-import * as THREE from 'three';
+import { MathUtils, Vector3, CatmullRomCurve3 } from 'three';
 
 export default class Curve {
     static create(p, phase) {
-        const turns = p.turns * THREE.MathUtils.lerp(
+        const turns = p.turns * MathUtils.lerp(
             0.7,
             1.5,
             Math.random()
         );
 
-        const wobble = THREE.MathUtils.lerp(
+        const wobble = MathUtils.lerp(
             0.12,
             0.38,
             Math.random()
         );
 
         // Orbital plane: X and Z
-        const baseRadius = THREE.MathUtils.lerp(
+        const baseRadius = MathUtils.lerp(
             p.minRadius,
             p.maxRadius,
             Math.random()
         );
 
-        const orbitWidth = THREE.MathUtils.randFloat(
+        const orbitWidth = MathUtils.randFloat(
             2.5,
             6.1
         );
 
-        const verticalOffset = THREE.MathUtils.randFloatSpread(0.7);
+        const verticalOffset = MathUtils.randFloatSpread(0.7);
 
-        const verticalWave = THREE.MathUtils.randFloat(
+        const verticalWave = MathUtils.randFloat(
             0.12,
             0.35
         );
@@ -42,9 +42,7 @@ export default class Curve {
 
             const t = j / p.segments;
 
-            const angle =
-                orbitPhase +
-                t * Math.PI * 2 * turns;
+            const angle = orbitPhase + t * Math.PI * 2 * turns;
 
             // Gradual expansion and contraction
             const envelope = Math.sin(Math.PI * t);
@@ -63,8 +61,8 @@ export default class Curve {
                 Math.sin(angle * 0.5 + phase) *
                 verticalWave;
 
-            points.push(new THREE.Vector3(x, y, z));
+            points.push(new Vector3(x, y, z));
         }
-        return new THREE.CatmullRomCurve3(points);      
+        return new CatmullRomCurve3(points);      
     }
 }
