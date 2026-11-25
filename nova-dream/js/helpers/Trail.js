@@ -47,17 +47,22 @@ export default class Trail {
     }
     update(filament) {
         const positions = this.mesh.geometry.attributes.position;
-        const count = this.pointCount; 
+        const count = this.pointCount;
 
-        for ( let i = 0; i < count; i++ ) {
+        for (let i = 0; i < count; i++) {
             const t = i / (count - 1);
 
-            const trailProgress = filament.progress - filament.direction * this.length * t;
-            const clampedProgress = THREE.MathUtils.clamp(trailProgress, 0, 1);
-            const point = filament.curve.getPointAt(clampedProgress);
+            let trailProgress =
+                filament.progress - filament.direction * this.length * t;
+
+            // Wrap around the closed curve
+            trailProgress = (trailProgress % 1 + 1) % 1;
+
+            const point = filament.curve.getPointAt(trailProgress);
 
             positions.setXYZ(i, point.x, point.y, point.z);
         }
+
         positions.needsUpdate = true;
     }
     updatePalette(paletteManager) {

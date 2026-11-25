@@ -23,14 +23,14 @@ export default class FilamentEngine {
     }
     setParams() {
         this.params = {
-            count: 7,
-            segments: 160,
-            radialSegments: 7,
+            count: 5,
+            segments: 180,
+            radialSegments: 8,
 
-            minRadius: 2.0,
-            maxRadius: 2.5,
+            minRadius: 4.0,
+            maxRadius: 5,
 
-            minThickness: 0.022,
+            minThickness: 0.028,
             maxThickness: 0.035,
 
             turns: 1,
@@ -38,7 +38,6 @@ export default class FilamentEngine {
         };
     }
     setUniforms() {
-
         const colors = this.paletteManager.getSystemColors('filaments');
 
         this.uniforms = {

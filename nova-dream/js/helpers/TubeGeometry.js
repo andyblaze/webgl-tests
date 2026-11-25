@@ -4,7 +4,7 @@ export default class TubeGeometry {
     static create(curve, segments, radialSegments,
         thickness, strandIndex, phase) {
 
-        const frames = curve.computeFrenetFrames(segments, false);
+        const frames = curve.computeFrenetFrames(segments, true);
 
         const positions = [];
         const progress = [];
@@ -20,14 +20,9 @@ export default class TubeGeometry {
             const point = curve.getPointAt(t);
 
             // Slightly tapered, irregular strand thickness
-            const taper = Math.sin(Math.PI * t);
+            const organicWidth = 0.9 + 0.1 * Math.sin(t * Math.PI * 6.0 + phase);
 
-            const organicWidth =
-                0.85 + 0.15 * Math.sin(t * 18.0 + phase);
-
-            const radius = thickness *
-                (0.35 + taper * 0.65) *
-                organicWidth;
+            const radius = thickness * organicWidth;
 
             const normal = frames.normals[i];
             const binormal = frames.binormals[i];

@@ -18,7 +18,7 @@ export default class Filament {
         // Initial position along curve
         this.progress = Math.random();
         this.speed = MathUtils.randFloat(0.035, 0.09);
-        this.direction = Math.random() < 0.5 ? 1 : -1;
+        this.direction = 1//Math.random() < 0.5 ? 1 : -1;
     }
     render(material) {
         this.curve = Curve.create(this.params, this.phase);
@@ -49,7 +49,7 @@ export default class Filament {
     }
     update(dt) {
         //this.progress += this.speed * dt * this.direction;
-        this.progress = (this.progress + this.speed * dt) % 1;
+        this.progress = (this.progress + this.speed * dt) % 1.0;
         // Reverse at either end of the filament
         /*if (this.progress >= 1.0) {
             this.progress = 1.0;
