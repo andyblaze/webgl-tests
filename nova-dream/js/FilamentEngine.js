@@ -23,15 +23,15 @@ export default class FilamentEngine {
     }
     setParams() {
         this.params = {
-            count: 8,
+            count: 7,
             segments: 160,
             radialSegments: 7,
 
-            minRadius: 1.0,
-            maxRadius: 1.5,
+            minRadius: 2.0,
+            maxRadius: 2.5,
 
-            minThickness: 0.012,
-            maxThickness: 0.025,
+            minThickness: 0.022,
+            maxThickness: 0.035,
 
             turns: 1,
             verticalSpread: 1.3

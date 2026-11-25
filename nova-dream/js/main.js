@@ -32,7 +32,11 @@ const filaments = new FilamentEngine(scene, paletteManager);
 const flashes = new FlashEngine(scene, paletteManager, { count: 20 });
 
 const world = new World();
-world.add([core, particles, filaments, flashes]);
+world.add([
+    core, particles, 
+    filaments, 
+    flashes
+]);
 
 const clock = new THREE.Timer();
 const time = { "dt": 0, "elapsed": 0, "timestamp": 0 };

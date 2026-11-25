@@ -55,6 +55,6 @@ export default class Curve {
 
             points.push(new Vector3(x, y, z));
         }
-        return new CatmullRomCurve3(points);      
+        return new CatmullRomCurve3(points, true, 'centripetal');
     }
 }
