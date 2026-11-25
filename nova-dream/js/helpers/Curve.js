@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 
 export default class Curve {
-    static create(p) {
+    static create(p, phase) {
         //const p = this.params;
-        const phase = Math.random() * Math.PI * 2;
+        //const phase = Math.random() * Math.PI * 2;
 
-        const thickness = THREE.MathUtils.lerp(
+        /*const thickness = THREE.MathUtils.lerp(
             p.minThickness,
             p.maxThickness,
             Math.random()
-        );
+        );*/
 
         const turns = p.turns * THREE.MathUtils.lerp(
             0.7,
@@ -74,7 +74,7 @@ export default class Curve {
 
             points.push(new THREE.Vector3(x, y, z));
         }
-
-        return { "curve": new THREE.CatmullRomCurve3(points), "thickness": thickness, "phase": phase };        
+        return new THREE.CatmullRomCurve3(points);
+        //return { "curve": new THREE.CatmullRomCurve3(points), "thickness": thickness, "phase": phase };        
     }
 }

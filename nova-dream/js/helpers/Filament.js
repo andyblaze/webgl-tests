@@ -7,10 +7,15 @@ import Curve from './Curve.js';
 export default class Filament {
     constructor(index, params, material, pm) {
         this.paletteManager = pm;
-        const { curve, thickness, phase } = Curve.create(params);
-        this.curve = curve; 
+        this.thickness = THREE.MathUtils.lerp(
+            params.minThickness,
+            params.maxThickness,
+            Math.random()
+        );
+        this.phase = Math.random() * Math.PI * 2;
+        this.curve = Curve.create(params, this.phase);
 
-        this.createMesh(params, thickness, index, phase, material);
+        this.createMesh(params, index, material);
 
         // Initial position along curve
         this.progress = Math.random();
@@ -24,7 +29,7 @@ export default class Filament {
         this.trail = new Trail(this.paletteManager);
         this.mesh.add(this.trail.mesh);
 
-        this.marker.position.copy(curve.getPointAt(this.progress));     
+        this.marker.position.copy(this.curve.getPointAt(this.progress));     
 
         // Give each filament its own orientation
         this.mesh.rotation.set(
@@ -33,10 +38,10 @@ export default class Filament {
             THREE.MathUtils.randFloatSpread(0.6)
         );
     }
-    createMesh(params, thickness, index, phase, material) {
+    createMesh(params, index, material) {
         const geometry = TubeGeometry.create(
             this.curve, params.segments, params.radialSegments,
-            thickness, index, phase
+            this.thickness, index, this.phase
         );
         this.mesh = new THREE.Mesh(geometry, material);        
     }
