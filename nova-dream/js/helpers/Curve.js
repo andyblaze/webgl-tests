@@ -14,8 +14,6 @@ export default class Curve {
             Math.random()
         );
 
-        const points = [];
-
         // Orbital plane: X and Z
         const baseRadius = THREE.MathUtils.lerp(
             p.minRadius,
@@ -36,6 +34,8 @@ export default class Curve {
         );
 
         const orbitPhase = Math.random() * Math.PI * 2;
+
+        const points = [];
 
         // Generate an extended elliptical spiral
         for (let j = 0; j <= p.segments; j++) {
