@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { byId, makeCamera, makeRenderer, makeScene } from "./functions.js";
 import PaletteManager from "./PaletteManager.js";
 import Core from './Core.js';
-import OrbitMotion from "./helpers/OrbitMotion.js";
+//import OrbitMotion from "./helpers/OrbitMotion.js";
 import LissajouMotion from "./helpers/LissajousMotion.js";
 import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
