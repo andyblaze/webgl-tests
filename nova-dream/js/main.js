@@ -6,7 +6,7 @@ import Core from './Core.js';
 import LissajouMotion from "./helpers/LissajousMotion.js";
 import ParticleEngine from './ParticleEngine.js';
 import FilamentEngine from "./FilamentEngine.js";
-import FlashEngine from './FlashEngine.js';
+//import FlashEngine from './FlashEngine.js';
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import World from "./World.js";
 import PerformanceMonitor from "./perf-monitor.js";
@@ -29,13 +29,13 @@ const particles = new ParticleEngine(
 );
 
 const filaments = new FilamentEngine(scene, paletteManager);
-const flashes = new FlashEngine(scene, paletteManager, { count: 20 });
+//const flashes = new FlashEngine(scene, paletteManager, { count: 20 });
 
 const world = new World();
 world.add([
     core, particles, 
-    filaments, 
-    flashes
+    // flashes,
+    filaments
 ]);
 
 const clock = new THREE.Timer();

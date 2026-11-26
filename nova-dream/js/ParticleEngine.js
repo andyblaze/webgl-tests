@@ -1,39 +1,5 @@
-import * as THREE from 'three';
-//import { shader } from './shaders/lissajou.js';
-
-class Attributes {
-    constructor() {
-        this.attribs = {};
-    }
-    add(atts) {
-        Object.assign(this.attribs, atts);
-        //console.log(this.attribs);
-    }
-    set(index, key, val) {
-        this.attribs[key].array[index] = val;
-    }
-    setColor(index, key, color) {
-        const i3 = index * 3;
-        this.attribs[key].array[i3] = color.r;
-        this.attribs[key].array[i3 + 1] = color.g;
-        this.attribs[key].array[i3 + 2] = color.b;        
-    }
-    applyTo(geometry, count) {
-        for ( const [key, val] of Object.entries(this.attribs) ) {
-            geometry.setAttribute(
-                key,
-                new THREE.BufferAttribute(val.array, val.size)
-            );
-        }
-        geometry.setAttribute(
-            'position',
-            new THREE.BufferAttribute(
-                new Float32Array(count * 3), 3
-            )
-        );  
-        //console.log(this.attribs);
-    }
-}
+import { Group, MathUtils, BufferGeometry, ShaderMaterial, AdditiveBlending, Points } from "three";
+import Attributes from "./helpers/attributes.js";
 
 const attributes = new Attributes();
 
@@ -57,12 +23,12 @@ export default class ParticleEngine {
             uEnergy: { value: this.energy }
         };
 
-        this.group = new THREE.Group();
+        this.group = new Group();
         this.createParticles();
         this.scene.add(this.group);
     }
     getColor(colorIndex) {
-        const palette = this.paletteManager.getSystemColors('particles');
+        const palette = this.paletteManager.getSystemColors("particles");
         const color = palette[colorIndex].clone();
 
         color.offsetHSL(
@@ -74,11 +40,11 @@ export default class ParticleEngine {
     }
     updateColors() {
         const colors = this.particles.geometry.attributes.stdColor;
-        const palette = this.paletteManager.getSystemColors('particles');
+        const palette = this.paletteManager.getSystemColors("particles");
 
         for (let i = 0; i < this.count; i++) {
             const i3 = i * 3;
-            // Preserve each particle's individual colour identity.
+            // Preserve each particle"s individual colour identity.
             const colorIndex = this.colorIndices[i];
             const color = palette[colorIndex];
 
@@ -90,10 +56,10 @@ export default class ParticleEngine {
     }
     getSize() {
         // More variation in particle size
-        return THREE.MathUtils.lerp(1.5, 4.8, Math.pow(Math.random(), 1.6));
+        return MathUtils.lerp(1.5, 4.8, Math.pow(Math.random(), 1.6));
     }
     getBrightness() {
-        return THREE.MathUtils.lerp(0.55, 1.5, Math.random());
+        return MathUtils.lerp(0.55, 1.5, Math.random());
     }
     getColorAt(i) {
         const colorIndex = Math.floor(Math.random() * 6);
@@ -101,7 +67,7 @@ export default class ParticleEngine {
         return this.getColor(colorIndex);
     }
     createParticles() {
-        const geometry = new THREE.BufferGeometry();
+        const geometry = new BufferGeometry();
 
         attributes.add({
             stdSize : { array: new Float32Array(this.count), size: 1 },
@@ -122,7 +88,7 @@ export default class ParticleEngine {
         attributes.add(motion.getAttributes());
         attributes.applyTo(geometry, this.count);
 
-        const material = new THREE.ShaderMaterial({
+        const material = new ShaderMaterial({
             uniforms: this.uniforms,
             vertexShader: motion.shader.vertex,
             fragmentShader: motion.shader.fragment,
@@ -130,11 +96,11 @@ export default class ParticleEngine {
             transparent: true,
             depthWrite: false,
             depthTest: true,
-            blending: THREE.AdditiveBlending,
+            blending: AdditiveBlending,
             toneMapped: false
         });
 
-        this.particles = new THREE.Points(geometry, material);
+        this.particles = new Points(geometry, material);
         this.group.add(this.particles);
     }
 
@@ -145,7 +111,7 @@ export default class ParticleEngine {
     }
 
     setEnergy(value) {
-        this.energy = THREE.MathUtils.clamp(value, 0, 2);
+        this.energy = MathUtils.clamp(value, 0, 2);
         this.uniforms.uEnergy.value = this.energy;
     }
     setPalette(p) {
