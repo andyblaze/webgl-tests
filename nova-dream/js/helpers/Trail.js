@@ -1,10 +1,10 @@
-import * as THREE from 'three';
-import { trailShader } from '../shaders/trail.js';
+import { ShaderMaterial, AdditiveBlending, BufferGeometry, BufferAttribute, Points } from "three";
+import { trailShader } from "../shaders/trail.js";
 
 export default class Trail {    
     constructor(paletteManager) {
-        const color = paletteManager.getSystemColors('trail')[0];
-        this.material = new THREE.ShaderMaterial({
+        const color = paletteManager.getSystemColors("trail")[0];
+        this.material = new ShaderMaterial({
             uniforms: {
                 uTime: { value: 0 },
                 uTrailColor: { value: color.clone() }
@@ -13,14 +13,14 @@ export default class Trail {
             fragmentShader: trailShader.fragment,
             transparent: true,
             depthWrite: false,
-            blending: THREE.AdditiveBlending,
+            blending: AdditiveBlending,
             toneMapped: false
         });
         this.pointCount = 60;
         this.length = 0.12;
 
         const count = this.pointCount;
-        const geometry = new THREE.BufferGeometry();
+        const geometry = new BufferGeometry();
 
         const positions = new Float32Array(count * 3);
         const progress = new Float32Array(count);
@@ -31,15 +31,15 @@ export default class Trail {
 
         geometry.setAttribute(
             'position',
-            new THREE.BufferAttribute(positions, 3)
+            new BufferAttribute(positions, 3)
         ); 
 
         geometry.setAttribute(
             'aTrailProgress',
-            new THREE.BufferAttribute(progress, 1)
+            new BufferAttribute(progress, 1)
         );
 
-        this.mesh = new THREE.Points(
+        this.mesh = new Points(
             geometry,
             this.material
         );
@@ -66,7 +66,7 @@ export default class Trail {
         positions.needsUpdate = true;
     }
     updatePalette(paletteManager) {
-        const color = paletteManager.getSystemColors('trail')[0];
+        const color = paletteManager.getSystemColors("trail")[0];
         this.material.uniforms.uTrailColor.value.copy(color);
     }
     updateMaterial(dt) {

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Vector3, BufferGeometry, Float32BufferAttribute } from "three";
 
 export default class TubeGeometry {
     static create(curve, segments, radialSegments,
@@ -32,7 +32,7 @@ export default class TubeGeometry {
                 const angle =
                     (j / radialSegments) * Math.PI * 2;
 
-                const radial = new THREE.Vector3()
+                const radial = new Vector3()
                     .copy(normal)
                     .multiplyScalar(Math.cos(angle))
                     .addScaledVector(
@@ -40,7 +40,7 @@ export default class TubeGeometry {
                         Math.sin(angle)
                     );
 
-                const vertex = new THREE.Vector3()
+                const vertex = new Vector3()
                     .copy(point)
                     .addScaledVector(radial, radius);
 
@@ -73,26 +73,26 @@ export default class TubeGeometry {
             }
         }
 
-        const geometry = new THREE.BufferGeometry();
+        const geometry = new BufferGeometry();
 
         geometry.setAttribute(
             'position',
-            new THREE.Float32BufferAttribute(positions, 3)
+            new Float32BufferAttribute(positions, 3)
         );
 
         geometry.setAttribute(
             'aProgress',
-            new THREE.Float32BufferAttribute(progress, 1)
+            new Float32BufferAttribute(progress, 1)
         );
 
         geometry.setAttribute(
             'aStrand',
-            new THREE.Float32BufferAttribute(strand, 1)
+            new Float32BufferAttribute(strand, 1)
         );
 
         geometry.setAttribute(
             'aPhase',
-            new THREE.Float32BufferAttribute(phases, 1)
+            new Float32BufferAttribute(phases, 1)
         );
 
         geometry.setIndex(indices);

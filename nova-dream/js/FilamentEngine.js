@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Group, ShaderMaterial, DoubleSide, AdditiveBlending } from 'three';
 import { filamentShader } from './shaders/filament.js';
 import Filament from './helpers/Filament.js';
 
@@ -14,7 +14,7 @@ export default class FilamentEngine {
         this.setParams();
         this.setUniforms();
 
-        this.group = new THREE.Group();
+        this.group = new Group();
         this.material = this.createMaterial();
 
         this.filaments = [];
@@ -54,14 +54,14 @@ export default class FilamentEngine {
     // SHARED SHADER MATERIAL
     // ======================================
     createMaterial() {
-        return new THREE.ShaderMaterial({
+        return new ShaderMaterial({
             uniforms: this.uniforms,
             vertexShader: filamentShader.vertex,
             fragmentShader: filamentShader.fragment,
             transparent: true,
             depthWrite: false,
-            side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending,
+            side: DoubleSide,
+            blending: AdditiveBlending,
             toneMapped: false
         });
     }

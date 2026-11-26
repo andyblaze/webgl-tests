@@ -9,7 +9,7 @@ export default class Curve {
 
         const verticalOffset = MathUtils.randFloatSpread(p.verticalSpread);
 
-        for (let j = 0; j < p.segments; j++) {
+        for ( let j = 0; j < p.segments; j++ ) {
             const t = j / p.segments;
             const angle = t * Math.PI * 2;
 

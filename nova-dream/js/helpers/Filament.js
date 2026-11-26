@@ -48,18 +48,7 @@ export default class Filament {
         return new Mesh(geometry, material);        
     }
     update(dt) {
-        //this.progress += this.speed * dt * this.direction;
         this.progress = (this.progress + this.speed * dt) % 1.0;
-        // Reverse at either end of the filament
-        /*if (this.progress >= 1.0) {
-            this.progress = 1.0;
-            this.direction = -1;
-        }
-
-        if (this.progress <= 0.0) {
-            this.progress = 0.0;
-            this.direction = 1;
-        }*/
         Marker.updatePalette(this.marker, this.paletteManager);
         // Follow the actual curved filament path
         this.marker.position.copy(

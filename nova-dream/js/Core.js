@@ -1,5 +1,8 @@
 
-import * as THREE from 'three';
+import {
+    Group, IcosahedronGeometry, ShaderMaterial, FrontSide,
+    DoubleSide, AdditiveBlending, Mesh 
+} from 'three';
 import { coreShader } from './shaders/core.js';
 import { shellShader } from './shaders/shell.js';
 
@@ -32,7 +35,7 @@ export default class Core {
             uShellColorC: { value: shellColors[2].clone() }
         };
 
-        this.group = new THREE.Group();
+        this.group = new Group();
 
         this.createCore();
         this.createOuterShell();
@@ -45,16 +48,16 @@ export default class Core {
     // ======================================
 
     createCore() {
-        const geometry = new THREE.IcosahedronGeometry(1.0, 96);
+        const geometry = new IcosahedronGeometry(1.0, 96);
 
-        const material = new THREE.ShaderMaterial({
+        const material = new ShaderMaterial({
             uniforms: this.uniforms,
             vertexShader: coreShader.vertex,
             fragmentShader: coreShader.fragment,
-            side: THREE.FrontSide
+            side: FrontSide
         });
 
-        this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh = new Mesh(geometry, material);
 
         this.group.add(this.mesh);
     }
@@ -64,20 +67,20 @@ export default class Core {
     // ======================================
 
     createOuterShell() {
-        const geometry = new THREE.IcosahedronGeometry(2.4, 64);
+        const geometry = new IcosahedronGeometry(2.4, 64);
 
-        const material = new THREE.ShaderMaterial({
+        const material = new ShaderMaterial({
             uniforms: this.uniforms,
             vertexShader: shellShader.vertex,
             fragmentShader: shellShader.fragment,
 
             transparent: true,
             depthWrite: false,
-            side: THREE.DoubleSide,
-            blending: THREE.AdditiveBlending
+            side: DoubleSide,
+            blending: AdditiveBlending
         });
 
-        this.shell = new THREE.Mesh(geometry, material);
+        this.shell = new Mesh(geometry, material);
 
         this.group.add(this.shell);
     }

@@ -1,12 +1,12 @@
-import * as THREE from 'three';
-import { markerShader } from '../shaders/marker.js';
+import { SphereGeometry, ShaderMaterial, Mesh } from "three";
+import { markerShader } from "../shaders/marker.js";
 
 export default class Marker {
     static create(paletteManager) {
-        const color = paletteManager.getSystemColors('marker')[0];
-        const geometry = new THREE.SphereGeometry(0.055, 16, 16);
+        const color = paletteManager.getSystemColors("marker")[0];
+        const geometry = new SphereGeometry(0.055, 16, 16);
 
-        const material = new THREE.ShaderMaterial({
+        const material = new ShaderMaterial({
             uniforms: {
                 uTime: { value: 0 },
                 uMarkerColor: { value: color.clone() }
@@ -16,13 +16,13 @@ export default class Marker {
             toneMapped: false
         });
 
-        return new THREE.Mesh(
+        return new Mesh(
             geometry,
             material
         );
     }
     static updatePalette(marker, paletteManager) {
-        const color = paletteManager.getSystemColors('marker')[0];
+        const color = paletteManager.getSystemColors("marker")[0];
         marker.material.uniforms.uMarkerColor.value.copy(color);
     }
 } 
