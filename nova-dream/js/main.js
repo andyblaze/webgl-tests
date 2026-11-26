@@ -10,7 +10,8 @@ import FilamentEngine from "./FilamentEngine.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import World from "./World.js";
 import PerformanceMonitor from "./perf-monitor.js";
-import CameraController from "./CameraController.js";
+import Ship from "./Ship.js";
+import Navigator from "./Navigator.js";
 
 const canvas = byId("universe");
 const renderer = makeRenderer(THREE, canvas);
@@ -21,7 +22,7 @@ const paletteManager = new PaletteManager();
 /*const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;*/
 
-const camController = new CameraController(camera);
+const ship = new Ship(camera, new Navigator());
 
 const core = new Core(scene, paletteManager);
 const particles = new ParticleEngine(
@@ -58,7 +59,7 @@ function animate(timestamp) {
     world.update(time);
     //controls.update();
 
-    camController.update(time.dt);
+    ship.update(time.dt);
 
     renderer.render(scene, camera);
     monitor.update(timestamp);
