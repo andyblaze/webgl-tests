@@ -14,6 +14,9 @@ class Manoeuvre {
         this.apply(ship);
         return true;
     }
+    reset() {
+        this.elapsed = 0;
+    }
     apply(ship) {
         const c = this.commands;
 
@@ -60,7 +63,13 @@ export default class Navigator {
         this.ship = ship;
     }
     update(dt) {
-        if (this.current >= this.manoeuvres.length) return;
+        if (this.current >= this.manoeuvres.length) {
+            for ( const m of this.manoeuvres ) 
+                m.reset();
+        this.current = 0;
+
+            //return;
+        }
 
         const manoeuvre = this.manoeuvres[this.current];
 
