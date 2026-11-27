@@ -4,7 +4,7 @@ class Motion {
     constructor() {
         this.angle = 0;
         this.target = 0;
-        this.damping = 2;
+        this.damping = 3;
     }
     move(degrees) {
         this.target += MathUtils.degToRad(degrees);
@@ -122,7 +122,6 @@ export default class Ship {
     }   
     update(dt) {
         this.navigator.update(dt);
-        this.navigator.getCommand();
         this.motions.update(dt);
 
         this.camera.rotation.y = this.motions.yaw;
