@@ -25,6 +25,8 @@ class Manoeuvre {
         if (c.yaw) ship.yaw(c.yaw);
         if (c.pitch) ship.pitch(c.pitch);
         if (c.roll) ship.roll(c.roll);
+        if (c.stop) ship.stop();
+        if (c.start) ship.start();
     }
 }
 
@@ -32,7 +34,7 @@ export default class Navigator {
     constructor() {
         this.manoeuvres = [
             new Manoeuvre(12, {
-                forward: 0.5,
+                forward: 2,
                 //yaw: 3,
                 //roll: 12,
                 pitch: 0.4
@@ -49,8 +51,14 @@ export default class Navigator {
                 roll: -0.6,
                 //pitch: 6
             }),
+            new Manoeuvre(6, {
+                stop: 1
+            }),
+            new Manoeuvre(6, {
+                start: 1
+            }),
             new Manoeuvre(12, {
-                backward: 0.5,
+                backward: 2,
                 //yaw: 3,
                 //roll: 12,
                 pitch: -0.4
@@ -67,8 +75,6 @@ export default class Navigator {
             for ( const m of this.manoeuvres ) 
                 m.reset();
         this.current = 0;
-
-            //return;
         }
 
         const manoeuvre = this.manoeuvres[this.current];

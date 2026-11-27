@@ -56,6 +56,10 @@ class Thrust {
 
         this.acceleration = 0;
     }
+    stop() {
+        this.velocity = 0;
+        this.acceleration = 0;
+    }
 }
 
 class Motions {
@@ -81,6 +85,13 @@ class Motions {
     }
     rollBy(degrees) {
         this.motions.roll.move(MathUtils.degToRad(degrees));
+    }
+    hold() {
+        this.holding = true;
+        this.thrust.stop();
+    }
+    release() {
+        this.holding = false;
     }
     get yaw() {
         return this.motions.yaw.angle;
@@ -119,7 +130,13 @@ export default class Ship {
     }
     backward(distance) {
         this.motions.thrust.move(-distance);
-    }   
+    }
+    stop() {
+        this.motions.hold();
+    }
+    start() {
+        this.motions.release();
+    }
     update(dt) {
         this.navigator.update(dt);
         this.motions.update(dt);
@@ -127,6 +144,9 @@ export default class Ship {
         this.camera.rotation.y = this.motions.yaw;
         this.camera.rotation.x = this.motions.pitch;
         this.camera.rotation.z = this.motions.roll;
-        this.camera.translateZ(-this.motions.thrust.velocity * dt);
+
+        if ( !this.motions.holding ) {
+            this.camera.translateZ(-this.motions.thrust.velocity * dt);
+        }
     }
 }

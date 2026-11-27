@@ -33,7 +33,7 @@ export function makeCamera(three) {
         1000                                    // Far clipping
     );
 
-    cam.position.set(0, 0, 12);
+    cam.position.set(0, 0, 24);
 
     cam.lookAt(0, 0, 0);  
     return cam;  
