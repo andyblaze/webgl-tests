@@ -28,29 +28,29 @@ class Manoeuvre {
 export default class Navigator {
     constructor() {
         this.manoeuvres = [
-            new Manoeuvre(3, {
-                forward: 1.5,
+            new Manoeuvre(12, {
+                forward: 0.5,
                 //yaw: 3,
                 //roll: 12,
-                pitch: 4
+                pitch: 0.4
             }),
-            new Manoeuvre(6, {
+            new Manoeuvre(12, {
                 //forward: 2.5,
-                yaw: 4,
-                roll: 6,
+                yaw: 0.4,
+                roll: 0.6,
                 //pitch: 6
             }),
-            new Manoeuvre(6, {
+            new Manoeuvre(12, {
                 //forward: 2.5,
-                yaw: -4,
-                roll: -6,
+                yaw: -0.4,
+                roll: -0.6,
                 //pitch: 6
             }),
-            new Manoeuvre(3, {
-                backward: 1.5,
+            new Manoeuvre(12, {
+                backward: 0.5,
                 //yaw: 3,
                 //roll: 12,
-                pitch: -4
+                pitch: -0.4
             })
         ];
 

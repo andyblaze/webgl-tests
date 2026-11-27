@@ -101,6 +101,7 @@ export default class ParticleEngine {
         });
 
         this.particles = new Points(geometry, material);
+        this.particles.frustumCulled = false;
         this.group.add(this.particles);
     }
 
