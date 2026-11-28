@@ -27,16 +27,24 @@ class Manoeuvre {
         if (c.roll) ship.roll(c.roll);
         if (c.stop) ship.stop();
         if (c.start) ship.start();
+        if (c.enterOrbit) ship.enterOrbit();
+        if (c.leaveOrbit) ship.leaveOrbit();
     }
 }
 
 export default class Navigator {
     constructor() {
         this.manoeuvres = [
+            new Manoeuvre(15, {
+                enterOrbit: 1
+            }),
+            new Manoeuvre(5, {
+                leaveOrbit: 1
+            })/*,
             new Manoeuvre(12, {
-                forward: 2,
+                forward: 1,
                 //yaw: 3,
-                //roll: 12,
+                roll: 0.6,
                 pitch: 0.4
             }),
             new Manoeuvre(12, {
@@ -51,18 +59,24 @@ export default class Navigator {
                 roll: -0.6,
                 //pitch: 6
             }),
-            new Manoeuvre(6, {
+            new Manoeuvre(3, {
                 stop: 1
             }),
-            new Manoeuvre(6, {
+            new Manoeuvre(3, {
                 start: 1
             }),
             new Manoeuvre(12, {
-                backward: 2,
+                backward: 1,
                 //yaw: 3,
-                //roll: 12,
+                roll: -0.6,
                 pitch: -0.4
-            })
+            }),
+            new Manoeuvre(3, {
+                stop: 1
+            }),
+            new Manoeuvre(3, {
+                start: 1
+            })*/
         ];
 
         this.current = 0;

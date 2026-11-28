@@ -62,6 +62,39 @@ class Thrust {
     }
 }
 
+class Orbit {
+    constructor() {
+        this.active = false;
+        this.angle = 0;
+        this.radius = 0;
+        this.speed = 0;
+    }
+
+    start(position, radius, speed) {
+        this.radius = radius;
+        this.speed = speed;
+
+        this.angle = Math.atan2(position.x, position.z);
+
+        this.active = true;
+    }
+
+    stop() {
+        this.active = false;
+    }
+
+    update(dt, camera) {
+        if (!this.active) return;
+
+        this.angle += this.speed * dt;
+
+        camera.position.x = Math.sin(this.angle) * this.radius;
+        camera.position.z = Math.cos(this.angle) * this.radius;
+
+        camera.lookAt(0, 0, 0);
+    }
+}
+
 class Motions {
     constructor() {
         this.motions = {
@@ -70,12 +103,13 @@ class Motions {
             roll: new Roll()
         };
         this.thrust = new Thrust();
+        this.orbit = new Orbit();
     }
     update(dt) {
         this.motions.yaw.update(dt);
         this.motions.pitch.update(dt);
         this.motions.roll.update(dt);   
-        this.thrust.update(dt);     
+        this.thrust.update(dt);   
     }
     yawBy(degrees) {
         this.motions.yaw.move(MathUtils.degToRad(degrees));
@@ -92,6 +126,15 @@ class Motions {
     }
     release() {
         this.holding = false;
+    }
+    enterOrbit(position, radius, speed) {
+        this.orbit.start(position, radius, speed);
+    }
+    leaveOrbit() {
+        this.orbit.stop();
+    }
+    get isOrbiting() {
+        return this.orbit.active;
     }
     get yaw() {
         return this.motions.yaw.angle;
@@ -137,9 +180,17 @@ export default class Ship {
     start() {
         this.motions.release();
     }
+    enterOrbit(radius=24, speed=0.25) {
+        this.motions.enterOrbit(this.camera.position, radius, speed);
+    }
+    leaveOrbit() {
+        this.motions.leaveOrbit();
+    }
     update(dt) {
         this.navigator.update(dt);
         this.motions.update(dt);
+        this.motions.orbit.update(dt, this.camera);  
+        if ( this.motions.isOrbiting ) return;
 
         this.camera.rotation.y = this.motions.yaw;
         this.camera.rotation.x = this.motions.pitch;
