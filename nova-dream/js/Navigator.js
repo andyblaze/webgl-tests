@@ -41,7 +41,7 @@ export default class Navigator {
                 //roll: 0.6,
                 //pitch: 0.4
             }),
-            new Manoeuvre(7.5, {
+            new Manoeuvre(10, {
                 enterOrbit: 1
             }),
             new Manoeuvre(5, {

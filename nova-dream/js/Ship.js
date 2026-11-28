@@ -68,30 +68,34 @@ class Orbit {
         this.angle = 0;
         this.radius = 0;
         this.speed = 0;
+        this.revolutions = 0;
+        this.targetRevolutions = 0;
     }
-
-    start(position, radius, speed) {
-        this.radius = radius;
+    start(position, radius, speed, revolutions = 1) {
+        this.radius = radius;//Math.hypot(position.x, position.z);
         this.speed = speed;
-
         this.angle = Math.atan2(position.x, position.z);
-
+        this.revolutions = 0;
+        this.targetRevolutions = revolutions;
         this.active = true;
     }
-
     stop() {
         this.active = false;
     }
-
     update(dt, camera) {
         if (!this.active) return;
 
-        this.angle += this.speed * dt;
+        const step = this.speed * dt;
+        this.angle += step;
+        this.revolutions += Math.abs(step) / (Math.PI * 2);
 
         camera.position.x = Math.sin(this.angle) * this.radius;
         camera.position.z = Math.cos(this.angle) * this.radius;
-
         camera.lookAt(0, 0, 0);
+
+        if (this.revolutions >= this.targetRevolutions) {
+            this.stop();
+        }
     }
 }
 
