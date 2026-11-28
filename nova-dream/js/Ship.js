@@ -193,7 +193,8 @@ export default class Ship {
     start() {
         this.motions.release();
     }
-    enterOrbit(radius=24, speed=0.25) {
+    enterOrbit(speed=0.25) {
+        const radius = this.camera.position.length();
         this.motions.enterOrbit(this.camera.position, radius, speed);
     }
     leaveOrbit() {
