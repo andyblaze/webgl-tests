@@ -1,4 +1,4 @@
-import { Vector3, MathUtils } from "three";
+import { Vector3, MathUtils, Euler } from "three";
 
 class Motion {
     constructor() {
@@ -130,8 +130,21 @@ class Motions {
     enterOrbit(position, radius, speed) {
         this.orbit.start(position, radius, speed);
     }
-    leaveOrbit() {
+    leaveOrbit(camera) {
         this.orbit.stop();
+
+        const rotation = new Euler().setFromQuaternion(
+            camera.quaternion,
+            camera.rotation.order
+        );
+
+        this.motions.yaw.angle = rotation.y;
+        this.motions.pitch.angle = rotation.x;
+        this.motions.roll.angle = rotation.z;
+
+        this.motions.yaw.target = rotation.y;
+        this.motions.pitch.target = rotation.x;
+        this.motions.roll.target = rotation.z;
     }
     get isOrbiting() {
         return this.orbit.active;
@@ -184,7 +197,8 @@ export default class Ship {
         this.motions.enterOrbit(this.camera.position, radius, speed);
     }
     leaveOrbit() {
-        this.motions.leaveOrbit();
+        this.motions.leaveOrbit(this.camera);
+        //this.camera.lookAt(0,0,0);
     }
     update(dt) {
         this.navigator.update(dt);

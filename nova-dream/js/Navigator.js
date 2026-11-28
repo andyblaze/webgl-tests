@@ -40,7 +40,26 @@ export default class Navigator {
             }),
             new Manoeuvre(5, {
                 leaveOrbit: 1
-            })/*,
+            }),
+            new Manoeuvre(5, {
+                yaw:4
+            }),
+            new Manoeuvre(1, {
+                stop: 1
+            }),
+            new Manoeuvre(1, {
+                start: 1
+            }),
+            new Manoeuvre(5, {
+                yaw:-4
+            }),
+            new Manoeuvre(1, {
+                stop: 1
+            }),
+            new Manoeuvre(1, {
+                start: 1
+            })
+            /*,
             new Manoeuvre(12, {
                 forward: 1,
                 //yaw: 3,
